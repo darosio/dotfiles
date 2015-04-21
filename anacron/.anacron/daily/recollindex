@@ -1,0 +1,10 @@
+#!/bin/sh
+
+echo "### recollindex DAILY ###"
+
+recollindex > /tmp/recoll.out 2>&1 || cat /tmp/recoll.out 
+#recollindex -c ~/docs/.recoll.media >/tmp/recoll.out 2>&1 ||cat /tmp/recoll.out
+recollindex -c ~/.recoll.Mail > /tmp/recoll.out 2>&1 ||cat /tmp/recoll.out
+#recollindex -c ~/docs/.recoll.zotero>/tmp/recoll.out 2>&1 ||cat /tmp/recoll.out
+
+echo

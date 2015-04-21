@@ -1,0 +1,17 @@
+# /etc/anacrontab: configuration file for anacron
+
+# See anacron(8) and anacrontab(5) for details.
+
+HOMEan=/home/dan/.anacron
+SHELL=/bin/sh
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+MAILTO=root
+# the maximal random delay added to the base delay of the jobs
+RANDOM_DELAY=0
+# the jobs will be started during the following hours only
+START_HOURS_RANGE=3-22
+
+#period in days   delay in minutes   job-identifier   command
+1	10	    dan.daily		nice run-parts --report     ${HOMEan}/daily
+@7	5	    dan.weekly		nice run-parts --report     ${HOMEan}/weekly
+@monthly 1	dan.monthly     nice run-parts --report     ${HOMEan}/monthly

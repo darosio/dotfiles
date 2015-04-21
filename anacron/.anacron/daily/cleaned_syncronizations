@@ -1,0 +1,5 @@
+#!/bin/sh
+
+echo "### Clean Syncronizations (unison and dropbox) ###"
+find ~/docs/ -name .unison\*
+echo
