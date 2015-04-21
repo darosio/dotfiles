@@ -1,0 +1,311 @@
+set modelines=1	" modeline must be within first or last 1 line
+filetype off                   " required!
+call vundle#rc()
+
+Plugin 'vim-scripts/DirDiff.vim'
+""" Colors
+Plugin 'tomasr/molokai'
+Plugin 'sjl/badwolf'
+Plugin 'altercation/vim-colors-solarized'
+""" Complete
+" Plugin 'Valloric/YouCompleteMe
+Plugin 'ervandew/supertab.git'
+" Plugin 'gkirilov/vim-wdiff'
+" Plugin 'vim-scripts/ShowMarks'  Not working properly
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""" Writing prose
+Plugin 'reedes/vim-wordy'
+" Plugin 'reedes/vim-pencil'
+" Plugin 'reedes/vim-wheel'
+Plugin 'vim-pandoc/vim-pandoc'
+Plugin 'vim-pandoc/vim-pandoc-syntax'
+Plugin 'junegunn/goyo.vim'
+Plugin 'amix/vim-zenroom2'
+Plugin 'vim-voom/VOoM'
+Plugin 'vim-scripts/LanguageTool'
+Plugin 'goldfeld/criticmarkup-vim'
+Plugin 'junegunn/vim-easy-align'
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+Plugin 'aklt/plantuml-syntax'
+Plugin 'chrisbra/csv.vim'
+Plugin 'mhinz/vim-signify' " works also for hg 'airblade/vim-gitgutter'
+Plugin 'tpope/vim-fugitive'
+Plugin 'bling/vim-airline'
+Plugin 'Lokaltog/vim-easymotion' " moving around
+Plugin 'tpope/vim-surround' " braces
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""" Python
+" Plugin 'klen/python-mode' maybe rope
+Plugin 'davidhalter/jedi-vim'
+" syntasytic to directly use flake8
+"Need: flake8 pep8 python-mccabe python-pyflakes
+Plugin 'nvie/vim-flake8'
+" Plugin 'nvie/vim-pyunit'
+Plugin 'alfredodeza/pytest.vim'
+Plugin 'alfredodeza/coveragepy.vim'
+" Virtualenv
+Plugin 'jmcantrell/vim-virtualenv'
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+Plugin 'majutsushi/tagbar' " ctags
+" the silver searcher alternative to ctags and tagbar
+Plugin 'rking/ag.vim'
+Plugin 'junegunn/fzf'
+
+set ttyfast		" faster redraw (with multiple windows)
+set lazyredraw	" do not redraw in the middle of macro running
+
+" Colors {{{
+syntax enable
+" for solarized colors
+set nocompatible
+set t_Co=16
+syntax on
+set background=dark	" often used with dark bg
+colorscheme solarized
+call togglebg#map("<F12>")
+" }}}
+" gvim {{{
+set guifont=Monaco\ 11	" font for gvim
+set guioptions=aegim	" a visual mode copy/paste, m menu, g gray menu ...
+set guioptions-=T   	" do not show Toolbars in gvim
+set diffopt+=iwhite	" ignore white spaces in gvimdiff
+if has('gui_running')
+	autocmd GuiEnter * set columns=95
+	if &diff
+		autocmd GuiEnter * set columns=165 lines=50
+		set guifont=Monaco\ 10
+	end
+	" winpos 576 329
+end
+" }}}
+" Leader Shortcuts {{{
+let mapleader=","
+" copy and paste
+vnoremap <leader>y "+y
+vmap <C-c> "+y
+nmap <C-c> "+yiw
+map <leader>pp "+gP
+map <leader>p "+p
+nmap <C-N> :set invnumber<CR>
+" toggle paste mode
+set pastetoggle=<F2>
+" Reload Vimrc
+map <silent> <leader>sv :source ~/.vim/vimrc<CR>:filetype detect<CR>
+map <silent> <leader>ev :vsp ~/.vim/vimrc<CR>
+" for when we forget to use sudo to open/edit a file
+command! Sudow :w !sudo tee % >/dev/null
+nnoremap <leader>w :w<CR>
+nnoremap <leader>q :q<CR>
+nnoremap <leader>qq :q!<CR>
+nnoremap ; :
+" Show trailing whitespace: <leader>ll
+set listchars=tab:>.,trail:·,eol:$,extends:#,nbsp:.
+nmap <silent> <leader>ll :set nolist!<CR>
+" Remove trailing whitespace: <leader>llr
+nnoremap <leader>llr :%s/\s\+$//<cr>:let @/=''<CR>
+" }}}
+" Spaces & Tabs {{{
+set autoindent		" always autoindent on
+"set smartindent		" if no indent file available
+set tabstop=4		" number of visual spaces per TAB
+set softtabstop=4	" number of spaces per TAB when editing
+set shiftwidth=4	" number of spaces per indent
+set shiftround		" round indent to multiple of 'shiftwidth'
+set expandtab		" tabs are always spaces
+set smarttab		" backspace over tabs
+set copyindent		" copy indent structure, spaces and tabs from upper line
+" }}}
+" UI Config {{{
+set number	" powerline?
+set showcmd	" powerline?
+set cursorline		" highlight current line
+filetype plugin indent on " load filetype-specific plugin/indent file
+set wildmenu		" visual autocomplete for command menu
+set showmatch		" highlight matvching [{()}]
+set textwidth=79	" line wrapped after 80 columns
+set wrap			" wrap text line longer then 80 chars
+set linebreak		" do not break a word in two lines when wrapping
+" move vertically accross fake wrapped lines
+nnoremap j gj
+nnoremap k gk
+" highlight inserted text during last INSERT mode
+nnoremap gV `[v`]
+" Jeff
+set nostartofline	" Avoid moving cursor to BOL when jumping around
+set virtualedit=block " Let cursor move past the last char in <C-v> mode
+set scrolloff=3		" Keep 3 context lines above and below the cursor
+set title			" show title in console title bar
+set colorcolumn=80	" show color at column 80
+highlight ColorColumn ctermbg=red guibg=darkred
+set hidden			" hides buffers instead of closing
+set noerrorbells	" don't beep
+set visualbell t_vb= " Disable all bells.  I hate ringing/flashing.
+" Use SVN, hg, git, rsnapshot, unison ...
+set nobackup
+set noswapfile
+" }}}
+" Searching {{{
+set ignorecase		" ignore case
+set smartcase		" try to be smart
+set incsearch		" search as characters are entered
+set hlsearch		" highlight matches
+" turn off highlight matches
+nnoremap <leader><space> :nohlsearch<cr>
+" }}}
+" Folding {{{
+set foldenable		" enable folding
+set foldlevelstart=7 " open most folds by default
+set foldnestmax=10	" creates 10 fold levels at maximum
+" space open/closes folds
+nnoremap <space> za
+set foldmethod=indent	" based on indent level (manual,expr,syntax,diff)
+" markdown {{{
+function! MarkdownLevel()
+    if getline(v:lnum) =~ '^# .*$'
+        return ">1"
+    endif
+    if getline(v:lnum) =~ '^## .*$'
+        return ">2"
+    endif
+    if getline(v:lnum) =~ '^### .*$'
+        return ">3"
+    endif
+    if getline(v:lnum) =~ '^#### .*$'
+        return ">4"
+    endif
+    if getline(v:lnum) =~ '^##### .*$'
+        return ">5"
+    endif
+    if getline(v:lnum) =~ '^###### .*$'
+        return ">6"
+    endif
+    return "="
+endfunction
+au BufEnter *.md setlocal foldexpr=MarkdownLevel()
+au BufEnter *.md setlocal foldmethod=expr
+au BufEnter *.md colorscheme morning
+" }}}
+" }}}
+
+""" Plugins installed from github:
+" Pytest {{{
+nmap <silent><Leader>rf <Esc>:Pytest file<CR>
+nmap <silent><Leader>rc <Esc>:Pytest class<CR>
+nmap <silent><Leader>rm <Esc>:Pytest method<CR>
+" }}}
+" virtualenv {{{
+let g:virtualenv_directory = '/home/dan/Copy/virtualenvs'
+let g:virtualenv_directory = '/home/dan/workspace/v'
+let g:virtualenv_auto_activate = 1
+let g:virtualenv_stl_format = '[%n]'
+"%{virtualenv#statusline()}
+" }}}
+" python-mode {{{
+" Python-mode
+" Activate rope
+" Keys:
+" K             Show python docs
+" <Ctrl-Space>  Rope autocomplete
+" <Ctrl-c>g     Rope goto definition
+" <Ctrl-c>d     Rope show documentation
+" <Ctrl-c>f     Rope find occurrences
+" <Leader>b     Set, unset breakpoint (g:pymode_breakpoint enabled)
+" [[            Jump on previous class or function (normal, visual, operator modes)
+" ]]            Jump on next class or function (normal, visual, operator modes)
+" [M            Jump on previous class or method (normal, visual, operator modes)
+" ]M            Jump on next class or method (normal, visual, operator modes)
+""let g:pymode_rope = 0
+" Documentation
+""let g:pymode_doc = 1
+""let g:pymode_doc_key = 'K'
+"Linting
+""let g:pymode_lint = 0
+""let g:pymode_lint_checker = "pyflakes,pep8"
+" Auto check on save
+""let g:pymode_lint_write = 1
+" Support virtualenv
+""let g:pymode_virtualenv = 1
+" Enable breakpoints plugin
+""let g:pymode_breakpoint = 1
+""let g:pymode_breakpoint_key = '<leader>b'
+" syntax highlighting
+""let g:pymode_syntax = 1
+""let g:pymode_syntax_all = 1
+""let g:pymode_syntax_indent_errors = g:pymode_syntax_all
+""let g:pymode_syntax_space_errors = g:pymode_syntax_all
+" Don't autofold code
+""let g:pymode_folding = 1
+" }}}
+
+" Plugins installed from Archlinux:
+" Gundo {{{
+nnoremap <leader>u :GundoToggle<CR>
+" }}}
+" Nerdtree {{{
+"nnoremap <leader>n <ESC>:NERDTreeToggle<CR>
+map <F2> :NERDTreeToggle<CR>
+" }}}
+" plantuml-syntax {{{
+" let g:plantuml_executable_script='java -jar c:\utils\plantuml\plantuml.jar'
+nnoremap <F5> :w<CR> :silent make<CR>
+inoremap <F5> <Esc>:w<CR>:silent make<CR>
+vnoremap <F5> :<C-U>:w<CR>:silent make<CR
+" }}}
+" vim-wordy {{{
+let g:wordy#ring = [
+  \ 'weak',
+  \ 'weasel',
+  \ 'puffery',
+  \ 'redundant',
+  \ 'problematic',
+  \ ['being', 'passive-voice', ],
+  \ ['business-jargon', 'art-jargon',],
+  \ ['colloquial', 'idiomatic', ],
+  \ 'similies',
+  \ 'said-synonyms',
+  \ 'contractions',
+  \ 'opinion',
+  \ 'vague-time',
+  \ ]
+" to cycle among defined rings
+nnoremap <silent> K :NextWordy<cr>
+" }}}
+" languagetool {{{
+let g:languagetool_jar='/usr/share/java/languagetool/languagetool-commandline.jar'
+"let g:DirDiffDynamicDiffText = 1
+"}}}
+" FZF {{{
+" List of buffers
+function! BufList()
+  redir => ls
+  silent ls
+  redir END
+  return split(ls, '\n')
+endfunction
+
+function! BufOpen(e)
+  execute 'buffer '. matchstr(a:e, '^[ 0-9]*')
+endfunction
+
+nnoremap <silent> <Leader><Enter> :call fzf#run({
+\   'source':      reverse(BufList()),
+\   'sink':        function('BufOpen'),
+\   'options':     '+m',
+\   'tmux_height': '40%'
+\ })<CR>
+"}}}  
+" zenroom2 and goyo {{{
+nnoremap <silent> <leader>z :Goyo<cr>
+" }}}
+
+" forse supertab non serve basta ctrl-space
+let g:SuperTabDefaultCompletionType = "context"
+" Disable auto-complete on .
+let g:jedi#popup_on_dot = 0
+let g:jedi#use_splits_not_buffers = "bottom"
+" autocmd FileType python setlocal completeopt-=preview
+map <F3> :exe ":!dict ".expand("<cword>")<CR>
+map <F4> :exe ":!wn ".expand("<cword>") " -antsa"<CR>
+map <F4> :exe ":!wn ".expand("<cword>") " -synsn -synsv -synsa -synsr"<CR>
+
+" vim:foldmethod=marker:foldlevel=0
