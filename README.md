@@ -1,16 +1,17 @@
-Repository for $HOME/.dotfiles
+# Repository for $HOME/.dotfiles
 
 ## Requirements
 
-#. stow
+1. GNU stow 
 
 ## Usage
+
+to create symlink into $HOME folder:
 
 	cd ~/.dotfile
 	stow package-version 
 	
-to create symlink into $HOME folder for the files that
-are needed of the machine you are invoking the command from.
+pick package-version as needed.
 
 Plan to use machine-specific git branches.
 
