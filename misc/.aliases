@@ -1,0 +1,267 @@
+alias diction='diction -s'
+# git annex
+ga-init() {
+    git init
+    git annex init $1
+    touch README
+    git add .
+    git commit -m 'inizialization'
+}
+alias ga='git annex'
+ga-dup() {
+    git annex find --include '*' --format='${file} ${escaped_key}\n' | \
+        sort -k2 | uniq --all-repeated=separate -f1 | sed 's/ [^ ]*$//'
+}
+
+alias pandoc='pandoc --latex-engine=xelatex'
+countfiles() {
+    find . -type d | while read DIR; do
+    ls -A $DIR | echo $DIR $(wc -w);done
+}
+alias fiji='~/.progs/Fiji.app/ImageJ-linux64'
+alias g='git st; git in; git out'
+#ranger shellcd
+alias rr='ranger'
+#$RANGERCD && unset RANGERCD && ranger-cd
+cd "$AUTOCD"
+# Bash's bind
+bind '"\e[11~": "urxvt &\n"'
+export EDITOR='vim'
+#alias of='o "`fzf -e`"'
+export FZF_DEFAULT_OPTS="-e -m --sort 10000"
+#export FZF_DEFAULT_COMMAND='ag -l -g ""'
+source /etc/profile.d/fzf.sh
+#TODO open filemanager after searching for file or dir
+
+sf() {
+ recoll -t -b -a $* | fzf -m | xargs -0 | xargs bash -c "for filename; do xdg-open '$filename' && echo '$filename'; done" aa
+}
+
+# for virtualenvwrapper
+export WORKON_HOME=~/workspace/venvs/
+source /usr/bin/virtualenvwrapper.sh 
+#alias prparser='. ~/.v/prparser/bin/activate'
+#alias tecan='. ~/.v/prtecan/bin/activate'
+#alias datan='. ~/workspace/v/datan-dev/bin/activate'
+
+
+source /usr/share/bash-completion/completions/git
+source /usr/share/bash-completion/completions/hg
+alias ligplus='java -jar ~/.progs/LigPlus/LigPlus.jar'
+alias ape='~/.progs/ApE.vfs/tclkit-linux-x86 ~/.progs/ApE.vfs/main.tcl'
+alias serialcloner='~/.progs/SerialCloner2-6/SerialCloner2.6.1'
+alias seaview='~/.progs/seaview/seaview'
+export TERMINAL=urxvt
+#avoid duplicates in history
+export HISTCONTROL=ignoredups
+#export WINEPREFIX=/home/dan/.bin/.win32
+export WINEARCH=win32
+
+export PYTHONDOCS=/usr/share/doc/python/html/
+#PS1="\[\033[1;30m\]dom\[\033[0;37m\]\$ "
+eval $(dircolors -b)
+
+export R_LIBS_USER=~/.Renviron/
+
+alias chromep='chromium --proxy-server="localhost:8118"'
+alias skype='xhost +local: && sudo -u skype -c /usr/bin/skype'
+alias skype='xhost +local: && su skype -c skype'
+alias lb='lsblk'
+alias vi='vim'
+alias viw='vi -c "match DiffDelete /\[-.\{-}-]/" -c "2match DiffAdd /{+.\{-}+}/"'
+alias o='xdg-open $@'
+alias nb='ipython notebook --pylab inline'
+alias nb='ipython notebook'
+alias ipythonp='ipython --pylab=inline'
+alias qpy='ipython qtconsole --pylab'
+alias e='gvim'
+alias ed='gvimdiff'
+#export TODO_ACTIONS_DIR=~/Dropbox/todo/.todo.actions.d/
+#export TODO_DIR=~/Dropbox/todo/
+## export EDITOR='geany'
+#if [[ -e /usr/bin/most ]]; then  export PAGER=most; fi
+export UNISONLOCALHOSTNAME=dpa3
+#export CDPATH='.:/Data/0dan'
+
+# PATH
+PATH=$PATH:$HOME/.progs/bin
+PATH=$PATH:$HOME/.progs/myrepos.branchable.com
+PATH=$PATH:$HOME/.cabal/bin
+export PATH
+
+export IGNOREEOF=1
+##export VBOX_USB=usbfs
+#export PYTHONPATH=~/lib/python2.7
+
+alias pyp='sudo pacmatic -Syu'
+alias pya='pacaur -Syua'
+alias pyu='sudo pacmatic -Syu; pya'
+sl(){
+ fname=`echo $1 | cut -d. -f1`
+ landslide $1 -d $fname.html
+ chromium $fname.html
+ }
+rst2pdf_myslide() {
+  sed s/^----// $1 > $1-tmp
+  rst2pdf -b 1 --raw-html -s ~/Dropbox/slideshows/rst2pdf/slides.style $1-tmp
+}
+alias rst2pdf_myslide2='rst2pdf -b 1 --raw-html -s ~/Dropbox/slideshows/rst2pdf/slides.style' 
+rst2my_beamer() {
+  fname=`echo $1 | cut -d. -f1`
+  rst2beamer $1 > $fname.tex
+  pdflatex $fname.tex
+  pdflatex $fname.tex
+}
+alias a='a.py'
+alias vga_on='xrandr --output VGA1 --auto --above LVDS1'
+alias vga='xrandr --output VGA1 --auto --same-as LVDS1'
+alias vga_onr='xrandr --output VGA1 --auto --right-of LVDS1'
+alias vga_off='xrandr --output VGA1 --off'
+alias impress='impressive -t none --nologo'
+alias fbk='sudo ~/Dropbox/4sharing/nc/ncsvc -h sslgate.fbk.eu -r Fbk_AD_realm -u darosio -f ~/Dropbox/4sharing/nc/certificato_sslgate.crt -p CEaMW2oSQY2 -L 6'
+alias fbk='sudo ~/.progs/nc/ncsvc -h sslgate.fbk.eu -r Fbk_AD_realm -u darosio -f ~/.progs/nc/certificato_sslgate.crt -p CEaMW2oSQY2 -L 6'
+alias t='todo.sh'
+alias tt='todo.sh ls'
+alias td='t `date -d today +%F`; t `date -d 1days +%F`; t `date -d 2days +%F`'
+alias swan='sshpass -p CEaME2oSQY2 ssh darosio%swan@gate.fbk.eu'
+alias omero='sshpass -p CEaMW2oSQY2 ssh darosio%omero@gate.fbk.eu'
+#alias omero-data='sshfs  darosio%omero@gate.fbk.eu:/data /media/omero/'
+alias omero-data='sshfs  omero:/data /media/omero/'
+alias swan-data='sshfs  swan:/hardmnt/swan1/data /media/swan/'
+alias pp='impressive --nologo'
+alias xev_arch="xev | grep -A2 --line-buffered '^KeyRelease' | sed -n '/keycode /s/^.*keycode \([0-9]*\).* (.*, \(.*\)).*$/\1 \2/p'"
+alias bb7='sudo sh -c "echo 7 > /sys/class/backlight/acpi_video0/brightness"'
+alias bb6='sudo sh -c "echo 6 > /sys/class/backlight/acpi_video0/brightness"'
+alias bb5='sudo sh -c "echo 5 > /sys/class/backlight/acpi_video0/brightness"'
+alias bb4='sudo sh -c "echo 4 > /sys/class/backlight/acpi_video0/brightness"'
+alias bb3='sudo sh -c "echo 3 > /sys/class/backlight/acpi_video0/brightness"'
+alias bb2='sudo sh -c "echo 2 > /sys/class/backlight/acpi_video0/brightness"'
+alias bb='sudo sh -c "echo "$1" > /sys/class/backlight/acpi_video0/brightness"'
+alias xl='xlock -mode molecule'
+alias bigcp='rsync -Phrltz'   #pg z -XH
+# -a is for archive, which preserves ownership, permissions etc.
+# -v is for verbose, so I can see what's happening (optional)
+# -h is for human-readable, so the transfer rate and file sizes are easier to read (optional)
+# -W is for copying whole files only, without delta-xfer algorithm which should reduce CPU load
+# --no-compress as there's no lack of bandwidth between local devices
+# --progress so I can see the progress of large files (optional)
+## alias rm='trash-put'
+alias svigolana='xterm -fn 9x15 -bg lightgreen -e /usr/bin/ssh -i ~/.ssh/dan@sterzing-2013-06-03 -p 23456 192.168.10.110 &'
+alias svigolana='urxvt -bg "#111020" -e ssh -i ~/.ssh/dan@sterzing-2013-06-03 -p 23456 192.168.10.110 &'
+alias svigolana='urxvt -bg "#111020" -e ssh -i ~/.ssh/dan@sterzing-2013-06-03 -p 23456 192.168.1.10 &'
+alias vigolana-data='sshfs -p 23456 192.168.1.10:/data /media/vigolana/ -o IdentityFile=$HOME/.ssh/dan@sterzing-2013-06-03'
+
+alias mmarzola='sshfs -p 23456 mmedia@marzola:/home/MM /media/marzola-mm'
+alias smarzola='urxvt -bg "#111020" -e ssh -i .ssh/dan@hunza-2013-06-03 -p 23456 -l mmedia 192.168.1.10 &'
+alias smarzola='urxvt -bg "#111020" -e ssh -i ~/.ssh/dan@hunza-2013-06-03 -p 23456 -l mmedia marzola &'
+alias stresero='urxvt -bg "#122021" -e ssh -i ~/.ssh/mmedia@-2013-06-03 -p 23456 -l mmedia tresero &'
+alias mtresero='sshfs -p 23456 mmedia@tresero:/home/MM /media/tresero-mm'
+alias pup='sudo pacmatic -Syu'
+alias hide='export HISTSIZE=0'
+alias l='ls -F --color=always'
+alias ll='ls -Flh'
+alias la='ls -Fah'
+alias dpa-x='xterm -bg lightgrey -fg midnightblue -fn 10x20 -e ssh dan@192.168.1.2 &'
+alias kngur-x='nohup xterm -bg lightgreen -fn 10x20 -e ssh dan@10.0.0.2 &'
+alias windowsXP='VBoxManage startvm "winXPvb"'
+alias priv='iwconfig wlan0 essid ff key 1122334455 mode ad-hoc; ifconfig wlan0 10.0.0.1 up'
+alias hour='sudo htpdate -s -D -u nobody:nobody www.google.com yahoo.com www.kernel.org'
+alias yy='pacaur -Ss'
+alias grep='grep --color'
+alias sHs='python2 -m SimpleHTTPServer'
+
+cp2marzola-mm() {
+ rsync -avzP -e 'ssh -p 23456' "$*" mmedia@marzola:/home/MM/
+ }
+
+cp2kongur-mm() {
+ rsync -avzP -e 'ssh -p 23456' "$*" mmedia@kongur:/home/MM/
+ }
+
+TN() {
+ pushd /tmp
+ #rm generale_it.pdf
+ wget http://www.meteotrentino.it/bollettini/today/generale_it.pdf
+ xdg-open generale_it.pdf
+ popd
+ }
+
+TNv() {
+ rm valanghe_it.pdf
+ wget http://www.meteotrentino.it/bollettini/today/valanghe_it.pdf
+ xdg-open valanghe_it.pdf
+ }
+
+fbkold() {
+# sudo ifconfig eth0 down
+ sudo iwconfig wlan0 essid "GuestsFbk"
+ sudo dhcpcd wlan0
+ firefox "http://wfgate.fbk.eu" &
+ }
+
+unis() {
+ sudo ifconfig eth0 192.168.1.2 up
+ unison-x11 &
+ }
+
+en() {
+ tw www.freetranslation.com.it-en "$*"
+ tw translate.google.com.it-en "$*"
+ } 
+
+it() {
+ tw www.freetranslation.com.en-it "$*"
+ tw translate.google.com.en-it "$*"
+ } 
+
+grepp() {
+ if test -z "$1" || test -z "$2" ; then
+   echo "USAGE: grepp searchterm
+     filetosearch";
+ else
+   perl -00ne "print if /$1/i" < $2
+ fi }
+
+fss() {
+ firefox "http://google.com/search?q=`xsel -p -o`&ie=UTF-8&oe=UTF-8"
+ }
+
+bind -x '"\C-l":ls -lh'
+#echo -e "$RED Attenzione \e[0m"
+export RED="\e[01;31m"
+
+fj() {
+ cd ~/Fiji.app
+ ./fiji-linux
+}
+
+alias qfn='firefox -qfn'
+
+2up() {
+ mv $1 tmp
+ mv tmp `Upper $1`
+}
+
+fm() {
+ fmt -w 79 $@ > ttt.rnd
+ mv ttt.rnd $@
+}
+
+pdf_myReduce() {
+ gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dNOPAUSE -dQUIET -dBATCH -dPDFSETTINGS=/ebook -sOutputFile=$2 $1
+}
+
+pdf_myReduce2() {
+ gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.5 -dNOPAUSE -dQUIET -dBATCH -dPDFSETTINGS=/screen -sOutputFile=$2 $1
+}
+
+##SSH_AUTH_SOCK=`ss -xl | grep -o '/run/user/1000/keyring-.*/ssh'`
+##[ -z "$SSH_AUTH_SOCK" ] || export SSH_AUTH_SOCK
+
+##eval $(keychain --eval --agents ssh -Q --quiet dan)
+
+#alias ssh='eval $(/usr/bin/keychain --eval --agents ssh -Q --quiet dan) && ssh'
+#automatic correction
+#shopt -s cdspell #nocaseglob
+#stop beeping
+#setterm -blength 0
