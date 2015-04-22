@@ -1,3 +1,7 @@
+# Auto "cd" when entering just a path
+shopt -s autocd
+# Line wrap on window resize
+shopt -s checkwinsize
 alias diction='diction -s'
 # git annex
 ga-init() {
