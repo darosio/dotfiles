@@ -1,0 +1,29 @@
+#base[NORMAL]      = "#002b36"
+#base[ACTIVE]      = "#808080"
+#base[PRELIGHT]    = "#E5E5F7"
+#base[PRELIGHT]    = "#002b36"
+#base[SELECTED]    = "#336699"
+#base[INSENSITIVE] = "#E5E5F7"
+#text[NORMAL]      = "#eee8d5"
+#text[ACTIVE]      = "#93a1a1"
+#text[PRELIGHT]    = "#93a1a1"
+#text[SELECTED]    = "#93a1a1"
+#text[INSENSITIVE] = "#93a1a1"
+
+
+style "mycolors" 
+{
+    #base[NORMAL] = "black"
+    base[NORMAL] = "#002b36"
+    base[SELECTED] = "#6699cc"
+    #text[NORMAL] = "#c0c0c0"
+    text[NORMAL]      = "#eee8d5"
+}
+widget "*.zim-pageview" style "mycolors"
+
+
+style "zim-pageindex-style"
+{
+    font_name = "Sans 11"
+    }
+widget "*.zim-pageindex" style "zim-pageindex-style"

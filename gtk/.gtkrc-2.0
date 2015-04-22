@@ -1,0 +1,14 @@
+# -- THEME AUTO-WRITTEN DO NOT EDIT
+include "/usr/share/themes/ThinIce/gtk-2.0/gtkrc"
+
+style "user-font" {
+	font_name = "FontAwesome 11"
+}
+
+widget_class "*" style "user-font"
+
+gtk-font-name="FontAwesome 11"
+
+include "/home/dan/.gtkrc.mine"
+
+# -- THEME AUTO-WRITTEN DO NOT EDIT
