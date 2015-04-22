@@ -1,0 +1,4 @@
+export UNISONLOCALHOSTNAME=dom
+
+HOMEan="/home/dan/.anacron"
+/usr/sbin/anacron -t ${HOMEan}/anacrontab -S ${HOMEan}/spool &> ${HOMEan}/anacron.log
