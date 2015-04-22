@@ -1,0 +1,55 @@
+[user]
+	email = daniele.arosio@cnr.it
+	name = daniele arosio
+
+[color]
+	ui = auto
+	decorate = short
+
+[filter "remove-pass"]                                                          
+    clean = "sed -e 's/^password.*/#password=TODO/'"
+
+[pager]
+	diff =
+
+[diff]
+    tool = vimdiff
+
+[diff "pandoc"]
+    textconv=pandoc --to=markdown
+    prompt = false
+
+[difftool]
+	prompt = false
+
+[difftool "dirdiff"]
+    cmd = vim -f '+next' '+execute \"DirDiff\" argv(0) argv(1)' $LOCAL $REMOTE '+syntax off'
+
+[difftool "dwdiff-short"]
+    cmd = dwdiff --no-common -L $LOCAL $REMOTE 
+
+[difftool "ydiff"]
+    cmd = diff -Npry $LOCAL $REMOTE
+
+[alias]
+    wd = diff --color-words='[^[:space:]]|(:alnum:|UTF_8_GUARD)+' --unified=1 --no-ext-diff
+    ydiff = difftool --tool=ydiff
+	d = difftool
+    # require dwdiff
+    wd-short = difftool --tool=dwdiff-short
+    dirdiff = difftool --tool=dirdiff
+
+    wd-merging = difftool --extcmd=dwdiff 
+    #| vim -c "match DiffDelete /\[-.\{-}-]/" -c "2match DiffAdd /{+.\{-}+}/" -
+    #viw = "!f() { vim -c "match DiffDelete /\[-.\{-}-]/" -c "2match DiffAdd /{+.\{-}+}/" ~/temp.diff"; }; f"
+    what = "!f() { git wd-merging > "temp.diff" && viw "temp.diff"; }; f"
+    #what = "!f() { git wd-merging | vim -;}; f"
+    # require DirDiff.vim
+
+	st = status
+    co = checkout
+
+	out = !git fetch && git log FETCH_HEAD..
+	in = !git fetch && git log ..FETCH_HEAD
+	lg = log --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr %an)%Creset' --abbrev-commit --date=relative
+    ls = log --stat --decorate
