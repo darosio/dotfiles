@@ -1,3 +1,7 @@
+# vim
 #vim/.netrwhist
 vim/bundle/*
 vim/thesaurus/*
+
+# anacron
+anacron/.anacron/spool/
