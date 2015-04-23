@@ -33,6 +33,16 @@ Plugin 'tpope/vim-fugitive'
 Plugin 'bling/vim-airline'
 Plugin 'Lokaltog/vim-easymotion' " moving around
 Plugin 'tpope/vim-surround' " braces
+" for IDE
+Plugin 'scrooloose/syntastic'
+Plugin 'jiangmiao/auto-pairs' " braces
+Plugin 'scrooloose/nerdcommenter' " ,cc
+"snipmate
+Plugin 'MarcWeber/vim-addon-mw-utils'
+Plugin 'tomtom/tlib_vim'
+Plugin 'garbas/vim-snipmate'
+" Optional
+Plugin 'honza/vim-snippets'
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """ Python
 " Plugin 'klen/python-mode' maybe rope
@@ -53,6 +63,8 @@ Plugin 'junegunn/fzf'
 
 set ttyfast		" faster redraw (with multiple windows)
 set lazyredraw	" do not redraw in the middle of macro running
+
+nmap <C-f> AgBuffer 
 
 " Colors {{{
 syntax enable
