@@ -38,6 +38,7 @@ Plugin 'tpope/vim-surround' " braces
 Plugin 'scrooloose/syntastic'
 Plugin 'jiangmiao/auto-pairs' " braces
 Plugin 'scrooloose/nerdcommenter' " ,cc
+Plugin 'scrooloose/nerdtree'
 "snipmate
 "Plugin 'MarcWeber/vim-addon-mw-utils'
 "Plugin 'tomtom/tlib_vim'
@@ -70,7 +71,8 @@ Plugin 'junegunn/fzf'
 set ttyfast		" faster redraw (with multiple windows)
 set lazyredraw	" do not redraw in the middle of macro running
 
-nmap <C-f> AgBuffer
+nmap <C-F> :Ag .
+nmap <leader>o :VoomToggle<CR>
 
 " Colors {{{
 syntax enable
@@ -279,7 +281,7 @@ function! BufOpen(e)
   execute 'buffer '. matchstr(a:e, '^[ 0-9]*')
 endfunction
 
-nnoremap <silent> <Leader><Enter> :call fzf#run({
+nnoremap <silent> <leader>l :call fzf#run({
 \   'source':      reverse(BufList()),
 \   'sink':        function('BufOpen'),
 \   'options':     '+m',
@@ -308,12 +310,23 @@ let g:tagbar_type_markdown = {
 
 
 nmap <F9> :TagbarToggle<CR>
+nmap <C-p> :FZF<CR>
 
+let g:SuperTabDefaultCompletionType = "context"
+" vim-pandoc {{{
+" need bibtool; autocomplete using <C-X> <C-O>
+let g:pandoc#biblio#use_bibtool=1
+let g:pandoc#completion#bib#mode = 'citeproc'
+let g:pandoc_bibfiles = ['~/Sync/00-papers.bib']
+" avoid spell check of citations like @Arosio2007
+syntax match myExNonWords +\<\p*[^A-Za-z \t]\p*\>+ contains=@NoSpell
+" }}}
 let g:pandoc#after#modules#enabled = ["supertab", "ultisnips"]
 let g:pandoc#filetypes#handled = ["pandoc", "markdown"]
+" need this to make tagbar work
 let g:pandoc#filetypes#pandoc_markdown = 0
-let g:pandoc#modules#enabled = ["folding"]
-let g:pandoc#folding#mode = ["relative"]
+"let g:pandoc#modules#enabled = ["folding"]
+"let g:pandoc#folding#mode = ["relative"]
 
 " forse supertab non serve basta ctrl-space
 "let g:SuperTabDefaultCompletionType = "context"
