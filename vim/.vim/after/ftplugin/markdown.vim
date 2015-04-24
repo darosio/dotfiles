@@ -55,6 +55,8 @@ set complete+=kspell
 " need bibtool; autocomplete using <C-X> <C-O>
 let g:pandoc#biblio#use_bibtool=1
 let g:pandoc#completion#bib#mode = 'citeproc'
+let g:pandoc_bibfiles = ['~/Sync/00-papers.bib']
+let g:SuperTabDefaultCompletionType = "context"
 " avoid spell check of citations like @Arosio2007
 syntax match myExNonWords +\<\p*[^A-Za-z \t]\p*\>+ contains=@NoSpell
 " }}}

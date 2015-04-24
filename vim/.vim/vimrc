@@ -19,6 +19,7 @@ Plugin 'reedes/vim-wordy'
 " Plugin 'reedes/vim-wheel'
 Plugin 'vim-pandoc/vim-pandoc'
 Plugin 'vim-pandoc/vim-pandoc-syntax'
+Plugin 'vim-pandoc/vim-pandoc-after'
 Plugin 'junegunn/goyo.vim'
 Plugin 'amix/vim-zenroom2'
 Plugin 'vim-voom/VOoM'
@@ -38,10 +39,14 @@ Plugin 'scrooloose/syntastic'
 Plugin 'jiangmiao/auto-pairs' " braces
 Plugin 'scrooloose/nerdcommenter' " ,cc
 "snipmate
-"Plugin 'MarcWeber/vim-addon-mw-utils'
-"Plugin 'tomtom/tlib_vim'
-"Plugin 'garbas/vim-snipmate'
-Plugin 'SirVer/ultisnips'
+Plugin 'MarcWeber/vim-addon-mw-utils'
+Plugin 'tomtom/tlib_vim'
+Plugin 'garbas/vim-snipmate'
+"UltiSnips
+"Plugin 'SirVer/ultisnips'
+Bundle 'Shougo/neocomplete'
+"Bundle 'Shougo/neosnippet'
+"Bundle 'Shougo/neosnippet-snippets'
 " Optional
 Plugin 'honza/vim-snippets'
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -65,7 +70,7 @@ Plugin 'junegunn/fzf'
 set ttyfast		" faster redraw (with multiple windows)
 set lazyredraw	" do not redraw in the middle of macro running
 
-nmap <C-f> AgBuffer 
+nmap <C-f> AgBuffer
 
 " Colors {{{
 syntax enable
@@ -92,7 +97,7 @@ if has('gui_running')
 end
 " }}}
 " Leader Shortcuts {{{
-let mapleader=","
+let mapleader=','
 " copy and paste
 vnoremap <leader>y "+y
 vmap <C-c> "+y
@@ -172,32 +177,6 @@ set foldnestmax=10	" creates 10 fold levels at maximum
 " space open/closes folds
 nnoremap <space> za
 set foldmethod=indent	" based on indent level (manual,expr,syntax,diff)
-" markdown {{{
-function! MarkdownLevel()
-    if getline(v:lnum) =~ '^# .*$'
-        return ">1"
-    endif
-    if getline(v:lnum) =~ '^## .*$'
-        return ">2"
-    endif
-    if getline(v:lnum) =~ '^### .*$'
-        return ">3"
-    endif
-    if getline(v:lnum) =~ '^#### .*$'
-        return ">4"
-    endif
-    if getline(v:lnum) =~ '^##### .*$'
-        return ">5"
-    endif
-    if getline(v:lnum) =~ '^###### .*$'
-        return ">6"
-    endif
-    return "="
-endfunction
-au BufEnter *.md setlocal foldexpr=MarkdownLevel()
-au BufEnter *.md setlocal foldmethod=expr
-au BufEnter *.md colorscheme morning
-" }}}
 " }}}
 
 """ Plugins installed from github:
@@ -306,13 +285,38 @@ nnoremap <silent> <Leader><Enter> :call fzf#run({
 \   'options':     '+m',
 \   'tmux_height': '40%'
 \ })<CR>
-"}}}  
+"}}}
 " zenroom2 and goyo {{{
-nnoremap <silent> <leader>z :Goyo<cr>
+nnoremap <silent> <F11> :Goyo<cr>
 " }}}
 
+" for markdown2ctags
+let g:tagbar_type_markdown = {
+    \ 'ctagstype': 'markdown',
+    \ 'ctagsbin' : '/usr/bin/markdown2ctags',
+    \ 'ctagsargs' : '-f - --sort=yes',
+    \ 'kinds' : [
+        \ 's:sections',
+        \ 'i:images'
+    \ ],
+    \ 'sro' : '|',
+    \ 'kind2scope' : {
+        \ 's' : 'section',
+    \ },
+    \ 'sort': 0,
+\ }
+
+
+nmap <F9> :TagbarToggle<CR>
+
+let g:pandoc#after#modules#enabled = ["supertab", "ultisnips"]
+let g:pandoc#filetypes#handled = ["pandoc", "markdown"]
+let g:pandoc#filetypes#pandoc_markdown = 0
+let g:pandoc#modules#enabled = ["folding"]
+let g:pandoc#folding#mode = ["relative"]
+
 " forse supertab non serve basta ctrl-space
-let g:SuperTabDefaultCompletionType = "context"
+"let g:SuperTabDefaultCompletionType = "context"
 " Disable auto-complete on .
 let g:jedi#popup_on_dot = 0
 let g:jedi#use_splits_not_buffers = "bottom"
