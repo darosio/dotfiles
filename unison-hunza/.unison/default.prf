@@ -1,0 +1,12 @@
+# Unison preferences
+#fastcheck = no
+fastcheck = true
+#ignore = Name {System Volume Information}
+#ignore = Name {0dan/mail-folders/Local Folders/,*/}*{.msf}
+label = "docs"
+#perms=0o1713
+root = /home/dan/docs
+root = ssh://dan@192.168.1.2:23456//home/dan/docs
+#sshargs = -C
+times = true
+watch = false
