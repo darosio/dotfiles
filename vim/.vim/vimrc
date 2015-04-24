@@ -39,11 +39,11 @@ Plugin 'scrooloose/syntastic'
 Plugin 'jiangmiao/auto-pairs' " braces
 Plugin 'scrooloose/nerdcommenter' " ,cc
 "snipmate
-Plugin 'MarcWeber/vim-addon-mw-utils'
-Plugin 'tomtom/tlib_vim'
-Plugin 'garbas/vim-snipmate'
+"Plugin 'MarcWeber/vim-addon-mw-utils'
+"Plugin 'tomtom/tlib_vim'
+"Plugin 'garbas/vim-snipmate'
 "UltiSnips
-"Plugin 'SirVer/ultisnips'
+Plugin 'SirVer/ultisnips'
 Bundle 'Shougo/neocomplete'
 "Bundle 'Shougo/neosnippet'
 "Bundle 'Shougo/neosnippet-snippets'
