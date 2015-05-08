@@ -52,6 +52,8 @@ set complete=.,b,u,]
 set complete+=kspell 
 
 let maplocalleader='\'
+map <localleader>o :Voom pandoc<CR>
+map <localleader>oo :VoomToggle<CR>
 
 
 """ Abbreviation (Macros)
