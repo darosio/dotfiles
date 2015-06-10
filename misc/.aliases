@@ -91,6 +91,7 @@ export UNISONLOCALHOSTNAME=dpa3
 # PATH
 PATH=$PATH:$HOME/.progs/bin
 PATH=$PATH:$HOME/.progs/myrepos.branchable.com
+PATH=$PATH:$HOME/.progs/bftools
 PATH=$PATH:$HOME/.cabal/bin
 export PATH
 
