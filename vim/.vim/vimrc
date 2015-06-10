@@ -2,7 +2,6 @@ set modelines=1	" modeline must be within first or last 1 line
 filetype off                   " required!
 call vundle#rc()
 
-Plugin 'vim-scripts/DirDiff.vim'
 """ Colors
 Plugin 'tomasr/molokai'
 Plugin 'sjl/badwolf'
@@ -10,6 +9,8 @@ Plugin 'altercation/vim-colors-solarized'
 """ Complete
 " Plugin 'Valloric/YouCompleteMe
 Plugin 'ervandew/supertab.git'
+" diff
+Plugin 'vim-scripts/DirDiff.vim'
 " Plugin 'gkirilov/vim-wdiff'
 " Plugin 'vim-scripts/ShowMarks'  Not working properly
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -21,7 +22,6 @@ Plugin 'vim-pandoc/vim-pandoc'
 Plugin 'vim-pandoc/vim-pandoc-syntax'
 Plugin 'vim-pandoc/vim-pandoc-after'
 Plugin 'junegunn/goyo.vim'
-"Plugin 'amix/vim-zenroom2'
 Plugin 'vim-voom/VOoM'
 Plugin 'vim-scripts/LanguageTool'
 Plugin 'goldfeld/criticmarkup-vim'
@@ -76,8 +76,11 @@ set lazyredraw	" do not redraw in the middle of macro running
 nmap <C-F> :Ag .
 nmap <leader>o :VoomToggle<CR>
 
-" Colors {{{
+" this order fix a problem with csv
+filetype plugin indent on " load filetype-specific plugin/indent file
 syntax enable
+
+" Colors {{{
 " for solarized colors
 set nocompatible
 set t_Co=16
@@ -141,7 +144,6 @@ set copyindent		" copy indent structure, spaces and tabs from upper line
 set number	" powerline?
 set showcmd	" powerline?
 set cursorline		" highlight current line
-filetype plugin indent on " load filetype-specific plugin/indent file
 set wildmenu		" visual autocomplete for command menu
 set showmatch		" highlight matvching [{()}]
 set textwidth=79	" line wrapped after 80 columns
