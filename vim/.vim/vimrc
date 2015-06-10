@@ -21,7 +21,7 @@ Plugin 'vim-pandoc/vim-pandoc'
 Plugin 'vim-pandoc/vim-pandoc-syntax'
 Plugin 'vim-pandoc/vim-pandoc-after'
 Plugin 'junegunn/goyo.vim'
-Plugin 'amix/vim-zenroom2'
+"Plugin 'amix/vim-zenroom2'
 Plugin 'vim-voom/VOoM'
 Plugin 'vim-scripts/LanguageTool'
 Plugin 'goldfeld/criticmarkup-vim'
@@ -190,8 +190,7 @@ nmap <silent><Leader>rc <Esc>:Pytest class<CR>
 nmap <silent><Leader>rm <Esc>:Pytest method<CR>
 " }}}
 " virtualenv {{{
-let g:virtualenv_directory = '/home/dan/Copy/virtualenvs'
-let g:virtualenv_directory = '/home/dan/workspace/v'
+let g:virtualenv_directory = '/home/dan/workspace/venvs'
 let g:virtualenv_auto_activate = 1
 let g:virtualenv_stl_format = '[%n]'
 "%{virtualenv#statusline()}
