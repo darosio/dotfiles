@@ -48,6 +48,9 @@ Plugin 'scrooloose/nerdtree'
 "UltiSnips
 Plugin 'SirVer/ultisnips'
 "june
+autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
 Bundle 'Shougo/neocomplete'
 "Bundle 'Shougo/neosnippet'
 "Bundle 'Shougo/neosnippet-snippets'
@@ -56,7 +59,7 @@ Plugin 'honza/vim-snippets'
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """ Python
 " Plugin 'klen/python-mode' maybe rope
-Plugin 'davidhalter/jedi-vim'
+"Plugin 'davidhalter/jedi-vim'
 " syntasytic to directly use flake8
 "Need: flake8 pep8 python-mccabe python-pyflakes
 Plugin 'nvie/vim-flake8'
@@ -74,7 +77,9 @@ Plugin 'junegunn/fzf'
 set ttyfast		" faster redraw (with multiple windows)
 set lazyredraw	" do not redraw in the middle of macro running
 
-nmap <C-F> :Ag .
+nmap <C-F> :Ag 
+" args `Ag -l FOOBAR .`
+" argdo %s/FOO/BAR/g | w
 nmap <leader>o :VoomToggle<CR>
 
 " this order fix a problem with csv
@@ -344,7 +349,7 @@ map <F4> :exe ":!wn ".expand("<cword>") " -synsn -synsv -synsa -synsr"<CR>
 
 " neocomplete
 " Disable AutoComplPop.
-let g:acp_enableAtStartup = 0
+let g:acp_enableAtStartup = 1
 " Use neocomplete.
 let g:neocomplete#enable_at_startup = 1
 " Use smartcase.

@@ -2,6 +2,8 @@ set tabstop=8
 set expandtab
 set shiftwidth=4
 set softtabstop=4
+set textwidth=79
+set autoindent
 
 " Add the virtualenv's site-packages to vim path
 " works only for python2 and iseems not needed to pick up libraries
