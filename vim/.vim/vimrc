@@ -1,46 +1,62 @@
 set modelines=1	" modeline must be within first or last 1 line
+
 filetype off                   " required!
 call vundle#rc()
 
-""" Colors
+" Colors:
 Plugin 'tomasr/molokai'
 Plugin 'sjl/badwolf'
 Plugin 'altercation/vim-colors-solarized'
-""" Complete
-" Plugin 'Valloric/YouCompleteMe
+
+" General:
+Plugin 'scrooloose/nerdtree'
+map <F2> :NERDTreeToggle<CR>
+Plugin 'junegunn/goyo.vim'
+nnoremap <silent> <F11> :Goyo<cr>
+Plugin 'bling/vim-airline'
+Plugin 'Lokaltog/vim-easymotion'
 Plugin 'ervandew/supertab.git'
-" diff
+let g:SuperTabDefaultCompletionType = "context"
+Plugin 'majutsushi/tagbar' " ctags
+" the silver searcher alternative to ctags and tagbar
+Plugin 'rking/ag.vim'
+nmap <C-F> :Ag 
+" args `Ag -l FOOBAR .`
+" argdo %s/FOO/BAR/g | w
+Plugin 'junegunn/fzf'
+
+" Diff:
 Plugin 'vim-scripts/DirDiff.vim'
 " Plugin 'gkirilov/vim-wdiff'
 " Plugin 'vim-scripts/ShowMarks'  Not working properly
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-""" Writing prose
+
+" Writing_Prose:
+Plugin 'vim-voom/VOoM'
+nmap <leader>o :VoomToggle<CR>
 Plugin 'reedes/vim-wordy'
 " Plugin 'reedes/vim-pencil'
 " Plugin 'reedes/vim-wheel'
 Plugin 'vim-pandoc/vim-pandoc'
 Plugin 'vim-pandoc/vim-pandoc-syntax'
 Plugin 'vim-pandoc/vim-pandoc-after'
-Plugin 'junegunn/goyo.vim'
-Plugin 'vim-voom/VOoM'
 Plugin 'vim-scripts/LanguageTool'
 Plugin 'goldfeld/criticmarkup-vim'
 Plugin 'junegunn/vim-easy-align'
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+map <F3> :exe ":!dict ".expand("<cword>")<CR>
+map <F4> :exe ":!wn ".expand("<cword>") " -antsa"<CR>
+map <F4> :exe ":!wn ".expand("<cword>") " -synsn -synsv -synsa -synsr"<CR>
+
+" Special_files:
 Plugin 'aklt/plantuml-syntax'
 Plugin 'chrisbra/csv.vim'
+
+" Git:
 Plugin 'mhinz/vim-signify' " works also for hg 'airblade/vim-gitgutter'
 Plugin 'tpope/vim-fugitive'
 Plugin 'tommcdo/vim-fubitive'   " Gbrowse for bitbucket
-Plugin 'bling/vim-airline'
-Plugin 'Lokaltog/vim-easymotion' " moving around
-Plugin 'tpope/vim-surround' " braces
-" for IDE
-"june
-"Plugin 'scrooloose/syntastic'
-Plugin 'jiangmiao/auto-pairs' " braces
+
+" IDE:
 Plugin 'scrooloose/nerdcommenter' " ,cc
-Plugin 'scrooloose/nerdtree'
 "snipmate
 "Plugin 'MarcWeber/vim-addon-mw-utils'
 "Plugin 'tomtom/tlib_vim'
@@ -56,10 +72,9 @@ Bundle 'Shougo/neocomplete'
 "Bundle 'Shougo/neosnippet-snippets'
 " Optional
 Plugin 'honza/vim-snippets'
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """ Python
-" Plugin 'klen/python-mode' maybe rope
 "Plugin 'davidhalter/jedi-vim'
+"Plugin 'scrooloose/syntastic' "june
 " syntasytic to directly use flake8
 "Need: flake8 pep8 python-mccabe python-pyflakes
 Plugin 'nvie/vim-flake8'
@@ -68,19 +83,14 @@ Plugin 'alfredodeza/pytest.vim'
 Plugin 'alfredodeza/coveragepy.vim'
 " Virtualenv
 Plugin 'jmcantrell/vim-virtualenv'
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-Plugin 'majutsushi/tagbar' " ctags
-" the silver searcher alternative to ctags and tagbar
-Plugin 'rking/ag.vim'
-Plugin 'junegunn/fzf'
 
+" Others:
+Plugin 'tpope/vim-surround' " braces
+Plugin 'jiangmiao/auto-pairs' " braces
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set ttyfast		" faster redraw (with multiple windows)
 set lazyredraw	" do not redraw in the middle of macro running
-
-nmap <C-F> :Ag 
-" args `Ag -l FOOBAR .`
-" argdo %s/FOO/BAR/g | w
-nmap <leader>o :VoomToggle<CR>
 
 " this order fix a problem with csv
 filetype plugin indent on " load filetype-specific plugin/indent file
@@ -190,63 +200,46 @@ set foldnestmax=10	" creates 10 fold levels at maximum
 nnoremap <space> za
 set foldmethod=indent	" based on indent level (manual,expr,syntax,diff)
 " }}}
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""" Plugins:
+" FZF {{{
+" List of buffers
+function! BufList()
+  redir => ls
+  silent ls
+  redir END
+  return split(ls, '\n')
+endfunction
 
-""" Plugins installed from github:
-" Pytest {{{
-nmap <silent><Leader>rf <Esc>:Pytest file<CR>
-nmap <silent><Leader>rc <Esc>:Pytest class<CR>
-nmap <silent><Leader>rm <Esc>:Pytest method<CR>
-" }}}
-" virtualenv {{{
-let g:virtualenv_directory = '/home/dan/workspace/venvs'
-let g:virtualenv_auto_activate = 1
-let g:virtualenv_stl_format = '[%n]'
-"%{virtualenv#statusline()}
-" }}}
-" python-mode {{{
-" Python-mode
-" Activate rope
-" Keys:
-" K             Show python docs
-" <Ctrl-Space>  Rope autocomplete
-" <Ctrl-c>g     Rope goto definition
-" <Ctrl-c>d     Rope show documentation
-" <Ctrl-c>f     Rope find occurrences
-" <Leader>b     Set, unset breakpoint (g:pymode_breakpoint enabled)
-" [[            Jump on previous class or function (normal, visual, operator modes)
-" ]]            Jump on next class or function (normal, visual, operator modes)
-" [M            Jump on previous class or method (normal, visual, operator modes)
-" ]M            Jump on next class or method (normal, visual, operator modes)
-""let g:pymode_rope = 0
-" Documentation
-""let g:pymode_doc = 1
-""let g:pymode_doc_key = 'K'
-"Linting
-""let g:pymode_lint = 0
-""let g:pymode_lint_checker = "pyflakes,pep8"
-" Auto check on save
-""let g:pymode_lint_write = 1
-" Support virtualenv
-""let g:pymode_virtualenv = 1
-" Enable breakpoints plugin
-""let g:pymode_breakpoint = 1
-""let g:pymode_breakpoint_key = '<leader>b'
-" syntax highlighting
-""let g:pymode_syntax = 1
-""let g:pymode_syntax_all = 1
-""let g:pymode_syntax_indent_errors = g:pymode_syntax_all
-""let g:pymode_syntax_space_errors = g:pymode_syntax_all
-" Don't autofold code
-""let g:pymode_folding = 1
-" }}}
+function! BufOpen(e)
+  execute 'buffer '. matchstr(a:e, '^[ 0-9]*')
+endfunction
 
-" Plugins installed from Archlinux:
-" Gundo {{{
-nnoremap <leader>u :GundoToggle<CR>
-" }}}
-" Nerdtree {{{
-"nnoremap <leader>n <ESC>:NERDTreeToggle<CR>
-map <F2> :NERDTreeToggle<CR>
+nnoremap <silent> <leader>l :call fzf#run({
+\   'source':      reverse(BufList()),
+\   'sink':        function('BufOpen'),
+\   'options':     '+m',
+\   'tmux_height': '40%'
+\ })<CR>
+nmap <C-p> :FZF<CR>
+"}}}
+" ctags{{{ 
+nmap <F9> :TagbarToggle<CR>
+" for markdown2ctags
+let g:tagbar_type_markdown = {
+    \ 'ctagstype': 'markdown',
+    \ 'ctagsbin' : '/usr/bin/markdown2ctags',
+    \ 'ctagsargs' : '-f - --sort=yes',
+    \ 'kinds' : [
+        \ 's:sections',
+        \ 'i:images'
+    \ ],
+    \ 'sro' : '|',
+    \ 'kind2scope' : {
+        \ 's' : 'section',
+    \ },
+    \ 'sort': 0,
+\ }
 " }}}
 " plantuml-syntax {{{
 " let g:plantuml_executable_script='java -jar c:\utils\plantuml\plantuml.jar'
@@ -277,51 +270,6 @@ nnoremap <silent> K :NextWordy<cr>
 let g:languagetool_jar='/usr/share/java/languagetool/languagetool-commandline.jar'
 "let g:DirDiffDynamicDiffText = 1
 "}}}
-" FZF {{{
-" List of buffers
-function! BufList()
-  redir => ls
-  silent ls
-  redir END
-  return split(ls, '\n')
-endfunction
-
-function! BufOpen(e)
-  execute 'buffer '. matchstr(a:e, '^[ 0-9]*')
-endfunction
-
-nnoremap <silent> <leader>l :call fzf#run({
-\   'source':      reverse(BufList()),
-\   'sink':        function('BufOpen'),
-\   'options':     '+m',
-\   'tmux_height': '40%'
-\ })<CR>
-"}}}
-" zenroom2 and goyo {{{
-nnoremap <silent> <F11> :Goyo<cr>
-" }}}
-
-" for markdown2ctags
-let g:tagbar_type_markdown = {
-    \ 'ctagstype': 'markdown',
-    \ 'ctagsbin' : '/usr/bin/markdown2ctags',
-    \ 'ctagsargs' : '-f - --sort=yes',
-    \ 'kinds' : [
-        \ 's:sections',
-        \ 'i:images'
-    \ ],
-    \ 'sro' : '|',
-    \ 'kind2scope' : {
-        \ 's' : 'section',
-    \ },
-    \ 'sort': 0,
-\ }
-
-
-nmap <F9> :TagbarToggle<CR>
-nmap <C-p> :FZF<CR>
-
-let g:SuperTabDefaultCompletionType = "context"
 " vim-pandoc {{{
 " need bibtool; autocomplete using <C-X> <C-O>
 let g:pandoc#biblio#use_bibtool=1
@@ -329,25 +277,34 @@ let g:pandoc#completion#bib#mode = 'citeproc'
 let g:pandoc_bibfiles = ['~/Sync/00-papers.bib']
 " avoid spell check of citations like @Arosio2007
 syntax match myExNonWords +\<\p*[^A-Za-z \t]\p*\>+ contains=@NoSpell
-" }}}
 let g:pandoc#after#modules#enabled = ["supertab", "ultisnips"]
 let g:pandoc#filetypes#handled = ["pandoc", "markdown"]
 " need this to make tagbar work
 let g:pandoc#filetypes#pandoc_markdown = 0
 "let g:pandoc#modules#enabled = ["folding"]
 "let g:pandoc#folding#mode = ["relative"]
-
+" }}}
+" Pytest {{{
+nmap <silent><Leader>rf <Esc>:Pytest file<CR>
+nmap <silent><Leader>rc <Esc>:Pytest class<CR>
+nmap <silent><Leader>rm <Esc>:Pytest method<CR>
+" }}}
+" virtualenv {{{
+let g:virtualenv_directory = '/home/dan/workspace/venvs'
+let g:virtualenv_auto_activate = 1
+let g:virtualenv_stl_format = '[%n]'
+"%{virtualenv#statusline()}
+" }}}
+" autocmd FileType python setlocal completeopt-=preview
+" jedi {{{
+"
 " forse supertab non serve basta ctrl-space
 "let g:SuperTabDefaultCompletionType = "context"
 " Disable auto-complete on .
 let g:jedi#popup_on_dot = 0
 let g:jedi#use_splits_not_buffers = "bottom"
-" autocmd FileType python setlocal completeopt-=preview
-map <F3> :exe ":!dict ".expand("<cword>")<CR>
-map <F4> :exe ":!wn ".expand("<cword>") " -antsa"<CR>
-map <F4> :exe ":!wn ".expand("<cword>") " -synsn -synsv -synsa -synsr"<CR>
-
-" neocomplete
+" }}}
+" neocomplete{{{
 " Disable AutoComplPop.
 let g:acp_enableAtStartup = 1
 " Use neocomplete.
@@ -357,5 +314,6 @@ let g:neocomplete#enable_smart_case = 1
 " Set minimum syntax keyword length.
 let g:neocomplete#sources#syntax#min_keyword_length = 3
 let g:neocomplete#lock_buffer_name_pattern = '\*ku\*'
+" }}}
 
 " vim:foldmethod=marker:foldlevel=0
