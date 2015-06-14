@@ -66,14 +66,14 @@ Plugin 'SirVer/ultisnips'
 "june
 autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
 autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+autocmd FileType python setlocal omnifunc=python3complete#Complete
 Bundle 'Shougo/neocomplete'
 "Bundle 'Shougo/neosnippet'
 "Bundle 'Shougo/neosnippet-snippets'
 " Optional
 Plugin 'honza/vim-snippets'
 """ Python
-"Plugin 'davidhalter/jedi-vim'
+Plugin 'davidhalter/jedi-vim'
 "Plugin 'scrooloose/syntastic' "june
 " syntasytic to directly use flake8
 "Need: flake8 pep8 python-mccabe python-pyflakes
