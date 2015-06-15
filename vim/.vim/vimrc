@@ -3,6 +3,11 @@ set modelines=1	" modeline must be within first or last 1 line
 filetype off                   " required!
 call vundle#rc()
 
+" Next:
+" NrrwRgn
+" TaskList
+" VimPDB
+"
 " Colors:
 Plugin 'tomasr/molokai'
 Plugin 'sjl/badwolf'
@@ -14,7 +19,7 @@ map <F2> :NERDTreeToggle<CR>
 Plugin 'junegunn/goyo.vim'
 nnoremap <silent> <F11> :Goyo<cr>
 Plugin 'bling/vim-airline'
-Plugin 'Lokaltog/vim-easymotion'
+"Plugin 'Lokaltog/vim-easymotion'
 Plugin 'ervandew/supertab.git'
 let g:SuperTabDefaultCompletionType = "context"
 Plugin 'majutsushi/tagbar' " ctags
@@ -39,8 +44,8 @@ Plugin 'reedes/vim-wordy'
 Plugin 'vim-pandoc/vim-pandoc'
 Plugin 'vim-pandoc/vim-pandoc-syntax'
 Plugin 'vim-pandoc/vim-pandoc-after'
-Plugin 'vim-scripts/LanguageTool'
-Plugin 'goldfeld/criticmarkup-vim'
+"Plugin 'vim-scripts/LanguageTool'
+"Plugin 'goldfeld/criticmarkup-vim'
 Plugin 'junegunn/vim-easy-align'
 map <F3> :exe ":!dict ".expand("<cword>")<CR>
 map <F4> :exe ":!wn ".expand("<cword>") " -antsa"<CR>
@@ -66,7 +71,8 @@ Plugin 'SirVer/ultisnips'
 "june
 autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
 autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-autocmd FileType python setlocal omnifunc=python3complete#Complete
+"autocmd FileType python setlocal omnifunc=python3complete#Complete
+autocmd FileType python setlocal omnifunc=jedi#completions
 Bundle 'Shougo/neocomplete'
 "Bundle 'Shougo/neosnippet'
 "Bundle 'Shougo/neosnippet-snippets'
@@ -203,6 +209,8 @@ set foldmethod=indent	" based on indent level (manual,expr,syntax,diff)
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """ Plugins:
 " FZF {{{
+nmap <C-p> :FZF<CR>
+"
 " List of buffers
 function! BufList()
   redir => ls
@@ -221,7 +229,17 @@ nnoremap <silent> <leader>l :call fzf#run({
 \   'options':     '+m',
 \   'tmux_height': '40%'
 \ })<CR>
-nmap <C-p> :FZF<CR>
+"
+" Choose a color scheme with fzf
+nnoremap <silent> <Leader>C :call fzf#run({
+\   'source':
+\     map(split(globpath(&rtp, "colors/*.vim"), "\n"),
+\         "substitute(fnamemodify(v:val, ':t'), '\\..\\{-}$', '', '')"),
+\   'sink':     'colo',
+\   'options':  '+m',
+\   'left':     20,
+\   'launcher': 'xterm -geometry 20x30 -e bash -ic %s'
+\ })<CR>
 "}}}
 " ctags{{{ 
 nmap <F9> :TagbarToggle<CR>
@@ -273,7 +291,7 @@ let g:languagetool_jar='/usr/share/java/languagetool/languagetool-commandline.ja
 " vim-pandoc {{{
 " need bibtool; autocomplete using <C-X> <C-O>
 let g:pandoc#biblio#use_bibtool=1
-let g:pandoc#completion#bib#mode = 'citeproc'
+"let g:pandoc#completion#bib#mode = 'citeproc'
 let g:pandoc_bibfiles = ['~/Sync/00-papers.bib']
 " avoid spell check of citations like @Arosio2007
 syntax match myExNonWords +\<\p*[^A-Za-z \t]\p*\>+ contains=@NoSpell
@@ -299,8 +317,7 @@ let g:virtualenv_stl_format = '[%n]'
 " jedi {{{
 "
 " forse supertab non serve basta ctrl-space
-"let g:SuperTabDefaultCompletionType = "context"
-" Disable auto-complete on .
+" To disable auto-complete on .
 let g:jedi#popup_on_dot = 0
 let g:jedi#use_splits_not_buffers = "bottom"
 " }}}
