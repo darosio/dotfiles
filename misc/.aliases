@@ -17,6 +17,7 @@ ga-dup() {
         sort -k2 | uniq --all-repeated=separate -f1 | sed 's/ [^ ]*$//'
 }
 
+alias pip_updall='pip freeze --local | grep -v '^\-e' | cut -d = -f 1  | xargs pip install -U
 alias pandoc='pandoc --latex-engine=xelatex'
 countfiles() {
     find . -type d | while read DIR; do
@@ -53,7 +54,7 @@ fshow() {
 }
 
 sf() {
- recoll -t -b -a $* | fzf -m | xargs -0 | xargs bash -c "for filename; do xdg-open '$filename' && echo '$filename'; done" aa
+ recoll -t -b -a $* | fzf -m 
 }
 
 # for virtualenvwrapper
