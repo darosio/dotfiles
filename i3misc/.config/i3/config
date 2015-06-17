@@ -269,3 +269,8 @@ for_window [class="^fiji-Main$"] floating enable, border 3, focus_follows_mouse 
 ## screen locker
 #xautolock -time 1 -locker i3lock -c 414141 -d &
 #bindsym Control+Mod1+l exec i3-msg workspace 1 && i3lock -c 111111 -d &
+
+
+# Show the first scratchpad window
+bindsym $mod+minus scratchpad show
+bindsym $mod+Shift+minus move scratchpad
