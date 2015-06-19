@@ -1,5 +1,6 @@
 set modelines=1	" modeline must be within first or last 1 line
 
+" Bundle {{{
 filetype off                   " required!
 call vundle#rc()
 
@@ -8,6 +9,11 @@ call vundle#rc()
 " TaskList
 " VimPDB
 "
+"
+"Plug 'ivanov/vim-ipython'
+"Plug 'lervag/vim-latex'
+"Plug 'wannesm/wmgraphviz.vim'
+"""
 " Colors:
 Plugin 'tomasr/molokai'
 Plugin 'sjl/badwolf'
@@ -36,20 +42,26 @@ Plugin 'vim-scripts/DirDiff.vim'
 " Plugin 'vim-scripts/ShowMarks'  Not working properly
 
 " Writing_Prose:
-Plugin 'vim-voom/VOoM'
-nmap <leader>o :VoomToggle<CR>
+Plugin 'vimoutliner/vimoutliner'
 Plugin 'reedes/vim-wordy'
 " Plugin 'reedes/vim-pencil'
 " Plugin 'reedes/vim-wheel'
 Plugin 'vim-pandoc/vim-pandoc'
 Plugin 'vim-pandoc/vim-pandoc-syntax'
 Plugin 'vim-pandoc/vim-pandoc-after'
+" Rmd and Rpres are pandoc
+"au BufRead,BufNewFile *.Rmd,*.Rpres setfiletype pandoc
+au BufRead,BufNewFile *.Rmd setfiletype markdown
+"Plugin 'vim-pandoc/vim-rmarkdown'
 "Plugin 'vim-scripts/LanguageTool'
 "Plugin 'goldfeld/criticmarkup-vim'
 Plugin 'junegunn/vim-easy-align'
 map <F3> :exe ":!dict ".expand("<cword>")<CR>
 map <F4> :exe ":!wn ".expand("<cword>") " -antsa"<CR>
 map <F4> :exe ":!wn ".expand("<cword>") " -synsn -synsv -synsa -synsr"<CR>
+" Passive voice and such
+Plugin 'jamestomasino/vim-writingsyntax'
+nnoremap <leader>P :setf writing<CR>"
 
 " Special_files:
 Plugin 'aklt/plantuml-syntax'
@@ -69,7 +81,8 @@ Plugin 'scrooloose/nerdcommenter' " ,cc
 "UltiSnips
 Plugin 'SirVer/ultisnips'
 "june
-autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+"autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+autocmd FileType html setlocal omnifunc=htmlcomplete#CompleteTags
 autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
 "autocmd FileType python setlocal omnifunc=python3complete#Complete
 autocmd FileType python setlocal omnifunc=jedi#completions
@@ -93,6 +106,7 @@ Plugin 'jmcantrell/vim-virtualenv'
 " Others:
 Plugin 'tpope/vim-surround' " braces
 Plugin 'jiangmiao/auto-pairs' " braces
+" }}}
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set ttyfast		" faster redraw (with multiple windows)
@@ -243,7 +257,7 @@ nnoremap <silent> <Leader>C :call fzf#run({
 "}}}
 " ctags{{{ 
 nmap <F9> :TagbarToggle<CR>
-" for markdown2ctags
+" tagbar markdown (markdown2ctags)
 let g:tagbar_type_markdown = {
     \ 'ctagstype': 'markdown',
     \ 'ctagsbin' : '/usr/bin/markdown2ctags',
@@ -257,6 +271,15 @@ let g:tagbar_type_markdown = {
         \ 's' : 'section',
     \ },
     \ 'sort': 0,
+\ }
+" tagbar r
+let g:tagbar_type_r = {
+    \ 'ctagstype' : 'r',
+    \ 'kinds'     : [
+        \ 'f:Functions',
+        \ 'g:GlobalVariables',
+        \ 'v:FunctionVariables',
+    \ ]
 \ }
 " }}}
 " plantuml-syntax {{{
@@ -289,18 +312,22 @@ let g:languagetool_jar='/usr/share/java/languagetool/languagetool-commandline.ja
 "let g:DirDiffDynamicDiffText = 1
 "}}}
 " vim-pandoc {{{
+let g:pandoc#filetypes#handled = ["pandoc", "markdown"]
 " need bibtool; autocomplete using <C-X> <C-O>
 let g:pandoc#biblio#use_bibtool=1
 let g:pandoc#completion#bib#mode = 'citeproc'
-"let g:pandoc_bibfiles = ['~/Sync/00-papers.bib']
+let g:pandoc_bibfiles = ['~/Sync/00-papers.bib']
 " avoid spell check of citations like @Arosio2007
 syntax match myExNonWords +\<\p*[^A-Za-z \t]\p*\>+ contains=@NoSpell
-let g:pandoc#after#modules#enabled = ["supertab", "ultisnips"]
-let g:pandoc#filetypes#handled = ["pandoc", "markdown"]
+let g:pandoc#folding#level = 2
+let g:pandoc#folding#fdc = 4
 " need this to make tagbar work
-let g:pandoc#filetypes#pandoc_markdown = 0
-"let g:pandoc#modules#enabled = ["folding"]
-"let g:pandoc#folding#mode = ["relative"]
+"let g:pandoc#filetypes#pandoc_markdown = 0
+let g:pandoc#synatx#codeblock#embeds#langs = ['ruby', 'vim', 'python', 'r', 'json', 'c', 'julia', 'make', 'sh', 'latex']
+" }}}
+" vim-pandoc-after {{{
+let g:pandoc#after#modules#enabled = ["supertab", "ultisnips"]
+let g:pandoc#after#modules#enabled = ["ultisnips"]
 " }}}
 " Pytest {{{
 nmap <silent><Leader>rf <Esc>:Pytest file<CR>

@@ -3,6 +3,9 @@
 " setlocal columns=136
 "setlocal background=light
 setlocal guifont=Cousine\ 12
+setlocal nonumber
+
+nmap <F9> :TOC<CR>
 
 " Dr Bunsen
 "func! WordProcessorMode() 
@@ -51,13 +54,12 @@ set complete+=s
 set complete=.,b,u,]
 set complete+=kspell 
 
-let maplocalleader='\'
+"let maplocalleader='\'
 map <localleader>o :Voom pandoc<CR>
 map <localleader>oo :VoomToggle<CR>
 
 
 """ Abbreviation (Macros)
 source ~/.vim/keystrokes.vim
-
 
 " vim:foldmethod=marker:foldlevel=0
