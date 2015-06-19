@@ -64,6 +64,8 @@ map <F4> :exe ":!wn ".expand("<cword>") " -synsn -synsv -synsa -synsr"<CR>
 " Passive voice and such
 Plugin 'jamestomasino/vim-writingsyntax'
 nnoremap <leader>P :setf writing<CR>"
+Plugin 'vim-scripts/Wordnet.vim'
+map <leader>ww <leader>wnd
 
 " Special_files:
 Plugin 'aklt/plantuml-syntax'
@@ -314,7 +316,7 @@ let g:languagetool_jar='/usr/share/java/languagetool/languagetool-commandline.ja
 "let g:DirDiffDynamicDiffText = 1
 "}}}
 " vim-pandoc {{{
-let g:pandoc#filetypes#handled = ["pandoc", "markdown"]
+let g:pandoc#filetypes#handled = ["pandoc", "markdown", "rst"]
 " need bibtool; autocomplete using <C-X> <C-O>
 let g:pandoc#biblio#use_bibtool=1
 let g:pandoc#completion#bib#mode = 'citeproc'
