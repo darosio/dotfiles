@@ -1,5 +1,7 @@
 set modelines=1	" modeline must be within first or last 1 line
 
+let mapleader=','
+
 " Bundle {{{
 filetype off                   " required!
 call vundle#rc()
@@ -139,17 +141,8 @@ if has('gui_running')
 	" winpos 576 329
 end
 " }}}
-" Leader Shortcuts {{{
-let mapleader=','
-" copy and paste
-vnoremap <leader>y "+y
-vmap <C-c> "+y
-nmap <C-c> "+yiw
-map <leader>pp "+gP
-map <leader>p "+p
+" Shortcuts {{{
 nmap <C-N> :set invnumber<CR>
-" toggle paste mode
-set pastetoggle=<F2>
 " Reload Vimrc
 map <silent> <leader>sv :source ~/.vim/vimrc<CR>:filetype detect<CR>
 map <silent> <leader>ev :vsp ~/.vim/vimrc<CR>
@@ -164,6 +157,15 @@ set listchars=tab:>.,trail:·,eol:$,extends:#,nbsp:.
 nmap <silent> <leader>ll :set nolist!<CR>
 " Remove trailing whitespace: <leader>llr
 nnoremap <leader>llr :%s/\s\+$//<cr>:let @/=''<CR>
+" }}}
+" copy and paste {{{
+vnoremap <leader>y "+y
+vmap <C-c> "+y
+nmap <C-c> "+yiw
+map <leader>pp "+gP
+map <leader>p "+p
+" toggle paste mode
+set pastetoggle=<F2>
 " }}}
 " Spaces & Tabs {{{
 set autoindent		" always autoindent on
