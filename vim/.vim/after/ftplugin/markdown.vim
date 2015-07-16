@@ -33,8 +33,11 @@ function! MySpellLang()
   if g:myLang == 2 | setlocal spell spelllang=en_us | endif
   echo "language:" g:myLangList[g:myLang]
 endf
-map <F7> :call MySpellLang()<CR>
-imap <F7> <C-o>:call MySpellLang()<CR>
+"map <F7> :call MySpellLang()<CR>
+"imap <F7> <C-o>:call MySpellLang()<CR>
+nmap <F7> :GrammarousCheck<CR>
+nmap <F8> <Plug>grammarous-open-info-window<CR>
+
 
 "setlocal formatoptions=t1 
 " reverse with =croql
