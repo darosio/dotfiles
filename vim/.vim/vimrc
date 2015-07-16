@@ -56,6 +56,7 @@ Plugin 'vim-pandoc/vim-pandoc-after'
 au BufRead,BufNewFile *.Rmd setfiletype markdown
 "Plugin 'vim-pandoc/vim-rmarkdown'
 "Plugin 'vim-scripts/LanguageTool'
+Plugin 'rhysd/vim-grammarous'
 "Plugin 'goldfeld/criticmarkup-vim'
 Plugin 'junegunn/vim-easy-align'
 map <F3> :exe ":!dict ".expand("<cword>")<CR>
