@@ -37,22 +37,8 @@ export FZF_DEFAULT_OPTS="-e -m --sort 10000"
 #export FZF_DEFAULT_COMMAND='ag -l -g ""'
 #source /etc/profile.d/fzf.sh
 source /etc/profile.d/fzf.bash
+source /etc/profile.d/fzf-extras.bash
 #TODO open filemanager after searching for file or dir
-
-# fshow - git commit browser
-fshow() {
-  local out sha q
-  while out=$(
-      git log --graph --color=always \
-          --format="%C(auto)%h%d %s %C(black)%C(bold)%cr" "$@" |
-      fzf --ansi --multi --no-sort --reverse --query="$q" --print-query); do
-    q=$(head -1 <<< "$out")
-    while read sha; do
-      git show --color=always $sha | less -R
-    done < <(sed '1d;s/^[^a-z0-9]*//;/^$/d' <<< "$out" | awk '{print $1}')
-  done
-}
-
 sf() {
  recoll -t -b -a $* | fzf -m 
 }
