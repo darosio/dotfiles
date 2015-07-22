@@ -1,0 +1,9 @@
+[DEFAULT]
+chain = true
+
+[workspace/zim/zim-arch]
+[workspace/zim/zim-home]
+[workspace/zim/zim-work]
+
+[.dotfiles]
+checkout = git clone 'git@bitbucket.org:darosio/dotfiles.git' '.dotfiles'
