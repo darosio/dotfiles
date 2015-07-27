@@ -1,3 +1,4 @@
+alias stow='stow -t ~/'
 # Auto "cd" when entering just a path
 shopt -s autocd
 # Line wrap on window resize

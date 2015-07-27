@@ -5,5 +5,5 @@ chain = true
 [workspace/zim/zim-home]
 [workspace/zim/zim-work]
 
-[.dotfiles]
+[workspace/dotfiles]
 checkout = git clone 'git@bitbucket.org:darosio/dotfiles.git' '.dotfiles'
