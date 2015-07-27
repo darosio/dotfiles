@@ -229,6 +229,7 @@ set foldmethod=indent	" based on indent level (manual,expr,syntax,diff)
 """ Plugins:
 " FZF {{{
 nmap <C-p> :FZF<CR>
+set rtp+=~/.fzf
 "
 " List of buffers
 function! BufList()
