@@ -1,5 +1,8 @@
+
 [DEFAULT]
 chain = true
+include = cat /usr/share/mr/git-annex
+include = cat /usr/share/mr/vis
 
 [workspace/zim/zim-arch]
 [workspace/zim/zim-home]
@@ -7,3 +10,11 @@ chain = true
 
 [workspace/dotfiles]
 checkout = git clone 'git@bitbucket.org:darosio/dotfiles.git' '.dotfiles'
+
+[.progs]
+checkout = 
+    git clone ssh://swan/~/.progs
+    cd $MR_REPO
+    git annex init
+    git_annex_sync
+
