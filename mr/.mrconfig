@@ -23,3 +23,5 @@ checkout =
     git annex init
     git_annex_sync
 
+
+[.progsoftware]
