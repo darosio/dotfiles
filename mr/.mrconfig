@@ -10,6 +10,11 @@ include = cat /usr/share/mr/vis
 
 [workspace/dotfiles]
 checkout = git clone 'git@bitbucket.org:darosio/dotfiles.git' '.dotfiles'
+#adding remote upstream
+#zap = 
+#    git pull upstream
+#    git merge upstream/master
+#    git push origin master
 
 [.progs]
 checkout = 
