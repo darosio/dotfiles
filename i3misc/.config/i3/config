@@ -251,6 +251,7 @@ exec xset -b
 exec --no-startup-id artha
 exec --no-startup-id goldendict
 exec --no-startup-id autokey-gtk
+exec --no-startup-id kupfer
 #exec --no-startup-id zim
 #exec --no-startup-id nm-applet
 
