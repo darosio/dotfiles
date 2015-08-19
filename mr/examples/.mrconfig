@@ -6,3 +6,6 @@ checkout = git clone 'https://github.com/djhocking/Markdown-for-Manuscripts' 'Ma
 checkout = hg clone 'ssh://hg@bitbucket.org/krother/python-for-biologists' 'python-for-biologists'
 [xero/dotfiles]
 checkout = git clone 'https://github.com/xero/dotfiles' 'dotfiles'
+
+[minimal-ij1-plugin]
+checkout = git clone 'git://github.com/imagej/minimal-ij1-plugin' 'minimal-ij1-plugin'

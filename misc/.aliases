@@ -45,11 +45,9 @@ sf() {
 }
 
 # for virtualenvwrapper
-export WORKON_HOME=~/workspace/venvs/
+export WORKON_HOME=~/.venvs/
 source /usr/bin/virtualenvwrapper.sh 
-#alias prparser='. ~/.v/prparser/bin/activate'
 #alias tecan='. ~/.v/prtecan/bin/activate'
-#alias datan='. ~/workspace/v/datan-dev/bin/activate'
 
 
 source /usr/share/bash-completion/completions/git
