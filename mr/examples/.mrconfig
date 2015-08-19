@@ -1,4 +1,8 @@
 [Blog]
+checkout = git clone 'https://github.com/petrkeil/Blog' 'Blog'
 [Markdown-for-Manuscripts]
+checkout = git clone 'https://github.com/djhocking/Markdown-for-Manuscripts' 'Markdown-for-Manuscripts'
 [python-for-biologists]
+checkout = hg clone 'ssh://hg@bitbucket.org/krother/python-for-biologists' 'python-for-biologists'
 [xero/dotfiles]
+checkout = git clone 'https://github.com/xero/dotfiles' 'dotfiles'
