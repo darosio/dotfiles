@@ -30,3 +30,9 @@ checkout = git clone 'https://github.com/borntyping/cookiecutter-pypackage-minim
 
 [templates/pandoc-talk]
 checkout = git clone 'https://github.com/larsyencken/pandoc-talk.git' 'pandoc-talk'
+
+[templates/python-project-template]
+checkout = git clone 'https://github.com/seanfisk/python-project-template' 'python-project-template'
+
+[templates/python_template]
+checkout = git clone 'https://github.com/pkrusche/python_template' 'python_template'
