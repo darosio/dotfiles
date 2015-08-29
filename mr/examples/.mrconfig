@@ -15,3 +15,6 @@ checkout = git clone 'https://github.com/jni/cellom2tif' 'cellom2tif'
 
 [dotfiles-horida]
 checkout = git clone 'git://github.com/haridas/Dotfiles.git' 'dotfiles-horida'
+
+[CalciumSignalExtract]
+checkout = git clone 'https://github.com/ninehundred1/CalciumSignalExtract.git' 'CalciumSignalExtract'
