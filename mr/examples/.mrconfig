@@ -18,3 +18,15 @@ checkout = git clone 'git://github.com/haridas/Dotfiles.git' 'dotfiles-horida'
 
 [CalciumSignalExtract]
 checkout = git clone 'https://github.com/ninehundred1/CalciumSignalExtract.git' 'CalciumSignalExtract'
+
+[templates/cookiecutter-docopt]
+checkout = git clone 'https://github.com/sloria/cookiecutter-docopt.git' 'cookiecutter-docopt'
+
+[templates/cookiecutter-pypackage]
+checkout = git clone 'https://github.com/audreyr/cookiecutter-pypackage.git' 'cookiecutter-pypackage'
+
+[templates/cookiecutter-pypackage-minimal]
+checkout = git clone 'https://github.com/borntyping/cookiecutter-pypackage-minimal.git' 'cookiecutter-pypackage-minimal'
+
+[templates/pandoc-talk]
+checkout = git clone 'https://github.com/larsyencken/pandoc-talk.git' 'pandoc-talk'
