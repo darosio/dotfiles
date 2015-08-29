@@ -13,3 +13,9 @@ checkout = git clone 'git@bitbucket.org:darosio/grants.git' 'grants'
 
 [lfin]
 checkout = git clone 'git@bitbucket.org:darosio/lfin.git' 'lfin'
+
+[ph-cl-maps]
+checkout = hg clone 'https://darosio@bitbucket.org/darosio/ph-cl-maps' 'ph-cl-maps'
+
+[progs]
+checkout = git clone 'git@bitbucket.org:darosio/progs' 'progs'
