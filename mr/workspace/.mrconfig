@@ -7,3 +7,6 @@ checkout = git clone 'git@bitbucket.org:darosio/darosio.bitbucket.org.git' 'daro
 
 [HIV_pipeline_mpba]
 checkout = git clone 'https://github.com/MPBA/generic.git' 'HIV_pipeline_mpba'
+
+[grants]
+checkout = git clone 'git@bitbucket.org:darosio/grants.git' 'grants'
