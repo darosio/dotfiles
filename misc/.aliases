@@ -1,3 +1,5 @@
+export PATH=$PATH:~/workspace/HIV_pipeline_mpba/HIV/library_name/
+
 alias t='tree'
 alias stow='stow -t ~/'
 # Auto "cd" when entering just a path

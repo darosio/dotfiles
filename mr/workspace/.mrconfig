@@ -19,3 +19,6 @@ checkout = hg clone 'https://darosio@bitbucket.org/darosio/ph-cl-maps' 'ph-cl-ma
 
 [progs]
 checkout = git clone 'git@bitbucket.org:darosio/progs' 'progs'
+
+[platereaders/prtecan]
+checkout = git clone 'git@bitbucket.org:darosio/prtecan.git' 'prtecan'
