@@ -25,3 +25,6 @@ checkout = git clone 'git@bitbucket.org:darosio/prtecan.git' 'prtecan'
 
 [platereaders/datan]
 checkout = hg clone 'ssh://hg@bitbucket.org/darosio/datan' 'datan'
+
+[platereaders/tecan]
+checkout = hg clone 'ssh://hg@bitbucket.org/darosio/tecan' 'tecan'
