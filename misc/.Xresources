@@ -146,6 +146,8 @@ Xft.rgba:       rgb
 Xft.hinting:    true
 !Xft.hintstyle:  hintslight
 Xft.hintstyle:  hintfull
+xterm*faceName: Source Code Pro
+xterm*faceSize: 12
 
 !Theme Five grey and quite good before solarized
 ! *background: rgb:ad/aa/ad
