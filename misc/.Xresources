@@ -67,11 +67,11 @@ URxvt*colorUL:      #4682B4
 ! URxvt*borderColor:                    color
 ! URxvt*iconFile:                       file
 ! URxvt*font:     xft:Monaco:size=11:antialias=true:hinting=true
-URxvt*font:     xft:Monaco:size=11:hinting=false
-! URxvt*font:     xft:fira sans :size=11
-! URxvt*font:     xft:Cousine :size=11
-! URxvt*boldFont: xft:DejaVu Sans Mono:bold:pixelsize=12:antialias=true:hinting=true
-URxvt*boldFont: xft:Monaco:bold:size=11
+! URxvt*font:     xft:Monaco:size=11:hinting=false
+! Source Code Pro; Consolas; Inconsolata-g; Dejavu Sans Mono; Droid Sans Mono; Ubuntu
+! Mono  12
+URxvt*font:     xft:Consolas:size=11
+! URxvt*boldFont: xft:Monaco:bold:size=11
 ! URxvt*italicFont:                     fontname
 ! URxvt*boldItalicFont:                 fontname
 URxvt*intensityStyles:  false
