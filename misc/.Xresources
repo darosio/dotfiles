@@ -70,7 +70,7 @@ URxvt*colorUL:      #4682B4
 ! URxvt*font:     xft:Monaco:size=11:hinting=false
 ! Source Code Pro; Consolas; Inconsolata-g; Dejavu Sans Mono; Droid Sans Mono; Ubuntu
 ! Mono  12
-URxvt*font:     xft:Consolas:size=11
+URxvt*font:     xft:Source Code Pro:size=12
 ! URxvt*boldFont: xft:Monaco:bold:size=11
 ! URxvt*italicFont:                     fontname
 ! URxvt*boldItalicFont:                 fontname
