@@ -270,3 +270,4 @@ pdf_myReduce2() {
 #shopt -s cdspell #nocaseglob
 #stop beeping
 #setterm -blength 0
+alias icy='java -jar .progs/icy/updater.jar'
