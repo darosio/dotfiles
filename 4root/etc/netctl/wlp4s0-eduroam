@@ -1,0 +1,16 @@
+Description='Eduroam Profile for darosio@fbkeduroam.it'
+Interface=wlp4s0
+Connection=wireless
+Security=wpa-configsection
+ESSID=eduroam
+IP=dhcp
+WPAConfigSection=(
+	'ssid="eduroam"'
+	'proto=RSN'
+	'key_mgmt=WPA-EAP'
+	'pairwise=CCMP'
+	'auth_alg=OPEN'
+	'eap=PEAP'
+	'identity="darosio@fbkeduroam.it"'
+	'#password=TODO
+)
