@@ -244,14 +244,13 @@ bindsym $mod+F5 workspace 5; exec zim
 # turn bell off
 exec xset -b
 #autostart
-#exec kupfer
 #exec --no-startup-id dropbox
 # exec --no-startup-id CopyAgent
 #exec --no-startup-id git annex assistant --autostart
-exec --no-startup-id artha
-exec --no-startup-id goldendict
-exec --no-startup-id autokey-gtk
-exec --no-startup-id kupfer
+##DDD##exec --no-startup-id artha
+##DDD##exec --no-startup-id goldendict
+##DDD##exec --no-startup-id autokey-gtk
+##DDD##exec --no-startup-id kupfer
 #exec --no-startup-id zim
 #exec --no-startup-id nm-applet
 
