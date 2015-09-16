@@ -1,0 +1,7 @@
+Description='Automatically generated profile by wifi-menu'
+Interface=wlp4s0
+Connection=wireless
+Security=wpa
+ESSID=AndroidAPtab
+IP=dhcp
+Key=borino2015
