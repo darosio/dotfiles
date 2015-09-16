@@ -199,7 +199,7 @@ bindsym XF86AudioRaiseVolume exec /usr/bin/pactl set-sink-volume 0 -- +5%; exec 
 bindsym XF86AudioMute exec /usr/bin/pactl set-sink-volume 0 0; exec /usr/bin/pactl set-sink-volume 1 0
 #bindsym XF86Launch1 exec /usr/bin/pactl play-sample that_was_easy
 bindsym --release XF86MonBrightnessUp exec --no-startup-id /usr/bin/xbacklight -inc 15
-bindsym --release XF86MonBrightnessDown exec --no-startup-id /usr/bin/xbacklight -dec 5
+bindsym --release XF86MonBrightnessDown exec --no-startup-id /usr/bin/xbacklight -dec 15
 # XF86WLAN
 #bindsym --release XF86WLAN exec --no-startup-id /usr/bin/urxvt -c ls
 
