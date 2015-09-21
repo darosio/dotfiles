@@ -272,3 +272,4 @@ pdf_myReduce2() {
 #setterm -blength 0
 alias icy='java -jar .progs/icy/updater.jar'
 alias ww='xfce4-panel --disable-wm-check'
+export MAKEFLAGS='-j4'
