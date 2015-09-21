@@ -7,10 +7,10 @@
 	decorate = short
 
 [filter "remove-pass"]                                                          
-    clean = "sed -e 's/password.*/#password=TODO/'"
+    clean = "sed -e 's/^password.*/#password=TODO/'"
 
 [filter "remove-Key"]                                                          
-    clean = "sed -e 's/Key.*/#Key=TODO/'"
+    clean = "sed -e 's/^Key.*/#Key=TODO/'"
 
 [pager]
 	diff =

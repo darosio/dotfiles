@@ -1,5 +1,12 @@
 export PATH=$PATH:~/workspace/HIV_pipeline_mpba/HIV/library_name/
 
+# pacman helper
+alias paclist-time='expac --timefmt="%Y-%m-%d %T" "%l\t%n" | sort'
+alias paclist-size_d='expac -HM "%011m\t%-20n\t%10d" $( comm -23 <(pacman -Qqen|sort) <(pacman -Qqg base base-devel|sort)  ) | sort -n'
+paclist-size() {
+    expac -s "%-30n %m" | sort -hk 2 | \
+        awk '{printf "%s %.0f MiB\n", $1, $2/1024/1024}' | column -t 
+}
 alias t='tree'
 alias stow='stow -t ~/'
 # Auto "cd" when entering just a path
