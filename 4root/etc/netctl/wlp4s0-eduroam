@@ -12,5 +12,5 @@ WPAConfigSection=(
 	'auth_alg=OPEN'
 	'eap=PEAP'
 	'identity="darosio@fbkeduroam.it"'
-	'#password=TODO
+	'password=TODO'
 )
