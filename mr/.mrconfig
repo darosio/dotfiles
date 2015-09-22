@@ -24,4 +24,4 @@ checkout =
     git_annex_sync
 
 
-[.progsoftware]
+#[.progsoftware]
