@@ -37,7 +37,14 @@ countfiles() {
 alias fiji='~/.progs/Fiji.app/ImageJ-linux64'
 alias g='git st; git in; git out'
 #ranger shellcd
-alias rr='ranger'
+rr() {
+    if [ -z "$RANGER_LEVEL" ]
+    then
+        ranger
+    else
+        exit
+    fi
+}
 #$RANGERCD && unset RANGERCD && ranger-cd
 cd "$AUTOCD"
 # Bash's bind
