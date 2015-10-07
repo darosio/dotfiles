@@ -5,7 +5,15 @@ let g:mapleader=','
 
 " Set to auto read when a file is changed from the outside
 set autoread
-
+"set noautoread              " Don't automatically re-read changed files.
+"set autowrite               " Stop complaining about unsaved buffers
+"set autowriteall            " 
+" Jeff
+hi DiffText gui=underline guibg=red guifg=black
+" Select the item in the list with enter
+inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+" tab switch
+"nnoremap <Tab> <ESC>:tabn<CR>
 " Bundle {{{
 filetype off                   " required!
 call vundle#rc()
@@ -19,11 +27,53 @@ call vundle#rc()
 "Plug 'ivanov/vim-ipython'
 "Plug 'lervag/vim-latex'
 "Plug 'wannesm/wmgraphviz.vim'
+"also consider:
+"easymotion
+"hardmode
+"hexmode
+"html5
+"nodejs-complete
+"php
+"tComment
+"web-indent
+"xmledit
+"
+""" easymotion
+"""\\w move to word forwards
+"""\\b move to word backwards
+""" hardmode ^_^
+""nnoremap <leader>h <ESC>:call ToggleHardMode()<CR>
+""" snipmate
+"""<c-r>tab lists snippets
+""" tComment
+""nnoremap <leader>c <c-_><c-_>
+""vnoremap <leader>c <c-_><c-_>
+
+" 
+" Highlight a column in csv text.
+" :Csv 1    " highlight first column
+" :Csv 12   " highlight twelfth column
+" :Csv 0    " switch off highlight
+""function! CSVH(colnr)
+""  if a:colnr > 1
+""    let n = a:colnr - 1
+""    execute 'match Keyword /^\([^,]*,\)\{'.n.'}\zs[^,]*/'
+""    execute 'normal! 0'.n.'f,'
+""  elseif a:colnr == 1
+""    match Keyword /^[^,]*/
+""    normal! 0
+""  else
+""    match
+""  endif
+""endfunction
+""command! -nargs=1 Csv :call CSVH(<args>)
+""
 """
 " Colors:
 Plugin 'tomasr/molokai'
 Plugin 'sjl/badwolf'
 Plugin 'altercation/vim-colors-solarized'
+Plugin 'vim-scripts/wombat256.vim'
 
 " General:
 Plugin 'scrooloose/nerdtree'
@@ -96,7 +146,15 @@ Plugin 'SirVer/ultisnips'
 autocmd FileType html setlocal omnifunc=htmlcomplete#CompleteTags
 autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
 "autocmd FileType python setlocal omnifunc=python3complete#Complete
+"autocmd FileType python set omnifunc=pythoncomplete#Complete
 autocmd FileType python setlocal omnifunc=jedi#completions
+"autocmd FileType c set omnifunc=ccomplete#Complete
+"autocmd FileType css set omnifunc=csscomplete#CompleteCSS
+"autocmd FileType php set omnifunc=phpcomplete#CompletePHP
+"autocmd FileType xml set omnifunc=xmlcomplete#CompleteTags
+" omni completion @FIXME
+""" inoremap <c-Space> <c-x><c-o>
+""" inoremap <c-@> <c-Space>
 Bundle 'Shougo/neocomplete'
 "Bundle 'Shougo/neosnippet'
 "Bundle 'Shougo/neosnippet-snippets'
@@ -119,6 +177,13 @@ Plugin 'tpope/vim-surround' " braces
 Plugin 'jiangmiao/auto-pairs' " braces
 " }}}
 
+"let g:airline#extensions#tabline#enabled = 1
+let g:airline_powerline_fonts = 1
+
+set nocompatible    "disable vi"
+" this order fix a problem with csv
+filetype plugin indent on " load filetype-specific plugin/indent file
+syntax enable
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set ttyfast		" faster redraw (with multiple windows)
 
@@ -128,13 +193,29 @@ set lazyredraw
 " redraw screen
 nnoremap <leader>r <ESC>:redraw!<CR>
 
-" this order fix a problem with csv
-filetype plugin indent on " load filetype-specific plugin/indent file
-syntax enable
+" Always show the status line
+set laststatus=2
+" partly inspired by sensible and partly from my old config
+set backspace=eol,start,indent "or =2 although not needed in Arch
+set whichwrap+=<,>,h,l  "to continue on next/previous line"
+nnoremap <C-e> 3<C-e>
+nnoremap <C-y> 3<C-y>
+set shortmess=atI
+set autochdir
+" file handling
+set fileencoding=utf-8
+set encoding=utf-8
+autocmd FileType plaintext setlocal spell spelllang=en_us,it_it color desert
+" I 'd like to understand this
+runtime macros/matchit.vim
+
+" Ignore these files when completing
+set wildignore+=*.o,*.obj,.git,*.pyc
+set wildignore+=eggs/**
+set wildignore+=*.egg-info/**
 
 " Colors {{{
 " for solarized colors
-set nocompatible    "disable vi"
 set t_Co=16
 syntax on
 set background=dark	" often used with dark bg
@@ -147,6 +228,7 @@ set guioptions=aegim	" a visual mode copy/paste, m menu, g gray menu ...
 set guioptions-=T   	" do not show Toolbars in gvim
 set diffopt+=iwhite	" ignore white spaces in gvimdiff
 if has('gui_running')
+    set antialias
 	autocmd GuiEnter * set columns=95
 	if &diff
 		autocmd GuiEnter * set columns=165 lines=50
@@ -156,7 +238,6 @@ if has('gui_running')
 end
 " }}}
 " Shortcuts {{{
-nmap <C-N> :set invnumber<CR>
 " Reload Vimrc
 map <silent> <leader>sv :source ~/.vim/vimrc<CR>:filetype detect<CR>
 map <silent> <leader>ev :vsp ~/.vim/vimrc<CR>
@@ -168,7 +249,7 @@ nnoremap <leader>qq :q!<CR>
 nmap <leader>wq :wq<CR>
 nnoremap ; :
 " Show trailing whitespace: <leader>ll
-set listchars=tab:>.,trail:·,eol:$,extends:#,nbsp:.
+set listchars=tab:>.,trail:Â·,eol:$,extends:#,nbsp:.
 nmap <silent> <leader>ll :set nolist!<CR>
 " Remove trailing whitespace: <leader>llr
 nnoremap <leader>llr :%s/\s\+$//<cr>:let @/=''<CR>
@@ -182,7 +263,7 @@ map <leader>p "+p
 " toggle paste mode
 set pastetoggle=<F2>
 " }}}
-" Spaces & Tabs {{{
+" Spaces & Tabs & moving around {{{
 set autoindent		" always autoindent on
 "set smartindent		" if no indent file available
 set tabstop=4		" number of visual spaces per TAB
@@ -192,10 +273,47 @@ set shiftround		" round indent to multiple of 'shiftwidth'
 set expandtab		" tabs are always spaces
 set smarttab		" backspace over tabs
 set copyindent		" copy indent structure, spaces and tabs from upper line
+
+" Smart way to move between windows
+map <C-j> <C-W>j
+map <C-k> <C-W>k
+map <C-h> <C-W>h
+map <C-l> <C-W>l
+" lets make these all work in insert mode too 
+" ( <C-O> makes next cmd happen as if in command mode ) FIXME
+imap <C-W> <C-O><C-W>
+" Close all the buffers
+map <leader>ba :1,1000 bd!<cr>
+" Useful mappings for managing tabs
+map <leader>tn :tabnew<cr>
+map <leader>to :tabonly<cr>
+map <leader>tc :tabclose<cr>
+map <leader>tm :tabmove<cr>
+" Opens a new tab with the current buffer's path
+" Super useful when editing files in the same directory
+map <leader>te :tabedit <c-r>=expand("%:p:h")<cr>/
+" Switch CWD to the directory of the open buffer
+map <leader>cd :cd %:p:h<cr>:pwd<cr>
+" Specify the behavior when switching between buffers But it shows tab always
+"try
+"  set switchbuf=useopen,usetab,newtab
+"  set stal=2
+"catch
+"endtry
+" Return to last edit position when opening files (You want this!)
+autocmd BufReadPost *
+     \ if line("'\"") > 0 && line("'\"") <= line("$") |
+     \   exe "normal! g`\"" |
+     \ endif
+" Remember info about open buffers on close
+set viminfo^=%
 " }}}
 " UI Config {{{
-set number	" powerline?
-set showcmd	" powerline?
+set history=700
+" line numbers
+set number
+nmap <C-N> :set invnumber<CR>
+"set showcmd  maybe faster?
 set cursorline		" highlight current line
 set wildmenu		" visual autocomplete for command menu
 set showmatch		" highlight matvching [{()}]
@@ -213,8 +331,7 @@ set virtualedit=block " Let cursor move past the last char in <C-v> mode
 set scrolloff=3		" Keep 3 context lines above and below the cursor
 set title			" show title in console title bar
 set colorcolumn=80	" show color at column 80
-highlight ColorColumn ctermbg=red guibg=darkred
-set hidden			" hides buffers instead of closing
+highlight ColorColumn ctermbg=green guibg=darkred
 set noerrorbells	" don't beep
 set visualbell t_vb= " Disable all bells.  I hate ringing/flashing.
 " Use SVN, hg, git, rsnapshot, unison ...
@@ -230,6 +347,9 @@ set hlsearch		" highlight search results
 nnoremap <leader><space> :nohlsearch<cr>
 " }}}
 " Folding {{{
+"myold set foldignore=
+"myold set formatoptions=cqrt
+" set formatoptions=tcroql    " Setting text and comment formatting to auto
 set foldenable		" enable folding
 set foldlevelstart=7 " open most folds by default
 set foldnestmax=10	" creates 10 fold levels at maximum
@@ -360,7 +480,7 @@ let g:virtualenv_stl_format = '[%n]'
 " }}}
 " autocmd FileType python setlocal completeopt-=preview
 " jedi {{{
-"
+" FIXME move these into ./after/ftplugin/python.vim
 " forse supertab non serve basta ctrl-space
 " To disable auto-complete on .
 let g:jedi#popup_on_dot = 0

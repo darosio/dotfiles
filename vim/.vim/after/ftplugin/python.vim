@@ -1,3 +1,10 @@
+
+" configure jedi from my old CHECK TODO
+let g:jedi#auto_initialization = 0
+let g:jedi#pydoc = "K"
+" keybind: pydoc
+nnoremap <buffer> K <ESC>:call jedi#show_pydoc()<CR>
+
 set tabstop=8
 set expandtab
 set shiftwidth=4
