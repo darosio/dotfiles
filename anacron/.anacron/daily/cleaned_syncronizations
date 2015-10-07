@@ -1,5 +1,6 @@
 #!/bin/sh
 
-echo "### Clean Syncronizations (unison and dropbox) ###"
+echo "### Clean Syncronizations (unison and syncthing) ###"
 find ~/docs/ -name .unison\*
+find ~/Sync/ -name \*sync-conflict\*
 echo
