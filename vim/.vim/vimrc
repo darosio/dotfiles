@@ -243,8 +243,8 @@ map <silent> <leader>sv :source ~/.vim/vimrc<CR>:filetype detect<CR>
 map <silent> <leader>ev :vsp ~/.vim/vimrc<CR>
 " for when we forget to use sudo to open/edit a file
 command! Sudow :w !sudo tee % >/dev/null
-nnoremap <leader>w :w<CR>
-nnoremap <leader>q :q<CR>
+nnoremap ;w :w<CR>
+nnoremap ;q :q<CR>
 nnoremap <leader>qq :q!<CR>
 nmap <leader>wq :wq<CR>
 nnoremap ; :
