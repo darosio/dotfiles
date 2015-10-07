@@ -1,6 +1,10 @@
 set modelines=1	" modeline must be within first or last 1 line
 
 let mapleader=','
+let g:mapleader=','
+
+" Set to auto read when a file is changed from the outside
+set autoread
 
 " Bundle {{{
 filetype off                   " required!
@@ -44,6 +48,8 @@ Plugin 'vim-scripts/DirDiff.vim'
 " Plugin 'vim-scripts/ShowMarks'  Not working properly
 
 " Writing_Prose:
+Plugin 'beloglazov/vim-online-thesaurus'
+nnoremap <leader>k :OnlineThesaurusCurrentWord<CR>
 Plugin 'vimoutliner/vimoutliner'
 Plugin 'reedes/vim-wordy'
 " Plugin 'reedes/vim-pencil'
@@ -115,7 +121,12 @@ Plugin 'jiangmiao/auto-pairs' " braces
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set ttyfast		" faster redraw (with multiple windows)
-set lazyredraw	" do not redraw in the middle of macro running
+
+" Don't redraw while executing macros (good performance config)
+set lazyredraw
+
+" redraw screen
+nnoremap <leader>r <ESC>:redraw!<CR>
 
 " this order fix a problem with csv
 filetype plugin indent on " load filetype-specific plugin/indent file
@@ -123,7 +134,7 @@ syntax enable
 
 " Colors {{{
 " for solarized colors
-set nocompatible
+set nocompatible    "disable vi"
 set t_Co=16
 syntax on
 set background=dark	" often used with dark bg
@@ -154,6 +165,7 @@ command! Sudow :w !sudo tee % >/dev/null
 nnoremap <leader>w :w<CR>
 nnoremap <leader>q :q<CR>
 nnoremap <leader>qq :q!<CR>
+nmap <leader>wq :wq<CR>
 nnoremap ; :
 " Show trailing whitespace: <leader>ll
 set listchars=tab:>.,trail:·,eol:$,extends:#,nbsp:.
@@ -213,7 +225,7 @@ set noswapfile
 set ignorecase		" ignore case
 set smartcase		" try to be smart
 set incsearch		" search as characters are entered
-set hlsearch		" highlight matches
+set hlsearch		" highlight search results
 " turn off highlight matches
 nnoremap <leader><space> :nohlsearch<cr>
 " }}}
