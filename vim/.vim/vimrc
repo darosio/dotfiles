@@ -74,6 +74,8 @@ Plugin 'tomasr/molokai'
 Plugin 'sjl/badwolf'
 Plugin 'altercation/vim-colors-solarized'
 Plugin 'vim-scripts/wombat256.vim'
+Plugin 'nanotech/jellybeans.vim'
+
 
 " General:
 Plugin 'scrooloose/nerdtree'
@@ -141,31 +143,14 @@ Plugin 'scrooloose/nerdcommenter' " ,cc
 "Plugin 'garbas/vim-snipmate'
 "UltiSnips
 Plugin 'SirVer/ultisnips'
-"june
-"autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
-autocmd FileType html setlocal omnifunc=htmlcomplete#CompleteTags
-autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-"autocmd FileType python setlocal omnifunc=python3complete#Complete
-"autocmd FileType python set omnifunc=pythoncomplete#Complete
-autocmd FileType python setlocal omnifunc=jedi#completions
-"autocmd FileType c set omnifunc=ccomplete#Complete
-"autocmd FileType css set omnifunc=csscomplete#CompleteCSS
-"autocmd FileType php set omnifunc=phpcomplete#CompletePHP
-"autocmd FileType xml set omnifunc=xmlcomplete#CompleteTags
-" omni completion @FIXME
-""" inoremap <c-Space> <c-x><c-o>
-""" inoremap <c-@> <c-Space>
 "XXBundle 'Shougo/neocomplete'
-"Bundle 'Shougo/neosnippet'
-"Bundle 'Shougo/neosnippet-snippets'
 " Optional
 Plugin 'honza/vim-snippets'
 """ Python
 Plugin 'davidhalter/jedi-vim'
 "Plugin 'scrooloose/syntastic' "june
 " syntasytic to directly use flake8
-"Need: flake8 pep8 python-mccabe python-pyflakes
-Plugin 'nvie/vim-flake8'
+Plugin 'nvie/vim-flake8'    "Need: flake8 pep8 python-mccabe python-pyflakes
 " Plugin 'nvie/vim-pyunit'
 Plugin 'alfredodeza/pytest.vim'
 Plugin 'alfredodeza/coveragepy.vim'
@@ -176,6 +161,18 @@ Plugin 'jmcantrell/vim-virtualenv'
 Plugin 'tpope/vim-surround' " braces
 Plugin 'jiangmiao/auto-pairs' " braces
 " }}}
+
+" omni completion FIXME
+"autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+autocmd FileType html setlocal omnifunc=htmlcomplete#CompleteTags
+autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+"autocmd FileType c set omnifunc=ccomplete#Complete
+"autocmd FileType css set omnifunc=csscomplete#CompleteCSS
+"autocmd FileType php set omnifunc=phpcomplete#CompletePHP
+"autocmd FileType xml set omnifunc=xmlcomplete#CompleteTags
+"
+""" inoremap <c-Space> <c-x><c-o>
+""" inoremap <c-@> <c-Space>
 
 "let g:airline#extensions#tabline#enabled = 1
 let g:airline_powerline_fonts = 1
