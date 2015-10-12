@@ -92,7 +92,8 @@ Plugin 'rking/ag.vim'
 nmap <C-F> :Ag 
 " args `Ag -l FOOBAR .`
 " argdo %s/FOO/BAR/g | w
-Plugin 'junegunn/fzf'
+Plugin 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install' }
+Plugin 'junegunn/fzf.vim'
 
 " Diff:
 Plugin 'vim-scripts/DirDiff.vim'
@@ -133,6 +134,7 @@ Plugin 'chrisbra/csv.vim'
 " Git:
 Plugin 'mhinz/vim-signify' " works also for hg 'airblade/vim-gitgutter'
 Plugin 'tpope/vim-fugitive'
+Plugin 'gregsexton/gitv'
 Plugin 'tommcdo/vim-fubitive'   " Gbrowse for bitbucket
 
 " IDE:
@@ -166,10 +168,10 @@ Plugin 'jiangmiao/auto-pairs' " braces
 "autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
 autocmd FileType html setlocal omnifunc=htmlcomplete#CompleteTags
 autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-"autocmd FileType c set omnifunc=ccomplete#Complete
-"autocmd FileType css set omnifunc=csscomplete#CompleteCSS
-"autocmd FileType php set omnifunc=phpcomplete#CompletePHP
-"autocmd FileType xml set omnifunc=xmlcomplete#CompleteTags
+autocmd FileType c set omnifunc=ccomplete#Complete
+autocmd FileType css set omnifunc=csscomplete#CompleteCSS
+autocmd FileType php set omnifunc=phpcomplete#CompletePHP
+autocmd FileType xml set omnifunc=xmlcomplete#CompleteTags
 "
 """ inoremap <c-Space> <c-x><c-o>
 """ inoremap <c-@> <c-Space>
@@ -357,38 +359,22 @@ set foldmethod=indent	" based on indent level (manual,expr,syntax,diff)
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """ Plugins:
 " FZF {{{
-nmap <C-p> :FZF<CR>
-set rtp+=~/.fzf
-"
-" List of buffers
-function! BufList()
-  redir => ls
-  silent ls
-  redir END
-  return split(ls, '\n')
-endfunction
+nnoremap <buffer><nowait> <C-p>p :Buffers<CR>
+nnoremap <C-p> :Files<CR>
+"set rtp+=~/.fzf
+" Mapping selecting mappings
+nmap <leader><tab> <plug>(fzf-maps-n)
+xmap <leader><tab> <plug>(fzf-maps-x)
+omap <leader><tab> <plug>(fzf-maps-o)
 
-function! BufOpen(e)
-  execute 'buffer '. matchstr(a:e, '^[ 0-9]*')
-endfunction
+" Insert mode completion
+imap <c-x><c-k> <plug>(fzf-complete-word)
+imap <c-x><c-f> <plug>(fzf-complete-path)
+imap <c-x><c-j> <plug>(fzf-complete-file-ag)
+imap <c-x><c-l> <plug>(fzf-complete-line)
 
-nnoremap <silent> <leader>l :call fzf#run({
-\   'source':      reverse(BufList()),
-\   'sink':        function('BufOpen'),
-\   'options':     '+m',
-\   'tmux_height': '40%'
-\ })<CR>
-"
-" Choose a color scheme with fzf
-nnoremap <silent> <Leader>C :call fzf#run({
-\   'source':
-\     map(split(globpath(&rtp, "colors/*.vim"), "\n"),
-\         "substitute(fnamemodify(v:val, ':t'), '\\..\\{-}$', '', '')"),
-\   'sink':     'colo',
-\   'options':  '+m',
-\   'left':     20,
-\   'launcher': 'xterm -geometry 20x30 -e bash -ic %s'
-\ })<CR>
+" Advanced customization using autoload functions
+inoremap <expr> <c-x><c-k> fzf#vim#complete#word({'left': '15%'})
 "}}}
 " ctags{{{ 
 nmap <F9> :TagbarToggle<CR>
