@@ -4,6 +4,7 @@ let g:jedi#auto_initialization = 0
 let g:jedi#pydoc = "K"
 " keybind: pydoc
 nnoremap <buffer> K <ESC>:call jedi#show_pydoc()<CR>
+setlocal omnifunc=python3complete#Complete
 
 set tabstop=8
 set expandtab

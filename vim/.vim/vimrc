@@ -155,7 +155,7 @@ autocmd FileType python setlocal omnifunc=jedi#completions
 " omni completion @FIXME
 """ inoremap <c-Space> <c-x><c-o>
 """ inoremap <c-@> <c-Space>
-Bundle 'Shougo/neocomplete'
+"XXBundle 'Shougo/neocomplete'
 "Bundle 'Shougo/neosnippet'
 "Bundle 'Shougo/neosnippet-snippets'
 " Optional
@@ -484,18 +484,18 @@ let g:virtualenv_stl_format = '[%n]'
 " forse supertab non serve basta ctrl-space
 " To disable auto-complete on .
 let g:jedi#popup_on_dot = 0
-let g:jedi#use_splits_not_buffers = "bottom"
+"let g:jedi#use_splits_not_buffers = "bottom"
 " }}}
 " neocomplete{{{
 " Disable AutoComplPop.
-let g:acp_enableAtStartup = 1
+"XXlet g:acp_enableAtStartup = 1
 " Use neocomplete.
-let g:neocomplete#enable_at_startup = 1
+"XXlet g:neocomplete#enable_at_startup = 1
 " Use smartcase.
-let g:neocomplete#enable_smart_case = 1
+"XXlet g:neocomplete#enable_smart_case = 1
 " Set minimum syntax keyword length.
-let g:neocomplete#sources#syntax#min_keyword_length = 3
-let g:neocomplete#lock_buffer_name_pattern = '\*ku\*'
+"XXlet g:neocomplete#sources#syntax#min_keyword_length = 3
+"XXlet g:neocomplete#lock_buffer_name_pattern = '\*ku\*'
 " }}}
 
 " vim:shiftwidth=2:expandtab"
