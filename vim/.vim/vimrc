@@ -498,4 +498,6 @@ let g:neocomplete#sources#syntax#min_keyword_length = 3
 let g:neocomplete#lock_buffer_name_pattern = '\*ku\*'
 " }}}
 
+" vim:shiftwidth=2:expandtab"
+"
 " vim:foldmethod=marker:foldlevel=0
