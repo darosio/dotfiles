@@ -28,3 +28,6 @@ checkout = hg clone 'ssh://hg@bitbucket.org/darosio/datan' 'datan'
 
 [platereaders/tecan]
 checkout = hg clone 'ssh://hg@bitbucket.org/darosio/tecan' 'tecan'
+
+[0_templates/cookiecutter-pypackage]
+checkout = git clone 'https://github.com/darosio/cookiecutter-pypackage.git' 'cookiecutter-pypackage'
