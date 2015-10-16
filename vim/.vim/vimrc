@@ -21,7 +21,16 @@ call vundle#rc()
 " Next:
 " NrrwRgn
 " TaskList
-" VimPDB
+" VimPDB "@L
+"
+" tabuler @sf
+"
+" minibufferExplorer @L @S
+" gundo @S
+"
+" Old:
+" command-T @A @S
+" makegreen @S before pytest 
 "
 "
 "Plug 'ivanov/vim-ipython'
@@ -78,20 +87,21 @@ Plugin 'nanotech/jellybeans.vim'
 
 
 " General:
-Plugin 'scrooloose/nerdtree'
+Plugin 'scrooloose/nerdtree' " @j @S
 map <F2> :NERDTreeToggle<CR>
 Plugin 'junegunn/goyo.vim'
 nnoremap <silent> <F11> :Goyo<cr>
-Plugin 'bling/vim-airline'
+Plugin 'bling/vim-airline' "better than powerline
 "Plugin 'Lokaltog/vim-easymotion'
-Plugin 'ervandew/supertab.git'
+Plugin 'ervandew/supertab.git' "@j @S
 let g:SuperTabDefaultCompletionType = "context"
-Plugin 'majutsushi/tagbar' " ctags
-" the silver searcher alternative to ctags and tagbar
-Plugin 'rking/ag.vim'
+Plugin 'majutsushi/tagbar' " ctags @sf and better than TagList (@S @L)
+" the silver searcher alternative to ctags and tagbar and ack.vim
+Plugin 'rking/ag.vim' "@S
 nmap <C-F> :Ag 
 " args `Ag -l FOOBAR .`
 " argdo %s/FOO/BAR/g | w
+" alternativesto CtrlP @j @S
 Plugin 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install' }
 Plugin 'junegunn/fzf.vim'
 
@@ -142,25 +152,31 @@ Plugin 'scrooloose/nerdcommenter' " ,cc
 "snipmate
 "Plugin 'MarcWeber/vim-addon-mw-utils'
 "Plugin 'tomtom/tlib_vim'
-"Plugin 'garbas/vim-snipmate'
-"UltiSnips
+"Plugin 'garbas/vim-snipmate' "@S
+"UltiSnips @j
+" @j: Eclim, IndentLine, Delimitmate, vim-rooter
 Plugin 'SirVer/ultisnips'
-"XXBundle 'Shougo/neocomplete'
+"XXBundle 'Shougo/neocomplete'  "still better then YouCompleteMe, which need
+"compilation"
 " Optional
 Plugin 'honza/vim-snippets'
 """ Python
-Plugin 'davidhalter/jedi-vim'
-"Plugin 'scrooloose/syntastic' "june
+" pydoc.vim @S @P
+" unite @P, but I use fzf
+Plugin 'davidhalter/jedi-vim' " @P
+"Plugin 'scrooloose/syntastic' "june @P @H @A
 " syntasytic to directly use flake8
-Plugin 'nvie/vim-flake8'    "Need: flake8 pep8 python-mccabe python-pyflakes
+Plugin 'nvie/vim-flake8'    "Need: flake8 pep8 python-mccabe python-pyflakes @P
+" @S: pep8, pyflake, rope
 " Plugin 'nvie/vim-pyunit'
-Plugin 'alfredodeza/pytest.vim'
+Plugin 'alfredodeza/pytest.vim' "@S
 Plugin 'alfredodeza/coveragepy.vim'
 " Virtualenv
 Plugin 'jmcantrell/vim-virtualenv'
 
 " Others:
-Plugin 'tpope/vim-surround' " braces
+Plugin 'tpope/vim-surround' " braces @S @sf``
+" @H SimplePairs
 Plugin 'jiangmiao/auto-pairs' " braces
 " }}}
 
