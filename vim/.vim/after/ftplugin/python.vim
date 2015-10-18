@@ -1,4 +1,26 @@
+set modelines=1	" modeline must be within first or last 1 line
 
+" jedi {{{
+" FIXME move these into ./after/ftplugin/python.vim
+" forse supertab non serve basta ctrl-space
+" To disable auto-complete on .
+let g:jedi#popup_on_dot = 0
+"let g:jedi#use_splits_not_buffers = "bottom"
+" }}}
+" Pytest {{{
+nmap <silent><Leader>rf <Esc>:Pytest file<CR>
+nmap <silent><Leader>rc <Esc>:Pytest class<CR>
+nmap <silent><Leader>rm <Esc>:Pytest method<CR>
+" }}}
+" virtualenv {{{
+let g:virtualenv_directory = '/home/dan/workspace/venvs'
+let g:virtualenv_auto_activate = 1
+let g:virtualenv_stl_format = '[%n]'
+"%{virtualenv#statusline()}
+" }}}
+" use Screen.vim for sending cmd to ipython
+vmap <CR> :ScreenSend<CR> <esc> "multiline
+nmap <CR> V :ScreenSend<CR>ej "multiline
 " configure jedi from my old CHECK TODO
 let g:jedi#auto_initialization = 0
 let g:jedi#pydoc = "K"
@@ -26,3 +48,5 @@ set autoindent
 "     activate_this = os.path.join(project_base_dir, 'bin/activate_this.py')
 "     execfile(activate_this, dict(__file__=activate_this))
 " EOF
+
+" vim:foldmethod=marker:foldlevel=0

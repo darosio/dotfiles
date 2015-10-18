@@ -1,7 +1,5 @@
 set modelines=1	" modeline must be within first or last 1 line
 
-let mapleader=','
-let g:mapleader=','
 
 " Set to auto read when a file is changed from the outside
 set autoread
@@ -14,42 +12,50 @@ hi DiffText gui=underline guibg=red guifg=black
 inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 " tab switch
 "nnoremap <Tab> <ESC>:tabn<CR>
+" :tabn :bdelete
 " Bundle {{{
 filetype off                   " required!
 call vundle#rc()
 
 " Next:
 " NrrwRgn
+Plugin 'chrisbra/NrrwRgn'
 " TaskList
 " VimPDB "@L
 "
-" tabuler @sf
+" tabular @sf
 "
-" minibufferExplorer @L @S
 " gundo @S
 "
 " Old:
-" command-T @A @S
+" command-T @A @S alternativeto fzf CtrlP
+" minibufferExplorer @L @S
 " makegreen @S before pytest 
 "
-"
-"Plug 'ivanov/vim-ipython'
+" Plugin 'ivanov/vim-ipython' "need python2
+" ""Plugin 'julienr/vim-cellmode'
+" R:
+Plugin 'ervandew/screen' "useful also for ipython
+Plugin 'jcfaria/Vim-R-plugin'
+"download.file("http://www.lepem.ufc.br/jaa/vimr/vimcom_1.2-6.tar.gz",
+"              destfile = "vimcom_1.2-6.tar.gz")
+"install.packages("vimcom_1.2-6.tar.gz", type = "source", repos = NULL)
+"download.file("http://www.lepem.ufc.br/jaa/vimr/colorout_1.1-1.tar.gz",
+"              destfile = "colorout_1.1-1.tar.gz")
+"install.packages("colorout_1.1-1.tar.gz", type = "source", repos = NULL)
+"~/.Rprofile if(interactive())library(...)
+" vim --servername VIM
+
 "Plug 'lervag/vim-latex'
 "Plug 'wannesm/wmgraphviz.vim'
 "also consider:
-"easymotion
-"hardmode
 "hexmode
 "html5
 "nodejs-complete
 "php
-"tComment
 "web-indent
 "xmledit
 "
-""" easymotion
-"""\\w move to word forwards
-"""\\b move to word backwards
 """ hardmode ^_^
 ""nnoremap <leader>h <ESC>:call ToggleHardMode()<CR>
 """ snipmate
@@ -85,7 +91,6 @@ Plugin 'altercation/vim-colors-solarized'
 Plugin 'vim-scripts/wombat256.vim'
 Plugin 'nanotech/jellybeans.vim'
 
-
 " General:
 Plugin 'scrooloose/nerdtree' " @j @S
 map <F2> :NERDTreeToggle<CR>
@@ -93,7 +98,10 @@ Plugin 'junegunn/goyo.vim'
 nnoremap <silent> <F11> :Goyo<cr>
 Plugin 'bling/vim-airline' "better than powerline
 "Plugin 'Lokaltog/vim-easymotion'
+"""\\w move to word forwards
+"""\\b move to word backwards
 Plugin 'ervandew/supertab.git' "@j @S
+" Ctrl-v Tab : when a real Tab is meant
 let g:SuperTabDefaultCompletionType = "context"
 Plugin 'majutsushi/tagbar' " ctags @sf and better than TagList (@S @L)
 " the silver searcher alternative to ctags and tagbar and ack.vim
@@ -108,7 +116,10 @@ Plugin 'junegunn/fzf.vim'
 " Diff:
 Plugin 'vim-scripts/DirDiff.vim'
 " Plugin 'gkirilov/vim-wdiff'
-" Plugin 'vim-scripts/ShowMarks'  Not working properly
+"Plugin 'vim-scripts/ShowMarks'  "Not working properly
+Plugin 'jacquesbh/vim-showmarks'
+nmap ,m :ShowMarksOnce<CR>
+nmap ,M :DoShowMarks<CR>
 
 " Writing_Prose:
 Plugin 'beloglazov/vim-online-thesaurus'
@@ -180,6 +191,10 @@ Plugin 'tpope/vim-surround' " braces @S @sf``
 Plugin 'jiangmiao/auto-pairs' " braces
 " }}}
 
+" FIXME
+let mapleader=','
+let g:mapleader=','
+
 " omni completion FIXME
 "autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
 autocmd FileType html setlocal omnifunc=htmlcomplete#CompleteTags
@@ -188,12 +203,7 @@ autocmd FileType c set omnifunc=ccomplete#Complete
 autocmd FileType css set omnifunc=csscomplete#CompleteCSS
 autocmd FileType php set omnifunc=phpcomplete#CompletePHP
 autocmd FileType xml set omnifunc=xmlcomplete#CompleteTags
-"
-""" inoremap <c-Space> <c-x><c-o>
-""" inoremap <c-@> <c-Space>
-
-"let g:airline#extensions#tabline#enabled = 1
-let g:airline_powerline_fonts = 1
+" autocmd FileType python setlocal completeopt-=preview
 
 set nocompatible    "disable vi"
 " this order fix a problem with csv
@@ -299,6 +309,8 @@ map <C-l> <C-W>l
 imap <C-W> <C-O><C-W>
 " Close all the buffers
 map <leader>ba :1,1000 bd!<cr>
+" Close current buffer
+map <C-Q> :bd<CR>
 " Useful mappings for managing tabs
 map <leader>tn :tabnew<cr>
 map <leader>to :tabonly<cr>
@@ -375,7 +387,8 @@ set foldmethod=indent	" based on indent level (manual,expr,syntax,diff)
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """ Plugins:
 " FZF {{{
-nnoremap <buffer><nowait> <C-p>p :Buffers<CR>
+nnoremap <buffer><nowait> <C-b> :Buffers<CR>
+nnoremap <C-b> :Buffers<CR>
 nnoremap <C-p> :Files<CR>
 "set rtp+=~/.fzf
 " Mapping selecting mappings
@@ -392,6 +405,14 @@ imap <c-x><c-l> <plug>(fzf-complete-line)
 " Advanced customization using autoload functions
 inoremap <expr> <c-x><c-k> fzf#vim#complete#word({'left': '15%'})
 "}}}
+" airline {{{
+" Enable the list of buffers 
+let g:airline#extensions#tabline#enabled = 1 
+" Show just the filename 
+let g:airline#extensions#tabline#fnamemod = ':t'
+" Use nicer graph font
+let g:airline_powerline_fonts = 1
+" }}}
 " ctags{{{ 
 nmap <F9> :TagbarToggle<CR>
 " tagbar markdown (markdown2ctags)
@@ -425,66 +446,6 @@ nnoremap <F5> :w<CR> :silent make<CR>
 inoremap <F5> <Esc>:w<CR>:silent make<CR>
 vnoremap <F5> :<C-U>:w<CR>:silent make<CR
 " }}}
-" vim-wordy {{{
-let g:wordy#ring = [
-  \ 'weak',
-  \ 'weasel',
-  \ 'puffery',
-  \ 'redundant',
-  \ 'problematic',
-  \ ['being', 'passive-voice', ],
-  \ ['business-jargon', 'art-jargon',],
-  \ ['colloquial', 'idiomatic', ],
-  \ 'similies',
-  \ 'said-synonyms',
-  \ 'contractions',
-  \ 'opinion',
-  \ 'vague-time',
-  \ ]
-" to cycle among defined rings
-nnoremap <silent> K :NextWordy<cr>
-" }}}
-" languagetool {{{
-let g:languagetool_jar='/usr/share/java/languagetool/languagetool-commandline.jar'
-"let g:DirDiffDynamicDiffText = 1
-"}}}
-" vim-pandoc {{{
-let g:pandoc#filetypes#handled = ["pandoc", "markdown", "rst"]
-" need bibtool; autocomplete using <C-X> <C-O>
-let g:pandoc#biblio#use_bibtool=1
-let g:pandoc#completion#bib#mode = 'citeproc'
-let g:pandoc_bibfiles = ['~/Sync/00-papers.bib']
-" avoid spell check of citations like @Arosio2007
-syntax match myExNonWords +\<\p*[^A-Za-z \t]\p*\>+ contains=@NoSpell
-let g:pandoc#folding#level = 2
-let g:pandoc#folding#fdc = 4
-" need this to make tagbar work
-"let g:pandoc#filetypes#pandoc_markdown = 0
-let g:pandoc#synatx#codeblock#embeds#langs = ['ruby', 'vim', 'python', 'r', 'json', 'c', 'julia', 'make', 'sh', 'latex']
-" }}}
-" vim-pandoc-after {{{
-let g:pandoc#after#modules#enabled = ["supertab", "ultisnips"]
-let g:pandoc#after#modules#enabled = ["ultisnips"]
-" }}}
-" Pytest {{{
-nmap <silent><Leader>rf <Esc>:Pytest file<CR>
-nmap <silent><Leader>rc <Esc>:Pytest class<CR>
-nmap <silent><Leader>rm <Esc>:Pytest method<CR>
-" }}}
-" virtualenv {{{
-let g:virtualenv_directory = '/home/dan/workspace/venvs'
-let g:virtualenv_auto_activate = 1
-let g:virtualenv_stl_format = '[%n]'
-"%{virtualenv#statusline()}
-" }}}
-" autocmd FileType python setlocal completeopt-=preview
-" jedi {{{
-" FIXME move these into ./after/ftplugin/python.vim
-" forse supertab non serve basta ctrl-space
-" To disable auto-complete on .
-let g:jedi#popup_on_dot = 0
-"let g:jedi#use_splits_not_buffers = "bottom"
-" }}}
 " neocomplete{{{
 " Disable AutoComplPop.
 "XXlet g:acp_enableAtStartup = 1
@@ -497,6 +458,4 @@ let g:jedi#popup_on_dot = 0
 "XXlet g:neocomplete#lock_buffer_name_pattern = '\*ku\*'
 " }}}
 
-" vim:shiftwidth=2:expandtab"
-"
 " vim:foldmethod=marker:foldlevel=0

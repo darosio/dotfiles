@@ -1,3 +1,46 @@
+set modelines=1	" modeline must be within first or last 1 line
+
+" vim-wordy {{{
+let g:wordy#ring = [
+  \ 'weak',
+  \ 'weasel',
+  \ 'puffery',
+  \ 'redundant',
+  \ 'problematic',
+  \ ['being', 'passive-voice', ],
+  \ ['business-jargon', 'art-jargon',],
+  \ ['colloquial', 'idiomatic', ],
+  \ 'similies',
+  \ 'said-synonyms',
+  \ 'contractions',
+  \ 'opinion',
+  \ 'vague-time',
+  \ ]
+" to cycle among defined rings
+nnoremap <silent> K :NextWordy<cr>
+" }}}
+" languagetool {{{
+let g:languagetool_jar='/usr/share/java/languagetool/languagetool-commandline.jar'
+"let g:DirDiffDynamicDiffText = 1
+"}}}
+" vim-pandoc {{{
+let g:pandoc#filetypes#handled = ["pandoc", "markdown", "rst"]
+" need bibtool; autocomplete using <C-X> <C-O>
+let g:pandoc#biblio#use_bibtool=1
+let g:pandoc#completion#bib#mode = 'citeproc'
+let g:pandoc_bibfiles = ['~/Sync/00-papers.bib']
+" avoid spell check of citations like @Arosio2007
+syntax match myExNonWords +\<\p*[^A-Za-z \t]\p*\>+ contains=@NoSpell
+let g:pandoc#folding#level = 2
+let g:pandoc#folding#fdc = 4
+" need this to make tagbar work
+"let g:pandoc#filetypes#pandoc_markdown = 0
+let g:pandoc#synatx#codeblock#embeds#langs = ['ruby', 'vim', 'python', 'r', 'json', 'c', 'julia', 'make', 'sh', 'latex']
+" }}}
+" vim-pandoc-after {{{
+let g:pandoc#after#modules#enabled = ["supertab", "ultisnips"]
+let g:pandoc#after#modules#enabled = ["ultisnips"]
+" }}}
 " not needed in i3
 " setlocal lines=38
 " setlocal columns=136
@@ -54,7 +97,8 @@ nnoremap \t ea<C-X><C-T>
 
 "zg		add word in ~.vim/spell
 set complete+=s
-set complete=.,b,u,]
+" I would rather use default: .,w,b,u,],i
+"set complete=.,b,u,]
 set complete+=kspell 
 
 "let maplocalleader='\'
