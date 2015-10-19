@@ -25,22 +25,24 @@ let g:languagetool_jar='/usr/share/java/languagetool/languagetool-commandline.ja
 "}}}
 " vim-pandoc {{{
 let g:pandoc#filetypes#handled = ["pandoc", "markdown", "rst"]
+let g:pandoc#filetypes#handled = ["markdown", "rst", "textile"] "default
 " need bibtool; autocomplete using <C-X> <C-O>
-let g:pandoc#biblio#use_bibtool=1
-let g:pandoc#completion#bib#mode = 'citeproc'
-let g:pandoc_bibfiles = ['~/Sync/00-papers.bib']
+let g:pandoc#biblio#use_bibtool = 1
+"let g:pandoc#biblio#bibs = ['~/Sync/00-papers.bib']
+
+let g:pandoc#completion#bib#mode = "citeproc"
+" fallback much faster, but not working in python3, consider unite-bibtex
+"let g:pandoc#formatting#mode = "A"
 " avoid spell check of citations like @Arosio2007
-syntax match myExNonWords +\<\p*[^A-Za-z \t]\p*\>+ contains=@NoSpell
+"""syntax match myExNonWords +\<\p*[^A-Za-z \t]\p*\>+ contains=@NoSpell
 let g:pandoc#folding#level = 2
 let g:pandoc#folding#fdc = 4
 " need this to make tagbar work
-"let g:pandoc#filetypes#pandoc_markdown = 0
+let g:pandoc#filetypes#pandoc_markdown = 1 "default
 let g:pandoc#synatx#codeblock#embeds#langs = ['ruby', 'vim', 'python', 'r', 'json', 'c', 'julia', 'make', 'sh', 'latex']
 " }}}
 " vim-pandoc-after {{{
-let g:pandoc#after#modules#enabled = ["ultisnips"]
-let g:pandoc#after#modules#enabled = ["supertab", "ultisnips"]
-let g:pandoc#after#modules#enabled = ["supertab"]
+let g:pandoc#after#modules#enabled = ["supertab", "ultisnips", "nrrwrgn"]
 " }}}
 " not needed in i3
 " setlocal lines=38
@@ -77,8 +79,8 @@ function! MySpellLang()
   if g:myLang == 2 | setlocal spell spelllang=en_us | endif
   echo "language:" g:myLangList[g:myLang]
 endf
-"map <F7> :call MySpellLang()<CR>
-"imap <F7> <C-o>:call MySpellLang()<CR>
+map <F6> :call MySpellLang()<CR>
+imap <F6> <C-o>:call MySpellLang()<CR>
 nmap <F7> :GrammarousCheck<CR>
 nmap <F8> <Plug>grammarous-open-info-window<CR>
 
@@ -101,11 +103,6 @@ set complete+=s
 " I would rather use default: .,w,b,u,],i
 "set complete=.,b,u,]
 set complete+=kspell 
-
-"let maplocalleader='\'
-map <localleader>o :Voom pandoc<CR>
-map <localleader>oo :VoomToggle<CR>
-
 
 """ Abbreviation (Macros)
 source ~/.vim/keystrokes.vim

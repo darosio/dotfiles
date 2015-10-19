@@ -1,6 +1,8 @@
 set modelines=1	" modeline must be within first or last 1 line
 
 " TODO jedi =? supertab completion.python3 and K<pydoc
+" https://github.com/dhruvasagar/vim-table-mode/ works with pandoc
+" https://github.com/msprev/unite-bibtex
 
 
 " Set to auto read when a file is changed from the outside
