@@ -1,34 +1,5 @@
 set modelines=1	" modeline must be within first or last 1 line
 
-" jedi {{{
-" FIXME move these into ./after/ftplugin/python.vim
-" forse supertab non serve basta ctrl-space
-" To disable auto-complete on .
-let g:jedi#popup_on_dot = 0
-"let g:jedi#use_splits_not_buffers = "bottom"
-" }}}
-" Pytest {{{
-nmap <silent><Leader>rf <Esc>:Pytest file<CR>
-nmap <silent><Leader>rc <Esc>:Pytest class<CR>
-nmap <silent><Leader>rm <Esc>:Pytest method<CR>
-" }}}
-" virtualenv {{{
-let g:virtualenv_directory = '/home/dan/workspace/venvs'
-let g:virtualenv_auto_activate = 1
-let g:virtualenv_stl_format = '[%n]'
-"%{virtualenv#statusline()}
-" }}}
-" use Screen.vim for sending cmd to ipython
-vmap <CR> :ScreenSend<CR> <esc> "multiline
-nmap <CR> V :ScreenSend<CR>ej "multiline
-" configure jedi from my old CHECK TODO
-let g:jedi#auto_initialization = 0
-let g:jedi#pydoc = "K"
-" keybind: pydoc
-nnoremap <buffer> K <ESC>:call jedi#show_pydoc()<CR>
-"setlocal omnifunc=python3complete#Complete
-setlocal omnifunc=jedi#completions
-
 set tabstop=8
 set expandtab
 set shiftwidth=4
@@ -36,6 +7,28 @@ set softtabstop=4
 set textwidth=79
 set autoindent
 
+" jedi {{{
+let g:jedi#auto_initialization = 1
+let g:jedi#auto_vim_configuration = 1
+let g:jedi#popup_on_dot = 0         " To disable auto-complete on .
+let g:jedi#use_splits_not_buffers = "right"
+let g:jedi#popup_select_first = 1
+let g:jedi#show_call_signatures = 1
+"setlocal completeopt-=preview "prevent docstring split window
+"setlocal omnifunc=python3complete#Complete
+setlocal omnifunc=jedi#completions
+" }}}
+" Pytest {{{
+nmap <silent><Leader>rf <Esc>:Pytest file<CR>
+nmap <silent><Leader>rc <Esc>:Pytest class<CR>
+nmap <silent><Leader>rm <Esc>:Pytest method<CR>
+" }}}
+" virtualenv {{{
+" FIXME not needed?
+let g:virtualenv_directory = '/home/dan/workspace/venvs'
+let g:virtualenv_auto_activate = 1
+let g:virtualenv_stl_format = '[%n]'
+"%{virtualenv#statusline()}
 " Add the virtualenv's site-packages to vim path
 " works only for python2 and iseems not needed to pick up libraries
 " py py3 << EOF
@@ -48,5 +41,11 @@ set autoindent
 "     activate_this = os.path.join(project_base_dir, 'bin/activate_this.py')
 "     execfile(activate_this, dict(__file__=activate_this))
 " EOF
+" }}}
+
+" use Screen.vim for sending cmd to ipython
+vmap <CR> :ScreenSend<CR><esc>'>j "multiline
+nmap <CR> V :ScreenSend<CR>ej "multiline
+
 
 " vim:foldmethod=marker:foldlevel=0

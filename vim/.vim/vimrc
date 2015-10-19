@@ -1,5 +1,7 @@
 set modelines=1	" modeline must be within first or last 1 line
 
+" TODO jedi =? supertab completion.python3 and K<pydoc
+
 
 " Set to auto read when a file is changed from the outside
 set autoread
@@ -37,6 +39,7 @@ Plugin 'chrisbra/NrrwRgn'
 " R:
 Plugin 'ervandew/screen' "useful also for ipython
 Plugin 'jcfaria/Vim-R-plugin'
+" ref: http://manuals.bioinformatics.ucr.edu/home/programming-in-r/vim-r
 "download.file("http://www.lepem.ufc.br/jaa/vimr/vimcom_1.2-6.tar.gz",
 "              destfile = "vimcom_1.2-6.tar.gz")
 "install.packages("vimcom_1.2-6.tar.gz", type = "source", repos = NULL)
@@ -100,9 +103,6 @@ Plugin 'bling/vim-airline' "better than powerline
 "Plugin 'Lokaltog/vim-easymotion'
 """\\w move to word forwards
 """\\b move to word backwards
-Plugin 'ervandew/supertab.git' "@j @S
-" Ctrl-v Tab : when a real Tab is meant
-let g:SuperTabDefaultCompletionType = "context"
 Plugin 'majutsushi/tagbar' " ctags @sf and better than TagList (@S @L)
 " the silver searcher alternative to ctags and tagbar and ack.vim
 Plugin 'rking/ag.vim' "@S
@@ -167,6 +167,19 @@ Plugin 'scrooloose/nerdcommenter' " ,cc
 "UltiSnips @j
 " @j: Eclim, IndentLine, Delimitmate, vim-rooter
 Plugin 'SirVer/ultisnips'
+" Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
+let g:UltiSnipsExpandTrigger="<F10>"
+let g:UltiSnipsExpandTrigger="<s-tab>"
+let g:UltiSnipsJumpForwardTrigger="<c-b>"
+let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+
+" If you want :UltiSnipsEdit to split your window.
+let g:UltiSnipsEditSplit="vertical"
+Plugin 'ervandew/supertab.git' "@j @S
+" Ctrl-v Tab : when a real Tab is meant
+" useful to know: ":verbose imap <tab>"
+" currently use ultisnip completion
+let g:SuperTabDefaultCompletionType = "context"
 "XXBundle 'Shougo/neocomplete'  "still better then YouCompleteMe, which need
 "compilation"
 " Optional
@@ -191,9 +204,10 @@ Plugin 'tpope/vim-surround' " braces @S @sf``
 Plugin 'jiangmiao/auto-pairs' " braces
 " }}}
 
-" FIXME
 let mapleader=','
 let g:mapleader=','
+" vim help
+nmap <Leader>h :exe ":h ".expand("<cword>")<CR>
 
 " omni completion FIXME
 "autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
@@ -203,7 +217,6 @@ autocmd FileType c set omnifunc=ccomplete#Complete
 autocmd FileType css set omnifunc=csscomplete#CompleteCSS
 autocmd FileType php set omnifunc=phpcomplete#CompletePHP
 autocmd FileType xml set omnifunc=xmlcomplete#CompleteTags
-" autocmd FileType python setlocal completeopt-=preview
 
 set nocompatible    "disable vi"
 " this order fix a problem with csv
@@ -211,10 +224,8 @@ filetype plugin indent on " load filetype-specific plugin/indent file
 syntax enable
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set ttyfast		" faster redraw (with multiple windows)
-
 " Don't redraw while executing macros (good performance config)
 set lazyredraw
-
 " redraw screen
 nnoremap <leader>r <ESC>:redraw!<CR>
 
@@ -272,7 +283,7 @@ nnoremap ;w :w<CR>
 nnoremap ;q :q<CR>
 nnoremap <leader>qq :q!<CR>
 nmap <leader>wq :wq<CR>
-nnoremap ; :
+nmap ; :
 " Show trailing whitespace: <leader>ll
 set listchars=tab:>.,trail:·,eol:$,extends:#,nbsp:.
 nmap <silent> <leader>ll :set nolist!<CR>
@@ -310,8 +321,8 @@ imap <C-W> <C-O><C-W>
 " Close all the buffers
 map <leader>ba :1,1000 bd!<cr>
 " Close current buffer
-map <C-Q> :bd<CR>
-" Useful mappings for managing tabs
+nmap <Leader>q :bd<CR>
+" Useful mappings for managing tabs FIXME @check tab?
 map <leader>tn :tabnew<cr>
 map <leader>to :tabonly<cr>
 map <leader>tc :tabclose<cr>
@@ -387,9 +398,8 @@ set foldmethod=indent	" based on indent level (manual,expr,syntax,diff)
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """ Plugins:
 " FZF {{{
-nnoremap <buffer><nowait> <C-b> :Buffers<CR>
-nnoremap <C-b> :Buffers<CR>
-nnoremap <C-p> :Files<CR>
+noremap <nowait><Leader>b :Buffers<CR>
+nnoremap <nowait><Leader>f :Files<CR>
 "set rtp+=~/.fzf
 " Mapping selecting mappings
 nmap <leader><tab> <plug>(fzf-maps-n)

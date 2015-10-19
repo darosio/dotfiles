@@ -38,8 +38,9 @@ let g:pandoc#folding#fdc = 4
 let g:pandoc#synatx#codeblock#embeds#langs = ['ruby', 'vim', 'python', 'r', 'json', 'c', 'julia', 'make', 'sh', 'latex']
 " }}}
 " vim-pandoc-after {{{
-let g:pandoc#after#modules#enabled = ["supertab", "ultisnips"]
 let g:pandoc#after#modules#enabled = ["ultisnips"]
+let g:pandoc#after#modules#enabled = ["supertab", "ultisnips"]
+let g:pandoc#after#modules#enabled = ["supertab"]
 " }}}
 " not needed in i3
 " setlocal lines=38

@@ -51,12 +51,13 @@ let vimrplugin_vimpager = "vertical"
 set shiftwidth=4
 set tabstop=8
 " start R with ,r key
-map  ,r <Plug>RStart 
-vmap ,r <Plug>RStart
+map  <Leader>R <Plug>RStart 
+vmap <Leader>R <Plug>RStart
 " send selection to R with CR
 vmap <CR> <Plug>RDSendSelection 
 " send line to R with space bar
 nmap <CR> <Plug>RDSendLine
 " }}}
+nmap K <ESC>\rh
 
 " vim:foldmethod=marker:foldlevel=0
