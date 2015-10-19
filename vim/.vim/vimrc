@@ -42,6 +42,8 @@ Plugin 'chrisbra/NrrwRgn'
 Plugin 'ervandew/screen' "useful also for ipython
 Plugin 'jcfaria/Vim-R-plugin'
 " ref: http://manuals.bioinformatics.ucr.edu/home/programming-in-r/vim-r
+"
+" install.packages("setwidth")
 "download.file("http://www.lepem.ufc.br/jaa/vimr/vimcom_1.2-6.tar.gz",
 "              destfile = "vimcom_1.2-6.tar.gz")
 "install.packages("vimcom_1.2-6.tar.gz", type = "source", repos = NULL)

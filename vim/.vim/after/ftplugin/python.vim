@@ -25,7 +25,7 @@ nmap <silent><Leader>rm <Esc>:Pytest method<CR>
 " }}}
 " virtualenv {{{
 " FIXME not needed?
-let g:virtualenv_directory = '/home/dan/workspace/venvs'
+let g:virtualenv_directory = '/home/dan/.venvs'
 let g:virtualenv_auto_activate = 1
 let g:virtualenv_stl_format = '[%n]'
 "%{virtualenv#statusline()}
