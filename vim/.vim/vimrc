@@ -154,6 +154,7 @@ map <leader>ww <leader>wnd
 
 " Special_files:
 Plugin 'aklt/plantuml-syntax'
+" let g:plantuml_executable_script='java -jar c:\utils\plantuml\plantuml.jar'
 Plugin 'chrisbra/csv.vim'
 
 " Git:
@@ -253,6 +254,11 @@ runtime macros/matchit.vim
 set wildignore+=*.o,*.obj,.git,*.pyc
 set wildignore+=eggs/**
 set wildignore+=*.egg-info/**
+
+" make <F5> (Makefile)
+nnoremap <F5> :w<CR> :silent make<CR> :redraw!<CR>
+inoremap <F5> <Esc>:w<CR>:silent make<CR> :redraw!<CR>
+vnoremap <F5> :<C-U>:w<CR>:silent make<CR> :redraw!<CR>
 
 " Colors {{{
 " for solarized colors
@@ -453,12 +459,6 @@ let g:tagbar_type_r = {
         \ 'v:FunctionVariables',
     \ ]
 \ }
-" }}}
-" plantuml-syntax {{{
-" let g:plantuml_executable_script='java -jar c:\utils\plantuml\plantuml.jar'
-nnoremap <F5> :w<CR> :silent make<CR>
-inoremap <F5> <Esc>:w<CR>:silent make<CR>
-vnoremap <F5> :<C-U>:w<CR>:silent make<CR
 " }}}
 " neocomplete{{{
 " Disable AutoComplPop.
