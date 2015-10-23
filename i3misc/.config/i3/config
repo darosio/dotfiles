@@ -32,6 +32,10 @@ floating_modifier $mod
 # start a terminal
 bindsym $mod+Return exec urxvt &
 
+# VGA external monotor
+bindsym $mod+o exec xrandr --output VGA1 --auto --right-of LVDS1 &
+bindsym $mod+Shift+o exec xrandr --output VGA1 --off &
+
 # kill focused window
 bindsym $mod+q kill
 

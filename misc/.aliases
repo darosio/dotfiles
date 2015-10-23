@@ -136,7 +136,7 @@ rst2my_beamer() {
   pdflatex $fname.tex
 }
 alias a='a.py'
-alias vga_on='xrandr --output VGA1 --auto --above LVDS1'
+alias vga_ont='xrandr --output VGA1 --auto --above LVDS1'
 alias vga='xrandr --output VGA1 --auto --same-as LVDS1'
 alias vga_onr='xrandr --output VGA1 --auto --right-of LVDS1'
 alias vga_off='xrandr --output VGA1 --off'
