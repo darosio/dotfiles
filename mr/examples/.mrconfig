@@ -35,3 +35,6 @@ checkout = git clone 'https://github.com/rpappalax/python-project-template.git' 
 
 [0_python_scaffolds/pypa/sampleproject]
 checkout = git clone 'https://github.com/pypa/sampleproject.git' 'sampleproject'
+
+[PythonicPerambulations]
+checkout = git clone 'https://github.com/jakevdp/PythonicPerambulations.git' 'PythonicPerambulations'

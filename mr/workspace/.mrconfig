@@ -2,9 +2,6 @@
 [Web/molecularimaging]
 checkout = hg clone 'https://darosio@bitbucket.org/darosio/molecularimaging' 'molecularimaging'
 
-[Web/darosio.bitbucket.org]
-checkout = git clone 'git@bitbucket.org:darosio/darosio.bitbucket.org.git' 'darosio.bitbucket.org'
-
 [HIV_pipeline_mpba]
 checkout = git clone 'https://github.com/MPBA/generic.git' 'HIV_pipeline_mpba'
 
@@ -37,3 +34,9 @@ checkout = git clone 'git@bitbucket.org:darosio/tk-wip2015.git' 'tk-wip2015'
 
 [nimg]
 checkout = git clone 'git@bitbucket.org:darosio/nimg.git' 'nimg'
+
+[Web/darosio]
+checkout = git clone 'git@bitbucket.org:darosio/darosio.git' 'darosio'
+
+[Web/darosio/darosio.bitbucket.org]
+checkout = git clone 'git@bitbucket.org:darosio/darosio.bitbucket.org' 'darosio.bitbucket.org'
