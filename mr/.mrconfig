@@ -16,12 +16,12 @@ checkout = git clone 'git@bitbucket.org:darosio/dotfiles.git' '.dotfiles'
 #    git merge upstream/master
 #    git push origin master
 
-[.progs]
-checkout = 
-    git clone ssh://swan/~/.progs
-    cd $MR_REPO
-    git annex init
-    git_annex_sync
+#[.progs]
+#checkout = 
+#    git clone ssh://swan/~/.progs
+#    cd $MR_REPO
+#    git annex init
+#    git_annex_sync
 
 
 #[.progsoftware]

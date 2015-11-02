@@ -15,6 +15,7 @@ shopt -s autocd
 shopt -s checkwinsize
 alias diction='diction -s'
 # git annex
+alias mrp='mr --config $HOME/.mrconfig-progs'
 ga-init() {
     git init
     git annex init $1
