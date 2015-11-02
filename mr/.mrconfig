@@ -10,6 +10,11 @@ include = cat /usr/share/mr/vis
 
 [workspace/dotfiles]
 checkout = git clone 'git@bitbucket.org:darosio/dotfiles.git' '.dotfiles'
+zap =
+    git pull
+    git add .
+    git commit -m "updated `date`"
+    git push
 #adding remote upstream
 #zap = 
 #    git pull upstream

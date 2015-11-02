@@ -10,6 +10,7 @@ checkout =
     cd $MR_REPO
     git annex init $HOSTNAME
     git_annex_sync
+#git_annex_sync = git pull; git add .; git commit -m "updated `date -I`" 
 
 
 [.progsoftware]
