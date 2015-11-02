@@ -52,6 +52,7 @@ Plugin 'jcfaria/Vim-R-plugin'
 "install.packages("colorout_1.1-1.tar.gz", type = "source", repos = NULL)
 "~/.Rprofile if(interactive())library(...)
 " vim --servername VIM
+" press ,R
 
 "Plug 'lervag/vim-latex'
 "Plug 'wannesm/wmgraphviz.vim'
