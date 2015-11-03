@@ -1,0 +1,48 @@
+% linespacing
+\usepackage{setspace}
+\doublespacing
+% e.g. \textsuperscript
+\usepackage{xltxtra}
+%% linenumering
+%\usepackage{lineno}
+%\linenumbers
+% FONTS
+%\setmainfont{Times New Roman} % good for mag=1500 fontsize=11pt
+\setmainfont{TeX Gyre Termes}
+%\setmainfont{Nimbus Roman No9 L} % simply awful
+%% "Times New Roman", 
+%\setmainfont{Liberation Serif}
+%\setmainfont{FreeSerif}
+%\setmainfont{txtt}
+%\setmainfont{TeX Gyre Bonum} % I like it; very bold section headings
+%\setmainfont{Alegreya}
+% geometry (e.g. includefoot, nohead)
+% http://www.ctan.org/tex-archive/macros/latex/contrib/geometry
+\usepackage[a4paper,mag=1500,truedimen,margin=25truemm]{geometry}
+% new section in new page
+% http://www.ctan.org/tex-archive/macros/latex/contrib/titlesec/
+\usepackage{titlesec}
+   \newcommand{\sectionbreak}{\clearpage}
+% fancyheader
+\usepackage{fancyhdr}
+\pagestyle{fancy}   % plain
+% first clean both header and footer
+\fancyhf{} % \fancyhead{} \fancyfoot{}
+%\fancyfoot[LO]{\nouppercase{\rightmark}}
+%\pagenumbering{roman}
+\usepackage{lastpage}
+% FIXME
+\fancyfoot[LE,RO]{\scriptsize Page \thepage\ of {\color{black} \pageref{LastPage}} }
+% move line separator from top to bottom
+\renewcommand{\headrulewidth}{0.0pt}
+\renewcommand{\footrulewidth}{0.4pt}
+% FIXME
+%\newcommand{\TheAuthor}{}
+%\newcommand{\Author}[1]{\renewcommand{\TheAuthor}{#1}}
+%\lfoot{\TheAuthor}
+\lfoot{\scriptsize \it Paredes JM et al.}
+%\cfoot{\today}
+% math like \degree \celsius \perthousand and \ohm
+\usepackage{gensymb}
+% math ISO 31-0:1992 to ISO 31-13:1992
+\usepackage{fixmath}
