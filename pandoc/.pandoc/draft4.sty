@@ -4,11 +4,13 @@
 % e.g. \textsuperscript
 \usepackage{xltxtra}
 %% linenumering
-%\usepackage{lineno}
-%\linenumbers
+\usepackage{lineno}
+\linenumbers
 % FONTS
 %\setmainfont{Times New Roman} % good for mag=1500 fontsize=11pt
-\setmainfont{TeX Gyre Termes}
+%\setmainfont{Georgia}
+\setmainfont{Minion Pro} % aur/ttf-adobe-fonts
+%\setmainfont{TeX Gyre Termes}
 %\setmainfont{Nimbus Roman No9 L} % simply awful
 %% "Times New Roman", 
 %\setmainfont{Liberation Serif}
@@ -31,8 +33,7 @@
 %\fancyfoot[LO]{\nouppercase{\rightmark}}
 %\pagenumbering{roman}
 \usepackage{lastpage}
-% FIXME
-\fancyfoot[LE,RO]{\scriptsize Page \thepage\ of {\color{black} \pageref{LastPage}} }
+\fancyfoot[LE,RO]{\scriptsize Page \thepage\ of \pageref*{LastPage} }
 % move line separator from top to bottom
 \renewcommand{\headrulewidth}{0.0pt}
 \renewcommand{\footrulewidth}{0.4pt}
