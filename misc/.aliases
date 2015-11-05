@@ -14,6 +14,7 @@ shopt -s autocd
 # Line wrap on window resize
 shopt -s checkwinsize
 alias diction='diction -s'
+alias git-ever-existed='git log --pretty=format: --name-status | cut -f2- | sort -u'
 # git annex
 alias mrp='mr --config $HOME/.mrconfig-progs'
 ga-init() {

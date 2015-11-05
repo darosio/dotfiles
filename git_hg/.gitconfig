@@ -56,6 +56,7 @@
 	out = !git fetch && git log FETCH_HEAD..
 	in = !git fetch && git log ..FETCH_HEAD
 	lg = log --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr %an)%Creset' --abbrev-commit --date=relative
-    ls = log --stat --decorate
+    ls = ls-files
+
 [push]
 	default = simple
