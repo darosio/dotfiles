@@ -29,9 +29,6 @@ checkout = hg clone 'ssh://hg@bitbucket.org/darosio/tecan' 'tecan'
 [0_templates/cookiecutter-pypackage]
 checkout = git clone 'https://github.com/darosio/cookiecutter-pypackage.git' 'cookiecutter-pypackage'
 
-[tk-wip2015]
-checkout = git clone 'git@bitbucket.org:darosio/tk-wip2015.git' 'tk-wip2015'
-
 [nimg]
 checkout = git clone 'git@bitbucket.org:darosio/nimg.git' 'nimg'
 
@@ -40,3 +37,6 @@ checkout = git clone 'git@bitbucket.org:darosio/darosio.git' 'darosio'
 
 [Web/darosio/darosio.bitbucket.org]
 checkout = git clone 'git@bitbucket.org:darosio/darosio.bitbucket.org' 'darosio.bitbucket.org'
+
+[ms-jose]
+checkout = git clone 'git@bitbucket.org:darosio/ms-jose.git' 'ms-jose'
