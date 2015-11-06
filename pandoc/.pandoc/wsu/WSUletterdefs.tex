@@ -1,0 +1,105 @@
+% Define WSU official colors
+\usepackage[dvinames]{xcolor}
+\definecolor{WSUcrimson}{RGB}{152,30,50}
+\definecolor{WSUgray}{HTML}{5e6a71}
+
+% Measurements are taken directly from the guide
+\usepackage[top=2in,left=1.5in,bottom=0.5in,right=0.625in]{geometry}
+\usepackage{graphicx}
+\usepackage[colorlinks=false,
+            pdfborder={0 0 0},
+            ]{hyperref}
+\usepackage[absolute]{textpos}
+\usepackage{ifthen}
+\usepackage{soul}
+
+
+% --- For placement of the horizontal line
+\usepackage{tikz}
+\usetikzlibrary{calc}
+
+% --- A nice serif font (palatino), but not the prescribed nonfree ITC stone
+\usepackage[sc,osf]{mathpazo}
+\linespread{1.05}
+
+% Remove paragraph indentation
+\parindent0pt
+\setlength{\parskip}{0.8\baselineskip}
+\raggedright
+\pagestyle{empty}
+% Ensure consistency in the footer
+\urlstyle{sf}
+
+\providecommand\WSUfromname{Me Myselfovsky}
+\providecommand\WSUfromtitle{Assistant Professor}
+\providecommand\WSUfromdegree{Ph.D.}
+\providecommand\WSUfromdept{School of Electrical Engineering and Computer Science}
+\providecommand\WSUfromaddress{PO Box 642752, Pullman, WA 99164-2752}
+\providecommand\WSUfromtel{(509) 335-5555}
+\providecommand\WSUfromfax{(509) 335-6666}
+\providecommand\WSUfromemail{\url{me@eecs.wsu.edu}}
+\providecommand\WSUfromweb{\url{http://eecs.wsu.edu/~me}}
+\providecommand\WSUtoname{Dr.~Wiseman}
+\providecommand\WSUtoaddress{Department of Wisemen\\
+                            Wise State University \\
+                            Wisetown, Wise\ \ 12345-6789\\
+                            USA}
+\providecommand\WSUdate{\today}
+\providecommand\WSUopening{Dear \WSUtoname}
+\providecommand\WSUclosing{Sincerely}
+% Update this and the next line to the correct path
+%\providecommand\WSUsignaturefile{AleeSignatureVector}
+\providecommand\WSUsignaturefile{Garrisign.jpg}
+\providecommand\WSUlogofile{Header.jpg}
+\providecommand\WSUenclosure{}
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+
+\renewcommand{\footrulewidth}{0pt}
+\fancyfoot{}
+\fancyfoot[L]{%
+    {\footnotesize\color{WSUgray}\sffamily
+    \WSUfromaddress\\[-0.1\baselineskip]
+    \WSUfromtel\ \textbullet\ Fax: \WSUfromfax\ \textbullet\ \WSUfromemail\ \textbullet\ \WSUfromweb}\color{black}}
+
+\fancyhead{}
+\fancyhead[L]{%
+    \begin{textblock*}{2in}[0.3066,0.39](1.5in,1.33in)
+        \includegraphics[width=2in]{\WSUlogofile}
+    \end{textblock*}
+    \begin{textblock*}{6.375in}(1.5in,1.4in)   % 6.375=8.5 - 1.5 - 0.625
+        \sffamily
+        \hfill \color{WSUgray} \WSUfromdept
+        \\ \hfill \WSUfromname, \WSUfromdegree
+    \end{textblock*}
+    \begin{tikzpicture}[remember picture,overlay]
+        \draw[color=WSUcrimson,line width=0.7pt] (current page.north west)+(1.5in,-1.33in) -- ($(-0.625in,-1.33in)+(current page.north east)$);
+    \end{tikzpicture}}
+\renewcommand{\headrulewidth}{0pt}
+
+
+\AtBeginDocument{
+    % Text lines should be less than 6in long
+    \newgeometry{top=2in,left=1.5in,bottom=1.2in,right=1in}
+
+    \WSUdate
+    \bigskip
+
+    \WSUtoname\ifthenelse{\equal{\WSUtoname}{}}{}{\\}
+    \WSUtoaddress
+    \bigskip
+
+    \WSUopening\par
+    }
+
+\AtEndDocument{
+    \par\vspace{2ex}
+    \WSUclosing,
+
+    \ifthenelse{\equal{\WSUsignaturefile}{}}{\bigskip\bigskip}{\includegraphics[width=1.2in]{\WSUsignaturefile}\\[-0.2\baselineskip]}
+
+    \WSUfromname \\
+    \WSUfromtitle\ifthenelse{\equal{\WSUfromtitle}{}}{}{\\}
+    \WSUenclosure
+	}
