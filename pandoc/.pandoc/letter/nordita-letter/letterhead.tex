@@ -1,0 +1,69 @@
+% =============================================================================
+%
+% LaTeX-Macro for a letter with NORDITA letterhead
+%
+% Versions 1.0-3.0 -- Axel Brandenburg
+% Version 4.0      -- Hans Mühlen 2007-10-26
+%
+% -----------------------------------------------------------------------------
+%
+% Required packages:
+%   graphicx
+%   ifthen
+%
+% Declares the following commands:
+%   \norletterhead{<eps or pdf>}
+%   \noropening{<>}
+%   \norclosing{<>}
+%   \norsignature{<>}
+%   \norpostscript{<>}
+%
+% Declares the following environments:
+%   --
+%
+% =============================================================================
+
+%%% PREAMBLE
+
+\documentclass[12pt,a4paper]{letter} 
+\pagestyle{empty}
+\usepackage{ifthen}
+\usepackage{graphicx}
+
+% -----------------------------------------------------------------------------
+
+%%% MARGINS ETC.
+
+\setlength{\textwidth}{160mm}		% A4 with 35mm margin	
+\setlength{\textheight}{235mm}		% A4
+\setlength{\hoffset}{-1in}          % To compensate default margins		
+\setlength{\voffset}{-1in}          % To compensate default margins			
+\setlength{\topmargin}{-1.8in}      % To compensate topmargin of letter pagestyle 		
+\setlength{\oddsidemargin}{35mm}
+\setlength{\evensidemargin}{35mm}
+
+% -----------------------------------------------------------------------------
+
+%%% DECLARATIONS
+
+\newcommand{\norletterhead}[1] {  
+  \ifthenelse{\equal{#1}{pdf}}
+    {\parbox{185mm}{\hspace{-20mm} 
+     \includegraphics{nordita_letterhead.pdf} \vspace*{15mm}}}{}
+  \ifthenelse{\equal{#1}{eps}}
+    {\parbox{185mm}{\hspace{-20mm}
+     \includegraphics{nordita_letterhead.eps} \newline\newline\newline}}{}
+  \ifthenelse{\equal{#1}{tex}}
+    {\vspace*{0mm} \input{nordita_letterhead.tex} \vspace*{15mm}}{}
+}
+
+\newcommand{\noropening}[1]
+  {\opening{\vspace*{2\parskip} #1}}
+\newcommand{\norclosing}[1]
+  {\closing{\hspace*{10mm}\parbox{100mm}{#1}}}
+\newcommand{\norsignature}[1]
+  {\signature{\vspace*{2\parskip}\hspace*{10mm}\parbox{140mm}{#1}}}
+\newcommand{\norpostscript}[1]
+  {\vspace*{2\parskip} \ps #1}
+
+% =============================================================================

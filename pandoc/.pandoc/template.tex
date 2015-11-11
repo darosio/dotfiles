@@ -1,0 +1,46 @@
+\documentclass[a4paper,11pt]{letter}
+\usepackage{graphicx}
+\addtolength{\voffset}{-80mm}
+\begin{document}
+
+\address{ \begin{minipage}[]{\textwidth}
+    \begin{minipage}[]{0.22\textwidth}
+    \includegraphics[width=\textwidth]{Header.ps}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.78\textwidth}
+    \begin{tabular}{lr}
+\multicolumn{2}{c}{\Large  Biochemisches Institut der Universit\"at Z\"urich}\\
+    Winterthurerstrasse 190  & CH-8057, Z\"{u}rich\\
+    \\
+    \multicolumn{2}{c}{\large Arosio Daniele}\\
+    Tel: (01) 6355568  & e-mail: arosio@bioc.unizh.ch\\
+    \end{tabular}
+    \\
+    \end{minipage}
+    \end{minipage} \vspace{15mm}}
+
+\signature{Daniele Arosio}
+
+
+\begin{letter}{ Dr.tudent \\
+                Somewhere Street \\
+                Over-The-Rainbow City, CA 99999 }
+
+\cc{Dr.~Chairman \\ Dr.~Advisor \\ Yo Mama}
+%\opening{Dear Dr. student,}
+
+$body$
+
+$if(closing)$
+\closing{$closing$}
+$endif$
+
+
+\encl{gaudy certificate (i.e., your diploma)}
+
+\ps{P.S. need to explicitly type P.S. here.}
+
+\end{letter}
+
+\end{document}
