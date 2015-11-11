@@ -42,10 +42,16 @@ let g:virtualenv_stl_format = '[%n]'
 "     execfile(activate_this, dict(__file__=activate_this))
 " EOF
 " }}}
+" vim-flake8 {{{
+map <buffer> <F8> :call Flake8()<CR>
+let g:flake8_show_in_file=1
+let g:flake8_show_in_gutter=1
+" }}}
 
 " use Screen.vim for sending cmd to ipython
-vmap <CR> :ScreenSend<CR><esc>'>j "multiline
-nmap <CR> V :ScreenSend<CR>ej "multiline
+" <CR> conflict with vim-flake8
+vmap <C-CR> :ScreenSend<CR><esc>'>j "multiline
+nmap <C-CR> V :ScreenSend<CR>ej "multiline
 
 
 " vim:foldmethod=marker:foldlevel=0
