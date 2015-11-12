@@ -163,7 +163,7 @@ bar {
     #output            LVDS1
     #output            HDMI1
     status_command    i3status
-    position          top
+    position          bottom
     mode              hide
     workspace_buttons yes
     #tray_output       none
