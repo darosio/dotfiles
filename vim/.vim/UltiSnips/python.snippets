@@ -4,3 +4,22 @@ import scipy
 import pandas as pd
 import matplotlib.pyplot as plt
 endsnippet
+
+snippet docopt "docopt minimum boilerplate" b
+"""
+Description
+
+Usage:
+    table_marco2dan.py <marco_table>
+
+"""
+from docopt import docopt
+
+def main():
+    pass
+
+if __name__ == '__main__':
+    __version__ = "0.0.1"
+    args = docopt(__doc__, version=__version__)
+    main()
+endsnippet
