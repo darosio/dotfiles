@@ -40,6 +40,7 @@ alias fiji='~/.progs/Fiji.app/ImageJ-linux64'
 alias g='git st; git in; git out'
 #ranger shellcd
 rr() {
+    export LESSOPEN='|/usr/bin/lesspipe.sh %s'
     if [ -z "$RANGER_LEVEL" ]
     then
         ranger
