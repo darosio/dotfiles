@@ -2,7 +2,18 @@ snippet np "pylab import" b
 import numpy as np
 import scipy
 import pandas as pd
+import matplotlib as mpl
 import matplotlib.pyplot as plt
+endsnippet
+
+snippet ipython "pylab import" b
+%load_ext autoreload
+%autoreload 2
+%matplotlib inline
+inline_rc = dict(mpl.rcParams)
+#import seaborn.apionly as sns
+#seaborn.reset_orig()
+#mpl.rcParams.update(inline_rc)
 endsnippet
 
 snippet docopt "docopt minimum boilerplate" b
