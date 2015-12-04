@@ -38,3 +38,6 @@ checkout = git clone 'https://github.com/pypa/sampleproject.git' 'sampleproject'
 
 [PythonicPerambulations]
 checkout = git clone 'https://github.com/jakevdp/PythonicPerambulations.git' 'PythonicPerambulations'
+
+[sima]
+checkout = git clone 'https://github.com/losonczylab/sima' 'sima'
