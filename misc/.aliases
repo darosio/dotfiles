@@ -1,4 +1,17 @@
 export PATH=$PATH:~/workspace/HIV_pipeline_mpba/HIV/library_name/
+# for data management in annexes
+copythistree() { 
+    find . -type d -exec mkdir -p $1/{} \;
+    }
+# $1: folder in analyses
+# $2: nimg name of the link
+# $3: optional description e.g. adaptive_22
+lndate() {
+    dir=$1/`date -I`
+    if [[ $3 ]]; then dir=${dir}_$3; fi
+    mkdir $dir
+    ln -s $dir $2
+    }
 
 # pacman helper
 alias paclist-time='expac --timefmt="%Y-%m-%d %T" "%l\t%n" | sort'

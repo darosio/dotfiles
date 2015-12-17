@@ -36,7 +36,8 @@
 
 [alias]
     wd = diff --color-words='[^[:space:]]|(:alnum:|UTF_8_GUARD)+' --unified=1 --no-ext-diff
-    wdiff = diff --word-diff=color --unified=1
+    #wdiff = diff --word-diff=color --unified=1
+    wdiff = diff --word-diff=color --unified=0
     ydiff = difftool --tool=ydiff
 	d = difftool
     # require dwdiff
