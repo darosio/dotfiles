@@ -256,6 +256,11 @@ set autochdir
 set fileencoding=utf-8
 set encoding=utf-8
 autocmd FileType plaintext setlocal spell spelllang=en_us,it_it color desert
+for d in glob('~/.vim/spell/*.add', 1, 1)
+    if filereadable(d) && (!filereadable(d . '.spl') || getftime(d) > getftime(d . '.spl'))
+        silent exec 'mkspell! ' . fnameescape(d)
+    endif
+endfor
 " I 'd like to understand this
 runtime macros/matchit.vim
 
