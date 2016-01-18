@@ -146,7 +146,7 @@ Plugin 'rhysd/vim-grammarous'
 Plugin 'junegunn/vim-easy-align'
 map <F3> :exe ":!dict ".expand("<cword>")<CR>
 map <F4> :exe ":!wn ".expand("<cword>") " -antsa"<CR>
-map <F4> :exe ":!wn ".expand("<cword>") " -synsn -synsv -synsa -synsr"<CR>
+map <F4> :exe ":!wn ".expand("<cword>") " -synsn -synsv -synsa -synsr -antsn -antsv -antsa -antsr"<CR>
 " Passive voice and such
 Plugin 'jamestomasino/vim-writingsyntax'
 nnoremap <leader>P :setf writing<CR>"
@@ -215,6 +215,7 @@ Plugin 'jmcantrell/vim-virtualenv'
 Plugin 'tpope/vim-surround' " braces @S @sf``
 " @H SimplePairs
 Plugin 'jiangmiao/auto-pairs' " braces
+"Plugin 'raimondi/delimitmate' " braces
 " }}}
 
 let mapleader=','
