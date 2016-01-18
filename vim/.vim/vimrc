@@ -191,6 +191,12 @@ let g:SuperTabDefaultCompletionType = "context"
 "compilation"
 " Optional
 Plugin 'honza/vim-snippets'
+" Unite
+Plugin 'Shougo/unite.vim'
+Plugin 'msprev/unite-bibtex'
+let g:unite_bibtex_bib_files=['/home/dan/Sync/00-papers.bib']
+let g:unite_bibtex_cache_dir='/home/dan/.temp_dir'
+
 """ Python
 " pydoc.vim @S @P
 " unite @P, but I use fzf

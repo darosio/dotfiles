@@ -26,6 +26,7 @@
 % http://www.ctan.org/tex-archive/macros/latex/contrib/titlesec/
 %\usepackage{titlesec} % not working with pandoc-1.16
    %\newcommand{\sectionbreak}{\clearpage}
+\usepackage[dvipsnames]{xcolor}
 % fancyheader
 \usepackage{fancyhdr}
 \pagestyle{fancy}   % plain
@@ -43,7 +44,7 @@
 %\newcommand{\Author}[1]{\renewcommand{\TheAuthor}{#1}}
 %\lfoot{\TheAuthor}
 \lfoot{\scriptsize \it Paredes JM et al.}
-%\cfoot{\today}
+\cfoot{\color{Gray}\tiny\today}
 % math like \degree \celsius \perthousand and \ohm
 \usepackage{gensymb}
 % math ISO 31-0:1992 to ISO 31-13:1992
