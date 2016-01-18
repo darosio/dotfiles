@@ -1,7 +1,9 @@
 # vim
 #vim/.netrwhist
-vim/bundle/*
-vim/thesaurus/*
+# they are links anyway
+#vim/bundle/*
+#vim/thesaurus/*
+*/.vim/spell/en.utf-8.add.spl
 
 # anacron
 anacron/.anacron/spool/
