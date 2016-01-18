@@ -17,7 +17,7 @@ let g:wordy#ring = [
   \ 'vague-time',
   \ ]
 " to cycle among defined rings
-nnoremap <silent> K :NextWordy<cr>
+nnoremap <silent><F8> :NextWordy<cr>
 " }}}
 " languagetool {{{
 let g:languagetool_jar='/usr/share/java/languagetool/languagetool-commandline.jar'
