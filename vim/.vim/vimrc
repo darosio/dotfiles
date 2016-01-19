@@ -2,7 +2,11 @@ set modelines=1	" modeline must be within first or last 1 line
 
 " TODO jedi =? supertab completion.python3 and K<pydoc
 " https://github.com/dhruvasagar/vim-table-mode/ works with pandoc
+" or see screecast for tabular
 " https://github.com/msprev/unite-bibtex
+" slimux (vim_slime) alternative to vim-r vim-ipython ...
+" tmux?...
+"http://vimawesome.com/
 
 
 " Set to auto read when a file is changed from the outside
@@ -17,6 +21,10 @@ inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 " tab switch
 "nnoremap <Tab> <ESC>:tabn<CR>
 " :tabn :bdelete
+"
+" diff
+" diffchar.vim
+" vim-diff-enhanced  vim-unified-diff
 " Bundle {{{
 filetype off                   " required!
 call vundle#rc()
@@ -98,6 +106,7 @@ Plugin 'sjl/badwolf'
 Plugin 'altercation/vim-colors-solarized'
 Plugin 'vim-scripts/wombat256.vim'
 Plugin 'nanotech/jellybeans.vim'
+Plugin 'junegunn/seoul256.vim'
 
 " General:
 Plugin 'scrooloose/nerdtree' " @j @S
@@ -127,10 +136,7 @@ nmap ,m :ShowMarksOnce<CR>
 nmap ,M :DoShowMarks<CR>
 
 " Writing_Prose:
-Plugin 'beloglazov/vim-online-thesaurus'
-nnoremap <leader>k :OnlineThesaurusCurrentWord<CR>
 Plugin 'vimoutliner/vimoutliner'
-Plugin 'reedes/vim-wordy'
 " Plugin 'reedes/vim-pencil'
 " Plugin 'reedes/vim-wheel'
 Plugin 'vim-pandoc/vim-pandoc'
@@ -144,14 +150,23 @@ au BufRead,BufNewFile *.Rmd setfiletype markdown
 Plugin 'rhysd/vim-grammarous'
 "Plugin 'goldfeld/criticmarkup-vim'
 Plugin 'junegunn/vim-easy-align'
-map <F3> :exe ":!dict ".expand("<cword>")<CR>
-map <F4> :exe ":!wn ".expand("<cword>") " -antsa"<CR>
-map <F4> :exe ":!wn ".expand("<cword>") " -synsn -synsv -synsa -synsr -antsn -antsv -antsa -antsr"<CR>
 " Passive voice and such
+Plugin 'reedes/vim-wordy'
 Plugin 'jamestomasino/vim-writingsyntax'
-nnoremap <leader>P :setf writing<CR>"
+nnoremap <F3> :setf writing<CR>"
+Plugin 'davidbeckingsale/writegood.vim'
+nmap <F4> :WritegoodToggle<CR>
+Plugin 'victormours/better-writing.vim'
+" set syntax=better-writing
+
+"Plugin 'reedes/vim-lexical'
+Plugin 'beloglazov/vim-online-thesaurus'
+nnoremap ,t :OnlineThesaurusCurrentWord<CR>
 Plugin 'vim-scripts/Wordnet.vim'
-map <leader>ww <leader>wnd
+"good enough using C-t C-c-c for artha, goldendict
+nmap ,w bve <C-t>
+nmap ,ww :exe ":!wn ".expand("<cword>") " -synsn -synsv -synsa -synsr -antsn -antsv -antsa -antsr"<CR>
+map ,wn <leader>wnd
 
 " Special_files:
 Plugin 'aklt/plantuml-syntax'
@@ -218,6 +233,25 @@ Plugin 'jiangmiao/auto-pairs' " braces
 "Plugin 'raimondi/delimitmate' " braces
 " }}}
 
+" vim-wordy {{{
+let g:wordy#ring = [
+  \ 'weak',
+  \ 'weasel',
+  \ 'puffery',
+  \ 'redundant',
+  \ 'problematic',
+  \ ['being', 'passive-voice', ],
+  \ ['business-jargon', 'art-jargon',],
+  \ ['colloquial', 'idiomatic', ],
+  \ 'similies',
+  \ 'said-synonyms',
+  \ 'contractions',
+  \ 'opinion',
+  \ 'vague-time',
+  \ ]
+" to cycle among defined rings
+nmap <silent><F3><F4> :NextWordy<cr>
+" }}}
 let mapleader=','
 let g:mapleader=','
 " vim help
