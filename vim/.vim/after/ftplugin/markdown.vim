@@ -40,7 +40,6 @@ setlocal formatoptions=1
 setlocal noexpandtab 
 map j gj 
 map k gk
-" setlocal spell spelllang=en_us,it 
 set thesaurus+=/home/dan/.vim/thesaurus/mthesaur.txt
 set formatprg=par
 setlocal wrap 
@@ -48,20 +47,23 @@ setlocal linebreak
 "endfu 
 "com! WP call WordProcessorMode()
 
+" SPELL
 "switch spellcheck languages
 let g:myLang = 0
-let g:myLangList = [ "nospell", "it_it", "en_us" ]
+let g:myLangList = [ "nospell", "it", "en_us" ]
 function! MySpellLang()
   "loop through languages
   let g:myLang = g:myLang + 1
   if g:myLang >= len(g:myLangList) | let g:myLang = 0 | endif
   if g:myLang == 0 | set nospell | endif
-  if g:myLang == 1 | setlocal spell spelllang=it_it | endif
+  if g:myLang == 1 | setlocal spell spelllang=it | endif
   if g:myLang == 2 | setlocal spell spelllang=en_us | endif
   echo "language:" g:myLangList[g:myLang]
 endf
+"zg		add word in ~.vim/spell
 map <F6> :call MySpellLang()<CR>
 imap <F6> <C-o>:call MySpellLang()<CR>
+
 nmap <F7> :GrammarousCheck<CR>
 nmap <F8> <Plug>grammarous-open-info-window<CR>
 
@@ -79,8 +81,8 @@ noremap Q gqap
 nnoremap \s ea<C-X><C-S>
 nnoremap \t ea<C-X><C-T>
 
-"zg		add word in ~.vim/spell
-set complete+=s
+" COMPLETE
+"set complete+=s "use thesaurus and was doing a lot of confusion"
 " I would rather use default: .,w,b,u,],i
 "set complete=.,b,u,]
 set complete+=kspell 

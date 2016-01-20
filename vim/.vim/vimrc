@@ -289,7 +289,7 @@ set autochdir
 " file handling
 set fileencoding=utf-8
 set encoding=utf-8
-autocmd FileType plaintext setlocal spell spelllang=en_us,it_it color desert
+
 for d in glob('~/.vim/spell/*.add', 1, 1)
     if filereadable(d) && (!filereadable(d . '.spl') || getftime(d) > getftime(d . '.spl'))
         silent exec 'mkspell! ' . fnameescape(d)
@@ -471,7 +471,16 @@ imap <c-x><c-j> <plug>(fzf-complete-file-ag)
 imap <c-x><c-l> <plug>(fzf-complete-line)
 
 " Advanced customization using autoload functions
-inoremap <expr> <c-x><c-k> fzf#vim#complete#word({'left': '15%'})
+"inoremap <expr> <c-x><c-k> fzf#vim#complete#word({'left': '15%'})
+function! s:make_sentence(lines)
+  return substitute(join(a:lines), '^.', '\=toupper(submatch(0))', '').'.'
+endfunction
+inoremap <expr> <c-x><c-s> fzf#complete({
+  \ 'source':  'cat /usr/share/dict/words',
+  \ 'reducer': function('<sid>make_sentence'),
+  \ 'options': '--multi --reverse --margin 15%,0',
+  \ 'left':    20})
+
 "}}}
 " airline {{{
 " Enable the list of buffers 
