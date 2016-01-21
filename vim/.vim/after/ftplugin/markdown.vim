@@ -82,6 +82,8 @@ nnoremap \s ea<C-X><C-S>
 nnoremap \t ea<C-X><C-T>
 
 " COMPLETE
+" http://vim.wikia.com/wiki/Dictionary_completions
+" @ponder https://github.com/reedes/vim-lexical
 "set complete+=s "use thesaurus and was doing a lot of confusion"
 " I would rather use default: .,w,b,u,],i
 "set complete=.,b,u,]
