@@ -1,14 +1,14 @@
 <config>
  <paths>
-  <path recursive="1">/home/dan/.progsoftware/dict_/big</path>
-  <path recursive="1">/home/dan/.progsoftware/dict_/learner</path>
-  <path recursive="1">/home/dan/.progsoftware/dict_/special</path>
-  <path recursive="1">/home/dan/.progsoftware/dict_/thesaurus</path>
-  <path recursive="0">/home/dan/.progsoftware/dict_/WordNet_3.0</path>
-  <path recursive="0">/home/dan/.progsoftware/dict_/stardict-Oxford_Guide_to_British_and_American_Culture-2.4.2</path>
+  <path recursive="1">/home/dan/.goldendict/dict_/big</path>
+  <path recursive="1">/home/dan/.goldendict/dict_/learner</path>
+  <path recursive="1">/home/dan/.goldendict/dict_/special</path>
+  <path recursive="1">/home/dan/.goldendict/dict_/thesaurus</path>
+  <path recursive="0">/home/dan/.goldendict/dict_/WordNet_3.0</path>
+  <path recursive="0">/home/dan/.goldendict/dict_/stardict-Oxford_Guide_to_British_and_American_Culture-2.4.2</path>
  </paths>
  <sounddirs>
-  <sounddir icon="" name="voices">/home/dan/.progsoftware/dict_/voices</sounddir>
+  <sounddir icon="" name="voices">/home/dan/.goldendict/dict_/voices</sounddir>
  </sounddirs>
  <dictionaryOrder id="0" name="">
   <dictionary name="Oxford Guide to British and American Culture (En-En)">64d97d1cdf6e56004f6bb5c51e0c84c2</dictionary>
@@ -87,7 +87,7 @@
    <mutedDictionaries/>
   </group>
  </groups>
- <hunspell dictionariesPath="/home/dan/.progsoftware/dict_/morphology/en_US_1.0">
+ <hunspell dictionariesPath="/home/dan/.goldendict/dict_/morphology/en_US_1.0">
   <enabled>en_US</enabled>
  </hunspell>
  <transliteration>
