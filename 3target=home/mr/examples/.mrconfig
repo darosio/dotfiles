@@ -41,3 +41,12 @@ checkout = git clone 'https://github.com/jakevdp/PythonicPerambulations.git' 'Py
 
 [sima]
 checkout = git clone 'https://github.com/losonczylab/sima' 'sima'
+
+[1_dotfiles/dotfile-example]
+checkout = git clone 'https://github.com/lkraav/dotfiles' 'dotfile-example'
+
+[1_dotfiles/dot_config_examples/centurion]
+checkout = hg clone 'https://bitbucket.org/jasonwryan/centurion' 'centurion'
+
+[1_dotfiles/dot_config_examples/shiv]
+checkout = hg clone 'https://bitbucket.org/jasonwryan/shiv' 'shiv'
