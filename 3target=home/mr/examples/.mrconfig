@@ -50,3 +50,6 @@ checkout = hg clone 'https://bitbucket.org/jasonwryan/centurion' 'centurion'
 
 [1_dotfiles/dot_config_examples/shiv]
 checkout = hg clone 'https://bitbucket.org/jasonwryan/shiv' 'shiv'
+
+[pandoc-letter]
+checkout = git clone 'https://github.com/aaronwolen/pandoc-letter.git' 'pandoc-letter'
