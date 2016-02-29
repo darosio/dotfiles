@@ -37,7 +37,7 @@ ga-init() {
     git add .
     git commit -m 'inizialization'
 }
-alias ga='git annex'
+alias ga='git-annex'
 ga-dup() {
     git annex find --include '*' --format='${file} ${escaped_key}\n' | \
         sort -k2 | uniq --all-repeated=separate -f1 | sed 's/ [^ ]*$//'
@@ -108,7 +108,7 @@ alias vi='vim'
 alias viw='vim -c "match DiffDelete /\[-.\{-}-]/" -c "2match DiffAdd /{+.\{-}+}/"'
 alias o='xdg-open $@'
 alias nb='ipython notebook --pylab inline'
-alias nb='jupyther notebook'
+alias nb='jupyter notebook'
 alias ipythonp='ipython --pylab=inline'
 alias qpy='ipython qtconsole --pylab'
 alias e='gvim'
