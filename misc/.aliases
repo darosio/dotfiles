@@ -49,7 +49,6 @@ countfiles() {
     find . -type d | while read DIR; do
     ls -A $DIR | echo $DIR $(wc -w);done
 }
-alias fiji='~/.progs/Fiji.app/ImageJ-linux64'
 alias g='git st; git in; git out'
 #ranger shellcd
 rr() {
@@ -88,6 +87,8 @@ source /usr/share/bash-completion/completions/hg
 alias ligplus='java -jar ~/.progs/LigPlus/LigPlus.jar'
 alias ape='~/.progs/ApE.vfs/tclkit-linux-x86 ~/.progs/ApE.vfs/main.tcl'
 alias serialcloner='~/.progs/SerialCloner2-6/SerialCloner2.6.1'
+alias fiji='~/.progs/Fiji.app/ImageJ-linux64'
+alias icy='java -jar .progs/icy/updater.jar'
 export TERMINAL=urxvt
 #avoid duplicates in history
 export HISTCONTROL=ignoredups
@@ -266,11 +267,6 @@ bind -x '"\C-l":ls -lh'
 #echo -e "$RED Attenzione \e[0m"
 export RED="\e[01;31m"
 
-fj() {
- cd ~/Fiji.app
- ./fiji-linux
-}
-
 alias qfn='firefox -qfn'
 
 2up() {
@@ -301,6 +297,5 @@ pdf_myReduce2() {
 #shopt -s cdspell #nocaseglob
 #stop beeping
 #setterm -blength 0
-alias icy='java -jar .progs/icy/updater.jar'
 alias ww='xfce4-panel --disable-wm-check'
 export MAKEFLAGS='-j4'

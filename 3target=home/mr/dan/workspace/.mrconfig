@@ -23,9 +23,6 @@ checkout = git clone 'git@bitbucket.org:darosio/prtecan.git' 'prtecan'
 [platereaders/datan]
 checkout = hg clone 'ssh://hg@bitbucket.org/darosio/datan' 'datan'
 
-[platereaders/tecan]
-checkout = hg clone 'ssh://hg@bitbucket.org/darosio/tecan' 'tecan'
-
 [0_templates/cookiecutter-pypackage]
 checkout = git clone 'https://github.com/darosio/cookiecutter-pypackage.git' 'cookiecutter-pypackage'
 
@@ -40,3 +37,6 @@ checkout = git clone 'git@bitbucket.org:darosio/darosio.bitbucket.org' 'darosio.
 
 [ms-jose]
 checkout = git clone 'git@bitbucket.org:darosio/ms-jose.git' 'ms-jose'
+
+[platereaders/prenspire]
+checkout = git clone 'git@bitbucket.org:darosio/prenspire.git' 'prenspire'
