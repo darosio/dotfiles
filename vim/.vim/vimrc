@@ -32,6 +32,8 @@ call vundle#rc()
 " Next:
 " NrrwRgn
 Plugin 'chrisbra/NrrwRgn'
+"Plugin 'prophittcorey/vim-t'
+Plugin 'vim-scripts/tasklist.vim'
 " TaskList
 " VimPDB "@L
 "

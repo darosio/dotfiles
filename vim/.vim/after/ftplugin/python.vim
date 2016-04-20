@@ -47,6 +47,9 @@ map <buffer> <F8> :call Flake8()<CR>
 let g:flake8_show_in_file=1
 let g:flake8_show_in_gutter=1
 " }}}
+" coveragepy {{{
+map <buffer> <F7> :Coveragepy report<CR>
+" }}}
 
 " use Screen.vim for sending cmd to ipython
 " <CR> conflict with vim-flake8

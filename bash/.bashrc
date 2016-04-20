@@ -3,6 +3,7 @@
 #
 
 PATH=$PATH:$HOME/.progs/git-annex.linux
+PATH="$(ruby -e 'print Gem.user_dir')/bin:$PATH"
 export PATH
 
 # If not running interactively, don't do anything
