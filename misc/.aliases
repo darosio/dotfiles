@@ -183,10 +183,9 @@ alias bigcp='rsync -Phrltz'   #pg z -XH
 # --no-compress as there's no lack of bandwidth between local devices
 # --progress so I can see the progress of large files (optional)
 ## alias rm='trash-put'
-alias svigolana='xterm -fn 9x15 -bg lightgreen -e /usr/bin/ssh -i ~/.ssh/dan@sterzing-2013-06-03 -p 23456 192.168.10.110 &'
 alias svigolana='urxvt -bg "#111020" -e ssh -i ~/.ssh/dan@sterzing-2013-06-03 -p 23456 192.168.10.110 &'
-alias svigolana='urxvt -bg "#111020" -e ssh -i ~/.ssh/dan@sterzing-2013-06-03 -p 23456 192.168.1.10 &'
-alias vigolana-data='sshfs -p 23456 192.168.1.10:/data /media/vigolana/ -o IdentityFile=$HOME/.ssh/dan@sterzing-2013-06-03'
+alias svigolana='urxvt -bg "#111020" -e ssh -i ~/.ssh/dan@sterzing-2013-06-03 -p 23456 vigolana &'
+alias vigolana-data='sshfs -p 23456 vigolana:/data /media/vigolana/ -o IdentityFile=$HOME/.ssh/dan@sterzing-2013-06-03'
 
 alias mmarzola='sshfs -p 23456 mmedia@marzola:/home/MM /media/marzola-mm'
 alias smarzola='urxvt -bg "#111020" -e ssh -i .ssh/dan@hunza-2013-06-03 -p 23456 -l mmedia 192.168.1.10 &'
