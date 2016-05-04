@@ -69,7 +69,8 @@ export EDITOR='vim'
 export FZF_DEFAULT_OPTS="-e -m --sort 10000"
 #export FZF_DEFAULT_COMMAND='ag -l -g ""'
 #source /etc/profile.d/fzf.sh
-source /etc/profile.d/fzf.bash
+#source /etc/profile.d/fzf.bash
+source /usr/share/fzf/fzf.bash
 source /etc/profile.d/fzf-extras.bash
 #TODO open filemanager after searching for file or dir
 sf() {
