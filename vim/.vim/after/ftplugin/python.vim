@@ -1,7 +1,7 @@
 set modelines=1	" modeline must be within first or last 1 line
 
 set tabstop=8
-set expandtab
+set expandtab		" tabs are always spaces
 set shiftwidth=4
 set softtabstop=4
 set textwidth=79

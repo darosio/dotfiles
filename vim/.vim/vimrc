@@ -366,7 +366,6 @@ set tabstop=4		" number of visual spaces per TAB
 set softtabstop=4	" number of spaces per TAB when editing
 set shiftwidth=4	" number of spaces per indent
 set shiftround		" round indent to multiple of 'shiftwidth'
-set expandtab		" tabs are always spaces
 set smarttab		" backspace over tabs
 set copyindent		" copy indent structure, spaces and tabs from upper line
 
