@@ -60,10 +60,6 @@ rr() {
         exit
     fi
 }
-#$RANGERCD && unset RANGERCD && ranger-cd
-
-cd "$AUTOCD"
-
 function ranger-cd {                                                               
     tempfile="$(mktemp -t tmp.XXXXXX)"                                             
     /usr/bin/ranger --choosedir="$tempfile" "${@:-$(pwd)}"                         
@@ -76,8 +72,8 @@ function ranger-cd {
 # This binds Ctrl-O to ranger-cd:                                                  
 bind '"\C-o":"ranger-cd\C-m"' 
 
-# Bash's bind
-bind '"\e[11~": "urxvt &\n"'
+# Bash's binds to <F1>
+bind '"\e[24~": "urxvt &\n"'
 export EDITOR='vim'
 #alias of='o "`fzf -e`"'
 export FZF_DEFAULT_OPTS="-e -m --sort 10000"

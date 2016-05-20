@@ -23,6 +23,7 @@ GIT_PS1_SHOWSTASHSTATE=1
 GIT_PS1_SHOWUNTRACKEDFILES=1
 GIT_PS1_SHOWUPSTREAM=1
 [ -n "$RANGER_LEVEL" ] && PS1="$PS1"'(in ranger) '
+cd "$AUTOCD"
 
 
 # host specific bash_profile                                                    
