@@ -22,6 +22,8 @@ GIT_PS1_SHOWDIRTYSTATE=1
 GIT_PS1_SHOWSTASHSTATE=1
 GIT_PS1_SHOWUNTRACKEDFILES=1
 GIT_PS1_SHOWUPSTREAM=1
+[ -n "$RANGER_LEVEL" ] && PS1="$PS1"'(in ranger) '
+
 
 # host specific bash_profile                                                    
 [[ -r .bashrc.$HOSTNAME ]] && . .bashrc.$HOSTNAME
