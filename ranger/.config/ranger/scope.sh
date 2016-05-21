@@ -55,24 +55,27 @@ case "$extension" in
     rar)
         try unrar -p- lt "$path" && { dump | trim; exit 0; } || exit 1;;
     # PDF documents:
-    pdf)
-        try pdftotext -l 10 -nopgbrk -q "$path" - && \
-            { dump | trim | fmt -s -w $width; exit 0; } || exit 1;;
+	pdf)
+        try convert "$path"[0] "$cached" && exit 6; #|| exit 1;;
+		try pdftotext -l 10 -nopgbrk -q "$path" - && \
+			{ dump | trim | fmt -s -w $width; exit 0; } || exit 1;;
+	tif)
+		try convert "$path" -combine -auto-level -despeckle "$cached" && exit 6 || exit 1;;
     # BitTorrent Files
     torrent)
         try transmission-show "$path" && { dump | trim; exit 5; } || exit 1;;
-    # Libreoffice Files
-    odt|odp|ods)
-        try odt2txt "$path" && { dump | trim; exit 5; } || exit 1;;
-    doc|xls|ppt)
-        try catdoc "$path" && { dump | trim; exit 5; } || exit 1;;
-        #antiword "$path" | trim
     # HTML Pages:
     htm|html|xhtml)
         try w3m    -dump "$path" && { dump | trim | fmt -s -w $width; exit 4; }
         try lynx   -dump "$path" && { dump | trim | fmt -s -w $width; exit 4; }
         try elinks -dump "$path" && { dump | trim | fmt -s -w $width; exit 4; }
         ;; # fall back to highlight/cat if the text browsers fail
+    # Libreoffice Files
+    odt|odp|ods)
+        try odt2txt "$path" && { dump | trim; exit 5; } || exit 1;;
+    doc|xls|ppt)
+        try catdoc "$path" && { dump | trim; exit 5; }
+        antiword "$path" | trim;;
 esac
 
 case "$mimetype" in
@@ -83,8 +86,8 @@ case "$mimetype" in
     image/*)
         img2txt --gamma=0.6 --width="$width" "$path" && exit 4 || exit 1;;
     # Image preview for videos, disabled by default:
-    # video/*)
-    #     ffmpegthumbnailer -i "$path" -o "$cached" -s 0 && exit 6 || exit 1;;
+    video/*)
+        ffmpegthumbnailer -i "$path" -o "$cached" -s 0 && exit 6 || exit 1;;
     # Display information about media files:
     video/* | audio/*)
         exiftool "$path" && exit 5
