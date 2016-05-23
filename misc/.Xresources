@@ -149,81 +149,10 @@ Xft.hintstyle:  hintfull
 xterm*faceName: Source Code Pro
 xterm*faceSize: 12
 
-!Theme Five grey and quite good before solarized
-! *background: rgb:ad/aa/ad
-! *foreground: rgb:00/00/00
-! *color0:     rgb:00/00/00
-! *color1:     rgb:64/0f/19
-! *color2:     rgb:63/79/6b
-! *color3:     rgb:ad/71/42
-! *color4:     rgb:4f/4f/89
-! *color5:     rgb:b2/5c/7c
-! *color6:     rgb:52/75/6b
-! *color7:     rgb:ad/aa/ad
-! *color8:     rgb:52/55/52
-! *color9:     rgb:a5/61/63
-! *color10:    rgb:ce/c2/63
-! *color11:    rgb:73/ae/70
-! *color12:    rgb:36/70/9f
-! *color13:    rgb:aa/82/9c
-! *color14:    rgb:51/89/89
-! *color15:    rgb:ff/ff/ef
-
-
-
-!!colors ripped from rezza: http://metawire.org/~rezza/index.php
-!*foreground:     rgb:dd/dd/dd
-!*background:     rgb:22/22/22
-!!black
-!*color0:         rgb:19/19/19
-!*color8:         rgb:25/25/25
-!!red
-!*color1:         rgb:80/32/32
-!*color9:         rgb:98/2b/2b
-!!green
-!*color2:         rgb:5b/76/2f
-!*color10:        rgb:89/b8/3f
-!!brown/yellow
-!*color3:         rgb:aa/99/43
-!*color11:        rgb:ef/ef/60
-!!blue
-!*color4:         rgb:32/4c/80
-!*color12:        rgb:2b/4f/98
-!!magenta
-!*color5:         rgb:70/6c/9a
-!*color13:        rgb:82/6a/b1
-!!cyan
-!*color6:         rgb:92/b1/9e
-!*color14:        rgb:a1/cd/cd
-!!white
-!*color7:         rgb:ff/ff/ff
-!*color15:        rgb:dd/dd/dd
-
-!!Theme Fifteen      blueish
-!*background: rgb:1d/2b/3a
-!*foreground: rgb:be/be/be
-!*color0:     rgb:00/00/00
-!*color1:     rgb:d3/62/65
-!*color2:     rgb:ae/ce/91
-!*color3:     rgb:e7/e1/8c
-!*color4:     rgb:7a/7a/b0
-!*color5:     rgb:96/3c/59
-!*color6:     rgb:41/81/79
-!*color7:     rgb:be/be/be
-!*color8:     rgb:66/66/66
-!*color9:     rgb:ef/81/71
-!*color10:    rgb:e5/f7/79
-!*color11:    rgb:ff/f7/99
-!*color12:    rgb:41/86/be
-!*color13:    rgb:ef/9e/be
-!*color14:    rgb:71/be/be
-!*color15:    rgb:ff/ff/ff
-
-!Theme Seven    light grey
-!Theme Nine
-!Theme Ten
-!Theme Eight
-
 ! -- Colours -- !
+#include "/home/dan/.config/colours/solarized0"
 #include "/home/dan/.config/colours/solarized"
-
+! https://web.archive.org/web/20090130061234/http://phraktured.net/terminal-colors/
+!#include "/home/dan/.config/colours/thirteen"
+! http://www.xcolors.net/
+!#include "/home/dan/.config/colours/medium-roast"

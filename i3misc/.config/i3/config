@@ -237,8 +237,8 @@ bindsym $mod+Shift+period exec recoll
 bindsym $mod+Print exec xfce4-screenshooter
 
 # mod+f12 toggle light to darl solarized
-bindsym $mod+F11 exec xrdb -DSOLARIZED_LIGHT -merge .Xresources 
-bindsym $mod+F12 exec xrdb -DSOLARIZED_DARK -merge .Xresources 
+bindsym $mod+F11 exec xrdb -DSOLARIZED_DARK -merge .Xresources 
+bindsym $mod+F12 exec xrdb -DSOLARIZED_LIGHT -merge .Xresources 
 
 # F2 and F3 for thunderbird and firefox
 bindsym $mod+F2 workspace 2; exec thunderbird
