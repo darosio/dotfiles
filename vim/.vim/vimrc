@@ -13,7 +13,7 @@ set modelines=1	" modeline must be within first or last 1 line
 set autoread
 "set noautoread              " Don't automatically re-read changed files.
 "set autowrite               " Stop complaining about unsaved buffers
-"set autowriteall            " 
+"set autowriteall            "
 " Jeff
 hi DiffText gui=underline guibg=red guifg=black
 " Select the item in the list with enter
@@ -44,7 +44,7 @@ Plugin 'vim-scripts/tasklist.vim'
 " Old:
 " command-T @A @S alternativeto fzf CtrlP
 " minibufferExplorer @L @S
-" makegreen @S before pytest 
+" makegreen @S before pytest
 "
 " Plugin 'ivanov/vim-ipython' "need python2
 " ""Plugin 'julienr/vim-cellmode'
@@ -82,7 +82,7 @@ Plugin 'jcfaria/Vim-R-plugin'
 ""nnoremap <leader>c <c-_><c-_>
 ""vnoremap <leader>c <c-_><c-_>
 
-" 
+"
 " Highlight a column in csv text.
 " :Csv 1    " highlight first column
 " :Csv 12   " highlight twelfth column
@@ -116,7 +116,7 @@ Plugin 'junegunn/seoul256.vim'
 Plugin 'junegunn/goyo.vim'
 nnoremap <silent> <F11> :Goyo<cr>
 Plugin 'vim-airline/vim-airline' "better than powerline
-Plugin 'vim-airline/vim-airline-themes' 
+Plugin 'vim-airline/vim-airline-themes'
 "Bundle 'powerline/powerline', {'rtp': 'powerline/bindings/vim/'} # never
 "ever again
 "Plugin 'Lokaltog/vim-easymotion'
@@ -125,7 +125,7 @@ Plugin 'vim-airline/vim-airline-themes'
 Plugin 'majutsushi/tagbar' " ctags @sf and better than TagList (@S @L)
 " the silver searcher alternative to ctags and tagbar and ack.vim
 Plugin 'rking/ag.vim' "@S
-nmap <C-F> :Ag 
+nmap <C-F> :Ag
 " args `Ag -l FOOBAR .`
 " argdo %s/FOO/BAR/g | w
 " alternativesto CtrlP @j @S
@@ -240,20 +240,20 @@ Plugin 'jiangmiao/auto-pairs' " braces
 
 " vim-wordy {{{
 let g:wordy#ring = [
-  \ 'weak',
-  \ 'weasel',
-  \ 'puffery',
-  \ 'redundant',
-  \ 'problematic',
-  \ ['being', 'passive-voice', ],
-  \ ['business-jargon', 'art-jargon',],
-  \ ['colloquial', 'idiomatic', ],
-  \ 'similies',
-  \ 'said-synonyms',
-  \ 'contractions',
-  \ 'opinion',
-  \ 'vague-time',
-  \ ]
+	\ 'weak',
+	\ 'weasel',
+	\ 'puffery',
+	\ 'redundant',
+	\ 'problematic',
+	\ ['being', 'passive-voice', ],
+	\ ['business-jargon', 'art-jargon',],
+	\ ['colloquial', 'idiomatic', ],
+	\ 'similies',
+	\ 'said-synonyms',
+	\ 'contractions',
+	\ 'opinion',
+	\ 'vague-time',
+	\ ]
 " to cycle among defined rings
 nmap <silent><F3><F4> :NextWordy<cr>
 " }}}
@@ -296,9 +296,9 @@ set fileencoding=utf-8
 set encoding=utf-8
 
 for d in glob('~/.vim/spell/*.add', 1, 1)
-    if filereadable(d) && (!filereadable(d . '.spl') || getftime(d) > getftime(d . '.spl'))
-        silent exec 'mkspell! ' . fnameescape(d)
-    endif
+	if filereadable(d) && (!filereadable(d . '.spl') || getftime(d) > getftime(d . '.spl'))
+		silent exec 'mkspell! ' . fnameescape(d)
+	endif
 endfor
 " I 'd like to understand this
 runtime macros/matchit.vim
@@ -327,7 +327,7 @@ set guioptions=aegim	" a visual mode copy/paste, m menu, g gray menu ...
 set guioptions-=T   	" do not show Toolbars in gvim
 set diffopt+=iwhite	" ignore white spaces in gvimdiff
 if has('gui_running')
-    set antialias
+	set antialias
 	autocmd GuiEnter * set columns=95
 	if &diff
 		autocmd GuiEnter * set columns=165 lines=50
@@ -377,7 +377,7 @@ map <C-j> <C-W>j
 map <C-k> <C-W>k
 map <C-h> <C-W>h
 map <C-l> <C-W>l
-" lets make these all work in insert mode too 
+" lets make these all work in insert mode too
 " ( <C-O> makes next cmd happen as if in command mode ) FIXME
 imap <C-W> <C-O><C-W>
 " Close all the buffers
@@ -402,9 +402,9 @@ map <leader>cd :cd %:p:h<cr>:pwd<cr>
 "endtry
 " Return to last edit position when opening files (You want this!)
 autocmd BufReadPost *
-     \ if line("'\"") > 0 && line("'\"") <= line("$") |
-     \   exe "normal! g`\"" |
-     \ endif
+	\ if line("'\"") > 0 && line("'\"") <= line("$") |
+	\   exe "normal! g`\"" |
+	\ endif
 " Remember info about open buffers on close
 set viminfo^=%
 " }}}
@@ -477,48 +477,50 @@ imap <c-x><c-l> <plug>(fzf-complete-line)
 " Advanced customization using autoload functions
 "inoremap <expr> <c-x><c-k> fzf#vim#complete#word({'left': '15%'})
 function! s:make_sentence(lines)
-  return substitute(join(a:lines), '^.', '\=toupper(submatch(0))', '').'.'
+	return substitute(join(a:lines), '^.', '\=toupper(submatch(0))', '').'.'
 endfunction
 inoremap <expr> <c-x><c-s> fzf#complete({
-  \ 'source':  'cat /usr/share/dict/words',
-  \ 'reducer': function('<sid>make_sentence'),
-  \ 'options': '--multi --reverse --margin 15%,0',
-  \ 'left':    20})
-
+	\ 'source':  'cat /usr/share/dict/words',
+	\ 'reducer': function('<sid>make_sentence'),
+	\ 'options': '--multi --reverse --margin 15%,0',
+	\ 'left':    20})
 "}}}
 " airline {{{
-" Enable the list of buffers 
-let g:airline#extensions#tabline#enabled = 1 
-" Show just the filename 
+" Enable the list of buffers
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#whitespace#enabled = 1
+" Show just the filename
 "let g:airline#extensions#tabline#fnamemod = ':t'
 " Use nicer graph font
 let g:airline_powerline_fonts = 1
+"let g:airline#extensions#tabline#left_sep = ' '
+"let g:airline#extensions#tabline#left_alt_sep = '|'
 " }}}
-" ctags{{{ 
+" ctags{{{
 nmap <F9> :TagbarToggle<CR>
 " tagbar markdown (markdown2ctags)
 let g:tagbar_type_markdown = {
-    \ 'ctagstype': 'markdown',
-    \ 'ctagsbin' : '/usr/bin/markdown2ctags',
-    \ 'ctagsargs' : '-f - --sort=yes',
-    \ 'kinds' : [
-        \ 's:sections',
-        \ 'i:images'
-    \ ],
-    \ 'sro' : '|',
-    \ 'kind2scope' : {
-        \ 's' : 'section',
-    \ },
-    \ 'sort': 0,
+	\ 'ctagstype': 'markdown',
+	\ 'ctagsbin' : '/usr/bin/markdown2ctags',
+	\ 'ctagsargs' : '-f - --sort=yes',
+	\ 'kinds' : [
+		\ 's:sections',
+		\ 'i:images'
+	\ ],
+	\ 'sro' : '|',
+	\ 'kind2scope' : {
+		\ 's' : 'section',
+	\ },
+	\ 'sort': 0,
 \ }
 " tagbar r
 let g:tagbar_type_r = {
-    \ 'ctagstype' : 'r',
-    \ 'kinds'     : [
-        \ 'f:Functions',
-        \ 'g:GlobalVariables',
-        \ 'v:FunctionVariables',
-    \ ]
+	\ 'ctagstype' : 'r',
+	\ 'kinds'     : [
+		\ 'f:Functions',
+		\ 'g:GlobalVariables',
+		\ 'v:FunctionVariables',
+	\ ]
 \ }
 " }}}
 " neocomplete{{{
@@ -534,33 +536,33 @@ let g:tagbar_type_r = {
 " }}}
 " ranger{{{
 function! RangeChooser()
-    let temp = tempname()
-    " The option "--choosefiles" was added in ranger 1.5.1. Use the next line
-    " with ranger 1.4.2 through 1.5.0 instead.
-    "exec 'silent !ranger --choosefile=' . shellescape(temp)
-    if has("gui_running")
-        exec 'silent !xterm -e ranger --choosefiles=' . shellescape(temp)
-    else
-        exec 'silent !ranger --choosefiles=' . shellescape(temp)
-    endif
-    if !filereadable(temp)
-        redraw!
-        " Nothing to read.
-        return
-    endif
-    let names = readfile(temp)
-    if empty(names)
-        redraw!
-        " Nothing to open.
-        return
-    endif
-    " Edit the first item.
-    exec 'edit ' . fnameescape(names[0])
-    " Add any remaning items to the arg list/buffer list.
-    for name in names[1:]
-        exec 'argadd ' . fnameescape(name)
-    endfor
-    redraw!
+	let temp = tempname()
+	" The option "--choosefiles" was added in ranger 1.5.1. Use the next line
+	" with ranger 1.4.2 through 1.5.0 instead.
+	"exec 'silent !ranger --choosefile=' . shellescape(temp)
+	if has("gui_running")
+		exec 'silent !xterm -e ranger --choosefiles=' . shellescape(temp)
+	else
+		exec 'silent !ranger --choosefiles=' . shellescape(temp)
+	endif
+	if !filereadable(temp)
+		redraw!
+		" Nothing to read.
+		return
+	endif
+	let names = readfile(temp)
+	if empty(names)
+		redraw!
+		" Nothing to open.
+		return
+	endif
+	" Edit the first item.
+	exec 'edit ' . fnameescape(names[0])
+	" Add any remaning items to the arg list/buffer list.
+	for name in names[1:]
+		exec 'argadd ' . fnameescape(name)
+	endfor
+	redraw!
 endfunction
 command! -bar RangerChooser call RangeChooser()
 "nnoremap <leader>r :<C-U>RangerChooser<CR>
