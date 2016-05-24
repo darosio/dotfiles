@@ -115,8 +115,10 @@ Plugin 'junegunn/seoul256.vim'
 "map <F2> :NERDTreeToggle<CR>
 Plugin 'junegunn/goyo.vim'
 nnoremap <silent> <F11> :Goyo<cr>
-"Plugin 'bling/vim-airline' "better than powerline
-Bundle 'powerline/powerline', {'rtp': 'powerline/bindings/vim/'}
+Plugin 'vim-airline/vim-airline' "better than powerline
+Plugin 'vim-airline/vim-airline-themes' 
+"Bundle 'powerline/powerline', {'rtp': 'powerline/bindings/vim/'} # never
+"ever again
 "Plugin 'Lokaltog/vim-easymotion'
 """\\w move to word forwards
 """\\b move to word backwards
@@ -485,12 +487,12 @@ inoremap <expr> <c-x><c-s> fzf#complete({
 
 "}}}
 " airline {{{
-"" Enable the list of buffers 
-"let g:airline#extensions#tabline#enabled = 1 
-"" Show just the filename 
+" Enable the list of buffers 
+let g:airline#extensions#tabline#enabled = 1 
+" Show just the filename 
 "let g:airline#extensions#tabline#fnamemod = ':t'
-"" Use nicer graph font
-"let g:airline_powerline_fonts = 1
+" Use nicer graph font
+let g:airline_powerline_fonts = 1
 " }}}
 " ctags{{{ 
 nmap <F9> :TagbarToggle<CR>
