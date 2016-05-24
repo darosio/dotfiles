@@ -1,2 +1,9 @@
 remove Mod4 = Super_R
 add Mod3 = Super_R
+clear lock
+clear control
+add control = Escape Control_L Control_R
+
+!keycode 66 = Control_L Caps_Lock NoSymbol NoSymbol
+keycode 66 = Escape
+keycode 62 = Caps_Lock
