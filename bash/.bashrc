@@ -32,5 +32,5 @@ cd "$AUTOCD"
 #. /usr/lib/python3.5/site-packages/powerline/bindings/bash/powerline.sh
 
 
-# host specific bash_profile                                                    
+# host specific bash_profile
 [[ -r .bashrc.$HOSTNAME ]] && . .bashrc.$HOSTNAME
