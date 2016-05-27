@@ -162,6 +162,7 @@ rst2my_beamer() {
   pdflatex $fname.tex
   pdflatex $fname.tex
 }
+alias fdup='fdupes -r -s -S'	# recursive, follow links, print size
 alias a='a.py'
 alias vga_ont='xrandr --output VGA1 --auto --above LVDS1'
 alias vga='xrandr --output VGA1 --auto --same-as LVDS1'
