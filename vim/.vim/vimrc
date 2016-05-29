@@ -49,6 +49,7 @@ Plugin 'vim-scripts/tasklist.vim'
 " slimux (vim_slime) alternative to vim-r vim-ipython ...
 Plugin 'epeli/slimux'
 " tmux?...
+"Plugin 'christoomey/vim-tmux-navigator'
 " R:
 Plugin 'ervandew/screen' "useful also for ipython
 Plugin 'jcfaria/Vim-R-plugin'
