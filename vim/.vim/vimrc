@@ -4,9 +4,7 @@ set modelines=1	" modeline must be within first or last 1 line
 " https://github.com/dhruvasagar/vim-table-mode/ works with pandoc
 " or see screecast for tabular
 " https://github.com/msprev/unite-bibtex
-" slimux (vim_slime) alternative to vim-r vim-ipython ...
-" tmux?...
-"http://vimawesome.com/
+" TODO check this: http://vimawesome.com/
 
 
 " Set to auto read when a file is changed from the outside
@@ -48,6 +46,9 @@ Plugin 'vim-scripts/tasklist.vim'
 "
 " Plugin 'ivanov/vim-ipython' "need python2
 " ""Plugin 'julienr/vim-cellmode'
+" slimux (vim_slime) alternative to vim-r vim-ipython ...
+Plugin 'epeli/slimux'
+" tmux?...
 " R:
 Plugin 'ervandew/screen' "useful also for ipython
 Plugin 'jcfaria/Vim-R-plugin'
