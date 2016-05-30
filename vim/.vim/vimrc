@@ -26,8 +26,14 @@ inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 " diffchar.vim
 " vim-diff-enhanced  vim-unified-diff
 " Bundle {{{
+set nocompatible
 filetype off                   " required!
-call vundle#rc()
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+" let Vundle manage Vundle, required
+Plugin 'VundleVim/Vundle.vim'
+" git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+"call vundle#rc()
 
 " Next:
 " NrrwRgn
@@ -166,10 +172,10 @@ Plugin 'victormours/better-writing.vim'
 
 "Plugin 'reedes/vim-lexical'
 Plugin 'beloglazov/vim-online-thesaurus'
-nnoremap ,t :OnlineThesaurusCurrentWord<CR>
+nnoremap ,k :OnlineThesaurusCurrentWord<CR>
 Plugin 'vim-scripts/Wordnet.vim'
 "good enough using C-t C-c-c for artha, goldendict
-nmap ,w bve <C-t>
+nmap ,wnn bve <C-t>
 nmap ,ww :exe ":!wn ".expand("<cword>") " -synsn -synsv -synsa -synsr -antsn -antsv -antsa -antsr"<CR>
 map ,wn <leader>wnd
 
@@ -236,6 +242,8 @@ Plugin 'tpope/vim-surround' " braces @S @sf``
 " @H SimplePairs
 Plugin 'jiangmiao/auto-pairs' " braces
 "Plugin 'raimondi/delimitmate' " braces
+call vundle#end()            " required
+filetype plugin indent on    " required
 " }}}
 
 " vim-wordy {{{
