@@ -29,5 +29,7 @@ fi
 # ...or the Window Manager of your choice
 #exec enlightenment_start
 #exec startxfce4
-xmodmap ~/.Xmodmap &&
+if [ -s ~/.Xmodmap ]; then
+    xmodmap ~/.Xmodmap
+fi
 exec i3
