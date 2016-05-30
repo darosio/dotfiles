@@ -1,3 +1,7 @@
+#--- nbextensions configuration ---
+import sys
+sys.path.append('/home/dan/.local/share/jupyter/extensions')
+#--- nbextensions configuration ---
 # Configuration file for ipython-notebook.
 
 c = get_config()
