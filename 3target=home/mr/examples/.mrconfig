@@ -53,3 +53,6 @@ checkout = hg clone 'https://bitbucket.org/jasonwryan/shiv' 'shiv'
 
 [pandoc-letter]
 checkout = git clone 'https://github.com/aaronwolen/pandoc-letter.git' 'pandoc-letter'
+
+[1_dotfiles/jeffknupp/dotfiles]
+checkout = git clone 'https://github.com/jeffknupp/dotfiles' 'dotfiles'
