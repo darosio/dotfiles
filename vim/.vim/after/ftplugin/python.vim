@@ -54,7 +54,7 @@ map <buffer> <F7> :Coveragepy report<CR>
 " use Screen.vim for sending cmd to ipython
 " <CR> conflict with vim-flake8
 vmap <CR> :ScreenSend<CR><esc>'>j "multiline
-nmap <CR> V :ScreenSend<CR>ej "multiline
+nmap <S-CR> V :ScreenSend<CR>ej "multiline
 
 
 " vim:foldmethod=marker:foldlevel=0

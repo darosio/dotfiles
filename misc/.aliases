@@ -99,7 +99,7 @@ alias ligplus='java -jar ~/.progs/LigPlus/LigPlus.jar'
 alias ape='~/.progs/ApE.vfs/tclkit-linux-x86 ~/.progs/ApE.vfs/main.tcl'
 alias serialcloner='~/.progs/SerialCloner2-6/SerialCloner2.6.1'
 alias fiji='~/.progs/Fiji.app/ImageJ-linux64'
-alias icy='java -jar .progs/icy/updater.jar'
+alias icy='java -jar ~/.progs/icy/updater.jar'
 export TERMINAL=urxvt
 #avoid duplicates in history
 export HISTCONTROL=ignoredups
