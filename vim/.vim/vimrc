@@ -3,6 +3,7 @@ set modelines=1	" modeline must be within first or last 1 line
 " TODO jedi =? supertab completion.python3 and K<pydoc
 " https://github.com/dhruvasagar/vim-table-mode/ works with pandoc
 " or see screecast for tabular
+" I had explored also "nvie/vim-rst-tables"
 " https://github.com/msprev/unite-bibtex
 " TODO check this: http://vimawesome.com/
 
