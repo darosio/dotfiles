@@ -1,0 +1,15 @@
+
+[grants]
+checkout = git clone 'git@bitbucket.org:darosio/grants.git' 'grants'
+
+[ms-jose]
+checkout = git clone 'git@bitbucket.org:darosio/ms-jose.git' 'ms-jose'
+
+[talks/tk-wip2015]
+checkout = git clone 'git@bitbucket.org:darosio/tk-wip2015.git' 'tk-wip2015'
+
+[Web/darosio]
+checkout = git clone 'git@bitbucket.org:darosio/darosio.git' 'darosio'
+
+[Web/molecularimaging]
+checkout = hg clone 'https://darosio@bitbucket.org/darosio/molecularimaging' 'molecularimaging'

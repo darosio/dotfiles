@@ -1,12 +1,5 @@
-
-[Web/molecularimaging]
-checkout = hg clone 'https://darosio@bitbucket.org/darosio/molecularimaging' 'molecularimaging'
-
 [HIV_pipeline_mpba]
 checkout = git clone 'https://github.com/MPBA/generic.git' 'HIV_pipeline_mpba'
-
-[grants]
-checkout = git clone 'git@bitbucket.org:darosio/grants.git' 'grants'
 
 [lfin]
 checkout = git clone 'git@bitbucket.org:darosio/lfin.git' 'lfin'
@@ -28,15 +21,6 @@ checkout = git clone 'https://github.com/darosio/cookiecutter-pypackage.git' 'co
 
 [nimg]
 checkout = git clone 'git@bitbucket.org:darosio/nimg.git' 'nimg'
-
-[Web/darosio]
-checkout = git clone 'git@bitbucket.org:darosio/darosio.git' 'darosio'
-
-[Web/darosio/darosio.bitbucket.org]
-checkout = git clone 'git@bitbucket.org:darosio/darosio.bitbucket.org' 'darosio.bitbucket.org'
-
-[ms-jose]
-checkout = git clone 'git@bitbucket.org:darosio/ms-jose.git' 'ms-jose'
 
 [platereaders/prenspire]
 checkout = git clone 'git@bitbucket.org:darosio/prenspire.git' 'prenspire'
