@@ -226,7 +226,7 @@ bindsym $mod+u for_window [urgent="newest" ] focus
 
 #quickswitch binding
 #bindsym $mod+Shift+z exec quickswitch.py -w
-indsym $mod+z exec quickswitch.py --dmenu='dmenu -l 20 -b -fn "-misc-monaco-medium-r-*-*-13-*"'
+#bindsym $mod+z exec quickswitch.py --dmenu='dmenu -l 20 -b -fn "-misc-monaco-medium-r-*-*-13-*"'
 
 #fzf search
 #bindsym $mod+period exec bash -c "source ~/Dropbox/4sharing/4aliases; od"
