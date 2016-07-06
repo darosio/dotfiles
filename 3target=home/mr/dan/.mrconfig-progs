@@ -10,6 +10,10 @@ checkout =
     cd $MR_REPO
     git annex init $HOSTNAME
     git_annex_sync
+update =
+	git_annex_sync
+	git annex add .
+	git_annex_sync
 zap =                                                                           
 	git add .                                                                   
 	git_annex_sync
