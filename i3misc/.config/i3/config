@@ -240,6 +240,7 @@ bindsym $mod+Print exec xfce4-screenshooter
 bindsym $mod+F11 exec xrdb -DSOLARIZED_DARK -merge .Xresources 
 bindsym $mod+F12 exec xrdb -DSOLARIZED_LIGHT -merge .Xresources 
 
+bindsym F2 exec --no-startup-id j4-dmenu-desktop --dmenu='rofi -dmenu -i'
 # F2 and F3 for thunderbird and firefox
 bindsym $mod+F2 workspace 2; exec thunderbird
 bindsym $mod+F3 workspace 3; exec firefox
