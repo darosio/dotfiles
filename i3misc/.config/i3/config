@@ -11,6 +11,7 @@
 
 set $mod Mod4
 set $alt Mod1
+set $sup Control
 
 #exec --no-startup-id xfce4-panel --disable-wm-check
 #exec --no-startup-id xfce4-power-manager
@@ -245,6 +246,8 @@ bindsym $mod+Tab exec --no-startup-id j4-dmenu-desktop --dmenu='rofi -dmenu -i'
 # list open windows to switch to
 bindsym $alt+Tab exec rofi -show window
 bindsym $alt+s exec rofi -show ssh
+# another favorite program
+bindsym $alt+x exec keepassx
 # F2 and F3 for thunderbird and firefox
 bindsym $mod+F2 workspace 2; exec thunderbird
 bindsym $mod+F3 workspace 3; exec firefox
