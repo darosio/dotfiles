@@ -225,8 +225,8 @@ bindsym $mod+Shift+b move container to workspace back_and_forth
 bindsym $mod+u for_window [urgent="newest" ] focus
 
 #quickswitch binding
-bindsym $mod+Shift+z exec quickswitch.py -w
-bindsym $mod+z exec quickswitch.py --dmenu='dmenu -l 20 -b -fn "-misc-monaco-medium-r-*-*-13-*"'
+#bindsym $mod+Shift+z exec quickswitch.py -w
+indsym $mod+z exec quickswitch.py --dmenu='dmenu -l 20 -b -fn "-misc-monaco-medium-r-*-*-13-*"'
 
 #fzf search
 #bindsym $mod+period exec bash -c "source ~/Dropbox/4sharing/4aliases; od"
@@ -240,7 +240,9 @@ bindsym $mod+Print exec xfce4-screenshooter
 bindsym $mod+F11 exec xrdb -DSOLARIZED_DARK -merge .Xresources 
 bindsym $mod+F12 exec xrdb -DSOLARIZED_LIGHT -merge .Xresources 
 
-bindsym F2 exec --no-startup-id j4-dmenu-desktop --dmenu='rofi -dmenu -i'
+bindsym $mod+z exec --no-startup-id j4-dmenu-desktop --dmenu='rofi -dmenu -i'
+# list open windows to switch to
+bindsym $mod+Tab exec rofi -show window
 # F2 and F3 for thunderbird and firefox
 bindsym $mod+F2 workspace 2; exec thunderbird
 bindsym $mod+F3 workspace 3; exec firefox
