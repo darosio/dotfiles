@@ -1,0 +1,8 @@
+#!/bin/sh
+
+echo "### RSNAPSHOT MONTHLY ###"
+sudo mount /media/rsnapshots
+rsnapshot -v monthly > /tmp/rsnapshot.out 2>&1 || cat /tmp/rsnapshot.out 
+cat /tmp/rsnapshot.out 
+sudo umount /media/rsnapshots
+echo

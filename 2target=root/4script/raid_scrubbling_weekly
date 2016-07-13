@@ -1,0 +1,6 @@
+#!/bin/sh
+
+echo "### RAID Scrubbling @weekly ###"
+mdadm --misc --detail /dev/md127
+echo check >> /sys/block/md127/md/sync_action
+mdadm --misc --detail /dev/md127

@@ -1,0 +1,10 @@
+#!/bin/sh
+
+echo "### Checksum Archive ###"
+sudo mount /media/rsnapshots
+cd /media/rsnapshots/Archive/
+cfv -M -u -r > /tmp/cksum_archive.out 2>&1
+#sudo -u dan -H sh -c "rsync -e '/usr/bin/ssh -c arcfour -i /home/dan/.ssh/dan@sterzing-2013-06-03 -p 23456' -a -H --progress --delete --numeric-ids --checksum /media/rsnapshots/Archive 192.168.10.110:/data/Archive"  > /tmp/cksum_archive.out 2>&1
+cat /tmp/cksum_archive.out 
+sudo umount /media/rsnapshots
+echo
