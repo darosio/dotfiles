@@ -174,20 +174,11 @@ alias fbk0='sudo ~/.progs/bin/pulsesvc -h sslgate.fbk.eu -r Fbk_AD_realm -u daro
 alias swan='sshpass -p CEaME2oSQY2 ssh darosio%swan@gate.fbk.eu'
 alias omero='sshpass -p CEaMW2oSQY2 ssh darosio%omero@gate.fbk.eu'
 #alias omero-data='sshfs  darosio%omero@gate.fbk.eu:/data /media/omero/'
-alias omero-data='sshfs  omero:/data /media/omero/'
 alias omero-data0='sshfs  omero:/hardmnt/data0 /media/omero0/'
 alias omero-data1='sshfs  omero:/hardmnt/data1 /media/omero1/'
 alias swan-data='sshfs  swan:/hardmnt/swan1/data /media/swan/'
 alias pp='impressive --nologo'
 alias xev_arch="xev | grep -A2 --line-buffered '^KeyRelease' | sed -n '/keycode /s/^.*keycode \([0-9]*\).* (.*, \(.*\)).*$/\1 \2/p'"
-alias bb7='sudo sh -c "echo 7 > /sys/class/backlight/acpi_video0/brightness"'
-alias bb6='sudo sh -c "echo 6 > /sys/class/backlight/acpi_video0/brightness"'
-alias bb5='sudo sh -c "echo 5 > /sys/class/backlight/acpi_video0/brightness"'
-alias bb4='sudo sh -c "echo 4 > /sys/class/backlight/acpi_video0/brightness"'
-alias bb3='sudo sh -c "echo 3 > /sys/class/backlight/acpi_video0/brightness"'
-alias bb2='sudo sh -c "echo 2 > /sys/class/backlight/acpi_video0/brightness"'
-alias bb='sudo sh -c "echo "$1" > /sys/class/backlight/acpi_video0/brightness"'
-alias xl='xlock -mode molecule'
 alias bigcp='rsync -Phrltz'   #pg z -XH
 # -a is for archive, which preserves ownership, permissions etc.
 # -v is for verbose, so I can see what's happening (optional)
@@ -196,7 +187,6 @@ alias bigcp='rsync -Phrltz'   #pg z -XH
 # --no-compress as there's no lack of bandwidth between local devices
 # --progress so I can see the progress of large files (optional)
 ## alias rm='trash-put'
-alias svigolana='urxvt -bg "#111020" -e ssh -i ~/.ssh/dan@sterzing-2013-06-03 -p 23456 192.168.10.110 &'
 alias svigolana='urxvt -bg "#111020" -e ssh -i ~/.ssh/dan@sterzing-2013-06-03 -p 23456 vigolana &'
 alias vigolana-data='sshfs -p 23456 vigolana:/data /media/vigolana/ -o IdentityFile=$HOME/.ssh/dan@sterzing-2013-06-03'
 
@@ -210,6 +200,7 @@ alias hide='export HISTSIZE=0'
 alias l='ls -F --color=always'
 alias ll='ls -Flh'
 alias la='ls -Fah'
+alias lla='ls -Flah'
 alias dpa-x='xterm -bg lightgrey -fg midnightblue -fn 10x20 -e ssh dan@192.168.1.2 &'
 alias kngur-x='nohup xterm -bg lightgreen -fn 10x20 -e ssh dan@10.0.0.2 &'
 alias windowsXP='VBoxManage startvm "winXPvb"'
