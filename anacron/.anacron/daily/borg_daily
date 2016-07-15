@@ -21,7 +21,6 @@ REPOSITORY=/media/rsnapshots/borg
 # excluded directories
 borg create -v --stats -C zlib -p             \
     $REPOSITORY::dan-`date +%Y-%m-%d`         \
-    ~/docs                                    \
     ~/Sync                                    \
     --exclude '/home/dan/Sync/tmp'            \
     --exclude '/home/dan/Sync/.stversions'    \
