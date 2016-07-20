@@ -56,3 +56,12 @@ checkout = git clone 'https://github.com/aaronwolen/pandoc-letter.git' 'pandoc-l
 
 [1_dotfiles/jeffknupp/dotfiles]
 checkout = git clone 'https://github.com/jeffknupp/dotfiles' 'dotfiles'
+
+[thesis/pandoc-thesis]
+checkout = git clone 'https://github.com/carnby/pandoc-thesis' 'pandoc-thesis'
+
+[thesis/rktik-thesis]
+checkout = git clone 'https://github.com/ciex/rktik-thesis' 'rktik-thesis'
+
+[thesis/thesis-markdown-pandoc]
+checkout = git clone 'https://github.com/chiakaivalya/thesis-markdown-pandoc' 'thesis-markdown-pandoc'

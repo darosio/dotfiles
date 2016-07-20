@@ -32,6 +32,6 @@ borg create -v --stats -C zlib -p             \
 # other machine's archives also.
 #borg prune -v $REPOSITORY --prefix `hostname`- \
 borg prune -v $REPOSITORY --prefix dan- \
-	--keep-daily=7 --keep-weekly=4 --keep-monthly=6 --keep-yearly=10
+	--keep-daily=5 --keep-weekly=3 --keep-monthly=6 --keep-yearly=10
 #!/bin/sh
 
