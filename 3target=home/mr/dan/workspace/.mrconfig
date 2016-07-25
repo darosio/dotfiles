@@ -24,3 +24,6 @@ checkout = git clone 'git@bitbucket.org:darosio/nimg.git' 'nimg'
 
 [platereaders/prenspire]
 checkout = git clone 'git@bitbucket.org:darosio/prenspire.git' 'prenspire'
+
+[python-bioformats]
+checkout = git clone 'https://github.com/darosio/python-bioformats.git' 'python-bioformats'
