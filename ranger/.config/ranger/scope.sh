@@ -76,6 +76,8 @@ case "$extension" in
     doc|xls|ppt)
         try catdoc "$path" && { dump | trim; exit 5; }
         antiword "$path" | trim;;
+    docx)
+    	try pandoc -t markdown "$path" && { dump | trim; exit 5; } || exit 1;;
 esac
 
 case "$mimetype" in
