@@ -261,7 +261,7 @@ exec xset -b
 #exec --no-startup-id git annex assistant --autostart
 ##DDD##exec --no-startup-id artha
 ##DDD##exec --no-startup-id goldendict
-##DDD##exec --no-startup-id autokey-gtk
+exec --no-startup-id autokey-gtk
 ##DDD##exec --no-startup-id kupfer
 #exec --no-startup-id zim
 #exec --no-startup-id nm-applet
