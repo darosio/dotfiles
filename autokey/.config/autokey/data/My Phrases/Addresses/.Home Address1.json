@@ -1,0 +1,31 @@
+{
+    "prompt": false,
+    "omitTrigger": false,
+    "showInTrayMenu": false,
+    "hotkey": {
+        "hotKey": null,
+        "modifiers": []
+    },
+    "matchCase": false,
+    "sendMode": "kb",
+    "modes": [
+        1
+    ],
+    "description": "Home Address",
+    "abbreviation": {
+        "wordChars": "[\\w]",
+        "backspace": true,
+        "abbreviations": [
+            "adr"
+        ],
+        "immediate": false,
+        "triggerInside": false,
+        "ignoreCase": false
+    },
+    "type": "phrase",
+    "usageCount": 1,
+    "filter": {
+        "isRecursive": false,
+        "regex": null
+    }
+}

@@ -16,6 +16,21 @@ inline_rc = dict(mpl.rcParams)
 #mpl.rcParams.update(inline_rc)
 endsnippet
 
+snippet npy "pylab import" b
+%load_ext autoreload
+%autoreload 2
+#import seaborn.apionly as sns
+#seaborn.reset_orig()
+#mpl.rcParams.update(inline_rc)
+import numpy as np
+import scipy
+import pandas as pd
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+%matplotlib inline
+inline_rc = dict(mpl.rcParams)
+endsnippet
+
 snippet Par "Parametes" b
 Parameters
 ----------

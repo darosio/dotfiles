@@ -1,0 +1,31 @@
+{
+    "hotkey": {
+        "hotKey": null,
+        "modifiers": []
+    },
+    "modes": [
+        1
+    ],
+    "usageCount": 5,
+    "matchCase": false,
+    "showInTrayMenu": false,
+    "abbreviation": {
+        "immediate": false,
+        "wordChars": "[\\w]",
+        "triggerInside": false,
+        "backspace": true,
+        "abbreviations": [
+            "npy"
+        ],
+        "ignoreCase": false
+    },
+    "type": "phrase",
+    "description": "numpy",
+    "prompt": false,
+    "filter": {
+        "isRecursive": false,
+        "regex": null
+    },
+    "sendMode": "kb",
+    "omitTrigger": false
+}
