@@ -186,3 +186,53 @@ AttributeError: 'int' object has no attribute 'grab_keyboard'
 2016-09-20 12:18:39,469 INFO - config-manager - Persisting configuration
 2016-09-20 12:18:39,469 INFO - config-manager - Backing up existing config file
 2016-09-20 12:18:39,495 INFO - config-manager - Finished persisting configuration - no errors
+2016-09-20 12:37:09,593 INFO - root - Initialising application
+2016-09-20 12:37:09,653 INFO - root - Initialise global hotkeys
+2016-09-20 12:37:09,653 INFO - config-manager - Loading config from existing file: /home/dan/.config/autokey/autokey.json
+2016-09-20 12:37:09,757 INFO - config-manager - Configuration changed - rebuilding in-memory structures
+2016-09-20 12:37:09,758 INFO - config-manager - Successfully loaded configuration
+2016-09-20 12:37:09,759 INFO - service - Starting service
+2016-09-20 12:37:10,294 INFO - interface - XRecord interface thread starting
+2016-09-20 12:37:10,295 INFO - service - Service now marked as running
+2016-09-20 12:37:11,425 INFO - root - Displaying configuration window
+2016-09-20 12:38:02,486 INFO - service - Undoing last abbreviation expansion
+2016-09-20 12:39:01,716 INFO - root - Displaying configuration window
+2016-09-20 12:39:28,108 ERROR - interface - Error in X event loop thread
+Traceback (most recent call last):
+  File "/usr/lib/python3.5/site-packages/autokey/interface.py", line 141, in __eventLoop
+    method(*args)
+  File "/usr/lib/python3.5/site-packages/autokey/interface.py", line 845, in __handleKeyPress
+    self.mediator.handle_keypress(keyCode, self.get_window_title(focus), self.get_window_class(focus))
+  File "/usr/lib/python3.5/site-packages/autokey/interface.py", line 1001, in get_window_class
+    return self.__getWinClass(windowvar, traverse)
+  File "/usr/lib/python3.5/site-packages/autokey/interface.py", line 1013, in __getWinClass
+    wmclass = windowvar.get_wm_class()
+  File "/usr/lib/python3.5/site-packages/Xlib/xobject/drawable.py", line 684, in get_wm_class
+    value = self.get_full_text_property(Xatom.WM_CLASS, Xatom.STRING)
+  File "/usr/lib/python3.5/site-packages/Xlib/xobject/drawable.py", line 491, in get_full_text_property
+    prop.value = prop.value.decode(self._STRING_ENCODING)
+AttributeError: 'memoryview' object has no attribute 'decode'
+2016-09-20 12:39:37,957 INFO - root - Displaying configuration window
+2016-09-20 12:40:30,610 INFO - config-manager - Configuration changed - rebuilding in-memory structures
+2016-09-20 12:40:30,612 INFO - config-manager - Persisting configuration
+2016-09-20 12:40:30,612 INFO - config-manager - Backing up existing config file
+2016-09-20 12:40:30,653 INFO - config-manager - Finished persisting configuration - no errors
+2016-09-20 12:40:33,111 INFO - root - Displaying configuration window
+2016-09-20 12:52:56,815 INFO - root - Initialising application
+2016-09-20 12:52:56,834 INFO - root - Initialise global hotkeys
+2016-09-20 12:52:56,834 INFO - config-manager - Loading config from existing file: /home/dan/.config/autokey/autokey.json
+2016-09-20 12:52:56,841 INFO - config-manager - Configuration changed - rebuilding in-memory structures
+2016-09-20 12:52:56,842 INFO - config-manager - Successfully loaded configuration
+2016-09-20 12:52:56,842 INFO - service - Starting service
+2016-09-20 12:52:56,960 INFO - interface - XRecord interface thread starting
+2016-09-20 12:52:56,962 INFO - service - Service now marked as running
+2016-09-20 12:52:57,073 INFO - root - Entering main()
+2016-09-20 12:55:17,888 INFO - root - Initialising application
+2016-09-20 12:55:17,898 INFO - root - Initialise global hotkeys
+2016-09-20 12:55:17,898 INFO - config-manager - Loading config from existing file: /home/dan/.config/autokey/autokey.json
+2016-09-20 12:55:17,901 INFO - config-manager - Configuration changed - rebuilding in-memory structures
+2016-09-20 12:55:17,901 INFO - config-manager - Successfully loaded configuration
+2016-09-20 12:55:17,901 INFO - service - Starting service
+2016-09-20 12:55:17,953 INFO - interface - XRecord interface thread starting
+2016-09-20 12:55:17,954 INFO - service - Service now marked as running
+2016-09-20 12:55:17,964 INFO - root - Entering main()
