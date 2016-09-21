@@ -223,8 +223,13 @@ Plugin 'honza/vim-snippets'
 " Unite
 Plugin 'Shougo/unite.vim'
 Plugin 'msprev/unite-bibtex'
-let g:unite_bibtex_bib_files=['/home/dan/Sync/00-papers.bib']
+
+let g:unite_bibtex_bib_files=['/home/dan/Sync/arte/My Library.bib']
 let g:unite_bibtex_cache_dir='/home/dan/.temp_dir'
+Plugin 'rafaqz/citation.vim'
+let g:citation_vim_mode="zotero"
+let g:citation_vim_zotero_folder='~/.zotero/zotero/ek4ik7y9.default/zotero/'
+let g:citation_vim_cache_path='~/.vim/thesaurus/cache/'
 
 """ Python
 " pydoc.vim @S @P

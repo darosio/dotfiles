@@ -8,10 +8,10 @@ let g:languagetool_jar='/usr/share/java/languagetool/languagetool-commandline.ja
 let g:pandoc#filetypes#handled = ["pandoc", "markdown", "rst"]
 let g:pandoc#filetypes#handled = ["markdown", "rst", "textile"] "default
 " need bibtool; autocomplete using <C-X> <C-O>
-let g:pandoc#biblio#use_bibtool = 1
-"let g:pandoc#biblio#bibs = ['~/Sync/00-papers.bib']
+let g:pandoc#biblio#use_bibtool = 0
+"let g:pandoc#biblio#bibs = ["/home/dan/Sync/arte/00-papers.biblatex"]
 
-let g:pandoc#completion#bib#mode = "citeproc"
+"let g:pandoc#completion#bib#mode = "citeproc"
 " fallback much faster, but not working in python3, consider unite-bibtex
 "let g:pandoc#formatting#mode = "A"
 " avoid spell check of citations like @Arosio2007
