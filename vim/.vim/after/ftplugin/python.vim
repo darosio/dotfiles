@@ -6,6 +6,8 @@ set shiftwidth=4
 set softtabstop=4
 set textwidth=79
 set autoindent
+set foldmethod=indent	" based on indent level (manual,expr,syntax,diff)
+set foldlevel=99
 
 " jedi {{{
 let g:jedi#auto_initialization = 1

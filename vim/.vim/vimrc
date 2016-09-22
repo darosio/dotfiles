@@ -1,9 +1,6 @@
 set modelines=1	" modeline must be within first or last 1 line
 
 " TODO jedi =? supertab completion.python3 and K<pydoc
-" https://github.com/dhruvasagar/vim-table-mode/ works with pandoc
-" or see screecast for tabular
-" I had explored also "nvie/vim-rst-tables"
 " https://github.com/msprev/unite-bibtex
 " TODO check this: http://vimawesome.com/
 
@@ -51,7 +48,12 @@ Plugin 'vim-scripts/tasklist.vim'
 " minibufferExplorer @L @S
 " makegreen @S before pytest
 "
-" Plugin 'ivanov/vim-ipython' "need python2
+" https://github.com/dhruvasagar/vim-table-mode/ works with pandoc
+" or see screecast for tabular
+" I had explored also "nvie/vim-rst-tables"
+Plugin 'dhruvasagar/vim-table-mode'
+"Plugin 'ivanov/vim-ipython' "need python2
+Plugin 'sophAi/vim-ipython_py3' "need python2
 " ""Plugin 'julienr/vim-cellmode'
 " slimux (vim_slime) alternative to vim-r vim-ipython ...
 Plugin 'epeli/slimux'
@@ -118,6 +120,8 @@ Plugin 'altercation/vim-colors-solarized'
 Plugin 'vim-scripts/wombat256.vim'
 Plugin 'nanotech/jellybeans.vim'
 Plugin 'junegunn/seoul256.vim'
+Plugin 'jnurmine/Zenburn'
+
 
 " General:
 "Plugin 'scrooloose/nerdtree' " @j @S
@@ -331,7 +335,8 @@ vnoremap <F5> :<C-U>:w<CR>:silent make<CR> :redraw!<CR>
 
 " Colors {{{
 " for solarized colors
-set t_Co=16
+"set t_Co=16
+set t_Co=256
 syntax on
 set background=dark	" often used with dark bg
 colorscheme solarized
@@ -471,7 +476,6 @@ set foldlevelstart=7 " open most folds by default
 set foldnestmax=10	" creates 10 fold levels at maximum
 " space open/closes folds
 nnoremap <space> za
-set foldmethod=indent	" based on indent level (manual,expr,syntax,diff)
 " }}}
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """ Plugins:
