@@ -1,3 +1,35 @@
+snippet capof "Insert figure with long caption" b
+\begin{center}
+\includegraphics[height=\textheight]{..png}
+\captionof{figure}[short]
+{\textbf{short.}
+long .}
+\label{fig:..} 
+\end{center}
+endsnippet
+
+snippet fig "Description" b
+
+\begin{figure}[htb] 
+\centering
+\includegraphics[width=\textwidth]{..png}
+\caption[short]
+{\textbf{short.}
+long.}
+\label{fig:..} 
+\end{figure}
+endsnippet
+
+snippet sfig "pandoc-crossref subfigures" b
+<div id="fig:">
+![subfigure 1 caption](image1.png){#fig:A}
+
+![subfigure 2 caption](image2.png){#fig:B}
+
+Caption of figure
+</div>
+endsnippet
+
 snippet pn "Presenter Notes for landslide" b
 ## Presenter Notes
 endsnippet
