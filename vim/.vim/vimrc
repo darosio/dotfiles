@@ -53,7 +53,7 @@ Plugin 'vim-scripts/tasklist.vim'
 " I had explored also "nvie/vim-rst-tables"
 Plugin 'dhruvasagar/vim-table-mode'
 "Plugin 'ivanov/vim-ipython' "need python2
-Plugin 'sophAi/vim-ipython_py3' "need python2
+"Plugin 'sophAi/vim-ipython_py3' "need python2
 " ""Plugin 'julienr/vim-cellmode'
 " slimux (vim_slime) alternative to vim-r vim-ipython ...
 Plugin 'epeli/slimux'
