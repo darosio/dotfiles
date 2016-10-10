@@ -3,7 +3,7 @@ set imap_user=daniele.arosio
 #set folder=imaps://danielepietroarosio@imap.gmail.com/
 set folder=imaps://smtp.cnr.it/
 
-#set imap_pass='toti2008y'
+#set imap_pass=''
 #set smtp_url=smtps://$imap_user:$imap_pass@smtp.gmail.com
 set imap_pass='toti31dav'
 set smtp_url=smtps://$imap_user:$imap_pass@smtp.cnr.it
