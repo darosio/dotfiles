@@ -73,9 +73,11 @@ case "$extension" in
     # Libreoffice Files
     odt|odp|ods)
         try odt2txt "$path" && { dump | trim; exit 5; } || exit 1;;
-    doc|xls|ppt)
-        try catdoc "$path" && { dump | trim; exit 5; }
-        antiword "$path" | trim;;
+    doc|ppt)
+        antiword "$path" && { dump | trim; exit 4; }
+        try catdoc "$path" && { dump | trim; exit 5; } || exit 1;;
+    xls)
+    	try xls2csv "$path" && { dump | trim; exit 5; } || exit 1;;
     docx)
     	try pandoc -t markdown "$path" && { dump | trim; exit 5; } || exit 1;;
 esac
