@@ -1,0 +1,24 @@
+## Receive options.
+set imap_user=daniele.arosio
+set folder=imaps://smtp.cnr.it/
+set imap_pass=$my_pw_cnr
+set spoolfile   = +INBOX
+mailboxes +INBOX
+set imap_check_subscribed
+# Specify where to save and/or look for postponed messages.
+set postponed = +INBOX/Drafts
+set record = +INBOX/Sent
+
+## Send options.
+set smtp_url=smtps://$imap_user:$imap_pass@smtp.cnr.it
+set realname='Daniele Arosio'
+set from=daniele.arosio@cnr.it
+set hostname="cnr.it"
+set signature="~/.mutt/cnr.signature"
+# Connection options
+#set ssl_force_tls = yes
+#unset ssl_starttls
+
+## Hook -- IMPORTANT!
+account-hook $folder "set imap_user=daniele.arosio imap_pass=$my_pw_cnr"
+

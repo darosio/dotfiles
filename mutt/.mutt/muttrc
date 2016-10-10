@@ -1,19 +1,17 @@
+# https://pbrisbin.com/posts/two_accounts_in_mutt/
 source "gpg2 -dq $HOME/.my-pws.gpg |"
-#set imap_user=danielepietroarosio@gmail.com
-set imap_user=daniele.arosio
-#set folder=imaps://danielepietroarosio@imap.gmail.com/
-set folder=imaps://smtp.cnr.it/
 
+## ACCOUNT2
+source "~/.mutt/gmail"
+folder-hook danielepietroarosio@gmail.com/ 'source ~/.mutt/gmail'
+#folder-hook *danielepietriarosio@gmail.com/Family 'set realname="Dan"'
 
-#set imap_pass=''
-#set smtp_url=smtps://$imap_user:$imap_pass@smtp.gmail.com
-#set imap_pass=''
-set imap_pass=$my_pw_cnr
-set smtp_url=smtps://$imap_user:$imap_pass@smtp.cnr.it
+## ACCOUNT1
+source "~/.mutt/cnr"
+# Here we use the $folder variable that has just been set in the sourced file.
+# We must set it right now otherwise the 'folder' variable will change in the next sourced file.
+folder-hook $folder 'source ~/.mutt/cnr'
 
-set spoolfile   = +INBOX
-#mailboxes       = +INBOX +INBOX/Refs
-set imap_check_subscribed
 
 # Store message headers locally to speed things up.
 # If hcache is a folder, Mutt will create sub cache folders for each account which may speeds things up even more.
@@ -24,9 +22,6 @@ set header_cache = ~/.cache/mutt
 # This will cost important disk usage according to your e-mail amount.
 set message_cachedir = "~/.cache/mutt"
 
-# Specify where to save and/or look for postponed messages.
-#set postponed = +[Gmail]/Drafts
-set postponed = +INBOX/Drafts
 
 # Allow Mutt to open new imap connection automatically.
 unset imap_passive
@@ -39,7 +34,15 @@ set mail_check = 120
 
 #source ~/.mutt/colors.muttrc                                     # source colors file
 set sidebar_visible = yes
+bind index,pager B sidebar-toggle-visible
+# Ctrl-n, Ctrl-p to select next, previous folder.
+# Ctrl-o to open selected folder.
+bind index,pager \CP sidebar-prev
+bind index,pager \CN sidebar-next
+bind index,pager \CO sidebar-open
+
 #set pager_index_lines=10
+#
 #
 #
 # bindings

@@ -1,0 +1,30 @@
+
+set imap_user=danielepietroarosio@gmail.com
+set folder=imaps://danielepietroarosio@imap.gmail.com/
+set imap_pass=$my_pw_gmail
+# Specify where to save and/or look for postponed messages.
+set postponed = +[Gmail]/Drafts
+
+
+color status cyan default
+
+set spoolfile   = +INBOX
+mailboxes +"-- DPA-----------"
+set imap_check_subscribed
+# Specify where to save and/or look for postponed messages.
+set postponed = +INBOX/Drafts
+unset record
+
+## Send options.
+set smtp_url=smtps://$imap_user:$imap_pass@smtp.gmail.com
+set realname='Daniele Arosio'
+set from=danielepietroarosio@gmail.com
+set hostname="gmail.com"
+set signature="~/.mutt/gmail.signature"
+# Connection options
+#set ssl_force_tls = yes
+#unset ssl_starttls
+
+## Hook -- IMPORTANT!
+account-hook $folder "set imap_user=danielepietroarosio@gmail.com imap_pass=$my_pw_gmail"
+
