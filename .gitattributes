@@ -1,3 +1,2 @@
-.msmtprc    filter=remove-pass
 4root/etc/netctl/*  filter=remove-pass
 4root/etc/netctl/*  filter=remove-Key
