@@ -1,7 +1,9 @@
-# https://pbrisbin.com/posts/two_accounts_in_mutt/
+# Inspired by:
+# https://pbrisbin.com/posts/two_accounts_in_mutt/ (espacially the git repo.)
 # http://stevelosh.com/blog/2012/10/the-homely-mutt/
 
 set mailcap_path        = ~/.mutt/mailcap			# entrys for filetypes
+set sleep_time = 0
 
 ## Receive options.
 set mbox_type=Maildir

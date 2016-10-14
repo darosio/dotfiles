@@ -1,14 +1,18 @@
 # Save the synchronization state files in the relevant directory
 SyncState *
 
+# Automatically create missing mailboxes, both locally and on the server
+Create Both
+Remove Slave
+Expunge Slave
+CopyArrivalDate yes
+
 #
 # Cnr
 #
 IMAPAccount cnr
 Host smtp.cnr.it
 User daniele.arosio
-# To store the password in an encrypted file use PassCmd instead of Pass
-# PassCmd "gpg2 -q --for-your-eyes-only --no-tty -d ~/.mailpass.gpg"
 PassCmd "pass email/cnr"
 # Use SSL
 SSLType IMAPS
@@ -28,11 +32,6 @@ Channel cnr
 Master :cnr-remote:
 Slave :cnr-local:
 Patterns INBOX *
-Remove Slave
-Expunge Slave
-CopyArrivalDate yes
-# Automatically create missing mailboxes, both locally and on the server
-Create Both
 
 
 #
@@ -42,12 +41,8 @@ IMAPAccount gmail
 Host imap.gmail.com
 User danielepietroarosio@gmail.com
 PassCmd "pass email/gmail"
-# Use SSL
 SSLType IMAPS
-# The following line should work. If get certificate errors, uncomment the two following lines and read the "Troubleshooting" section.
 CertificateFile /etc/ssl/certs/ca-certificates.crt
-#CertificateFile ~/.cert/imap.gmail.com.pem
-#CertificateFile ~/.cert/Equifax_Secure_CA.pem
 
 IMAPStore gmail-remote
 Account gmail
@@ -56,18 +51,47 @@ MaildirStore gmail-local
 # The trailing "/" is important
 Path ~/.maildir/gmail/
 Inbox ~/.maildir/gmail/Inbox
-Flatten .
+#Flatten .
 
-Channel gmail
+Channel gmail-inbox
+Master :gmail-remote:INBOX
+Slave :gmail-local:Inbox
+
+Channel gmail-archive
+Master ":gmail-remote:[Gmail]/All Mail"
+Slave :gmail-local:archive
+
+Channel gmail-draft
+Master :gmail-remote:[Gmail]/Draft
+Slave :gmail-local:draft
+
+Channel gmail-sent
+Master ":gmail-remote:[Gmail]/Sent Mail"
+Slave :gmail-local:sent
+
+Channel gmail-spam
+Master :gmail-remote:[Gmail]/Spam
+Slave :gmail-local:spam
+
+Channel gmail-trash
+Master :gmail-remote:[Gmail]/Trash
+Slave :gmail-local:trash
+
+Channel gmail-rest
 Master :gmail-remote:
 Slave :gmail-local:
 # Exclude everything under the internal [Gmail] folder, except the interesting folders
-Patterns * ![Gmail]* "[Gmail]/Sent Mail" "[Gmail]/Starred" "[Gmail]/All Mail"
-# Automatically create missing mailboxes, both locally and on the server
-Create Both
-Remove Slave
-Expunge Slave
-CopyArrivalDate yes
+#Patterns * ![Gmail]* "[Gmail]/Sent Mail" "[Gmail]/Starred" "[Gmail]/All Mail"
+Patterns * ![Gmail]* !archive !draft !sent !spam !trash
+
+Group gmail
+Channel gmail-inbox
+Channel gmail-archive
+Channel gmail-draft
+Channel gmail-sent
+Channel gmail-spam
+Channel gmail-trash
+Channel gmail-rest
 
 #############################################################################
 #		INBOXES 

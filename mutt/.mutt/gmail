@@ -1,18 +1,15 @@
-#set mbox_type=Maildir
+set realname="Daniele P. Arosio"
+set edit_headers=yes
 set sendmail  = "/usr/bin/msmtp -a gmail"
-set mbox      = "+cnr/archive"
-set postponed = "+cnr/drafts"
-#set folder=$HOME/.mail/gmail
+set signature="~/.mutt/gmail.signature"
+#set mbox      = "+cnr/archive"
 # Specify where to save and/or look for postponed messages.
 set postponed = +[Gmail]/Drafts
+unset record
 
 color status cyan default
 
-set imap_check_subscribed
-# Specify where to save and/or look for postponed messages.
-set postponed = +INBOX/Drafts
-unset record
-
+#set folder=$HOME/.mail/gmail
 mailboxes ! + `\
 for file in ~/.maildir/gmail/*; do \
   box=$(basename "$file"); \
@@ -21,5 +18,3 @@ for file in ~/.maildir/gmail/*; do \
 	echo -n "\"+gmail/$box\" "; \
   fi; \
 done`
-## Send options.
-set signature="~/.mutt/gmail.signature"

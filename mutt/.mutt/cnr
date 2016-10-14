@@ -1,14 +1,12 @@
 set from      = "daniele.arosio@cnr.it"
 set sendmail  = "/usr/bin/msmtp -a cnr"
 set mbox      = "+cnr/archive"
-set postponed = "+cnr/drafts"
+set record = +cnr/Sent
+set postponed = +cnr/Drafts
 ## Receive options.
 ##
 #set folder = "~/.maildir"
 #set record = "+cnr/Sent\ Items"
-#set postponed = "+cnr/Drafts"
-set postponed = +cnr/Drafts
-set record = +cnr/Sent
 ##set folder=imaps://smtp.cnr.it/
 #mailboxes +INBOX
 #set imap_check_subscribed
@@ -28,7 +26,7 @@ set record = +cnr/Sent
 #set smtp_url=smtps://$imap_user:$imap_pass@smtp.cnr.it
 ## Hook -- IMPORTANT!
 #account-hook $folder "set imap_user=daniele.arosio imap_pass=$my_pw_cnr"
-set realname='Daniele Arosio'
+set realname='daniele arosio'
 set signature="~/.mutt/cnr.signature"
 
 
