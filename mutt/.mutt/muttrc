@@ -5,20 +5,15 @@ set mailcap_path        = ~/.mutt/mailcap			# entrys for filetypes
 
 ## Receive options.
 set mbox_type=Maildir
-#set folder=$HOME/.maildir/gmail
-#set spoolfile = $HOME/.maildir/
 set folder=$HOME/.maildir/
 set mask="!^\\.[^.]"
+# Store message headers locally to speed things up.
+# If hcache is a folder, Mutt will create sub cache folders for each account which may speeds things up even more.
+set header_cache = ~/.cache/mutt/
+#
 #set imap_check_subscribed
 mailboxes `echo -n "+ "; find ~/.maildir/ -maxdepth 1 -type d -name "*" -printf "+'%f' "`
 
-# Store message headers locally to speed things up.
-# If hcache is a folder, Mutt will create sub cache folders for each account which may speeds things up even more.
-set header_cache = ~/.cache/mutt
-
-
-
-#source ~/.mutt/colors.muttrc                                     # source colors file
 set sidebar_visible = yes
 bind index,pager B sidebar-toggle-visible
 # Ctrl-n, Ctrl-p to select next, previous folder.
@@ -29,22 +24,16 @@ bind index,pager \CO sidebar-open
 
 #set pager_index_lines=10
 #
-#
-#
 # Sync email
 macro index O "<shell-escape>mbsync -a<enter>"           "run offlineimap to sync all mail"
 macro index o "<shell-escape>mbsync -n -d INBOXES<enter>" "run offlineimap to sync inbox"
 
-
-#set spoolfile = "+cnr/Inbox"
-
-
-#folder-hook cnr/*		source ~/.mutt/cnr
-#folder-hook gmail/*     source ~/.mutt/gmail
+# hooks for multiaccount
+set spoolfile = "+cnr/Inbox"
 folder-hook cnr/*		'source ~/.mutt/cnr'
 folder-hook gmail/*     'source ~/.mutt/gmail'
-
 source ~/.mutt/cnr
+#
 ## ACCOUNT2
 #source "~/.mutt/gmail"
 #folder-hook danielepietroarosio@gmail.com/ 'source ~/.mutt/gmail'

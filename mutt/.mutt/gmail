@@ -1,6 +1,5 @@
 #set mbox_type=Maildir
 #set folder=$HOME/.mail/gmail
-set spoolfile=+gmail/Inbox
 set header_cache=~/.cache/mutt
 set imap_pass=$my_pw_gmail
 # Specify where to save and/or look for postponed messages.

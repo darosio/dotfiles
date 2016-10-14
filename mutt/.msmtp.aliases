@@ -1,0 +1,10 @@
+# Example aliases file
+     
+# Send root to Joe and Jane
+root: daniele.arosio@cnr.it, daniele.arosio@cnr.it
+     
+# Send cron to Mark
+cron: daniele.arosio@cnr.it
+   
+# Send everything else to admin
+default: daniele.arosio@cnr.it
