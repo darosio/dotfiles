@@ -1,36 +1,22 @@
 # https://pbrisbin.com/posts/two_accounts_in_mutt/
-source "gpg2 -dq $HOME/.my-pws.gpg |"
+# http://stevelosh.com/blog/2012/10/the-homely-mutt/
 
-## ACCOUNT2
-source "~/.mutt/gmail"
-folder-hook danielepietroarosio@gmail.com/ 'source ~/.mutt/gmail'
-#folder-hook *danielepietriarosio@gmail.com/Family 'set realname="Dan"'
+set mailcap_path        = ~/.mutt/mailcap			# entrys for filetypes
 
-## ACCOUNT1
-source "~/.mutt/cnr"
-# Here we use the $folder variable that has just been set in the sourced file.
-# We must set it right now otherwise the 'folder' variable will change in the next sourced file.
-folder-hook $folder 'source ~/.mutt/cnr'
-
+## Receive options.
+set mbox_type=Maildir
+#set folder=$HOME/.maildir/gmail
+#set spoolfile = $HOME/.maildir/
+set folder=$HOME/.maildir/
+set mask="!^\\.[^.]"
+#set imap_check_subscribed
+mailboxes `echo -n "+ "; find ~/.maildir/ -maxdepth 1 -type d -name "*" -printf "+'%f' "`
 
 # Store message headers locally to speed things up.
 # If hcache is a folder, Mutt will create sub cache folders for each account which may speeds things up even more.
 set header_cache = ~/.cache/mutt
 
-# Store messages locally to speed things up, like searching message bodies.
-# Can be the same folder as header_cache.
-# This will cost important disk usage according to your e-mail amount.
-set message_cachedir = "~/.cache/mutt"
 
-
-# Allow Mutt to open new imap connection automatically.
-unset imap_passive
-
-# Keep IMAP connection alive by polling intermittently (time in seconds).
-set imap_keepalive = 300
-
-# How often to check for new mail (time in seconds).
-set mail_check = 120
 
 #source ~/.mutt/colors.muttrc                                     # source colors file
 set sidebar_visible = yes
@@ -45,24 +31,34 @@ bind index,pager \CO sidebar-open
 #
 #
 #
-# bindings
-bind pager q            exit
-bind pager /            search
-bind pager <up>         previous-line
-bind pager <down>       next-line
-bind pager k            previous-line
-bind pager j            next-line
-bind pager gg           top
-bind pager G            bottom
-bind index gg           first-entry
-bind index G            last-entry
-bind pager K            previous-undeleted
-bind pager J            next-undeleted
-bind index K            previous-unread
-bind index J            next-unread
-bind index W            clear-flag
-bind index w            set-flag
-bind index,pager R      group-reply
-bind compose p          pgp-menu
-bind attach <return>    view-mailcap
+# Sync email
+macro index O "<shell-escape>mbsync -a<enter>"           "run offlineimap to sync all mail"
+macro index o "<shell-escape>mbsync -n -d INBOXES<enter>" "run offlineimap to sync inbox"
 
+
+#set spoolfile = "+cnr/Inbox"
+
+
+#folder-hook cnr/*		source ~/.mutt/cnr
+#folder-hook gmail/*     source ~/.mutt/gmail
+folder-hook cnr/*		'source ~/.mutt/cnr'
+folder-hook gmail/*     'source ~/.mutt/gmail'
+
+source ~/.mutt/cnr
+## ACCOUNT2
+#source "~/.mutt/gmail"
+#folder-hook danielepietroarosio@gmail.com/ 'source ~/.mutt/gmail'
+##folder-hook *danielepietriarosio@gmail.com/Family 'set realname="Dan"'
+
+## ACCOUNT1
+##source "~/.mutt/cnr"
+# Here we use the $folder variable that has just been set in the sourced file.
+# We must set it right now otherwise the 'folder' variable will change in the next sourced file.
+##folder-hook $folder 'source ~/.mutt/cnr'
+macro index C "<copy-message>?<toggle-mailboxes>" "copy a message to a mailbox"
+macro index c "<change-folder>?<toggle-mailboxes>" "copy a message to a mailbox"
+macro pager c "<change-folder>?<toggle-mailboxes>" "copy a message to a mailbox"
+macro index M "<save-message>?<toggle-mailboxes>" "move a message to a mailbox"
+macro compose A "<attach-message>?<toggle-mailboxes>" "attach message(s) to this message"
+source ~/.mutt/colors
+source ~/.mutt/bindings

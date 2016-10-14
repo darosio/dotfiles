@@ -1,13 +1,28 @@
+set from      = "daniele.arosio@cnr.it"
+set sendmail  = "/usr/bin/msmtp -a personal"
+set mbox      = "+cnr/archive"
+set postponed = "+cnr/drafts"
 ## Receive options.
-set imap_user=daniele.arosio
-set folder=imaps://smtp.cnr.it/
-set imap_pass=$my_pw_cnr
-set spoolfile   = +INBOX
-mailboxes +INBOX
-set imap_check_subscribed
+##
+#set folder = "~/.maildir"
+#set record = "+cnr/Sent\ Items"
+#set postponed = "+cnr/Drafts"
+set postponed = +cnr/Drafts
+set record = +cnr/Sent
+##set folder=imaps://smtp.cnr.it/
+set spoolfile   = +cnr/Inbox
+#mailboxes +INBOX
+#set imap_check_subscribed
 # Specify where to save and/or look for postponed messages.
-set postponed = +INBOX/Drafts
-set record = +INBOX/Sent
+#
+#mailboxes ! + `\
+#for file in ~/.maildir/cnr/*; do \
+  #box=$(basename "$file"); \
+  #if [ ! "$box" = '.' -a ! "$box" = '..' -a ! "$box" = '.customflags' \
+	  #-a ! "$box" = '.subscriptions' ]; then \
+	#echo -n "\"+cnr/$box\" "; \
+  #fi; \
+#done`
 
 ## Send options.
 set smtp_url=smtps://$imap_user:$imap_pass@smtp.cnr.it
@@ -20,5 +35,19 @@ set signature="~/.mutt/cnr.signature"
 #unset ssl_starttls
 
 ## Hook -- IMPORTANT!
-account-hook $folder "set imap_user=daniele.arosio imap_pass=$my_pw_cnr"
+#account-hook $folder "set imap_user=daniele.arosio imap_pass=$my_pw_cnr"
+
+color status green default
+
+macro index ,c "<change-folder>+gmail/Inbox<enter>" "change accounts"
+#macro index ,z "<shell-escape>mbsync --pull-new codeclimate-inbox<enter>" "sync IMAP"
+#macro index D "<save-message>+codeclimate/trash<enter>" "move message to the trash"
+#macro index S "<save-message>+codeclimate/spam<enter>" "mark message as spam"
+macro index D \
+    "<save-message>+cnr/Trash<enter>" \
+    "move message to the trash"
+
+macro index S \
+    "<save-message>+cnr/Spam<enter>"  \
+        "mark message as spam"
 
