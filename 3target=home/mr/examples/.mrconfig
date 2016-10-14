@@ -65,3 +65,6 @@ checkout = git clone 'https://github.com/ciex/rktik-thesis' 'rktik-thesis'
 
 [thesis/thesis-markdown-pandoc]
 checkout = git clone 'https://github.com/chiakaivalya/thesis-markdown-pandoc' 'thesis-markdown-pandoc'
+
+[1_dotfiles/pbrisbin]
+checkout = git clone 'https://github.com/pbrisbin/dotfiles/' 'pbrisbin'
