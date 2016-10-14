@@ -1,20 +1,13 @@
 #set mbox_type=Maildir
+set sendmail  = "/usr/bin/msmtp -a gmail"
+set mbox      = "+cnr/archive"
+set postponed = "+cnr/drafts"
 #set folder=$HOME/.mail/gmail
-set header_cache=~/.cache/mutt
-set imap_pass=$my_pw_gmail
 # Specify where to save and/or look for postponed messages.
 set postponed = +[Gmail]/Drafts
 
 color status cyan default
 
-#mailboxes ! + `\
-#for file in ~/.mail/gmail/*; do \
-  #box=$(basename "$file"); \
-  #if [ ! "$box" = '.' -a ! "$box" = '..' -a ! "$box" = '.customflags' \
-      #-a ! "$box" = '.subscriptions' ]; then \
-    #echo -n "\"+$box\" "; \
-  #fi; \
-#done`
 set imap_check_subscribed
 # Specify where to save and/or look for postponed messages.
 set postponed = +INBOX/Drafts
@@ -29,16 +22,4 @@ for file in ~/.maildir/gmail/*; do \
   fi; \
 done`
 ## Send options.
-set smtp_url=smtps://$imap_user:$imap_pass@smtp.gmail.com
-set realname='Daniele Arosio'
-set from=danielepietroarosio@gmail.com
-set hostname="gmail.com"
 set signature="~/.mutt/gmail.signature"
-# Connection options
-#set ssl_force_tls = yes
-#unset ssl_starttls
-set my_pw_gmail=`pass email/gmail | awk 'BEGIN{getline; print $0}'`
-
-## Hook -- IMPORTANT!
-account-hook $folder "set imap_user=danielepietroarosio@gmail.com imap_pass=$my_pw_gmail"
-

@@ -1,5 +1,5 @@
 set from      = "daniele.arosio@cnr.it"
-set sendmail  = "/usr/bin/msmtp -a personal"
+set sendmail  = "/usr/bin/msmtp -a cnr"
 set mbox      = "+cnr/archive"
 set postponed = "+cnr/drafts"
 ## Receive options.
@@ -24,19 +24,13 @@ set record = +cnr/Sent
 #done`
 
 ## Send options.
-set imap_user = daniele.arosio
-set imap_pass = `pass email/cnr | awk 'BEGIN{getline; print $0}'`
-set smtp_url=smtps://$imap_user:$imap_pass@smtp.cnr.it
-set realname='Daniele Arosio'
-set from=daniele.arosio@cnr.it
-set hostname="cnr.it"
-set signature="~/.mutt/cnr.signature"
-# Connection options
-#set ssl_force_tls = yes
-#unset ssl_starttls
-
+#set imap_pass = `pass email/cnr | awk 'BEGIN{getline; print $0}'`
+#set smtp_url=smtps://$imap_user:$imap_pass@smtp.cnr.it
 ## Hook -- IMPORTANT!
 #account-hook $folder "set imap_user=daniele.arosio imap_pass=$my_pw_cnr"
+set realname='Daniele Arosio'
+set signature="~/.mutt/cnr.signature"
+
 
 color status green default
 
