@@ -20,6 +20,7 @@ set postponed = +cnr/Drafts
 	#echo -n "\"+cnr/$box\" "; \
   #fi; \
 #done`
+mailboxes `echo -n "+ "; find ~/.maildir/cnr/ -maxdepth 1 -type d -name "*" -printf "+'%f' "`
 
 ## Send options.
 #set imap_pass = `pass email/cnr | awk 'BEGIN{getline; print $0}'`
@@ -36,11 +37,10 @@ macro index ,c "<change-folder>+gmail/Inbox<enter>" "change accounts"
 #macro index ,z "<shell-escape>mbsync --pull-new codeclimate-inbox<enter>" "sync IMAP"
 #macro index D "<save-message>+codeclimate/trash<enter>" "move message to the trash"
 #macro index S "<save-message>+codeclimate/spam<enter>" "mark message as spam"
-macro index D \
-    "<save-message>+cnr/Trash<enter>" \
-    "move message to the trash"
 
+## Deleto to trash and move into Spam
+macro index D \
+    "<save-message>+cnr/Trash<enter>"  "move message to the trash"
 macro index S \
-    "<save-message>+cnr/Spam<enter>"  \
-        "mark message as spam"
+    "<save-message>+cnr/Spam<enter>"   "mark message as spam"
 

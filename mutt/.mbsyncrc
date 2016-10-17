@@ -62,7 +62,7 @@ Master ":gmail-remote:[Gmail]/All Mail"
 Slave :gmail-local:archive
 
 Channel gmail-draft
-Master :gmail-remote:[Gmail]/Draft
+Master :gmail-remote:[Gmail]/Drafts
 Slave :gmail-local:draft
 
 Channel gmail-sent

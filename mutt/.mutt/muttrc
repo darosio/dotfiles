@@ -4,6 +4,13 @@
 
 set mailcap_path        = ~/.mutt/mailcap			# entrys for filetypes
 set sleep_time = 0
+set send_charset="utf-8"
+#auto_view text/html
+set sort=threads
+set sort_aux=last-date-received
+set query_command="goobook query %s"
+macro index,pager a "<pipe-message>goobook add<return>" "add sender to google contacts"
+bind editor <Tab> complete-query
 
 ## Receive options.
 set mbox_type=Maildir
@@ -16,15 +23,6 @@ set header_cache = ~/.cache/mutt/
 #set imap_check_subscribed
 mailboxes `echo -n "+ "; find ~/.maildir/ -maxdepth 1 -type d -name "*" -printf "+'%f' "`
 
-set sidebar_visible = yes
-bind index,pager B sidebar-toggle-visible
-# Ctrl-n, Ctrl-p to select next, previous folder.
-# Ctrl-o to open selected folder.
-bind index,pager \CP sidebar-prev
-bind index,pager \CN sidebar-next
-bind index,pager \CO sidebar-open
-
-#set pager_index_lines=10
 #
 # Sync email
 macro index O "<shell-escape>mbsync -a<enter>"           "run offlineimap to sync all mail"
@@ -51,5 +49,11 @@ macro index c "<change-folder>?<toggle-mailboxes>" "copy a message to a mailbox"
 macro pager c "<change-folder>?<toggle-mailboxes>" "copy a message to a mailbox"
 macro index M "<save-message>?<toggle-mailboxes>" "move a message to a mailbox"
 macro compose A "<attach-message>?<toggle-mailboxes>" "attach message(s) to this message"
+macro index 'c' '<change-folder>?<change-dir><home>^K=<enter>'
+macro index,pager <f2> '<sync-mailbox><enter-command>source ~/.mutt/cnr<enter><change-folder>!<enter>'
+macro index,pager <f3> '<sync-mailbox><enter-command>source ~/.mutt/gmail<enter><change-folder>!<enter>'
+macro attach 'V' "<pipe-entry>cat >~/.cache/mutt/mail.html && $BROWSER ~/.cache/mutt/mail.html && rm ~/.cache/mutt/mail.html<enter>"
 source ~/.mutt/colors
 source ~/.mutt/bindings
+#set pager_index_lines=10
+source ~/.mutt/sidebar
