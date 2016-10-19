@@ -60,7 +60,7 @@ case "$extension" in
 		try pdftotext -l 10 -nopgbrk -q "$path" - && \
 			{ dump | trim | fmt -s -w $width; exit 0; } || exit 1;;
 	tif)
-		try convert "$path" -combine -auto-level -despeckle "$cached" && exit 6 || exit 1;;
+		try convert "$path" -combine -auto-level -scale 50% -despeckle "$cached" && exit 6 || exit 1;;
     # BitTorrent Files
     torrent)
         try transmission-show "$path" && { dump | trim; exit 5; } || exit 1;;
@@ -87,8 +87,8 @@ case "$mimetype" in
     text/* | */xml)
         try highlight --out-format=ansi "$path" && { dump | trim; exit 5; } || exit 2;;
     # Ascii-previews of images:
-    image/*)
-        img2txt --gamma=0.6 --width="$width" "$path" && exit 4 || exit 1;;
+    #image/*)
+        #img2txt --gamma=0.6 --width="$width" "$path" && exit 4 || exit 1;;
     # Image preview for videos, disabled by default:
     video/*)
         ffmpegthumbnailer -i "$path" -o "$cached" -s 0 && exit 6 || exit 1;;
