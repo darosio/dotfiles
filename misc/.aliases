@@ -128,8 +128,8 @@ alias nb='ipython notebook --pylab inline'
 alias nb='jupyter notebook'
 alias ipythonp='ipython --pylab=inline'
 alias qpy='ipython qtconsole --pylab'
-alias e='gvim'
-alias ed='gvimdiff'
+alias e='emacs'
+alias ee='emacs -nw'
 #export TODO_ACTIONS_DIR=~/Dropbox/todo/.todo.actions.d/
 #export TODO_DIR=~/Dropbox/todo/
 ## export EDITOR='geany'
