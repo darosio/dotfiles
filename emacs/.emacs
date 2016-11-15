@@ -12,7 +12,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(package-selected-packages (quote (evil-visual-mark-mode))))
+ '(package-selected-packages (quote (powerline evil-visual-mark-mode))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -24,6 +24,8 @@
 (evil-mode t)
 (require 'helm-config)
 (helm-mode 1)
+(require 'powerline)
+(powerline-default-theme)
 
 ;; package management
 (defun ensure-package-installed (&rest packages)
@@ -48,4 +50,5 @@ Return a list of installed packages or nil for every skipped package."
 
 ;; Assuming you wish to install "iedit" and "magit"
 (ensure-package-installed 'evil
-			  'helm)
+			  'helm
+			  'powerline)
