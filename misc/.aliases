@@ -85,6 +85,9 @@ export FZF_DEFAULT_OPTS="-e -m --sort 10000"
 source /usr/share/fzf/key-bindings.bash
 source /etc/profile.d/fzf-extras.bash
 #TODO open filemanager after searching for file or dir
+fb() {
+ goobook query "" |fzf | goobook dquery `cut -f 1`
+}
 sf() {
  recoll -t -b -a $* | fzf -m 
 }

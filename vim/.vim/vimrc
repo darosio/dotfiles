@@ -58,6 +58,8 @@ let g:table_mode_header_fillchar="="
 "Plugin 'sophAi/vim-ipython_py3' "need python2
 " ""Plugin 'julienr/vim-cellmode'
 " slimux (vim_slime) alternative to vim-r vim-ipython ...
+" org-mode
+Plugin 'jceb/vim-orgmode'
 Plugin 'epeli/slimux'
 " tmux?...
 "Plugin 'christoomey/vim-tmux-navigator'
