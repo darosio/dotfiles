@@ -88,10 +88,10 @@ bindsym $mod+w layout tabbed
 bindsym $mod+e layout toggle split
 
 # toggle tiling / floating
-bindsym $mod+Shift+space floating toggle
+bindsym $mod+Shift+Home floating toggle
 
 # change focus between tiling / floating windows
-bindsym $mod+space focus mode_toggle
+bindsym $mod+Home focus mode_toggle
 
 # focus the parent container
 bindsym $mod+a focus parent
@@ -200,9 +200,12 @@ bindsym $mod+Shift+m exec lxterminal -e alsamixer
 bindsym $mod+Shift+p exec pavucontrol
 bindsym $mod+Shift+g exec gvim
 
-bindsym XF86AudioLowerVolume exec /usr/bin/pactl set-sink-volume 0 -- -5%; exec /usr/bin/pactl set-sink-volume 1 -- -5%
-bindsym XF86AudioRaiseVolume exec /usr/bin/pactl set-sink-volume 0 -- +5%; exec /usr/bin/pactl set-sink-volume 1 -- +5%
-bindsym XF86AudioMute exec /usr/bin/pactl set-sink-volume 0 0; exec /usr/bin/pactl set-sink-volume 1 0
+#bindsym XF86AudioLowerVolume exec /usr/bin/pactl set-sink-volume 0 -- -5%; exec /usr/bin/pactl set-sink-volume 1 -- -5%
+#bindsym XF86AudioRaiseVolume exec /usr/bin/pactl set-sink-volume 0 -- +5%; exec /usr/bin/pactl set-sink-volume 1 -- +5%
+#bindsym XF86AudioMute exec /usr/bin/pactl set-sink-volume 0 0; exec /usr/bin/pactl set-sink-volume 1 0
+bindsym $mod+Next exec pactl set-sink-volume 0 -5%; exec pactl set-sink-volume 1 -5%
+bindsym $mod+Prior  exec pactl set-sink-volume 0 +5%; exec pactl set-sink-volume 1 +5%
+bindsym $mod+End   exec pactl set-sink-mute 0 toggle;  exec pactl set-sink-mute 1 toggle
 #bindsym XF86Launch1 exec /usr/bin/pactl play-sample that_was_easy
 bindsym --release XF86MonBrightnessUp exec --no-startup-id /usr/bin/xbacklight -inc 15
 bindsym --release XF86MonBrightnessDown exec --no-startup-id /usr/bin/xbacklight -dec 15
@@ -242,10 +245,10 @@ bindsym $mod+Print exec xfce4-screenshooter
 bindsym $mod+F11 exec xrdb -DSOLARIZED_DARK -merge .Xresources 
 bindsym $mod+F12 exec xrdb -DSOLARIZED_LIGHT -merge .Xresources 
 
-bindsym $mod+Tab exec --no-startup-id j4-dmenu-desktop --dmenu='rofi -dmenu -i'
+bindsym $mod+space exec --no-startup-id j4-dmenu-desktop --dmenu='rofi -dmenu -i'
 # list open windows to switch to
-bindsym $alt+Tab exec rofi -show window
-bindsym $alt+s exec rofi -show ssh
+bindsym $mod+Tab exec rofi -show window
+bindsym $mod+Shift+s exec rofi -show ssh
 # another favorite program
 bindsym $mod+x exec keepassx
 # F2 and F3 for thunderbird and firefox
