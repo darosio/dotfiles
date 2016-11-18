@@ -32,11 +32,10 @@ Return a list of installed packages or nil for every skipped package."
 ;; Assuming you wish to install ""
 (ensure-package-installed 'evil-leader
 			  'evil-nerd-commenter
-			  'powerline
+			  'powerline-evil
 			  'paganini-theme
-			  'magit)
+			  'evil-magit)
 			  ;'helm
-			  ;'powerline)
 
 
 (setq vc-follow-symlinks t)
@@ -74,20 +73,39 @@ Return a list of installed packages or nil for every skipped package."
 (evil-leader/set-key "," 'other-window)
 (evil-leader/set-key "b" 'ibuffer)
 (evil-leader/set-key "x" 'helm-M-x)
-(evil-leader/set-key "cc" 'evilnc-comment-or-uncomment-lines)
-(evil-leader/set-key "cy" 'evilnc-copy-and-comment-lines)
+
 (require 'evil)
 (evil-mode t)
-(define-key evil-normal-state-map (kbd "C-h") 'evil-window-left)
+(setq evil-motion-state-modes (append evil-emacs-state-modes evil-motion-state-modes))
+(setq evil-emacs-state-modes nil)
+;; (define-key evil-normal-state-map (kbd "C-h") 'evil-window-left)
 (define-key evil-normal-state-map (kbd "C-j") 'evil-window-down)
 (define-key evil-normal-state-map (kbd "C-k") 'evil-window-up)
 (define-key evil-normal-state-map (kbd "C-l") 'evil-window-right)
+
+;; nerdcommenter
+;; (evilnc-default-hotkeys)
+(evil-leader/set-key
+  "cc" 'evilnc-comment-or-uncomment-lines
+  "cy" 'evilnc-copy-and-comment-lines
+  "cl" 'evilnc-quick-comment-or-uncomment-to-the-line
+  "ll" 'evilnc-quick-comment-or-uncomment-to-the-line
+  ;; "cc" 'evilnc-copy-and-comment-lines
+  "cp" 'evilnc-comment-or-uncomment-paragraphs
+  "cr" 'comment-or-uncomment-region
+  "cv" 'evilnc-toggle-invert-comment-line-by-line
+  "\\" 'evilnc-comment-operator ; if you prefer backslash key
+)
+
+
 (require 'dired-x)
 
+(require 'powerline)
+(powerline-center-evil-theme)
+;; (require 'evil-magit)
 ;; (require 'helm-config)
 ;; (helm-mode 1)
-(require 'powerline)
-(powerline-default-theme)
+
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -100,7 +118,10 @@ Return a list of installed packages or nil for every skipped package."
  '(custom-safe-themes
    (quote
     ("1e67765ecb4e53df20a96fb708a8601f6d7c8f02edb09d16c838e465ebe7f51b" default)))
- '(package-selected-packages (quote (magit paganini-theme powerline evil-leader)))
+ '(menu-bar-mode nil)
+ '(package-selected-packages
+   (quote
+    (evil-magit powerline-evil magit paganini-theme powerline evil-leader)))
  '(scroll-bar-mode nil)
  '(tool-bar-mode nil))
 
