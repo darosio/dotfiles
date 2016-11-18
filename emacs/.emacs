@@ -35,7 +35,7 @@ Return a list of installed packages or nil for every skipped package."
 			  'powerline
 			  'paganini-theme
 			  'evil-magit)
-			  ;'helm
+			  ;'helm 
 
 
 (setq vc-follow-symlinks t)
@@ -76,8 +76,8 @@ Return a list of installed packages or nil for every skipped package."
 
 (require 'evil)
 (evil-mode t)
-(setq evil-motion-state-modes (append evil-emacs-state-modes evil-motion-state-modes))
-(setq evil-emacs-state-modes nil)
+;; (setq evil-motion-state-modes (append evil-emacs-state-modes evil-motion-state-modes))
+;; (setq evil-emacs-state-modes nil)
 ;; (define-key evil-normal-state-map (kbd "C-h") 'evil-window-left)
 (define-key evil-normal-state-map (kbd "C-j") 'evil-window-down)
 (define-key evil-normal-state-map (kbd "C-k") 'evil-window-up)
@@ -102,7 +102,9 @@ Return a list of installed packages or nil for every skipped package."
 
 (require 'powerline)
 (powerline-default-theme)
-;; (require 'evil-magit)
+
+(require 'evil-magit)
+
 ;; (require 'helm-config)
 ;; (helm-mode 1)
 
@@ -119,7 +121,9 @@ Return a list of installed packages or nil for every skipped package."
    (quote
     ("1e67765ecb4e53df20a96fb708a8601f6d7c8f02edb09d16c838e465ebe7f51b" default)))
  '(menu-bar-mode nil)
- '(package-selected-packages (quote (magit paganini-theme powerline evil-leader)))
+ '(package-selected-packages
+   (quote
+    (evil-magit magit paganini-theme powerline evil-leader)))
  '(scroll-bar-mode nil)
  '(tool-bar-mode nil))
 
