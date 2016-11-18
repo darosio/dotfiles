@@ -34,7 +34,9 @@ Return a list of installed packages or nil for every skipped package."
 			  'evil-nerd-commenter
 			  'powerline
 			  'paganini-theme
-			  'evil-magit)
+			  'evil-magit
+			  'org-evil
+			  'auto-complete)
 			  ;'helm 
 
 
@@ -73,6 +75,7 @@ Return a list of installed packages or nil for every skipped package."
 (evil-leader/set-key "," 'other-window)
 (evil-leader/set-key "b" 'ibuffer)
 (evil-leader/set-key "x" 'helm-M-x)
+(evil-leader/set-key "g" 'magit-status)
 
 (require 'evil)
 (evil-mode t)
@@ -99,11 +102,17 @@ Return a list of installed packages or nil for every skipped package."
 
 
 (require 'dired-x)
-
+;; powerline
 (require 'powerline)
 (powerline-default-theme)
-
+;; evil-magit
 (require 'evil-magit)
+;; org-evil
+(require 'org-evil)
+;; auto-complete
+(require 'auto-complete-config)
+(ac-config-default)
+;; (setq ac-show-menu-immediately-on-auto-complete t) ; not sure I want/need this.
 
 ;; (require 'helm-config)
 ;; (helm-mode 1)
@@ -123,7 +132,7 @@ Return a list of installed packages or nil for every skipped package."
  '(menu-bar-mode nil)
  '(package-selected-packages
    (quote
-    (evil-magit magit paganini-theme powerline evil-leader)))
+    (org-evil evil-magit magit paganini-theme powerline evil-leader)))
  '(scroll-bar-mode nil)
  '(tool-bar-mode nil))
 
