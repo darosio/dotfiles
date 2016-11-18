@@ -100,6 +100,7 @@ Return a list of installed packages or nil for every skipped package."
  '(custom-safe-themes
    (quote
     ("1e67765ecb4e53df20a96fb708a8601f6d7c8f02edb09d16c838e465ebe7f51b" default)))
+ '(menu-bar-mode nil)
  '(package-selected-packages (quote (magit paganini-theme powerline evil-leader)))
  '(scroll-bar-mode nil)
  '(tool-bar-mode nil))
