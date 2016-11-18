@@ -32,7 +32,7 @@ Return a list of installed packages or nil for every skipped package."
 ;; Assuming you wish to install ""
 (ensure-package-installed 'evil-leader
 			  'evil-nerd-commenter
-			  'powerline-evil
+			  'powerline
 			  'paganini-theme
 			  'evil-magit)
 			  ;'helm
@@ -101,7 +101,7 @@ Return a list of installed packages or nil for every skipped package."
 (require 'dired-x)
 
 (require 'powerline)
-(powerline-center-evil-theme)
+(powerline-default-theme)
 ;; (require 'evil-magit)
 ;; (require 'helm-config)
 ;; (helm-mode 1)
@@ -119,9 +119,7 @@ Return a list of installed packages or nil for every skipped package."
    (quote
     ("1e67765ecb4e53df20a96fb708a8601f6d7c8f02edb09d16c838e465ebe7f51b" default)))
  '(menu-bar-mode nil)
- '(package-selected-packages
-   (quote
-    (evil-magit powerline-evil magit paganini-theme powerline evil-leader)))
+ '(package-selected-packages (quote (magit paganini-theme powerline evil-leader)))
  '(scroll-bar-mode nil)
  '(tool-bar-mode nil))
 
