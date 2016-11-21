@@ -113,6 +113,11 @@ Return a list of installed packages or nil for every skipped package."
 (require 'auto-complete-config)
 (ac-config-default)
 ;; (setq ac-show-menu-immediately-on-auto-complete t) ; not sure I want/need this.
+;; notmuch email
+(autoload 'notmuch "notmuch" "notmuch mail" t)
+(add-to-list 'load-path "/home/dan/workspace/dotfiles/emacs/contrib")
+(require 'org-notmuch)
+(define-key global-map "\C-cl" 'org-store-link)
 
 ;; (require 'helm-config)
 ;; (helm-mode 1)
