@@ -113,11 +113,118 @@ Return a list of installed packages or nil for every skipped package."
 (require 'auto-complete-config)
 (ac-config-default)
 ;; (setq ac-show-menu-immediately-on-auto-complete t) ; not sure I want/need this.
+
 ;; notmuch email
-(autoload 'notmuch "notmuch" "notmuch mail" t)
+(require 'notmuch) ;(autoload 'notmuch "notmuch" "notmuch mail" t) 
+(global-set-key (kbd "C-c m") 'notmuch)
+(setq notmuch-search-oldest-first nil)
+(setq notmuch-fcc-dirs '(("daniele.arosio@cnr.it" . "cnr/Sent")
+			 (".*" . "gmail/sent"))) ;set sent mail directory
+(setq mail-user-agent 'message-user-agent) ;Setup User-Agent header
+(setq send-mail-function (quote sendmail-send-it)
+      ;; message-send-mail-function 'message-send-mail-with-sendmail
+      sendmail-program "~/.progs/bin/msmtp-enqueue.sh"
+      mail-specify-envelope-from t ;'header
+      message-sendmail-f-is-evil nil
+      mail-envelope-from 'header
+      message-sendmail-envelope-from 'header
+      mail-interactive t)
+(setq notmuch-saved-searches ;A few commonly used saved searches. 
+      (quote
+       ((:name "inbox" :query "tag:inbox" :key "i" :sort-order oldest-first)
+	(:name "unread" :query "tag:unread" :key "u")
+	(:name "flagged" :query "tag:flagged" :key "f")
+	(:name "sent" :query "tag:sent" :key "t")
+	(:name "drafts" :query "tag:draft" :key "d")
+	(:name "all mail" :query "*" :key "a")
+	(:name "cnr" :query "to:daniele.arosio@cnr.it" :key "c")
+	(:name "gmail" :query "to:danielepietroarosio@gmail.com" :key "g"))))
+(setq message-kill-buffer-on-exit t) ;kill buffer after sending mail)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;       notmuch-show-all-multipart/alternative-parts nil
+;;       mime-edit-pgp-signers '("C84EF897")
+;;       mime-edit-pgp-encrypt-to-self t
+;;       mml2015-encrypt-to-self t
+;;       mml2015-sign-with-sender t
+;;       notmuch-crypto-process-mime t
+;;       user-full-name "Christian Kruse"
+;;       user-mail-address "cjk@defunct.ch"
+;;       mail-user-agent 'message-user-agent
+;;       notmuch-always-prompt-for-sender t
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ; stores postponed messages to the specified directory
+;; (setq message-directory "MailLocation/Drafts") ;
+;; (setq message-directory "gmail/draft")
+;; ;Settings for main screen
+;; (setq notmuch-hello-hide-tags (quote ("killed")))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; org-notmuch
 (add-to-list 'load-path "/home/dan/workspace/dotfiles/emacs/contrib")
 (require 'org-notmuch)
 (define-key global-map "\C-cl" 'org-store-link)
+(define-key notmuch-show-mode-map "\C-c\C-o" 'browse-url-at-point)
+(define-key notmuch-search-mode-map "g" 'notmuch-poll-and-refresh-this-buffer)
+(define-key notmuch-hello-mode-map "g" 'notmuch-poll-and-refresh-this-buffer)
+(define-key notmuch-search-mode-map "d"
+  (lambda () "toggle deleted tag for thread" (interactive)
+    (if (member "deleted" (notmuch-search-get-tags))
+	(notmuch-search-tag '("-deleted"))
+      (notmuch-search-tag '("+deleted" "-inbox" "-unread")))))
+(define-key notmuch-search-mode-map "!"
+  (lambda ()
+    "toggle unread tag for thread"
+    (interactive)
+    (if (member "unread" (notmuch-search-get-tags))
+        (notmuch-search-tag '("-unread"))
+      (notmuch-search-tag '("+unread")))))
+(define-key notmuch-show-mode-map "d"
+  (lambda ()
+    "toggle deleted tag for message"
+    (interactive)
+    (if (member "deleted" (notmuch-show-get-tags))
+        (notmuch-show-tag '("-deleted"))
+      (notmuch-show-tag '("+deleted" "-inbox" "-unread")))))
+(define-key notmuch-search-mode-map "a"
+  (lambda ()
+    "toggle archive"
+    (interactive)
+    (if (member "archive" (notmuch-search-get-tags))
+        (notmuch-search-tag '("-archive"))
+      (notmuch-search-tag '("+archive" "-inbox" "-unread")))))
+(define-key notmuch-show-mode-map "a"
+  (lambda ()
+    "toggle archive"
+    (interactive)
+    (if (member "archive" (notmuch-show-get-tags))
+        (notmuch-show-tag '("-archive"))
+      (notmuch-show-tag '("+archive" "-inbox" "-unread")))))
+(define-key notmuch-hello-mode-map "i"
+  (lambda ()
+    (interactive)
+    (notmuch-hello-search "tag:inbox")))
+(define-key notmuch-hello-mode-map "u"
+  (lambda ()
+    (interactive)
+    (notmuch-hello-search "tag:unread")))
+(define-key notmuch-hello-mode-map "a"
+  (lambda ()
+    (interactive)
+    (notmuch-hello-search "tag:archive")))
+;;;;;;;;;
+;Reading mail settings:
+(define-key notmuch-show-mode-map "S"
+    (lambda ()
+    "mark message as spam"
+    (interactive)
+(notmuch-show-tag (list "+spam" "-inbox"))))
+(define-key notmuch-search-mode-map "S"
+(lambda ()
+    "mark message as spam"
+    (interactive)
+    (notmuch-search-tag (list "-inbox" "+spam"))
+    (next-line) ))
+
 
 ;; (require 'helm-config)
 ;; (helm-mode 1)
