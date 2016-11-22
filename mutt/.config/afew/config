@@ -1,0 +1,17 @@
+#default filter chain
+#[SpamFilter]
+#[KillThreadsFilter]
+#[ListMailsFilter]
+#[SentMailsFilter]
+#sent_tag = sent
+#[ArchiveSentMailsFilter]
+
+
+#[InboxFilter]
+
+[MailMover]
+folders = gmail/Inbox
+# rules
+#Defunct/INBOX = 'tag:archive':Defunct/Archiv 'tag:cforum':Defunct/Lists.cforum 'tag:deleted':Defunct/Trash
+#cnr/Inbox = 'tag:deleted':cnr/Trash
+gmail/Inbox = 'tag:deleted':gmail/trash

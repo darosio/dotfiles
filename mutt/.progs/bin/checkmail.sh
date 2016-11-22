@@ -14,4 +14,4 @@ mbsync -qa
 
 notmuch new --quiet
 
-#afew
+afew -a -m

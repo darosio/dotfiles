@@ -31,8 +31,7 @@ path=/home/dan/.maildir
 [user]
 name=Daniele Arosio
 primary_email=daniele.arosio@cnr.it
-other_email=danielepietroarosio@cnr.it;
-other_email=daniele.arosio@unitn.it;
+other_email=danielepietroarosio@cnr.it;daniele.arosio@unitn.it;
 
 # Configuration for "notmuch new"
 #
