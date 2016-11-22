@@ -32,6 +32,7 @@ path=/home/dan/.maildir
 name=Daniele Arosio
 primary_email=daniele.arosio@cnr.it
 other_email=danielepietroarosio@cnr.it;
+other_email=daniele.arosio@unitn.it;
 
 # Configuration for "notmuch new"
 #
@@ -49,7 +50,7 @@ other_email=danielepietroarosio@cnr.it;
 #
 [new]
 tags=unread;inbox;
-ignore=
+ignore=Trash;trash
 
 # Search configuration
 #
