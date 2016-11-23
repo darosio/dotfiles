@@ -8,4 +8,6 @@ export PATH=$PATH:$HOME/.progs/git-annex.linux:$HOME/.ssh/
 
 [[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && exec startx
 
+eval "$(keychain --eval)"
+
 #export DESKTOP_SESSION=LXDE

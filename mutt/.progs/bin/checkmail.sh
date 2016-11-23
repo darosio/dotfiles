@@ -8,7 +8,9 @@ if ! ping -c1 www.google.com > /dev/null 2>&1; then
 	fi
 fi
 
-bash /usr/share/doc/msmtp/msmtpqueue/msmtp-runqueue.sh 2>&1 >> ~/.msmtp.log
+#bash /usr/share/doc/msmtp/msmtpqueue/msmtp-runqueue.sh 2>&1 >> ~/.msmtp.log
+#$HOME/.progs/bin/msmtp-runqueue.sh 2>&1 >> ~/.msmtp.log
+/home/dan/.progs/bin/msmtp-runqueue.sh 2>&1 >> ~/.msmtp.log
 
 mbsync -qa
 
