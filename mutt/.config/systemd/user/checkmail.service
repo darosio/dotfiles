@@ -2,6 +2,8 @@
 Description=check mail
 RefuseManualStart=no
 RefuseManualStop=yes
+After=gpg-agent.service
+Wants=gpg-agent.service
 
 [Service]
 Type=oneshot

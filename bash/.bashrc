@@ -32,5 +32,7 @@ cd "$AUTOCD"
 #. /usr/lib/python3.5/site-packages/powerline/bindings/bash/powerline.sh
 
 
+#eval "$(keychain --eval --agents ssh,gpg C08BC79E3A3F1D89AD90C0008B6A39EFA290FB41)"
+
 # host specific bash_profile
 [[ -r .bashrc.$HOSTNAME ]] && . .bashrc.$HOSTNAME
