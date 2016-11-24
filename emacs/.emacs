@@ -225,10 +225,42 @@ Return a list of installed packages or nil for every skipped package."
     (notmuch-search-tag (list "-inbox" "+spam"))
     (next-line) ))
 
+;; example configuration for mu4e
 
+;; make sure mu4e is in your load-path
+(require 'mu4e)
+
+;; Only needed if your maildir is _not_ ~/Maildir
+;; Must be a real dir, not a symlink
+(setq mu4e-maildir "/home/dan/.maildir")
+
+;; these must start with a "/", and must exist
+;; (i.e.. /home/user/Maildir/sent must exist)
+;; you use e.g. 'mu mkdir' to make the Maildirs if they don't
+;; already exist
+
+;; below are the defaults; if they do not exist yet, mu4e offers to
+;; create them. they can also functions; see their docstrings.
+;; (setq mu4e-sent-folder   "/sent")
+;; (setq mu4e-drafts-folder "/drafts")
+;; (setq mu4e-trash-folder  "/trash")
+
+;; smtp mail setting; these are the same that `gnus' uses.
+(setq
+   message-send-mail-function   'sendmail-send-it)
+   ;; smtpmail-default-smtp-server "smtp.example.com"
+   ;; smtpmail-smtp-server         "smtp.example.com"
+   ;; smtpmail-local-domain        "example.com")
 ;; (require 'helm-config)
 ;; (helm-mode 1)
+;; use 'fancy' non-ascii characters in various places in mu4e
+(setq mu4e-use-fancy-chars t)
 
+;; save attachment to my desktop (this can also be a function)
+(setq mu4e-attachment-dir "~/")
+
+;; attempt to show images when viewing messages
+(setq mu4e-view-show-images t)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
