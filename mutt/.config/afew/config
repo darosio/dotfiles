@@ -2,16 +2,17 @@
 #[SpamFilter]
 #[KillThreadsFilter]
 #[ListMailsFilter]
-#[SentMailsFilter]
-#sent_tag = sent
+[SentMailsFilter]
+sent_tag = sent
 #[ArchiveSentMailsFilter]
 
 
-#[InboxFilter]
+[InboxFilter]
 
 [MailMover]
-folders = gmail/Inbox cnr/Inbox
+folders = gmail/Inbox cnr/INBOX cnr/INBOX.Sent
 # rules
 #Defunct/INBOX = 'tag:archive':Defunct/Archiv 'tag:cforum':Defunct/Lists.cforum 'tag:deleted':Defunct/Trash
-cnr/Inbox = 'tag:deleted':cnr/Trash
+cnr/INBOX = 'tag:deleted':cnr/INBOX.Trash
+cnr/INBOX.Sent = 'tag:deleted':cnr/INBOX.Trash
 gmail/Inbox = 'tag:deleted':gmail/trash

@@ -11,7 +11,8 @@
 # configured here named ".notmuch".
 #
 [database]
-path=/home/dan/.maildir
+#path=/home/dan/.maildir
+path=/home/dan/Sync/Maildir
 
 # User configuration
 #
@@ -31,7 +32,7 @@ path=/home/dan/.maildir
 [user]
 name=Daniele Arosio
 primary_email=daniele.arosio@cnr.it
-other_email=danielepietroarosio@cnr.it;daniele.arosio@unitn.it;
+#other_email=danielepietroarosio@cnr.it;daniele.arosio@unitn.it;
 
 # Configuration for "notmuch new"
 #
@@ -48,8 +49,9 @@ other_email=danielepietroarosio@cnr.it;daniele.arosio@unitn.it;
 #		in the mail store.
 #
 [new]
-tags=unread;inbox;
-ignore=Trash;trash
+#tags=unread;inbox;
+tags=new
+#ignore=Trash;trash
 
 # Search configuration
 #
