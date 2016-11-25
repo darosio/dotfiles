@@ -12,9 +12,9 @@ while sleep 90; do
 	#try also this but
 	#/home/dan/.progs/bin/msmtp-runqueue.sh >> ~/.msmtp.log
 	
-	mbsync -qa
+	#mbsync -qa
 	
-	notmuch new --quiet
+	#notmuch new --quiet
 	
-	afew -a -m
+	#afew -a -m
 done

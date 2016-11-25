@@ -262,6 +262,10 @@ Return a list of installed packages or nil for every skipped package."
 ;; attempt to show images when viewing messages
 (setq mu4e-view-show-images t)
 
+;; How do I configure the citation line when replying in Emacs?
+(setq message-citation-line-format "On %a, %d %b %Y, %f wrote:")
+(setq message-citation-line-function 'message-insert-formatted-citation-line)
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

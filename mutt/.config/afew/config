@@ -1,13 +1,13 @@
 #default filter chain
 #[SpamFilter]
+#[ClassifyingFilter]
 #[KillThreadsFilter]
 #[ListMailsFilter]
 [SentMailsFilter]
 sent_tag = sent
 #[ArchiveSentMailsFilter]
-
-
 [InboxFilter]
+
 
 [MailMover]
 folders = gmail/Inbox cnr/INBOX cnr/INBOX.Sent
