@@ -5,7 +5,7 @@
 # Executed by startx (run your window manager from here)
 
 if [ -d /etc/X11/xinit/xinitrc.d ]; then
-  for f in /etc/X11/xinit/xinitrc.d/*; do
+  for f in /etc/X11/xinit/xinitrc.d/?*.sh; do
     [ -x "$f" ] && . "$f"
   done
   unset f
@@ -32,4 +32,5 @@ fi
 if [ -s ~/.Xmodmap ]; then
     xmodmap ~/.Xmodmap
 fi
+#eval "$(keychain --eval --agents ssh,gpg C08BC79E3A3F1D89AD90C0008B6A39EFA290FB41)" &
 exec i3
