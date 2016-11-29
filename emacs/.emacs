@@ -118,8 +118,8 @@ Return a list of installed packages or nil for every skipped package."
 (require 'notmuch) ;(autoload 'notmuch "notmuch" "notmuch mail" t) 
 (global-set-key (kbd "C-c m") 'notmuch)
 (setq notmuch-search-oldest-first nil)
-(setq notmuch-fcc-dirs '(("daniele.arosio@cnr.it" . "cnr/Sent")
-			 (".*" . "gmail/sent"))) ;set sent mail directory
+(setq notmuch-fcc-dirs '(("daniele.arosio@cnr.it" . "cnr/INBOX.Sent")
+			 (".*" . "cnr/INBOX.Sent"))) ;set sent mail directory
 (setq mail-user-agent 'message-user-agent) ;Setup User-Agent header
 (setq send-mail-function (quote sendmail-send-it)
       ;; message-send-mail-function 'message-send-mail-with-sendmail

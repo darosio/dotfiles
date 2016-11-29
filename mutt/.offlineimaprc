@@ -12,6 +12,9 @@ localrepository = main-local
 remoterepository = main-remote
 # Status cache. Default is plain, which eventually becomes huge and slow.
 status_backend = sqlite
+autorefresh = 1
+quick = 15
+postsynchook = ~/.progs/bin/checkmail.sh
 
 [Repository main-local]
 # Currently, offlineimap only supports maildir and IMAP for local repositories.
