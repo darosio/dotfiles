@@ -1,0 +1,7 @@
+xallexcepts = application/pdf application/postscript application/x-dvi \
+application/x-fsdirectory|parentopen inode/directory \
+inode/directory|parentopen text/html|chm text/html|epub \
+text/html|gnuinfo
+[view]
+inode/directory = urxvt -e ranger %f
+inode/directory|parentopen = urxvt -e ranger %f
