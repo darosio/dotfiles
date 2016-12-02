@@ -17,7 +17,7 @@ bind editor <Tab> complete-query
 
 ## Receive options.
 set mbox_type=Maildir
-set folder=$HOME/.maildir/
+#set folder=$HOME/.maildir/
 set mask="!^\\.[^.]"
 # Store message headers locally to speed things up.
 # If hcache is a folder, Mutt will create sub cache folders for each account which may speeds things up even more.

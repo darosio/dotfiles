@@ -234,8 +234,8 @@ Return a list of installed packages or nil for every skipped package."
 
 
 ;; TODO How do I configure the citation line when replying in Emacs?
-(setq message-citation-line-format "On %a, %d %b %Y, %f wrote:")
-(setq message-citation-line-function 'message-insert-formatted-citation-line)
+;; (setq message-citation-line-format "On %a, %d %b %Y, %f wrote:")
+;; (setq message-citation-line-function 'message-insert-formatted-citation-line)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.

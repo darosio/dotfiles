@@ -15,5 +15,5 @@ fi
 
 #notmuch new --quiet
 notmuch new
-afew -mav
 afew -tnv
+afew -mav

@@ -5,14 +5,20 @@
 #[ListMailsFilter]
 [SentMailsFilter]
 sent_tag = sent
+to_transforms = d.arosio@sns.it:sns 
+## does not work
 #[ArchiveSentMailsFilter]
+
+[FolderNameFilter]
+folder_blacklist = cnr/INBOX Refs 
+
 [InboxFilter]
 
-
 [MailMover]
-folders = gmail/Inbox cnr/INBOX cnr/INBOX.Sent
+folders = cnr/INBOX cnr/INBOX.Sent cnr/INBOX.Refs.liaisan-G03 archive
 # rules
-#Defunct/INBOX = 'tag:archive':Defunct/Archiv 'tag:cforum':Defunct/Lists.cforum 'tag:deleted':Defunct/Trash
 cnr/INBOX = 'tag:deleted':cnr/INBOX.Trash 'tag:archive':archive
 cnr/INBOX.Sent = 'tag:deleted':cnr/INBOX.Trash 'tag:archive':archive
-gmail/Inbox = 'tag:deleted':gmail/trash
+#gmail/Inbox = 'tag:deleted':gmail/trash
+archive = 'tag:deleted':cnr/INBOX.Trash
+cnr/INBOX.Refs.liaisan-G03 = 'tag:archive':archive
