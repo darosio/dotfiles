@@ -1,0 +1,17 @@
+application/pdf; /usr/bin/mupdf %s; test=test "$DISPLAY" != ""; description=Portable Document Format; nametemplate=%s.pdf
+application/x-pdf; /usr/bin/mupdf %s; test=test "$DISPLAY" != ""; description=Portable Document Format; nametemplate=%s.pdf
+#message/rfc822; less %s; edit=${EDITOR-vi} %s; compose=${EDITOR-vi} %s; needsterminal;
+#text/html; surf %s &; test=test -n "$DISPLAY"; needsterminal;
+#text/html; w3m -I %{charset} -T text/html; copiousoutput;
+image/*; feh %s
+video/*; mpv %s
+audio/*; mpv %s
+text/*; vim %s
+application/msword; libreoffice %s
+application/docx; libreoffice %s
+application/octet-stream ; echo %s "can be anything..."                    ; copiousoutput
+text/html                ; /usr/bin/elinks -dump %s ; nametemplate=%s.html ; copiousoutput
+application/pdf          ; /usr/bin/zathura %s                             ; copiousoutput
+image/*                  ; /usr/bin/mirage %s                              ; copiousoutput
+audio/*                  ; /usr/bin/mplayer %s                             ; copiousoutput
+video/*                  ; /usr/bin/mplayer %s                             ; copiousoutput
