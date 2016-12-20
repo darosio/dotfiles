@@ -24,4 +24,16 @@
   "CNR: www.douban.com/people/renws"
   "\n"))
 
+(setq send-mail-function (quote sendmail-send-it)
+      ;; message-send-mail-function 'message-send-mail-with-sendmail
+      sendmail-program "~/.progs/bin/msmtp-enqueue.sh"
+      mail-specify-envelope-from t ;'header
+      message-sendmail-f-is-evil nil
+      mail-envelope-from 'header
+      message-sendmail-envelope-from 'header
+      mail-interactive t)
+
+;; add Cc and Bcc headers to the message buffer
+(setq message-default-mail-headers "Cc: \nBcc: \n")
+
 (provide 'mu4e-config)
