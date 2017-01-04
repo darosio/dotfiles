@@ -42,7 +42,7 @@ values."
      ;; <M-m f e R> (Emacs style) to install them.
      ;; ----------------------------------------------------------------
      helm
-     ;; auto-completion
+     auto-completion
      ;; better-defaults
      emacs-lisp
      ;; git
@@ -56,12 +56,13 @@ values."
      ;; version-control
      mu4e
      speed-reading
+     deft
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '()
+   dotspacemacs-additional-packages '(org-gcal)
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
@@ -306,13 +307,103 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
- (setq-default org-directory "~/Sync/share/phone/box/notes/")
+ ;(setq org-agenda-include-diary t)
+ ;(setq org-agenda-include-all-todo t) only in http://sachachua.com/blog/tag/gtd/#post-4543
+ (setq-default org-directory "~/Sync/notes/")
  (setq-default dotspacemacs-configuration-layers
    '((org :variables org-projectile-file "~/Sync/share/phone/box/TODOs.org")))
- (setq org-agenda-files (quote ("~/Sync/share/phone/box/notes/todo.org")))
+ (setq org-agenda-files (quote ("~/Sync/notes"
+                                "~/Sync/notes/home"
+                                "~/Sync/notes/gcal"
+                                "~/Sync/notes/arch")))
  (setq org-capture-templates
-   '(("t" "todo" entry (file+headline "~/Sync/share/phone/box/notes/todo.org" "Tasks")
-      "* TODO [#A] %?")))
+   '(("t" "todo" entry (file+headline "~/Sync/notes/todo.org" "Inbox") "* TODO [#A] %? :INBOX:")))
+;;; Capture templates for: TODO tasks, Notes, appointments, phone calls, meetings, and org-protocol
+;(setq org-capture-templates
+      ;(quote (("t" "todo" entry (file "~/git/org/refile.org")
+               ;"* TODO %?\n%U\n%a\n" :clock-in t :clock-resume t)
+              ;("r" "respond" entry (file "~/git/org/refile.org")
+               ;"* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
+              ;("n" "note" entry (file "~/git/org/refile.org")
+               ;"* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)
+              ;("j" "Journal" entry (file+datetree "~/git/org/diary.org")
+               ;"* %?\n%U\n" :clock-in t :clock-resume t)
+              ;("w" "org-protocol" entry (file "~/git/org/refile.org")
+               ;"* TODO Review %c\n%U\n" :immediate-finish t)
+              ;("m" "Meeting" entry (file "~/git/org/refile.org")
+               ;"* MEETING with %? :MEETING:\n%U" :clock-in t :clock-resume t)
+              ;("p" "Phone call" entry (file "~/git/org/refile.org")
+               ;"* PHONE %? :PHONE:\n%U" :clock-in t :clock-resume t)
+              ;("h" "Habit" entry (file "~/git/org/refile.org")
+               ;"* NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n"))))
+
+; TAGS 1
+(setq org-todo-state-tags-triggers
+      (quote (("CANCELLED" ("CANCELLED" . t))
+              ("WAITING" ("WAITING" . t))
+              ("HOLD" ("WAITING") ("HOLD" . t))
+              (done ("WAITING") ("HOLD"))
+              ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
+              ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
+              ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))))
+; TAGS 2
+; Tags with fast selection keys
+(setq org-tag-alist (quote ((:startgroup)
+                            ("@errand" . ?e)
+                            ("@office" . ?o)
+                            ("@home" . ?h)
+                            ("@pc" . ?p)
+                            (:endgroup)
+                            ("WAITING" . ?w)
+                            ("HOLD" . ?h)
+                            ("PERSONAL" . ?P)
+                            ("WORK" . ?W)
+                            ("FARM" . ?F)
+                            ("ORG" . ?O)
+                            ("NORANG" . ?N)
+                            ("crypt" . ?E)
+                            ("NOTE" . ?n)
+                            ("CANCELLED" . ?c)
+                            ("FLAGGED" . ??))))
+
+; Allow setting single tags without the menu
+;(setq org-fast-tag-selection-single-key (quote expert))
+
+; For tag searches ignore tasks with scheduled and deadline dates
+;(setq org-agenda-tags-todo-honor-ignore-options t)
+; TAGS 2 end
+; Targets include this file and any file contributing to the agenda - up to 9 levels deep
+(setq org-refile-targets (quote ((nil :maxlevel . 9)
+                                 (org-agenda-files :maxlevel . 9))))
+ ;(setq org-refile-targets (quote (("~/Sync/notes/todo.org" :maxlevel . 1) 
+                              ;("~/Sync/notes/someday.org" :level . 2))))
+; Use full outline paths for refile targets - we file directly with IDO
+(setq org-refile-use-outline-path t)
+
+; Targets complete directly with IDO
+(setq org-outline-path-complete-in-steps nil)
+
+; Allow refile to create parent tasks with confirmation
+(setq org-refile-allow-creating-parent-nodes (quote confirm))
+
+; Use IDO for both buffer and file completion and ido-everywhere to t
+(setq org-completion-use-ido t)
+(setq ido-everywhere t)
+(setq ido-max-directory-size 100000)
+(ido-mode (quote both))
+; Use the current window when visiting files and buffers with ido
+(setq ido-default-file-method 'selected-window)
+(setq ido-default-buffer-method 'selected-window)
+; Use the current window for indirect buffer display
+(setq org-indirect-buffer-display 'current-window)
+
+;;;; Refile settings
+; Exclude DONE state tasks from refile targets
+(defun bh/verify-refile-target ()
+  "Exclude todo keywords with a done state from refile targets"
+  (not (member (nth 2 (org-heading-components)) org-done-keywords)))
+
+(setq org-refile-target-verify-function 'bh/verify-refile-target)
  ;; my personal config
  (push "~/.spacemacs.d/config/" load-path)
  (require 'mu4e-config nil t)
@@ -320,6 +411,65 @@ you should place your code here."
  (setq-default dotspacemacs-configuration-layers
                '((python :variables python-test-runner 'pytest)))
  ;; '((python :variables python-test-runner '(pytest nose))))
+ (setq deft-directory "~/Sync/notes")
+ (setq deft-extensions '("org" "md" "txt" "markdown"))
+ (setq deft-recursive t)
+ ;; gcalendar
+ (require 'org-gcal)
+ (setq org-gcal-client-id "831258038866-64mls0749a0bctsqi9rt5prvlnb2qubs.apps.googleusercontent.com"
+       org-gcal-client-secret "ZaVnbmhd-JeCxvMMmN4-2FOM"
+       org-gcal-file-alist '(("danielepietroarosio@gmail.com" .  "~/Sync/notes/gcal/dpa.org")
+                             ("c87gevr5pc3191on8c7nh8b4nc@group.calendar.google.com" .  "~/Sync/notes/gcal/figli.org")
+                             ("cfaned8dou8gm2qciies0itso4@group.calendar.google.com" .  "~/Sync/notes/gcal/deadlines.org")
+                             ("tq1af7efj4l9h8glgqi2g5vmsg@group.calendar.google.com" .  "~/Sync/notes/gcal/IBF.org")
+                             ;("i_217.77.81.46#sunrise@group.v.calendar.google.com" .  "~/Sync/notes/gcal/sunrise.org")
+                             ;("it.italian#holiday@group.v.calendar.google.com" .  "~/Sync/notes/gcal/feste.org")
+                             ))
+ (setq calendar-latitude 46.067270) ; Borino
+ (setq calendar-longitude 11.166153)
+ (setq calendar-location-name "Trento")
+ (setq calendar-time-zone 60)
+; (setq holiday-general-holidays '(
+ (setq holiday-other-holidays
+       '((holiday-fixed 1 1 "Capodanno")
+         (holiday-fixed 5 1 "1 Maggio")
+         (holiday-fixed 4 25 "Liberazione")
+         (holiday-fixed 6 2 "Festa Repubblica")
+         (holiday-fixed 7 14 "Bastille Day")
+         ))
+ (setq holiday-bahai-holidays nil)
+ (setq holiday-hebrew-holidays nil)
+; (setq holiday-islamic-holidays nil)
+ (setq holiday-christian-holidays
+       '((holiday-fixed 12 8 "Immacolata Concezione")
+         (holiday-fixed 12 25 "Natale")
+         (holiday-fixed 12 26 "Santo Stefano")
+         (holiday-fixed 1 6 "Epifania")
+         (holiday-easter-etc -52 "Giovedì grasso")
+         (holiday-easter-etc -47 "Martedì grasso")
+         (holiday-easter-etc  -2 "Venerdì Santo")
+         (holiday-easter-etc   0 "Pasqua")
+         (holiday-easter-etc  +1 "Lunedì Pasqua")
+         (holiday-fixed 8 15 "Assunzione di Maria")
+         (holiday-fixed 11 1 "Ognissanti")
+         ))
+ (setq org-todo-keywords
+	   (quote ((sequence "TODO(t)" "NEXT(n)" "APPT(a)" "|" "DONE(d)")
+			   (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING"))))
+
+ ;(setq org-use-fast-todo-selection t)
+ ;(setq org-treat-S-cursor-todo-selection-as-state-change nil)
+
+ (setq org-todo-keyword-faces
+	   (quote (;("TODO" :foreground "red" :weight bold)
+			   ("NEXT" :foreground "light blue" :weight bold)
+			   ("APPT" :foreground "yellow" :weight bold)
+			   ("DONE" :foreground "forest green" :weight bold)
+			   ("WAITING" :foreground "orange" :weight bold)
+			   ("HOLD" :foreground "magenta" :weight bold)
+			   ("CANCELLED" :foreground "forest green" :weight bold)
+			   ("MEETING" :foreground "forest green" :weight bold)
+			   ("PHONE" :foreground "forest green" :weight bold))))
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
@@ -329,12 +479,9 @@ you should place your code here."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(org-agenda-files
-   (quote
-    ("~/Sync/share/phone/box/notes/spacemacs.org" "~/Sync/share/phone/box/notes/todo.org")))
  '(package-selected-packages
    (quote
-    (yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode helm-pydoc cython-mode anaconda-mode pythonic yaml-mode csv-mode web-mode tagedit slim-mode scss-mode sass-mode pug-mode less-css-mode helm-css-scss haml-mode emmet-mode flyspell-correct-helm flyspell-correct auto-dictionary mmm-mode markdown-toc markdown-mode gh-md spray mu4e-maildirs-extension mu4e-alert ht org-projectile org-present org org-pomodoro alert log4e gntp org-download htmlize gnuplot ws-butler window-numbering which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spacemacs-theme spaceline restart-emacs request rainbow-delimiters quelpa popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint info+ indent-guide ido-vertical-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump define-word column-enforce-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line))))
+    (org-gcal request-deferred deferred helm-company helm-c-yasnippet company-web web-completion-data company-statistics company-anaconda company auto-yasnippet yasnippet ac-ispell auto-complete deft yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode helm-pydoc cython-mode anaconda-mode pythonic yaml-mode csv-mode web-mode tagedit slim-mode scss-mode sass-mode pug-mode less-css-mode helm-css-scss haml-mode emmet-mode flyspell-correct-helm flyspell-correct auto-dictionary mmm-mode markdown-toc markdown-mode gh-md spray mu4e-maildirs-extension mu4e-alert ht org-projectile org-present org org-pomodoro alert log4e gntp org-download htmlize gnuplot ws-butler window-numbering which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spacemacs-theme spaceline restart-emacs request rainbow-delimiters quelpa popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint info+ indent-guide ido-vertical-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump define-word column-enforce-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
