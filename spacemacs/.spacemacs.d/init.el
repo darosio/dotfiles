@@ -316,14 +316,17 @@ you should place your code here."
                                 "~/Sync/notes/home"
                                 "~/Sync/notes/gcal"
                                 "~/Sync/notes/arch")))
- (setq org-capture-templates
-   '(("t" "todo" entry (file+headline "~/Sync/notes/todo.org" "Inbox") "* TODO [#A] %? :INBOX:")))
 ;;; Capture templates for: TODO tasks, Notes, appointments, phone calls, meetings, and org-protocol
-;(setq org-capture-templates
-      ;(quote (("t" "todo" entry (file "~/git/org/refile.org")
-               ;"* TODO %?\n%U\n%a\n" :clock-in t :clock-resume t)
-              ;("r" "respond" entry (file "~/git/org/refile.org")
-               ;"* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
+(setq org-capture-templates
+	  (quote (("t" "todo" entry (file+headline "~/Sync/notes/todo.org" "Inbox") 
+			   "* TODO %?\n%U\n%a\n" :clock-in t :clock-resume t)
+			;"* TODO [#A] %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n")))
+			;"* TODO [#A] %? :INBOX:")))
+			  ("r" "respond" entry (file+headline "~/Sync/notes/todo.org" "Reply")
+			   "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
+			  ("i" "idea" entry (file+headline "~/Sync/share/phone/box/notes/ideas.org" "Ideas")
+			   "* IDEA [#B] %? :IDEA:")
+			  )))
               ;("n" "note" entry (file "~/git/org/refile.org")
                ;"* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)
               ;("j" "Journal" entry (file+datetree "~/git/org/diary.org")
