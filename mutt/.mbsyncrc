@@ -3,8 +3,8 @@ SyncState *
 
 # Automatically create missing mailboxes, both locally and on the server
 Create Both
-Remove Slave
-Expunge Slave
+Remove Both
+Expunge Both
 CopyArrivalDate yes
 
 #
@@ -24,14 +24,15 @@ Account cnr
 
 MaildirStore cnr-local
 # The trailing "/" is important
-Path ~/.maildir/cnr/
-Inbox ~/.maildir/cnr/Inbox
+Path ~/Sync/Maildir/cnr/
+Inbox ~/Sync/Maildir/cnr/INBOX
 Flatten .
 
 Channel cnr
 Master :cnr-remote:
 Slave :cnr-local:
 Patterns INBOX *
+#Patterns INBOX
 
 
 #
