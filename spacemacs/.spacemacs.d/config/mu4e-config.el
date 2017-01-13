@@ -43,7 +43,7 @@
 
 (setq send-mail-function (quote sendmail-send-it)
       ;; message-send-mail-function 'message-send-mail-with-sendmail
-      sendmail-program "~/.progs/bin/msmtp-enqueue.sh"
+      sendmail-program "~/.local/bin/msmtp-enqueue.sh"
       mail-specify-envelope-from t ;'header
       message-sendmail-f-is-evil nil
       mail-envelope-from 'header
