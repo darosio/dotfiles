@@ -21,11 +21,16 @@
 ;;NEEDED FOR MBSYNC
 (setq mu4e-change-filenames-when-moving t)
 
+;; show images
+(setq mu4e-show-images t)
+(setq mu4e-view-show-addresses t)
+
 (setq mu4e-maildir-shortcuts
       '( ("/cnr/INBOX"        . ?i)
          ("/cnr/Sent"         . ?s)
          ("/cnr/Templates"    . ?t)
-         ("/cnr/Drafts"       . ?a)))
+         ("/archive"          . ?a)
+         ("/cnr/Drafts"       . ?d)))
 ;; something about ourselves
 ; mu4e-reply-to-address "daniele.arosio@cnr.it"
 (setq user-mail-address "daniele.arosio@cnr.it"
@@ -60,8 +65,6 @@
       ;mu4e-headers-auto-update t
       ;mu4e-compose-signature-auto-include nil)
 
-;; show images
-(setq mu4e-show-images t)
 
 ;; use imagemagick, if available
 (when (fboundp 'imagemagick-register-types)
@@ -81,8 +84,22 @@
 (setq mu4e-maildirs-extension-maildir-collapsed-prefix "archives")
 (setq mu4e-maildirs-extension-default-collapse-level 1)
 ; taken from mu4e page to define bookmarks
-;(add-to-list 'mu4e-bookmarks
-;             '("size:5M..500M"       "Big messages"     ?b))
+
+;;; Bookmarks
+(setq mu4e-bookmarks
+      `(("flag:unread AND NOT flag:trashed" "Unread messages" ?u)
+        ("date:today..now" "Today's messages" ?t)
+        ("date:7d..now" "Last 7 days" ?w)
+        ("mime:image/*" "Messages with images" ?p)
+        (,(mapconcat 'identity
+                     (mapcar
+                      (lambda (maildir)
+                        (concat "maildir:" (car maildir)))
+                      mu4e-maildir-shortcuts) " OR ")
+         "All inboxes" ?i)))
+(add-to-list 'mu4e-bookmarks
+             '("size:5M..500M"       "Big messages"     ?b))
+(setq mu4e-attachment-dir  "~/")
 ;http://www.djcbsoftware.nl/code/mu/mu4e/Bookmarks.html
 ;(add-to-list 'mu4e-bookmarks
 ;             (make-mu4e-bookmark
