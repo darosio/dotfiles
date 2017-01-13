@@ -77,4 +77,8 @@
            ;(set-fill-column 72)
            ;(flyspell-mode)))
 
+;https://github.com/agpchil/mu4e-maildirs-extension
+(setq mu4e-maildirs-extension-maildir-collapsed-prefix "archives")
+(setq mu4e-maildirs-extension-default-collapse-level 1)
+
 (provide 'mu4e-config)
