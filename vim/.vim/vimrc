@@ -59,7 +59,7 @@ let g:table_mode_header_fillchar="="
 " ""Plugin 'julienr/vim-cellmode'
 " slimux (vim_slime) alternative to vim-r vim-ipython ...
 " org-mode
-Plugin 'jceb/vim-orgmode'
+"Plugin 'jceb/vim-orgmode'
 Plugin 'epeli/slimux'
 " tmux?...
 "Plugin 'christoomey/vim-tmux-navigator'

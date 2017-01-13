@@ -11,7 +11,7 @@
 (setq mu4e-drafts-folder "/cnr/Drafts")
 ;(setq mu4e-trash-folder "/cnr/INBOX.Trash")
 (setq mu4e-trash-folder "/cnr/Trash")
-(setq mu4e-refile-folder "/cnr/Archives")
+(setq mu4e-refile-folder "/archive")
 
 ;; allow for updating mail using 'U' in the main view:
 ;(setq mu4e-get-mail-command "offlineimap -u quiet")
@@ -80,5 +80,14 @@
 ;https://github.com/agpchil/mu4e-maildirs-extension
 (setq mu4e-maildirs-extension-maildir-collapsed-prefix "archives")
 (setq mu4e-maildirs-extension-default-collapse-level 1)
+; taken from mu4e page to define bookmarks
+;(add-to-list 'mu4e-bookmarks
+;             '("size:5M..500M"       "Big messages"     ?b))
+;http://www.djcbsoftware.nl/code/mu/mu4e/Bookmarks.html
+;(add-to-list 'mu4e-bookmarks
+;             (make-mu4e-bookmark
+;              :name  "Big messages"
+;              :query "size:5M..500M"
+;              :key ?b))
 
 (provide 'mu4e-config)
