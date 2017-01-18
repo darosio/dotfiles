@@ -307,26 +307,58 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
- ;(setq org-agenda-include-diary t)
- ;(setq org-agenda-include-all-todo t) only in http://sachachua.com/blog/tag/gtd/#post-4543
- (setq-default org-directory "~/Sync/notes/")
- (setq-default dotspacemacs-configuration-layers
-   '((org :variables org-projectile-file "~/Sync/share/phone/box/TODOs.org")))
- (setq org-agenda-files (quote ("~/Sync/notes"
-                                "~/Sync/notes/home"
-                                "~/Sync/notes/gcal"
-                                "~/Sync/notes/arch")))
+   ;; (setq org-agenda-include-diary t)
+   ;; (setq org-agenda-include-all-todo t) ;;only in http://sachachua.com/blog/tag/gtd/#post-4543
+   (setq-default org-directory "~/Sync/notes/")
+   (setq org-agenda-files (quote ("~/Sync/notes"
+                                  "~/Sync/notes/home"
+                                  "~/Sync/notes/gcal"
+                                  "~/Sync/notes/arch")))
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ;; TODO keywords
+   (setq org-todo-keywords
+         (quote ((sequence "TODO(t)" "NEXT(n)" "APPT(a)" "|" "DONE(d)")
+                 (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)"))))
+              ;; (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING"))))
+   (setq org-todo-keyword-faces
+         (quote (;("TODO" :foreground "red" :weight bold)
+                 ("NEXT" :foreground "light blue" :weight bold)
+                 ("APPT" :foreground "yellow" :weight bold)
+                 ("DONE" :foreground "forest green" :weight bold)
+                 ("WAITING" :foreground "orange" :weight bold)
+                 ("HOLD" :foreground "magenta" :weight bold)
+                 ("CANCELLED" :foreground "forest green" :weight bold)
+                 ;; ("MEETING" :foreground "forest green" :weight bold)
+                 ;; ("PHONE" :foreground "forest green" :weight bold)
+                 )))
+   ;; change todo states pressing "t" (default)
+   (setq org-use-fast-todo-selection t)
+   ;; S-left S-right skipping setting timespamps 
+   (setq org-treat-S-cursor-todo-selection-as-state-change nil)
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ;; TODO states tigger tags
+   (setq org-todo-state-tags-triggers
+         (quote (("CANCELLED" ("CANCELLED" . t))
+                 ("WAITING" ("WAITING" . t))
+                 ("HOLD" ("WAITING") ("HOLD" . t))
+                 (done ("WAITING") ("HOLD"))
+                 ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
+                 ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
+                 ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))))
+   ;; Org Capture
 ;;; Capture templates for: TODO tasks, Notes, appointments, phone calls, meetings, and org-protocol
-(setq org-capture-templates
-	  (quote (("t" "todo" entry (file+headline "~/Sync/notes/todo.org" "Inbox") 
-			   "* TODO %?\n%U\n%a\n" :clock-in t :clock-resume t)
-			;"* TODO [#A] %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n")))
-			;"* TODO [#A] %? :INBOX:")))
-			  ("r" "respond" entry (file+headline "~/Sync/notes/todo.org" "Reply")
-			   "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
-			  ("i" "idea" entry (file+headline "~/Sync/share/phone/box/notes/ideas.org" "Ideas")
-			   "* IDEA [#B] %? :IDEA:")
-			  )))
+   (setq org-capture-templates
+         (quote (("t" "todo" entry (file+headline "~/Sync/notes/todo.org" "Inbox")
+                  "* TODO %? :INBOX:\n%U\n%a\n" :clock-in t :clock-resume t)
+                 ;; "* TODO [#A] %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n")))
+                 ;; "* TODO [#A] %? :INBOX:")))
+                 ("r" "respond" entry (file+headline "~/Sync/notes/todo.org" "Reply")
+                  "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
+                 ("i" "idea" entry (file+headline "~/Sync/share/phone/box/notes/ideas.org" "Ideas")
+                  "* IDEA [#B] %? :IDEA:")
+                 ("w" "org-protocol" entry (file+headline "~/Sync/notes/todo.org" "Inbox")
+                                        "* TODO Review %c\n%U\n" :immediate-finish t)
+                 )))
               ;("n" "note" entry (file "~/git/org/refile.org")
                ;"* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)
               ;("j" "Journal" entry (file+datetree "~/git/org/diary.org")
@@ -339,141 +371,139 @@ you should place your code here."
                ;"* PHONE %? :PHONE:\n%U" :clock-in t :clock-resume t)
               ;("h" "Habit" entry (file "~/git/org/refile.org")
                ;"* NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n"))))
-
-; TAGS 1
-(setq org-todo-state-tags-triggers
-      (quote (("CANCELLED" ("CANCELLED" . t))
-              ("WAITING" ("WAITING" . t))
-              ("HOLD" ("WAITING") ("HOLD" . t))
-              (done ("WAITING") ("HOLD"))
-              ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
-              ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
-              ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))))
-; TAGS 2
-; Tags with fast selection keys
-(setq org-tag-alist (quote ((:startgroup)
-                            ("@errand" . ?e)
-                            ("@office" . ?o)
-                            ("@home" . ?h)
-                            ("@pc" . ?p)
-                            (:endgroup)
-                            ("WAITING" . ?w)
-                            ("HOLD" . ?h)
-                            ("PERSONAL" . ?P)
-                            ("WORK" . ?W)
-                            ("FARM" . ?F)
-                            ("ORG" . ?O)
-                            ("NORANG" . ?N)
-                            ("crypt" . ?E)
-                            ("NOTE" . ?n)
-                            ("CANCELLED" . ?c)
-                            ("FLAGGED" . ??))))
-
-; Allow setting single tags without the menu
-;(setq org-fast-tag-selection-single-key (quote expert))
-
-; For tag searches ignore tasks with scheduled and deadline dates
-;(setq org-agenda-tags-todo-honor-ignore-options t)
-; TAGS 2 end
-; Targets include this file and any file contributing to the agenda - up to 9 levels deep
-(setq org-refile-targets (quote ((nil :maxlevel . 9)
-                                 (org-agenda-files :maxlevel . 9))))
- ;(setq org-refile-targets (quote (("~/Sync/notes/todo.org" :maxlevel . 1) 
-                              ;("~/Sync/notes/someday.org" :level . 2))))
-; Use full outline paths for refile targets - we file directly with IDO
-(setq org-refile-use-outline-path t)
-
-; Targets complete directly with IDO
-(setq org-outline-path-complete-in-steps nil)
-
-; Allow refile to create parent tasks with confirmation
-(setq org-refile-allow-creating-parent-nodes (quote confirm))
-
-; Use IDO for both buffer and file completion and ido-everywhere to t
-(setq org-completion-use-ido t)
-(setq ido-everywhere t)
-(setq ido-max-directory-size 100000)
-(ido-mode (quote both))
-; Use the current window when visiting files and buffers with ido
-(setq ido-default-file-method 'selected-window)
-(setq ido-default-buffer-method 'selected-window)
-; Use the current window for indirect buffer display
-(setq org-indirect-buffer-display 'current-window)
-
-;;;; Refile settings
-; Exclude DONE state tasks from refile targets
-(defun bh/verify-refile-target ()
-  "Exclude todo keywords with a done state from refile targets"
-  (not (member (nth 2 (org-heading-components)) org-done-keywords)))
-
-(setq org-refile-target-verify-function 'bh/verify-refile-target)
- ;; my personal config
- (push "~/.spacemacs.d/config/" load-path)
- (require 'mu4e-config nil t)
- ;; python
- (setq-default dotspacemacs-configuration-layers
-               '((python :variables python-test-runner 'pytest)))
- ;; '((python :variables python-test-runner '(pytest nose))))
- (setq deft-directory "~/Sync/notes")
- (setq deft-extensions '("org" "md" "txt" "markdown"))
- (setq deft-recursive t)
- ;; gcalendar
- (require 'org-gcal)
- (setq org-gcal-client-id "831258038866-64mls0749a0bctsqi9rt5prvlnb2qubs.apps.googleusercontent.com"
-       org-gcal-client-secret "ZaVnbmhd-JeCxvMMmN4-2FOM"
-       org-gcal-file-alist '(("danielepietroarosio@gmail.com" .  "~/Sync/notes/gcal/dpa.org")
-                             ("c87gevr5pc3191on8c7nh8b4nc@group.calendar.google.com" .  "~/Sync/notes/gcal/figli.org")
-                             ("cfaned8dou8gm2qciies0itso4@group.calendar.google.com" .  "~/Sync/notes/gcal/deadlines.org")
-                             ("tq1af7efj4l9h8glgqi2g5vmsg@group.calendar.google.com" .  "~/Sync/notes/gcal/IBF.org")
-                             ;("i_217.77.81.46#sunrise@group.v.calendar.google.com" .  "~/Sync/notes/gcal/sunrise.org")
-                             ;("it.italian#holiday@group.v.calendar.google.com" .  "~/Sync/notes/gcal/feste.org")
-                             ))
- (setq calendar-latitude 46.067270) ; Borino
- (setq calendar-longitude 11.166153)
- (setq calendar-location-name "Trento")
- (setq calendar-time-zone 60)
-; (setq holiday-general-holidays '(
- (setq holiday-other-holidays
-       '((holiday-fixed 1 1 "Capodanno")
-         (holiday-fixed 5 1 "1 Maggio")
-         (holiday-fixed 4 25 "Liberazione")
-         (holiday-fixed 6 2 "Festa Repubblica")
-         (holiday-fixed 7 14 "Bastille Day")
-         ))
- (setq holiday-bahai-holidays nil)
- (setq holiday-hebrew-holidays nil)
-; (setq holiday-islamic-holidays nil)
- (setq holiday-christian-holidays
-       '((holiday-fixed 12 8 "Immacolata Concezione")
-         (holiday-fixed 12 25 "Natale")
-         (holiday-fixed 12 26 "Santo Stefano")
-         (holiday-fixed 1 6 "Epifania")
-         (holiday-easter-etc -52 "Giovedì grasso")
-         (holiday-easter-etc -47 "Martedì grasso")
-         (holiday-easter-etc  -2 "Venerdì Santo")
-         (holiday-easter-etc   0 "Pasqua")
-         (holiday-easter-etc  +1 "Lunedì Pasqua")
-         (holiday-fixed 8 15 "Assunzione di Maria")
-         (holiday-fixed 11 1 "Ognissanti")
-         ))
- (setq org-todo-keywords
-	   (quote ((sequence "TODO(t)" "NEXT(n)" "APPT(a)" "|" "DONE(d)")
-			   (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING"))))
-
- ;(setq org-use-fast-todo-selection t)
- ;(setq org-treat-S-cursor-todo-selection-as-state-change nil)
-
- (setq org-todo-keyword-faces
-	   (quote (;("TODO" :foreground "red" :weight bold)
-			   ("NEXT" :foreground "light blue" :weight bold)
-			   ("APPT" :foreground "yellow" :weight bold)
-			   ("DONE" :foreground "forest green" :weight bold)
-			   ("WAITING" :foreground "orange" :weight bold)
-			   ("HOLD" :foreground "magenta" :weight bold)
-			   ("CANCELLED" :foreground "forest green" :weight bold)
-			   ("MEETING" :foreground "forest green" :weight bold)
-			   ("PHONE" :foreground "forest green" :weight bold))))
-  )
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ;; Refile setup
+   ;; Targets include this file and any file contributing to the agenda - up to 9 levels deep
+   (setq org-refile-targets (quote ((nil :maxlevel . 9)
+                                    (org-agenda-files :maxlevel . 9))))
+    ;(setq org-refile-targets (quote (("~/Sync/notes/todo.org" :maxlevel . 1) 
+                                 ;("~/Sync/notes/someday.org" :level . 2))))
+   ; Use full outline paths for refile targets - we file directly with IDO
+   (setq org-refile-use-outline-path t)
+   ; Targets complete directly with IDO
+   (setq org-outline-path-complete-in-steps nil)
+   ; Allow refile to create parent tasks with confirmation
+   (setq org-refile-allow-creating-parent-nodes (quote confirm))
+   ;; ; Use IDO for both buffer and file completion and ido-everywhere to t
+   ;; (setq org-completion-use-ido t)
+   ;; (setq ido-everywhere t)
+   ;; (setq ido-max-directory-size 100000)
+   ;; (ido-mode (quote both))
+   ;; ; Use the current window when visiting files and buffers with ido
+   ;; (setq ido-default-file-method 'selected-window)
+   ;; (setq ido-default-buffer-method 'selected-window)
+   ;; ; Use the current window for indirect buffer display
+   ;; (setq org-indirect-buffer-display 'current-window)
+   ;; ; Exclude DONE state tasks from refile targets
+   ;; (defun bh/verify-refile-target ()
+   ;;   "Exclude todo keywords with a done state from refile targets"
+   ;;   (not (member (nth 2 (org-heading-components)) org-done-keywords)))
+   ;; (setq org-refile-target-verify-function 'bh/verify-refile-target)
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ;; Calendars
+   ;; gcalendar
+   (require 'org-gcal)
+   (setq org-gcal-client-id "831258038866-64mls0749a0bctsqi9rt5prvlnb2qubs.apps.googleusercontent.com"
+         org-gcal-client-secret "ZaVnbmhd-JeCxvMMmN4-2FOM"
+         org-gcal-file-alist '(("danielepietroarosio@gmail.com" .  "~/Sync/notes/gcal/dpa.org")
+                               ("c87gevr5pc3191on8c7nh8b4nc@group.calendar.google.com" .
+                                "~/Sync/notes/gcal/figli.org")
+                               ("cfaned8dou8gm2qciies0itso4@group.calendar.google.com" .
+                                "~/Sync/notes/gcal/deadlines.org")
+                               ("tq1af7efj4l9h8glgqi2g5vmsg@group.calendar.google.com" .
+                                "~/Sync/notes/gcal/IBF.org")
+                               ;; ("i_217.77.81.46#sunrise@group.v.calendar.google.com" .
+                               ;;  "~/Sync/notes/gcal/sunrise.org")
+                               ;; ("it.italian#holiday@group.v.calendar.google.com" .
+                               ;;  "~/Sync/notes/gcal/feste.org")
+                               ))
+   ;; Sunrise and sunset
+   (setq calendar-latitude 46.067270) ; Borino
+   (setq calendar-longitude 11.166153)
+   (setq calendar-location-name "Trento")
+   (setq calendar-time-zone 60)
+   ;; Holidays (setq holiday-general-holidays '(
+   (setq holiday-other-holidays
+         '((holiday-fixed 1 1 "Capodanno")
+           (holiday-fixed 5 1 "1 Maggio")
+           (holiday-fixed 4 25 "Liberazione")
+           (holiday-fixed 6 2 "Festa Repubblica")
+           (holiday-fixed 7 14 "Bastille Day")
+           ))
+   (setq holiday-bahai-holidays nil)
+   (setq holiday-hebrew-holidays nil)
+   ;; (setq holiday-islamic-holidays nil)
+   (setq holiday-christian-holidays
+         '((holiday-fixed 12 8 "Immacolata Concezione")
+           (holiday-fixed 12 25 "Natale")
+           (holiday-fixed 12 26 "Santo Stefano")
+           (holiday-fixed 1 6 "Epifania")
+           (holiday-easter-etc -52 "Giovedì grasso")
+           (holiday-easter-etc -47 "Martedì grasso")
+           (holiday-easter-etc  -2 "Venerdì Santo")
+           (holiday-easter-etc   0 "Pasqua")
+           (holiday-easter-etc  +1 "Lunedì Pasqua")
+           (holiday-fixed 8 15 "Assunzione di Maria")
+           (holiday-fixed 11 1 "Ognissanti")
+           ))
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ;; Tags with fast selection keys
+   (setq org-tag-alist (quote ((:startgroup)
+                               ("@errand" . ?e)
+                               ("@office" . ?o)
+                               ("@home" . ?h)
+                               (:endgroup)
+                               ("@pc" . ?p)
+                               ("WAITING" . ?w)
+                               ("HOLD" . ?h)
+                               ("PERSONAL" . ?P)
+                               ("WORK" . ?W)
+                               ("NOTE" . ?n)
+                               ("CANCELLED" . ?c)
+                               ("FLAGGED" . ??))))
+   ;; Allow setting single tags without the menu
+   (setq org-fast-tag-selection-single-key (quote expert))
+   ;; For tag searches ignore tasks with scheduled and deadline dates
+   ;; (setq org-agenda-tags-todo-honor-ignore-options t)
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ;; maybe exist: ", a n"  and  "Esc SPC"
+   ;; (global-set-key (kbd "C-c a H") 'org-capture)
+   (global-set-key (kbd "<f7> <f8>") 'calendar)    ; F7 F8
+   ;; (define-key evil-insert-state-map (kbd "SPC a o H") 'forward-char)
+   ;; (with-eval-after-load 'org-agenda '((agenda)
+   ;;                                    (tags-todo "@office")
+   ;;                                    (tags-todo "@home")
+   ;;                                    (tags-todo "@pc")
+   ;;                                    (tags-todo "WORK")
+   ;;                                    (tags-todo "emacs")))
+     ;; (require 'org-projectile)
+     ;; (push (org-projectile:todo-files) org-agenda-files))
+   ;; (global-set-key (kbd "SPC a o H") '((agenda)
+   ;;                                  (tags-todo "@office")
+   ;;                                  (tags-todo "@home")
+   ;;                                  (tags-todo "@pc")
+   ;;                                  (tags-todo "WORK")
+   ;;                                  (tags-todo "emacs")))
+   ;; ("H" "Office and Home Lists"
+   ;;  ((agenda)
+   ;;   (tags-todo "@office")
+   ;;   (tags-todo "@home")
+   ;;   (tags-todo "@pc")
+   ;;   (tags-todo "WORK")
+   ;;   (tags-todo "emacs")))
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ;; my personal config
+   (push "~/.spacemacs.d/config/" load-path)
+   (require 'mu4e-config nil t)
+   ;; python
+   (setq-default dotspacemacs-configuration-layers
+                 '((python :variables python-test-runner 'pytest)))
+   ;; '((python :variables python-test-runner '(pytest nose))))
+   (setq deft-directory "~/Sync/notes")
+   (setq deft-extensions '("org" "md" "txt" "markdown"))
+   (setq deft-recursive t)
+)
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.

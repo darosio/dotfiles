@@ -16,7 +16,7 @@
 ;; allow for updating mail using 'U' in the main view:
 ;(setq mu4e-get-mail-command "offlineimap -u quiet")
 (setq mu4e-get-mail-command "mbsync cnr")
-;(setq mu4e-update-interval 120)
+(setq mu4e-update-interval 120)
 ;;rename files when moving
 ;;NEEDED FOR MBSYNC
 (setq mu4e-change-filenames-when-moving t)
