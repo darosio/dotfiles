@@ -70,7 +70,11 @@ URxvt*colorUL:      #4682B4
 ! URxvt*font:     xft:Monaco:size=11:hinting=false
 ! Source Code Pro; Consolas; Inconsolata-g; Dejavu Sans Mono; Droid Sans Mono; Ubuntu
 ! Mono  12
-URxvt*font:     xft:Source Code Pro:size=12
+!URxvt*font:     xft:Source Code Pro:size=12
+!URxvt*font:     xft:Fira Code:size=12
+!URxvt*font:     xft:Input Mono:size=12
+!URxvt*font:     xft:Iosevka:size=12
+URxvt*font:     xft:Hack:size=12
 ! URxvt*boldFont: xft:Monaco:bold:size=11
 ! URxvt*italicFont:                     fontname
 ! URxvt*boldItalicFont:                 fontname
@@ -145,7 +149,8 @@ Xft.antialias:  true
 Xft.rgba:       rgb
 Xft.hinting:    true
 !Xft.hintstyle:  hintslight
-Xft.hintstyle:  hintfull
+!Xft.hintstyle:  hintfull
+Xft.hintstyle:  hintslight
 xterm*faceName: Source Code Pro
 xterm*faceSize: 12
 
