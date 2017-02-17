@@ -1,7 +1,10 @@
 #! /bin/sh
 
+if ! ping -c1 www.google.com > /dev/null 2>&1; then
+	sleep 30
+fi
 # Send mail
-echo "$SMARTD_MESSAGE" | mail -s "$SMARTD_FAILTYPE" "$SMARTD_ADDRESS"
+echo "$SMARTD_MESSAGE" | mail -s "$SMARTD_FAILTYPE $HOSTNAME" "$SMARTD_ADDRESS"
 
 # Notify user
 sudo -u dan DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus notify-send "S.M.A.R.T Error ($SMARTD_FAILTYPE)" "$SMARTD_MESSAGE" --icon=dialog-warning
