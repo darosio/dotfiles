@@ -2,5 +2,5 @@
 Description=recollindex
 
 [Service]
-Type=oneshot
-ExecStart=/usr/bin/recollindex > /tmp/recoll.out 2>&1
+;Type=oneshot
+ExecStart=/home/dan/.local/bin/recollindex.sh
