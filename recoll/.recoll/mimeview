@@ -5,3 +5,7 @@ text/html|gnuinfo
 [view]
 inode/directory = urxvt -e ranger %f
 inode/directory|parentopen = urxvt -e ranger %f
+
+application/pdf  = okular --page=%p %f
+
+application/x-all = xdg-open %u
