@@ -1,0 +1,8 @@
+[Unit]
+Description=status email for %i to dan
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/systemd-email danielepietroarosio@gmail.com %i
+User=root
+Group=systemd-journal
