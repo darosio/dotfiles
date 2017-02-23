@@ -1,0 +1,7 @@
+[Unit]
+Description=Simple RAID scrubbing
+OnFailure=status-email-user@%n.service
+
+[Service]
+;Type=oneshot
+ExecStart=/usr/local/bin/raid_scrubbing.bash
