@@ -1,5 +1,5 @@
 [Unit]
-Description=Run recollindex daily and every 3 hours
+Description=Run simple RAID scrubbing weekly
 
 [Timer]
 Unit=raid_scrubbing.service
