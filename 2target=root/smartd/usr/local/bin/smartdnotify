@@ -4,7 +4,20 @@ if ! ping -c1 www.google.com > /dev/null 2>&1; then
 	sleep 30
 fi
 # Send mail
-echo "$SMARTD_MESSAGE" | mail -s "$SMARTD_FAILTYPE $HOSTNAME" "$SMARTD_ADDRESS"
+#echo "$SMARTD_MESSAGE" | mail -s "$SMARTD_FAILTYPE $HOSTNAME" "$SMARTD_ADDRESS"
+#Device:$SMARTD_DEVICE Device node:$SMARTD_DEVICESTRING
+#$HOSTNAME smartd has detected $SMARTD_FAILTYPE error on $SMARTD_DEVICE
+sendmail -t << EOF
+To: daniele.arosio@cnr.it
+Subject: SMART error ($SMARTD_FAILTYPE) detected on host: $HOSTNAME
+
+$SMARTD_MESSAGE
+
+Date occurred:	$SMARTD_TFIRST
+
+# Full message
+$SMARTD_FULLMESSAGE
+EOF
 
 # Notify user
 if [ -f /usr/bin/notify-send ]
