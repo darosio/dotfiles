@@ -13,3 +13,6 @@ checkout = git clone 'git@bitbucket.org:darosio/darosio.git' 'darosio'
 
 [Web/molecularimaging]
 checkout = hg clone 'https://darosio@bitbucket.org/darosio/molecularimaging' 'molecularimaging'
+
+[pandoc_resume]
+checkout = git clone 'ssh://git@bitbucket.org/darosio/cv.git' 'pandoc_resume'
