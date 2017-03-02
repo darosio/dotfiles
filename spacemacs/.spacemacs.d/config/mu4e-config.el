@@ -4,33 +4,22 @@
 ;(setq org-mu4e-link-query-in-headers-mode nil)
 ; sembra non servire (http://pragmaticemacs.com/emacs/master-your-inbox-with-mu4e-and-org-mode/)
 
-(setq mu4e-maildir "~/Sync/Maildir")
-;(setq mu4e-sent-folder "/cnr/INBOX.Sent")
-(setq mu4e-sent-folder "/cnr/Sent")
-;(setq mu4e-drafts-folder "/cnr/INBOX.Drafts")
-(setq mu4e-drafts-folder "/cnr/Drafts")
-;(setq mu4e-trash-folder "/cnr/INBOX.Trash")
-(setq mu4e-trash-folder "/cnr/Trash")
-(setq mu4e-refile-folder "/archive")
-
 ;; allow for updating mail using 'U' in the main view:
 ;(setq mu4e-get-mail-command "offlineimap -u quiet")
-(setq mu4e-get-mail-command "mbsync cnr")
-(setq mu4e-update-interval 120)
-;;rename files when moving
-;;NEEDED FOR MBSYNC
-(setq mu4e-change-filenames-when-moving t)
+(setq mu4e-get-mail-command "mbsync cnr"
+	  mu4e-update-interval 120
+	  ;; rename files when moving NEEDED FOR MBSYNC
+	  mu4e-change-filenames-when-moving t)
 
-;; show images
-(setq mu4e-show-images t)
-(setq mu4e-view-show-addresses t)
+(setq mu4e-maildir "~/Sync/Maildir"
+	  mu4e-sent-folder "/cnr/Sent"
+	  mu4e-drafts-folder "/cnr/Drafts"
+	  mu4e-trash-folder "/cnr/Trash"
+	  mu4e-refile-folder "/archive"
+	  mu4e-view-show-addresses t
+	  ;; show images
+	  mu4e-show-images t)
 
-(setq mu4e-maildir-shortcuts
-      '( ("/cnr/INBOX"        . ?i)
-         ("/cnr/Sent"         . ?s)
-         ("/cnr/Templates"    . ?t)
-         ("/archive"          . ?a)
-         ("/cnr/Drafts"       . ?d)))
 ;; something about ourselves
 ; mu4e-reply-to-address "daniele.arosio@cnr.it"
 (setq user-mail-address "daniele.arosio@cnr.it"
@@ -60,9 +49,8 @@
 
 ;; from http://www.macs.hw.ac.uk/~rs46/posts/2014-01-13-mu4e-email-client.html
 ; get mail
-;(setq mu4e-get-mail-command "mbsync -c ~/.emacs.d/.mbsyncrc work"
-;(setq mu4e-html2text-command "w3m -T text/html")
-      ;mu4e-headers-auto-update t
+;(setq mu4e-html2text-command "w3m -T text/html"
+      ;mu4e-headers-auto-update t)
       ;mu4e-compose-signature-auto-include nil)
 
 
@@ -80,12 +68,16 @@
            ;(set-fill-column 72)
            ;(flyspell-mode)))
 
-;https://github.com/agpchil/mu4e-maildirs-extension
-(setq mu4e-maildirs-extension-maildir-collapsed-prefix "archives")
-(setq mu4e-maildirs-extension-default-collapse-level 1)
-; taken from mu4e page to define bookmarks
+;;; shortcuts ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(setq mu4e-maildir-shortcuts
+      '( ("/cnr/INBOX"        . ?i)
+         ("/cnr/Sent"         . ?s)
+         ("/cnr/Templates"    . ?t)
+         ("/archive"          . ?a)
+         ("/cnr/Drafts"       . ?d)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; shortcuts ;;;
 
-;;; Bookmarks
+;;; Bookmarks ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (setq mu4e-bookmarks
       `(("flag:unread AND NOT flag:trashed" "Unread messages" ?u)
         ("date:today..now" "Today's messages" ?t)
@@ -99,12 +91,20 @@
          "All inboxes" ?i)))
 (add-to-list 'mu4e-bookmarks
              '("size:5M..500M"       "Big messages"     ?b))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Bookmarks ;;;
+
 (setq mu4e-attachment-dir  "~/")
-;http://www.djcbsoftware.nl/code/mu/mu4e/Bookmarks.html
-;(add-to-list 'mu4e-bookmarks
-;             (make-mu4e-bookmark
-;              :name  "Big messages"
-;              :query "size:5M..500M"
-;              :key ?b))
+
+;https://github.com/agpchil/mu4e-maildirs-extension
+(setq mu4e-maildirs-extension-maildir-collapsed-prefix "archives"
+	  mu4e-maildirs-extension-default-collapse-level 1)
+
+
+;; use org structures and tables in message mode
+(add-hook 'message-mode-hook 'turn-on-orgtbl
+		  'message-mode-hook 'turn-on-orgstruct++)
+
+;; TODO
+;; http://pragmaticemacs.com/emacs/email-templates-in-mu4e-with-yasnippet/
 
 (provide 'mu4e-config)

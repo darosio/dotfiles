@@ -32,6 +32,8 @@ values."
    dotspacemacs-configuration-layers
    '(
      python
+     (python :variables python-test-runner 'pytest)
+     ;(python :variables python-test-runner '(pytest nose))
      yaml
      csv
      html
@@ -55,6 +57,7 @@ values."
      ;; syntax-checking
      ;; version-control
      mu4e
+     (mu4e :variables mu4e-enable-mode-line t)
      speed-reading
      deft
      )
@@ -496,10 +499,6 @@ you should place your code here."
    ;; my personal config
    (push "~/.spacemacs.d/config/" load-path)
    (require 'mu4e-config nil t)
-   ;; python
-   (setq-default dotspacemacs-configuration-layers
-                 '((python :variables python-test-runner 'pytest)))
-   ;; '((python :variables python-test-runner '(pytest nose))))
    (setq deft-directory "~/Sync/notes")
    (setq deft-extensions '("org" "md" "txt" "markdown"))
    (setq deft-recursive t)
