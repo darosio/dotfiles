@@ -6,34 +6,99 @@
 
 ;; allow for updating mail using 'U' in the main view:
 ;(setq mu4e-get-mail-command "offlineimap -u quiet")
-(setq mu4e-get-mail-command "mbsync cnr"
+(setq mu4e-get-mail-command "mbsync -a"
 	  mu4e-update-interval 120
 	  ;; rename files when moving NEEDED FOR MBSYNC
 	  mu4e-change-filenames-when-moving t)
 
+;; something about ourselves
+; mu4e-reply-to-address "daniele.arosio@cnr.it"
+;(setq user-mail-address "daniele.arosio@cnr.it"
+ ;user-full-name  "Daniele Arosio"
+ ;message-signature
+ ;(concat
+  ;"Daniele Arosio\n"
+  ;"Institute of Biophysics\n"
+  ;"National Research Council of Italy\n"
+  ;"Bruno Kessler Foundation\n"
+  ;"Via Sommarive 18\n"
+  ;"38123 Trento, Italy\n"
+  ;"Email: daniele.arosio@cnr.it"
+  ;"\n")) ;(setq message-signature-file "~/.emacs.d/.signature") ;
+
+ (setq mu4e-contexts
+    `( ,(make-mu4e-context
+          :name "cnr"
+          :enter-func (lambda () (mu4e-message "Entering Cnr context"))
+          :leave-func (lambda () (mu4e-message "Leaving Cnr context"))
+          ;; we match based on the contact-fields of the message
+          :match-func (lambda (msg)
+                        (when msg 
+                          (mu4e-message-contact-field-matches msg 
+                            :to "daniele.arosio@cnr.it")))
+          :vars '( ( user-mail-address      . "daniele.arosio@cnr.it"  )
+                   ( user-full-name         . "Daniele Arosio" )
+				   ( mu4e-sent-folder   . "/cnr/Sent" )
+	  			   ( mu4e-drafts-folder . "/cnr/Drafts" )
+	  			   ( mu4e-trash-folder  . "/cnr/Trash" )
+	  			   ( mu4e-refile-folder . "/archive" )
+                   ( mu4e-compose-signature .
+                     (concat
+						"Daniele Arosio\n"
+  						"National Research Council (CNR), Institute of Biophysics\n"
+  						"Via Sommarive 18\n"
+  						"38123 Trento, Italy\n"))))
+       ,(make-mu4e-context
+          :name "gmail"
+          :enter-func (lambda () (mu4e-message "Switch to the gmail context"))
+          ;; no leave-func
+          ;; we match based on the contact-fields of the message
+          :match-func (lambda (msg)
+                        (when msg 
+                          (mu4e-message-contact-field-matches msg 
+                            :to "danielepietroarosio@gmail.com")))
+          :vars '( ( user-mail-address       . "danielepietroarosio@gmail.com" )
+                   ( user-full-name          . "daniele arosio" )
+                   ( mu4e-compose-signature  .
+                     (concat
+                       "daniele arosio\n"
+                       "38123 Trento\n"))))
+
+       ;,(make-mu4e-context
+          ;:name "Cycling"
+          ;:enter-func (lambda () (mu4e-message "Switch to the Cycling context"))
+          ;;; no leave-func
+          ;;; we match based on the maildir of the message; assume all
+          ;;; cycling-related messages go into the /cycling maildir
+          ;:match-func (lambda (msg)
+                        ;(when msg
+                          ;(string= (mu4e-message-field msg :maildir) "/cycling")))
+          ;:vars '( ( user-mail-address       . "aderleth@example.com" )
+                   ;( user-full-name          . "AliceD" )
+                   ;( mu4e-compose-signature  . nil)))
+        ))
+
+  ;; set `mu4e-context-policy` and `mu4e-compose-policy` to tweak when mu4e should
+  ;; guess or ask the correct context, e.g.
+
+  ;; start with the first (default) context; 
+  ;; default is to ask-if-none (ask when there's no context yet, and none match)
+  (setq mu4e-context-policy 'pick-first)
+
+  ;; compose with the current context is no context matches;
+  ;; default is to ask 
+  ;; (setq mu4e-compose-context-policy nil)
+
+
 (setq mu4e-maildir "~/Sync/Maildir"
-	  mu4e-sent-folder "/cnr/Sent"
-	  mu4e-drafts-folder "/cnr/Drafts"
-	  mu4e-trash-folder "/cnr/Trash"
-	  mu4e-refile-folder "/archive"
+	  ;mu4e-sent-folder "/cnr/Sent"
+	  ;mu4e-drafts-folder "/cnr/Drafts"
+	  ;mu4e-trash-folder "/cnr/Trash"
+	  ;mu4e-refile-folder "/archive"
 	  mu4e-view-show-addresses t
 	  ;; show images
 	  mu4e-show-images t)
 
-;; something about ourselves
-; mu4e-reply-to-address "daniele.arosio@cnr.it"
-(setq user-mail-address "daniele.arosio@cnr.it"
- user-full-name  "Daniele Arosio"
- message-signature
- (concat
-  "Daniele Arosio\n"
-  "Institute of Biophysics\n"
-  "National Research Council of Italy\n"
-  "Bruno Kessler Foundation\n"
-  "Via Sommarive 18\n"
-  "38123 Trento, Italy\n"
-  "Email: daniele.arosio@cnr.it"
-  "\n")) ;(setq message-signature-file "~/.emacs.d/.signature") ;
 
 (setq send-mail-function (quote sendmail-send-it)
       ;; message-send-mail-function 'message-send-mail-with-sendmail
