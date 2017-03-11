@@ -50,8 +50,8 @@ Account gmail
 
 MaildirStore gmail-local
 # The trailing "/" is important
-Path ~/.maildir/gmail/
-Inbox ~/.maildir/gmail/Inbox
+Path ~/Sync/Maildir/gmail/
+Inbox ~/Sync/Maildir/gmail/Inbox
 #Flatten .
 
 Channel gmail-inbox
