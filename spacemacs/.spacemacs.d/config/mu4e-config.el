@@ -133,6 +133,33 @@
            ;(set-fill-column 72)
            ;(flyspell-mode)))
 
+;;; remove attachments ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defun my-remove-attachment (msg num) 
+  "Remove attachment." 
+  (let* ((attach (mu4e~view-get-attach msg num))
+         (path (mu4e-msg-field msg :path))
+         (filename (and attach (plist-get attach :name)))
+         (cmd (format "touch /tmp/%s; altermime --input=%s --replace='%s' 
+         			  --with='/tmp/%s'"  filename path filename filename)))
+    (when (and filename
+               (yes-or-no-p
+                (format "Are you sure you want to remove '%s'?" filename)))
+      (shell-command cmd)
+      (message cmd))))
+
+(add-to-list 'mu4e-view-attachment-actions
+             '("remove-attachment" . my-remove-attachment))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; remove attachments ;;;
+(add-to-list 'mu4e-marks
+  '(tag
+     :char       "x"
+     :prompt     "gtag"
+     :ask-target (lambda () (read-string "What tag do you want to add?"))
+     :action      (lambda (docid msg target)
+                    (mu4e-action-retag-message msg (concat "+" target)))))
+
+(mu4e~headers-defun-mark-for tag)
+(define-key mu4e-headers-mode-map (kbd "x") 'mu4e-headers-mark-for-tag)
 ;;; shortcuts ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (setq mu4e-maildir-shortcuts
       '( ("/cnr/INBOX"        . ?i)
