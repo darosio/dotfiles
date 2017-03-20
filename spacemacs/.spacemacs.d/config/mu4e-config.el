@@ -152,14 +152,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; remove attachments ;;;
 (add-to-list 'mu4e-marks
   '(tag
-     :char       "x"
+     :char       "z"
      :prompt     "gtag"
      :ask-target (lambda () (read-string "What tag do you want to add?"))
      :action      (lambda (docid msg target)
                     (mu4e-action-retag-message msg (concat "+" target)))))
 
 (mu4e~headers-defun-mark-for tag)
-(define-key mu4e-headers-mode-map (kbd "x") 'mu4e-headers-mark-for-tag)
+(define-key mu4e-headers-mode-map (kbd "z") 'mu4e-headers-mark-for-tag)
 ;;; shortcuts ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (setq mu4e-maildir-shortcuts
       '( ("/cnr/INBOX"        . ?i)
