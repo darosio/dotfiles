@@ -252,7 +252,8 @@ bindsym $mod+Shift+s exec rofi -show ssh
 # another favorite program
 bindsym $mod+x exec keepassx
 # F2 and F3 for thunderbird and firefox
-bindsym $mod+F2 workspace 2; exec thunderbird
+#bindsym $mod+F2 workspace 2; exec thunderbird
+bindsym $mod+F2 workspace 2; exec emacs
 bindsym $mod+F3 workspace 3; exec firefox
 bindsym $mod+F5 workspace 5; exec zim
 

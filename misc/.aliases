@@ -15,6 +15,8 @@ lndate() {
     ln -s $dir $2
     }
 
+alias tags="ag --nobreak --noheading --nofilename X-Key ~/Sync/Maildir/ | sed -e 's/X-Keywords: //; s/, /\n/g' | sort | uniq"
+
 # pacman helper
 alias paclist-time='expac --timefmt="%Y-%m-%d %T" "%l\t%n" | sort'
 alias paclist-size_d='expac -HM "%011m\t%-20n\t%10d" $( comm -23 <(pacman -Qqen|sort) <(pacman -Qqg base base-devel|sort)  ) | sort -n'
