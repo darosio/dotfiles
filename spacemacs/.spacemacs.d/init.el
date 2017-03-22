@@ -313,12 +313,16 @@ you should place your code here."
    ;; (setq org-agenda-include-diary t)
    ;; (setq org-agenda-include-all-todo t) ;;only in http://sachachua.com/blog/tag/gtd/#post-4543
    (setq-default org-directory "~/Sync/notes/")
-   (setq org-agenda-files (quote ("~/Sync/notes"
+   ;(setq org-agenda-files (quote ("~/Sync/notes"
+
+   (setq org-agenda-files (quote ("~/Sync/share/phone/box/notes/todo.org"
+   								  "~/Sync/share/phone/box/notes/someday.org"
+								  "~/Sync/share/phone/box/notes/weekly_review.org"
                                   "~/Sync/notes/home"
                                   "~/Sync/notes/gcal"
                                   "~/Sync/notes/arch")))
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-   ;; TODO keywords
+   ;; STATES - todo keywords - TYP_TODO
    (setq org-todo-keywords
          (quote ((sequence "TODO(t)" "NEXT(n)" "APPT(a)" "|" "DONE(d)")
                  (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)"))))
@@ -349,16 +353,22 @@ you should place your code here."
                  ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
                  ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))))
    ;; Org Capture
+(setq org-default-notes-file "~/org/refile.org")
 ;;; Capture templates for: TODO tasks, Notes, appointments, phone calls, meetings, and org-protocol
    (setq org-capture-templates
-         (quote (("t" "todo" entry (file+headline "~/Sync/notes/todo.org" "Inbox")
-                  "* TODO %? :INBOX:\n%U\n%a\n" :clock-in t :clock-resume t)
+         (quote (("t" "todo" entry (file+headline "~/Sync/share/phone/box/notes/todo.org" "Inbox")
+                  "* TODO %? \n%U\n%a\n" :clock-in t :clock-resume t)
                  ;; "* TODO [#A] %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n")))
                  ;; "* TODO [#A] %? :INBOX:")))
+                 ("i" "idea" entry (file+headline "~/Sync/share/phone/box/notes/someday.org" "Ideas")
+                  "* IDEA [#B] %? :IDEA:")
+				 ("b" "Blank" entry (file org-default-notes-file) "* %?\n%u")
+                 ("a" "Appointment" entry (file  "~/Sync/notes/gcal/dpa.org" )
+	                  "* %?\n\n%^T\n\n:PROPERTIES:\n\n:END:\n\n")
                  ("r" "respond" entry (file+headline "~/Sync/notes/todo.org" "Reply")
                   "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
-                 ("i" "idea" entry (file+headline "~/Sync/share/phone/box/notes/ideas.org" "Ideas")
-                  "* IDEA [#B] %? :IDEA:")
+				 ("n" "Next Task" entry (file+headline org-default-notes-file "Tasks")
+				  "** NEXT %? \nDEADLINE: %t")
                  ("w" "org-protocol" entry (file+headline "~/Sync/notes/todo.org" "Inbox")
                                         "* TODO Review %c\n%U\n" :immediate-finish t)
                  )))
@@ -406,11 +416,11 @@ you should place your code here."
    ;; Calendars
    ;; gcalendar
    (require 'org-gcal)
-   (setq org-gcal-client-id "424037061111-meak29pogotildriindkf2v9h1gbjkgu.apps.googleusercontent.com"
-         org-gcal-client-secret "8Roq86eH6Y3X6XOr-kxIztQk"
+   (setq org-gcal-client-id "100447390762-1unqkpjv30do2uq0r5uetd8pkr9ha81s.apps.googleusercontent.com"
+         org-gcal-client-secret "EhuKxnNmAoM2XMPjCFOpiLDK"
          org-gcal-file-alist '(("danielepietroarosio@gmail.com" .  "~/Sync/notes/gcal/dpa.org")
-         ;                      ("c87gevr5pc3191on8c7nh8b4nc@group.calendar.google.com" .
-          ;                      "~/Sync/notes/gcal/figli.org")
+                               ("c87gevr5pc3191on8c7nh8b4nc@group.calendar.google.com" .
+                                "~/Sync/notes/gcal/figli.org")
            ;                    ("cfaned8dou8gm2qciies0itso4@group.calendar.google.com" .
             ;                    "~/Sync/notes/gcal/deadlines.org")
              ;                  ("tq1af7efj4l9h8glgqi2g5vmsg@group.calendar.google.com" .
@@ -424,8 +434,11 @@ you should place your code here."
    ;; if I just added something to my calendar, I might have to reload the agenda by hitting r in the agenda view.
    ;(add-hook 'org-agenda-mode-hook (lambda () (org-gcal-sync) ))
    ;; syncs with my Google calendar when I capture.
-   (add-hook 'org-capture-after-finalize-hook (lambda () (org-gcal-sync) ))
-
+   ;(add-hook 'org-capture-after-finalize-hook (lambda () (org-gcal-sync) ))
+   (setq org-agenda-custom-commands
+         '(("c" "Simple agenda view"
+      	 ((agenda "")
+      	  (alltodo "")))))
    ;; Sunrise and sunset
    (setq calendar-latitude 46.067270) ; Borino
    (setq calendar-longitude 11.166153)
