@@ -406,20 +406,26 @@ you should place your code here."
    ;; Calendars
    ;; gcalendar
    (require 'org-gcal)
-   (setq org-gcal-client-id "831258038866-64mls0749a0bctsqi9rt5prvlnb2qubs.apps.googleusercontent.com"
-         org-gcal-client-secret "ZaVnbmhd-JeCxvMMmN4-2FOM"
+   (setq org-gcal-client-id "424037061111-meak29pogotildriindkf2v9h1gbjkgu.apps.googleusercontent.com"
+         org-gcal-client-secret "8Roq86eH6Y3X6XOr-kxIztQk"
          org-gcal-file-alist '(("danielepietroarosio@gmail.com" .  "~/Sync/notes/gcal/dpa.org")
-                               ("c87gevr5pc3191on8c7nh8b4nc@group.calendar.google.com" .
-                                "~/Sync/notes/gcal/figli.org")
-                               ("cfaned8dou8gm2qciies0itso4@group.calendar.google.com" .
-                                "~/Sync/notes/gcal/deadlines.org")
-                               ("tq1af7efj4l9h8glgqi2g5vmsg@group.calendar.google.com" .
-                                "~/Sync/notes/gcal/IBF.org")
+         ;                      ("c87gevr5pc3191on8c7nh8b4nc@group.calendar.google.com" .
+          ;                      "~/Sync/notes/gcal/figli.org")
+           ;                    ("cfaned8dou8gm2qciies0itso4@group.calendar.google.com" .
+            ;                    "~/Sync/notes/gcal/deadlines.org")
+             ;                  ("tq1af7efj4l9h8glgqi2g5vmsg@group.calendar.google.com" .
+              ;                  "~/Sync/notes/gcal/IBF.org")
                                ;; ("i_217.77.81.46#sunrise@group.v.calendar.google.com" .
                                ;;  "~/Sync/notes/gcal/sunrise.org")
                                ;; ("it.italian#holiday@group.v.calendar.google.com" .
                                ;;  "~/Sync/notes/gcal/feste.org")
                                ))
+   ;; syncs whenever I load the agenda. Since this happens in the background,
+   ;; if I just added something to my calendar, I might have to reload the agenda by hitting r in the agenda view.
+   ;(add-hook 'org-agenda-mode-hook (lambda () (org-gcal-sync) ))
+   ;; syncs with my Google calendar when I capture.
+   (add-hook 'org-capture-after-finalize-hook (lambda () (org-gcal-sync) ))
+
    ;; Sunrise and sunset
    (setq calendar-latitude 46.067270) ; Borino
    (setq calendar-longitude 11.166153)
