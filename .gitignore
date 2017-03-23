@@ -10,3 +10,5 @@ anacron/.anacron/spool/
 
 # tmux plugins (installed manually with git submodule add)
 tmux/.tmux/resurrect/
+
+*.elc

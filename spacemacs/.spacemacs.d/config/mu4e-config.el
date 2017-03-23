@@ -1,5 +1,6 @@
 ;; allow for updating mail using 'U' in the main view:
 ;(setq mu4e-get-mail-command "offlineimap -u quiet")
+(require 'org-mu4e)
 (setq mu4e-get-mail-command "mbsync -a"
 	  mu4e-update-interval 120
       mu4e-headers-auto-update t
@@ -232,7 +233,7 @@
            ;(set-fill-column 72)
            ;(flyspell-mode)))
 ;; configure orgmode support in mu4e
-(require 'org-mu4e)
+;; (require 'org-mu4e)
 ;; when mail is sent, automatically convert org body to HTML
 (setq org-mu4e-convert-to-html t)
 
