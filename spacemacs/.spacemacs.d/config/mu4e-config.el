@@ -1,6 +1,8 @@
 ;; allow for updating mail using 'U' in the main view:
 ;(setq mu4e-get-mail-command "offlineimap -u quiet")
 (require 'org-mu4e)
+
+(setq mu4e-confirm-quit nil)
 (setq mu4e-get-mail-command "mbsync -a"
 	  mu4e-update-interval 120
       mu4e-headers-auto-update t
