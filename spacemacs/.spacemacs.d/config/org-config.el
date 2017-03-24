@@ -219,6 +219,8 @@
 
 ;; == Agenda ==
 
+(setq org-agenda-span 'day)
+
 ;; Dim blocked tasks (and other settings)
 (setq org-enforce-todo-dependencies t)
 (setq org-agenda-inhibit-startup nil)
