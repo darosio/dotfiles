@@ -7,6 +7,7 @@
                                "~/Sync/share/phone/box/notes/refile.org"
                                "~/Sync/notes/home"
                                "~/Sync/notes/gcal"
+                               "~/Sync/notes/proj"
                                "~/Sync/notes/arch")))
 
 ;; a global-set-key example
@@ -113,11 +114,11 @@
 ;; == Refile ==
 ;; Targets include this file and any file contributing to the agenda - up to 9 levels deep
 (setq org-refile-targets (quote ((nil :maxlevel . 9)
-                                 ;; (org-agenda-files :maxlevel . 9))))
-                                 ("~/Sync/share/phone/box/notes/todo.org" :maxlevel . 9)
-                                 ("~/Sync/notes/gcal/dpa.org" :maxlevel . 1)
-                                 (org-default-notes-file :maxlevel . 9)
-                                 )))
+                                 (org-agenda-files :maxlevel . 9))))
+                                 ;; ("~/Sync/share/phone/box/notes/todo.org" :maxlevel . 9)
+                                 ;; ("~/Sync/notes/gcal/dpa.org" :maxlevel . 1)
+                                 ;; (org-default-notes-file :maxlevel . 9)
+                                 ;; )))
 ;;  Be sure to use the full path for refile setup
 (setq org-refile-use-outline-path t)
 ;; Targets complete directly with IDO
@@ -161,60 +162,100 @@
             (or subtree-end (point-max)))
         next-headline))))
 
-   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-   ;; Calendars
-   ;; gcalendar
-   (require 'org-gcal)
-   (setq org-gcal-client-id "100447390762-1unqkpjv30do2uq0r5uetd8pkr9ha81s.apps.googleusercontent.com"
-         org-gcal-client-secret "EhuKxnNmAoM2XMPjCFOpiLDK"
-         org-gcal-file-alist '(("danielepietroarosio@gmail.com" .  "~/Sync/notes/gcal/dpa.org")
-                               ("c87gevr5pc3191on8c7nh8b4nc@group.calendar.google.com" .
-                                "~/Sync/notes/gcal/figli.org")
-           ;                    ("cfaned8dou8gm2qciies0itso4@group.calendar.google.com" .
-            ;                    "~/Sync/notes/gcal/deadlines.org")
-             ;                  ("tq1af7efj4l9h8glgqi2g5vmsg@group.calendar.google.com" .
-              ;                  "~/Sync/notes/gcal/IBF.org")
-                               ;; ("i_217.77.81.46#sunrise@group.v.calendar.google.com" .
-                               ;;  "~/Sync/notes/gcal/sunrise.org")
-                               ;; ("it.italian#holiday@group.v.calendar.google.com" .
-                               ;;  "~/Sync/notes/gcal/feste.org")
-                               ))
-   ;; syncs whenever I load the agenda. Since this happens in the background,
-   ;; if I just added something to my calendar, I might have to reload the agenda by hitting r in the agenda view.
-   ;(add-hook 'org-agenda-mode-hook (lambda () (org-gcal-sync) ))
-   ;; syncs with my Google calendar when I capture.
-   ;(add-hook 'org-capture-after-finalize-hook (lambda () (org-gcal-sync) ))
 
-   ;; Sunrise and sunset
-   (setq calendar-latitude 46.067270) ; Borino
-   (setq calendar-longitude 11.166153)
-   (setq calendar-location-name "Trento")
-   (setq calendar-time-zone 60)
-   ;; Holidays (setq holiday-general-holidays '(
-   (setq holiday-other-holidays
-         '((holiday-fixed 1 1 "Capodanno")
-           (holiday-fixed 5 1 "1 Maggio")
-           (holiday-fixed 4 25 "Liberazione")
-           (holiday-fixed 6 2 "Festa Repubblica")
-           (holiday-fixed 7 14 "Bastille Day")
-           ))
-   (setq holiday-bahai-holidays nil)
-   (setq holiday-hebrew-holidays nil)
-   ;; (setq holiday-islamic-holidays nil)
-   (setq holiday-christian-holidays
-         '((holiday-fixed 12 8 "Immacolata Concezione")
-           (holiday-fixed 12 25 "Natale")
-           (holiday-fixed 12 26 "Santo Stefano")
-           (holiday-fixed 1 6 "Epifania")
-           (holiday-easter-etc -52 "Giovedì grasso")
-           (holiday-easter-etc -47 "Martedì grasso")
-           (holiday-easter-etc  -2 "Venerdì Santo")
-           (holiday-easter-etc   0 "Pasqua")
-           (holiday-easter-etc  +1 "Lunedì Pasqua")
-           (holiday-fixed 8 15 "Assunzione di Maria")
-           (holiday-fixed 11 1 "Ognissanti")
-           ))
-   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ;; == Habits ==
+(require 'org-habit)
+
+;; (setq org-modules '(org-habit))
+;; (setq org-habit-show-habits-only-for-today t)
+
+
+;; == Clocking Functions ==
+(require 'org-clock)
+;; If not a project, clocking-in changes TODO to NEXT
+(setq org-clock-in-switch-to-state 'bh/clock-in-to-next)
+(defun bh/clock-in-to-next (kw)
+  "Switch a task from TODO to NEXT when clocking in.
+Skips capture tasks, projects, and subprojects.
+Switch projects and subprojects from NEXT back to TODO"
+  (when (not (and (boundp 'org-capture-mode) org-capture-mode))
+    (cond
+     ((and (member (org-get-todo-state) (list "TODO"))
+           (not (bh/is-project-p)))
+      "NEXT")
+     ((and (member (org-get-todo-state) (list "NEXT"))
+           (bh/is-project-p))
+      "TODO"))))
+(add-hook 'org-mode-hook
+          (lambda ()
+            (define-key org-mode-map (kbd "C-c C-.") 'org-time-stamp-inactive)))
+;; Also ensure that NEXT projects are switched to TODO when clocking in
+(add-hook 'org-clock-in-hook 'gs/mark-next-done-parent-tasks-todo 'append)
+
+;; global Effort estimate values  ;http://doc.norang.ca/org-mode.html
+;; global STYLE property values for completion
+(setq org-global-properties (quote (("Effort_ALL" . "0:15 0:30 0:45 1:00 1:30 2:00 3:00 4:00 6:00 0:00")
+                                    ("STYLE_ALL" . "habit"))))
+;; Enable auto clock resolution for finding open clocks
+(setq org-clock-auto-clock-resolution (quote when-no-clock-is-running))
+;; Resume clocking task when emacs is restarted
+(org-clock-persistence-insinuate)
+;; Sometimes I change tasks I'm clocking quickly - this removes clocked tasks with 0:00 duration
+(setq org-clock-out-remove-zero-time-clocks t)
+
+(defun gs/mark-next-done-parent-tasks-todo ()
+  "Visit each parent task and change NEXT (or DONE) states to TODO."
+  ;; Don't change the value if new state is "DONE"
+  (let ((mystate (or (and (fboundp 'org-state)
+                          (member state
+                                  (list "NEXT" "TODO")))
+                     (member (nth 2 (org-heading-components))
+                             (list "NEXT" "TODO")))))
+    (when mystate
+      (save-excursion
+        (while (org-up-heading-safe)
+          (when (member (nth 2 (org-heading-components)) (list "NEXT" "DONE"))
+            (org-todo "TODO")))))))
+(add-hook 'org-after-todo-state-change-hook 'gs/mark-next-done-parent-tasks-todo 'append)
+
+
+;; == bh/helper-functions ==
+(defun bh/is-project-p ()
+  "Any task with a todo keyword subtask."
+  (save-restriction
+    (widen)
+    (let ((has-subtask)
+          (subtree-end (save-excursion (org-end-of-subtree t)))
+          (is-a-task (member (nth 2 (org-heading-components)) org-todo-keywords-1)))
+      (save-excursion
+        (forward-line 1)
+        (while (and (not has-subtask)
+                    (< (point) subtree-end)
+                    (re-search-forward "^\*+ " subtree-end t))
+          (when (member (org-get-todo-state) org-todo-keywords-1)
+            (setq has-subtask t))))
+      (and is-a-task has-subtask))))
+(defun bh/find-project-task ()
+  "Move point to the parent (project) task if any."
+  (save-restriction
+    (widen)
+    (let ((parent-task (save-excursion (org-back-to-heading 'invisible-ok) (point))))
+      (while (org-up-heading-safe)
+        (when (member (nth 2 (org-heading-components)) org-todo-keywords-1)
+          (setq parent-task (point))))
+      (goto-char parent-task)
+      parent-task)))
+(defun bh/is-project-subtree-p ()
+  "Any task with a todo keyword that is in a project subtree.
+Callers of this function already widen the buffer view."
+  (let ((task (save-excursion (org-back-to-heading 'invisible-ok)
+                              (point))))
+    (save-excursion
+      (bh/find-project-task)
+      (if (equal (point) task)
+          nil
+
+t))))
 
 
 ;; == Agenda ==
@@ -407,6 +448,7 @@ show this warning instead."
      (tags "emacs")))
 	 ))
 
+
 ;; == Agenda Navigation ==
 
 ;; Search for a "=" and go to the next line
@@ -461,41 +503,8 @@ show this warning instead."
 	      (delete-region (region-beginning) (region-end)))
 	  )))))
 (add-hook 'org-finalize-agenda-hook 'gs/remove-agenda-regions)
-;; == bh/helper-functions ==
-(defun bh/is-project-p ()
-  "Any task with a todo keyword subtask."
-  (save-restriction
-    (widen)
-    (let ((has-subtask)
-          (subtree-end (save-excursion (org-end-of-subtree t)))
-          (is-a-task (member (nth 2 (org-heading-components)) org-todo-keywords-1)))
-      (save-excursion
-        (forward-line 1)
-        (while (and (not has-subtask)
-                    (< (point) subtree-end)
-                    (re-search-forward "^\*+ " subtree-end t))
-          (when (member (org-get-todo-state) org-todo-keywords-1)
-            (setq has-subtask t))))
-      (and is-a-task has-subtask))))
-(defun bh/find-project-task ()
-  "Move point to the parent (project) task if any."
-  (save-restriction
-    (widen)
-    (let ((parent-task (save-excursion (org-back-to-heading 'invisible-ok) (point))))
-      (while (org-up-heading-safe)
-        (when (member (nth 2 (org-heading-components)) org-todo-keywords-1)
-          (setq parent-task (point))))
-      (goto-char parent-task)
-      parent-task)))
-(defun bh/is-project-subtree-p ()
-  "Any task with a todo keyword that is in a project subtree.
-Callers of this function already widen the buffer view."
-  (let ((task (save-excursion (org-back-to-heading 'invisible-ok)
-                              (point))))
-    (save-excursion
-      (bh/find-project-task)
-      (if (equal (point) task)
-          nil
 
-t))))
+;(push "~/.spacemacs.d/config/" load-path)
+(require 'cal-config nil t)
+
 (provide 'org-config)
