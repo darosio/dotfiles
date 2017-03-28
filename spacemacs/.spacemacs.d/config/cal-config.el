@@ -6,10 +6,10 @@
       org-gcal-file-alist '(("danielepietroarosio@gmail.com" .  "~/Sync/notes/gcal/dpa.org")
                             ("c87gevr5pc3191on8c7nh8b4nc@group.calendar.google.com" .
                              "~/Sync/notes/gcal/figli.org")
-                           ("cfaned8dou8gm2qciies0itso4@group.calendar.google.com" .
-                            "~/Sync/notes/gcal/deadlines.org")
-          ;                  ("tq1af7efj4l9h8glgqi2g5vmsg@group.calendar.google.com" .
-           ;                  "~/Sync/notes/gcal/IBF.org")
+                            ("cfaned8dou8gm2qciies0itso4@group.calendar.google.com" .
+                             "~/Sync/notes/gcal/deadlines.org")
+                            ("tq1af7efj4l9h8glgqi2g5vmsg@group.calendar.google.com" .
+                             "~/Sync/notes/gcal/IBF.org")
                             ;; ("i_217.77.81.46#sunrise@group.v.calendar.google.com" .
                             ;;  "~/Sync/notes/gcal/sunrise.org")
                             ;; ("it.italian#holiday@group.v.calendar.google.com" .
