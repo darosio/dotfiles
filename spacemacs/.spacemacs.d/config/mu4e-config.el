@@ -133,7 +133,7 @@
 ;; toggle per name with M-RET
 (setq mu4e-view-show-addresses 't)
 ;; every new email composition gets its own frame! (window)
-(setq mu4e-compose-in-new-frame t)
+;; (setq mu4e-compose-in-new-frame t)
 ;; give me ISO(ish) format date-time stamps in the header list
 (setq mu4e-headers-date-format "%Y-%m-%d %H:%M")
 ;; the headers to show in the headers list -- a pair of a field
