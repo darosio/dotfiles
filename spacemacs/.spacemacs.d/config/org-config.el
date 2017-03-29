@@ -98,7 +98,7 @@
      "* MEETING with %? :MEETING:\n%t" :clock-in t :clock-resume t)
     ("n" "Next Task" entry (file+headline org-default-notes-file "Tasks")
      "** NEXT %? \nDEADLINE: %t")
-    ("r" "respond" entry (file org-default-notes-file)
+    ("r" "respond" entry (file "~/Sync/share/phone/box/notes/todo.org")
      "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
     ))
            ;("n" "note" entry (file "~/git/org/refile.org")
