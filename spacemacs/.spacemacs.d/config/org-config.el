@@ -346,7 +346,7 @@ show this warning instead."
 	   (concat stuck ; add stuck warning
 		   " [" path "]") ; add "breadcrumb"
 	 stuck)))
-       
+
 (defun gs/org-agenda-add-location-string ()
   "Gets the value of the LOCATION property"
   (let ((loc (org-entry-get (point) "LOCATION")))
@@ -361,35 +361,38 @@ show this warning instead."
 
 ;; Custom agenda command definitions
 (setq org-agenda-custom-commands
-      '(("h" "Habits" agenda "STYLE=\"habit\""
-	 ((org-agenda-overriding-header "Habits")
-	  (org-agenda-sorting-strategy
-	   '(todo-state-down effort-up category-keep))))
-	(" " "Export Schedule" ((agenda "" ((org-agenda-overriding-header "Today's Schedule:")
-					    (org-agenda-ndays 1)
-					    (org-agenda-start-on-weekday nil)
-					    (org-agenda-start-day "+0d")
-					    (org-agenda-todo-ignore-deadlines nil)))
-				(tags-todo "-CANCELLED-ARCHIVE/!NEXT"
+      '(
+        ("h" "Habits" agenda "STYLE=\"habit\""
+         ((org-agenda-overriding-header "Habits")
+          (org-agenda-sorting-strategy '(todo-state-down effort-up category-keep)))
+         )
+        (" " "Export Schedule"
+         (
+          (agenda "" ((org-agenda-overriding-header "Today's Schedule:")
+                      (org-agenda-ndays 3)
+                      (org-agenda-start-on-weekday nil)
+                      (org-agenda-start-day "+0d")
+                      (org-agenda-todo-ignore-deadlines nil)))
+          (tags-todo "-CANCELLED-ARCHIVE/!NEXT"
 					   ((org-agenda-overriding-header "Next Tasks:")
 					    ))
-				(tags "REFILE-ARCHIVE-REFILE=\"nil\""
+          (tags "REFILE-ARCHIVE-REFILE=\"nil\""
 				      ((org-agenda-overriding-header "Tasks to Refile:")
 				       (org-tags-match-list-sublevels nil)))
-				(tags-todo "-INACTIVE-HOLD-CANCELLED-REFILE-ARCHIVEr/!"
+          (tags-todo "-INACTIVE-HOLD-CANCELLED-REFILE-ARCHIVEr/!"
 					   ((org-agenda-overriding-header "Active Projects:")
 					    (org-agenda-skip-function 'gs/select-projects)))
-				(tags-todo "-INACTIVE-HOLD-CANCELLED-REFILE-ARCHIVE-STYLE=\"habit\"/!-NEXT"
+          (tags-todo "-INACTIVE-HOLD-CANCELLED-REFILE-ARCHIVE-STYLE=\"habit\"/!-NEXT"
 					   ((org-agenda-overriding-header "Standalone Tasks:")
 					    (org-agenda-skip-function 'gs/select-standalone-tasks)))
-				(agenda "" ((org-agenda-overriding-header "Week At A Glance:")
+          (agenda "" ((org-agenda-overriding-header "Week At A Glance:")
 					    (org-agenda-ndays 5)
 					    (org-agenda-start-day"+1d")
 					    (org-agenda-prefix-format '((agenda . "  %-12:c%?-12t %s [%b] ")))))
-				(tags-todo "-INACTIVE-HOLD-CANCELLED-REFILE-ARCHIVE/!-NEXT"
+          (tags-todo "-INACTIVE-HOLD-CANCELLED-REFILE-ARCHIVE/!-NEXT"
 					   ((org-agenda-overriding-header "Remaining Project Tasks:")
 					    (org-agenda-skip-function 'gs/select-project-tasks)))
-				(tags "INACTIVE-ARCHIVE"
+          (tags "INACTIVE-ARCHIVE"
 				      ((org-agenda-overriding-header "Inactive Projects and Tasks")
 				       (org-tags-match-list-sublevels nil)))
 ;; from ref 1
@@ -413,40 +416,46 @@ show this warning instead."
          ;;                    (org-tags-match-list-sublevels nil)
          ;;                    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
          ;;                    (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks)))
-                (tags "-REFILE/"
+        (tags "-REFILE/"
                       ((org-agenda-overriding-header "Tasks to Archive")
                        (org-agenda-skip-function 'bh/skip-non-archivable-tasks)
                        (org-tags-match-list-sublevels nil)))
-
-				(tags "ENDOFAGENDA"
-				      ((org-agenda-overriding-header "End of Agenda")
-				       (org-tags-match-list-sublevels nil))))
-	 ((org-agenda-start-with-log-mode t)
-	  (org-agenda-log-mode-items '(clock))
-	  (org-agenda-prefix-format '((agenda . "  %-12:c%?-12t %(gs/org-agenda-add-location-string)% s")
-				      (timeline . "  % s")
-				      (todo . "  %-12:c %(gs/org-agenda-prefix-string) ")
-				      (tags . "  %-12:c %(gs/org-agenda-prefix-string) ")
-				      (search . "  %i %-12:c")))
-	  (org-agenda-todo-ignore-deadlines 'near)
-	  (org-agenda-todo-ignore-scheduled t)))
-	("X" "Agenda" ((agenda "") (alltodo))
-	 ((org-agenda-ndays 10)
-	  (org-agenda-start-on-weekday nil)
-	  (org-agenda-start-day "-1d")
-	  (org-agenda-start-with-log-mode t)
-	  (org-agenda-log-mode-items '(closed clock state))))
-
-   ("H" "Office and Home Lists"
-    ((agenda)
-     (tags-todo "@office")
-     (tags-todo "@home")
-     (tags-todo "@pc")
-     (tags-todo "WORK")
-     (tags-todo "PERSONAL")
-     (tags "IDEA")
-     (tags "emacs")))
-	 ))
+	  		(tags "ENDOFAGENDA"
+	  		      ((org-agenda-overriding-header "End of Agenda")
+	  		       (org-tags-match-list-sublevels nil)))
+        )
+         (
+          ;; (org-agenda-start-with-log-mode t)
+          ;; ;; (org-agenda-log-mode-items '(clock))
+          ;; (org-agenda-log-mode-items 'clock)
+          (org-agenda-prefix-format '((agenda . "  %-12:c%?-12t %(gs/org-agenda-add-location-string)% s")
+	  		      (timeline . "  % s")
+	  		      (todo . "  %-12:c %(gs/org-agenda-prefix-string) ")
+	  		      (tags . "  %-12:c %(gs/org-agenda-prefix-string) ")
+	  		      (search . "  %i %-12:c")))
+          (org-agenda-todo-ignore-deadlines 'near)
+          (org-agenda-todo-ignore-scheduled t)
+          ))
+        ("X" "Agenda"
+         ((agenda "") (alltodo))
+         (
+          (org-agenda-ndays 10)
+          (org-agenda-start-on-weekday nil)
+          (org-agenda-start-day "-1d")
+          (org-agenda-start-with-log-mode t)
+          (org-agenda-log-mode-items '(closed clock state))
+          ))
+        ("H" "Office and Home Lists"
+         ((agenda)
+          (tags-todo "@office")
+          (tags-todo "@home")
+          (tags-todo "@pc")
+          (tags-todo "WORK")
+          (tags-todo "PERSONAL")
+          (tags "IDEA")
+          (tags "emacs")
+          ))
+        ))
 
 
 ;; == Agenda Navigation ==
