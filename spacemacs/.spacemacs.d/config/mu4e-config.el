@@ -155,8 +155,7 @@
   (let* ((attach (mu4e~view-get-attach msg num))
          (path (mu4e-msg-field msg :path))
          (filename (and attach (plist-get attach :name)))
-         (cmd (format "touch /tmp/%s; altermime --input=%s --replace='%s' 
-         			  --with='/tmp/%s'"  filename path filename filename)))
+         (cmd (format "touch /tmp/%s-removed; altermime --input=%s --replace='%s' --with='/tmp/%s-removed'"  filename path filename filename)))
     (when (and filename
                (yes-or-no-p
                 (format "Are you sure you want to remove '%s'?" filename)))
