@@ -86,7 +86,8 @@
 						"Daniele Arosio\n"
   						"National Research Council (CNR), Institute of Biophysics\n"
   						"Via Sommarive 18\n"
-  						"38123 Trento, Italy\n"))))
+  						"38123 Trento, Italy\n"
+              "tel +39 0461 314607\n"))))
        ,(make-mu4e-context
           :name "gmail"
           :enter-func (lambda () (mu4e-message "Switch to the gmail context"))
