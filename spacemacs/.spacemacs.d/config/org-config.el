@@ -453,7 +453,13 @@ show this warning instead."
           (tags-todo "WORK")
           (tags-todo "PERSONAL")
           (tags "IDEA")
-          (tags "emacs")
+          ))
+        ("D" "Daily Action List"
+         ((agenda ""
+                  ((org-agenda-ndays 1)
+                   (org-agenda-sorting-strategy
+                    (quote ((agenda time-up priority-down tag-up) )))
+                   (org-deadline-warning-days 0)))
           ))
         ))
 
