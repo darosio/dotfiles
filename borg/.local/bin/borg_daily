@@ -1,0 +1,37 @@
+#!/bin/sh
+
+mount="/media/rsnapshots"
+#if grep -qs "$mount" /proc/mounts; then
+if mountpoint -q "$mount"; then
+	echo "$mount is a mountpoint"
+else
+	echo "$mount is not a mountpoint"
+    sudo mount "$mount"
+    if [ $? -eq 0 ]; then
+     echo "Mount success!"
+    else
+     echo "Something went wrong with the mount..."
+    fi
+fi
+#REPOSITORY=username@remoteserver.com:backup
+REPOSITORY=/media/rsnapshots/borg
+
+# Backup all of /home and /var/www except a few
+# $REPOSITORY::`hostname`-`date +%Y-%m-%d`    \
+# excluded directories
+borg create -v --stats -C zlib -p             \
+    $REPOSITORY::dan-`date +%Y-%m-%d`         \
+    ~/Sync                                    \
+    --exclude '/home/dan/Sync/tmp'            \
+    --exclude '/home/dan/Sync/.stversions'    \
+    --exclude '*.pyc'
+
+# Use the `prune` subcommand to maintain 7 daily, 4 weekly and 6 monthly
+# archives of THIS machine. --prefix `hostname`- is very important to
+# limit prune's operation to this machine's archives and not apply to
+# other machine's archives also.
+#borg prune -v $REPOSITORY --prefix `hostname`- \
+borg prune -v $REPOSITORY --prefix dan- \
+	--keep-daily=4 --keep-weekly=2 --keep-monthly=6 --keep-yearly=10
+#!/bin/sh
+

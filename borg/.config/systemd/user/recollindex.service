@@ -1,0 +1,7 @@
+[Unit]
+Description=recollindex
+OnFailure=status-email-user@%n.service
+
+[Service]
+;Type=oneshot
+ExecStart=/home/dan/.local/bin/recollindex.sh

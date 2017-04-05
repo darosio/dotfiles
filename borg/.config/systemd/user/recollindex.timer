@@ -1,0 +1,14 @@
+[Unit]
+Description=Run recollindex daily and every 3 hours
+
+[Timer]
+Persistent=true
+;OnBootSec= 1min
+;OnCalendar=daily
+RandomizedDelaySec=3min
+OnCalendar=*-*-* 12:10:00
+;OnUnitActiveSec=1h 
+Unit=recollindex.service
+
+[Install]
+WantedBy=timers.target

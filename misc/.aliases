@@ -186,7 +186,7 @@ alias omero-data1='sshfs  omero:/hardmnt/data1 /media/omero1/'
 alias swan-data='sshfs  swan:/hardmnt/swan1/data /media/swan/'
 alias pp='impressive --nologo'
 alias xev_arch="xev | grep -A2 --line-buffered '^KeyRelease' | sed -n '/keycode /s/^.*keycode \([0-9]*\).* (.*, \(.*\)).*$/\1 \2/p'"
-alias bigcp='rsync -Phrltz'   #pg z -XH
+alias bigcp='rsync -Phrltz --info=progress2'   #pg z -XH
 # -a is for archive, which preserves ownership, permissions etc.
 # -v is for verbose, so I can see what's happening (optional)
 # -h is for human-readable, so the transfer rate and file sizes are easier to read (optional)
