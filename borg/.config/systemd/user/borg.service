@@ -1,7 +1,7 @@
 [Unit]
-Description=recollindex
+Description=borg
 OnFailure=status-email-user@%n.service
 
 [Service]
 ;Type=oneshot
-ExecStart=/home/dan/.local/bin/recollindex.sh
+ExecStart=/home/dan/.local/bin/borg.sh

@@ -6,9 +6,9 @@ Persistent=true
 ;OnBootSec= 1min
 ;OnCalendar=daily
 RandomizedDelaySec=3min
-OnCalendar=*-*-* 12:10:00
+OnCalendar=*-*-* 16:10:00
 ;OnUnitActiveSec=1h 
-Unit=recollindex.service
+Unit=borg.service
 
 [Install]
 WantedBy=timers.target
