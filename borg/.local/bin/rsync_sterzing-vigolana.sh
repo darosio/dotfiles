@@ -2,37 +2,48 @@
 #
 out=/tmp/`basename "$0"`-`date +%d%H%M%S`
 
-#sudo mount /media/rsnapshots
 
 echo "To: daniele.arosio@cnr.it"							 > $out
 echo "From: $HOSTNAME"										>> $out
 echo "Subject: rsync: $HOSTNAME-vigolana"					>> $out
 
-printf "du before sync: ---------------------------\n"			>> $out
-sudo du -ksh /media/rsnapshots/*							>> $out
-echo "-------------------------------------------"			>> $out
 
-printf "\n\nSync vigolana:/data/borg to $HOSTNAME:rsnapshots\n"					>> $out
+#sudo mount /media/rsnapshots
 echo														>> $out
-rsync -i -a -H --info=progress0,stats2,del,name,flist --delete --numeric-ids \
-	10.0.0.1:/data/borg/ /media/rsnapshots/borg/ \
-	-e '/usr/bin/ssh -c aes256-ctr -i ~/.ssh/dan@sterzing-2013-06-03 -p 23456' >> $out 2>&1
-# --checksum
-printf "\n\nSync $HOSTNAME to vigolana\n"					>> $out
-echo "/rnapshots to /data (exept Sync, borg, remotes)..."	>> $out
-echo														>> $out
-rsync -i -a -H --info=progress0,stats2,del,name,flist --delete --numeric-ids \
-	/media/rsnapshots/ 10.0.0.1:/data/ \
-	--exclude '/lost+found/' \
-	--exclude '/remotes/' \
-	--exclude '/Sync/' \
-	--exclude '/borg/' \
-	-e '/usr/bin/ssh -c aes256-ctr -i ~/.ssh/dan@sterzing-2013-06-03 -p 23456' >> $out 2>&1
-
-echo														>> $out
-echo "du after sync: ----------------------------"			>> $out
-sudo du -ksh /media/rsnapshots/*							>> $out
-echo "-------------------------------------------"			>> $out
+echo "Checking mountpoint /media/rsnapshots:"				>> $out
+~/.local/bin/mount_rsnapshots.sh							>> $out 2>&1
+# Either "1" because of mount rsnapshots problem 
+# or "127" because command script was ot found.
+if [ $? -eq 0 ]; then
+	echo "du before sync: ---------------------------"
+	sudo du -ksh /media/rsnapshots/*
+	echo "-------------------------------------------"
+	
+	# vigolana:/data/borg to sterzing:/media/rsnapshots
+	printf "\n\nSync vigolana:/data/borg to $HOSTNAME:rsnapshots\n"
+	echo
+	rsync -i -a -H --info=progress0,stats2,del,name,flist --numeric-ids \
+		--delete 10.0.0.1:/data/borg/ /media/rsnapshots/borg/ \
+		-e '/usr/bin/ssh -c aes256-ctr -i ~/.ssh/dan@sterzing-2013-06-03 -p 23456'
+	# --checksum
+	
+	# sterzing:/media/rsnapshots to vigolana:/data
+	printf "\n\nSync $HOSTNAME to vigolana\n"
+	echo "/rnapshots to /data (exept Sync, borg, remotes)..."
+	echo
+	rsync -i -a -H --info=progress0,stats2,del,name,flist --numeric-ids \
+		--delete /media/rsnapshots/ 10.0.0.1:/data/ \
+		--exclude '/lost+found/' \
+		--exclude '/remotes/' \
+		--exclude '/Sync/' \
+		--exclude '/borg/' \
+		-e '/usr/bin/ssh -c aes256-ctr -i ~/.ssh/dan@sterzing-2013-06-03 -p 23456'
+	
+	echo
+	echo "du after sync: ----------------------------"
+	sudo du -ksh /media/rsnapshots/*
+	echo "-------------------------------------------"
+fi															>> $out 2>&1
 
 #sudo umount /media/rsnapshots
 
