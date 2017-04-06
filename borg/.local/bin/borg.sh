@@ -22,7 +22,8 @@ printf "\nPruning archives...\n"				>> $out
 # limit prune's operation to this machine's archives and not apply to
 # other machine's archives also.
 #borg prune -v $REPOSITORY --prefix `hostname`- \
-#borg prune -v $REPOSITORY --prefix dan- \
-#	--keep-daily=4 --keep-weekly=2 --keep-monthly=6 --keep-yearly=10 
+borg prune --info --list --stats $REPOSITORY --prefix dan- \
+	--keep-daily=4 --keep-weekly=2 --keep-monthly=6    \
+	--keep-yearly=10 					>> $out 2>&1
 
 cat $out | msmtp daniele.arosio@cnr.it
