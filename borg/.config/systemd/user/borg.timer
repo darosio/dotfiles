@@ -1,13 +1,9 @@
 [Unit]
-Description=Run recollindex daily and every 3 hours
+Description=Run borg backup daily.
 
 [Timer]
 Persistent=true
-;OnBootSec= 1min
-;OnCalendar=daily
-RandomizedDelaySec=3min
-OnCalendar=*-*-* 16:10:00
-;OnUnitActiveSec=1h 
+OnCalendar=daily
 Unit=borg.service
 
 [Install]
