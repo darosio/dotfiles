@@ -1,0 +1,10 @@
+[Unit]
+Description=Run rsync from rsnapshots to vigolana and from vigolana:borg.
+
+[Timer]
+Persistent=true
+OnCalendar=hourly
+Unit=rsync2vigolana.service
+
+[Install]
+WantedBy=timers.target

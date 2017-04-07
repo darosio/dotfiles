@@ -1,0 +1,7 @@
+[Unit]
+Description=mount rsnapshots and rsync with vigolana
+OnFailure=status-email-user@%n.service
+
+[Service]
+;Type=oneshot
+ExecStart=/home/dan/.local/bin/rsync_sterzing-vigolana.sh
