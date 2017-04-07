@@ -48,8 +48,7 @@ fi															>> $out 2>&1
 #sudo umount /media/rsnapshots
 
 (echo
-echo "### Clean Syncronizations (syncthing) ###"
-find ~/Sync/ -name \*sync-conflict\*  | xargs ls -l
-echo)														>> $out 2>&1
+echo "### Clean Syncronizations (syncthing) ###")			>> $out
+find ~/Sync/ -name \*sync-conflict\*  | xargs ls -lF		>> $out
 
 cat $out | grep -v "+++" | grep -v "\.\.\." | msmtp daniele.arosio@cnr.it

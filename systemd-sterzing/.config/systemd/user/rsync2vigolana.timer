@@ -3,7 +3,8 @@ Description=Run rsync from rsnapshots to vigolana and from vigolana:borg.
 
 [Timer]
 Persistent=true
-OnCalendar=hourly
+OnCalendar=daily
+RandomizedDelaySec=21min
 Unit=rsync2vigolana.service
 
 [Install]
