@@ -3,15 +3,15 @@
 out=/tmp/`basename "$0"`-`date +%d%H%M%S`
 
 
-echo "To: daniele.arosio@cnr.it"							 > $out
-echo "From: $HOSTNAME"										>> $out
-echo "Subject: rsync: $HOSTNAME-vigolana"					>> $out
+(echo "To: daniele.arosio@cnr.it"
+echo "From: $HOSTNAME"
+echo "Subject: rsync: $HOSTNAME-vigolana")					 > $out
 
 
 #sudo mount /media/rsnapshots
-echo														>> $out
-echo "Checking mountpoint /media/rsnapshots:"				>> $out
-~/.local/bin/mount_rsnapshots.sh							>> $out 2>&1
+(echo
+echo "Checking mountpoint /media/rsnapshots:"
+~/.local/bin/mount_rsnapshots.sh)							>> $out 2>&1
 # Either "1" because of mount rsnapshots problem 
 # or "127" because command script was ot found.
 if [ $? -eq 0 ]; then
@@ -47,4 +47,9 @@ fi															>> $out 2>&1
 
 #sudo umount /media/rsnapshots
 
-cat $out | msmtp daniele.arosio@cnr.it
+(echo
+echo "### Clean Syncronizations (syncthing) ###"
+find ~/Sync/ -name \*sync-conflict\*  | xargs ls -l
+echo)														>> $out 2>&1
+
+cat $out | grep -v "+++" | grep -v "\.\.\." | msmtp daniele.arosio@cnr.it
