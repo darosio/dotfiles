@@ -26,4 +26,4 @@ borg prune --info --list --stats $REPOSITORY --prefix dan- \
 	--keep-daily=4 --keep-weekly=2 --keep-monthly=6    \
 	--keep-yearly=10 					>> $out 2>&1
 
-cat $out | msmtp daniele.arosio@cnr.it
+cat $out | grep -v "/*/" | msmtp daniele.arosio@cnr.it
