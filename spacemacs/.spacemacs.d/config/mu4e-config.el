@@ -99,7 +99,8 @@
                             :to "danielepietroarosio@gmail.com")))
           :vars '( ( user-mail-address       . "danielepietroarosio@gmail.com" )
                    ( user-full-name          . "daniele arosio" )
-	  			   ( mu4e-drafts-folder . "/gmail/draft" )
+                   (mu4e-drafts-folder . "/gmail/draft")
+                   (mu4e-trash-folder . "/gmail/trash")
                    ( mu4e-compose-signature  .
                      (concat
                        "daniele arosio\n"
