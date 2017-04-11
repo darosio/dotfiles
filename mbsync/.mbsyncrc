@@ -2,9 +2,9 @@
 SyncState *
 
 # Automatically create missing mailboxes, both locally and on the server
-Create Both
+Create Slave
 Remove Both
-Expunge Both
+Expunge Slave
 CopyArrivalDate yes
 
 #
@@ -61,6 +61,8 @@ Slave :gmail-local:Inbox
 Channel gmail-archive
 Master ":gmail-remote:[Gmail]/All Mail"
 Slave :gmail-local:archive
+# Sync Push Flags
+# Expunge None
 
 Channel gmail-draft
 Master :gmail-remote:[Gmail]/Drafts
@@ -78,21 +80,23 @@ Channel gmail-trash
 Master :gmail-remote:[Gmail]/Trash
 Slave :gmail-local:trash
 
+# Labels
 Channel gmail-rest
 Master :gmail-remote:
 Slave :gmail-local:
 # Exclude everything under the internal [Gmail] folder, except the interesting folders
 #Patterns * ![Gmail]* "[Gmail]/Sent Mail" "[Gmail]/Starred" "[Gmail]/All Mail"
-Patterns * ![Gmail]* !archive !draft !sent !spam !trash
+Patterns * ![Gmail]* !Inbox !archive !draft !sent !spam !trash
+# Patterns "*" "!Drafts" "!Sent" "!Trash" "![Gmail]*" "!INBOX" "!Lists*" "!Cron*"
 
 Group gmail
+Channel gmail-trash
 Channel gmail-inbox
-Channel gmail-archive
 Channel gmail-draft
 Channel gmail-sent
 Channel gmail-spam
-Channel gmail-trash
 Channel gmail-rest
+Channel gmail-archive
 
 #############################################################################
 #		INBOXES 

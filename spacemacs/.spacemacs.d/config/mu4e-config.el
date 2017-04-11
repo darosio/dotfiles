@@ -73,8 +73,9 @@
           ;; we match based on the contact-fields of the message
           :match-func (lambda (msg)
                         (when msg 
-                          (mu4e-message-contact-field-matches msg 
-                            :to "daniele.arosio@cnr.it")))
+                          (string= (mu4e-message-field msg :maildir) "/cnr/*/")))
+                          ;; (mu4e-message-contact-field-matches msg 
+                            ;; :to "daniele.arosio@cnr.it")))
           :vars '( ( user-mail-address      . "daniele.arosio@cnr.it"  )
                    ( user-full-name         . "Daniele Arosio" )
 				   ( mu4e-sent-folder   . "/cnr/Sent" )
@@ -94,9 +95,8 @@
           ;; no leave-func
           ;; we match based on the contact-fields of the message
           :match-func (lambda (msg)
-                        (when msg 
-                          (mu4e-message-contact-field-matches msg 
-                            :to "danielepietroarosio@gmail.com")))
+                        (when msg
+                          (string= (mu4e-message-field msg :maildir) "/gmail/Inbox")))
           :vars '( ( user-mail-address       . "danielepietroarosio@gmail.com" )
                    ( user-full-name          . "daniele arosio" )
                    (mu4e-drafts-folder . "/gmail/draft")
