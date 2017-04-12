@@ -21,6 +21,12 @@
       mail-interactive t)
 
 ;;; Reading messages ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Call EWW to display HTML messages
+(defun jcs-view-in-eww (msg)
+  (eww-browse-url (concat "file://" (mu4e~write-body-to-html msg))))
+
+;; Arrange to view messages in either the default browser or EWW
+(add-to-list 'mu4e-view-actions '("Eww view" . jcs-view-in-eww) t)
 ;; see html as text; use 'a V' to open in browser
 ;(setq mu4e-html2text-command "w3m -T text/html")
 ;; usually not as awesome as w3m, but preserves urls of google alerts
