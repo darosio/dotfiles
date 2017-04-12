@@ -8,6 +8,31 @@ Expunge Slave
 CopyArrivalDate yes
 
 #
+# Aruba pec
+#
+IMAPAccount pec
+Host imaps.pec.aruba.it
+User daniele.arosio@pec.it
+PassCmd "pass arubapec"
+# Use SSL
+SSLType IMAPS
+CertificateFile /etc/ssl/certs/ca-certificates.crt
+
+IMAPStore pec-remote
+Account pec
+
+MaildirStore pec-local
+# The trailing "/" is important
+Path ~/Sync/Maildir/pec/
+Inbox ~/Sync/Maildir/pec/INBOX
+Flatten .
+
+Channel pec
+Master :pec-remote:
+Slave :pec-local:
+Patterns INBOX *
+
+#
 # Cnr
 #
 IMAPAccount cnr
@@ -104,3 +129,4 @@ Channel gmail-archive
 Group INBOXES
 Channel cnr:INBOX
 Channel gmail:INBOX
+Channel pec:INBOX
