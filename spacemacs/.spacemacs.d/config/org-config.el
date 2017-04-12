@@ -100,6 +100,8 @@
      "** NEXT %? \nDEADLINE: %t")
     ("r" "respond" entry (file+headline "~/Sync/share/phone/box/notes/todo.org" "Reply")
      "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
+    ("w" "waiting reply" entry (file+headline "~/Sync/share/phone/box/notes/todo.org" "Reply")
+     "* WAITING Reply from %:from on %:subject\n %U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
     ))
            ;("n" "note" entry (file "~/git/org/refile.org")
             ;"* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)
