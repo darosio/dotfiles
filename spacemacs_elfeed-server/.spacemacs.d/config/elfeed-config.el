@@ -22,4 +22,16 @@
 
 (setq httpd-port 8181)
 
+(defun bjm/elfeed-updater ()
+  "Wrapper to load the elfeed db from disk before opening"
+  (interactive)
+  (elfeed-db-save)
+  (quit-window)
+  (elfeed-db-load)
+  (elfeed)
+  (elfeed-search-update--force)
+  (elfeed-update))
+
+(run-with-timer 0 (* 30 60) 'bjm/elfeed-updater)
+
 (provide 'elfeed-config)

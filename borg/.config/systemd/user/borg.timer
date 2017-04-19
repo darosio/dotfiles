@@ -3,8 +3,7 @@ Description=daily borg backup.
 
 [Timer]
 Persistent=true
-#OnCalendar=daily
-OnCalendar=hourly
+OnCalendar=daily
 Unit=borg.service
 
 [Install]
