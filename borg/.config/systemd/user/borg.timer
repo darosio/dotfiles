@@ -1,9 +1,10 @@
 [Unit]
-Description=Run borg backup daily.
+Description=daily borg backup.
 
 [Timer]
 Persistent=true
-OnCalendar=daily
+#OnCalendar=daily
+OnCalendar=hourly
 Unit=borg.service
 
 [Install]
