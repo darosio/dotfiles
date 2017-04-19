@@ -21,6 +21,12 @@
       mail-interactive t)
 
 ;;; Reading messages ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Call EWW to display HTML messages
+(defun jcs-view-in-eww (msg)
+  (eww-browse-url (concat "file://" (mu4e~write-body-to-html msg))))
+
+;; Arrange to view messages in either the default browser or EWW
+(add-to-list 'mu4e-view-actions '("Eww view" . jcs-view-in-eww) t)
 ;; see html as text; use 'a V' to open in browser
 ;(setq mu4e-html2text-command "w3m -T text/html")
 ;; usually not as awesome as w3m, but preserves urls of google alerts
@@ -105,6 +111,24 @@
                      (concat
                        "daniele arosio\n"
                        "38123 Trento\n"))))
+       ,(make-mu4e-context
+         :name "pec"
+         :enter-func (lambda () (mu4e-message "Switch to the gmail context"))
+         ;; no leave-func
+         ;; we match based on the contact-fields of the message
+         :match-func (lambda (msg)
+                       (when msg
+                         (mu4e-message-contact-field-matches msg 
+                         :from "daniele.arosio@pec.it")))
+         :vars '( ( user-mail-address       . "daniele.arosio@pec.it" )
+                  ( user-full-name          . "Daniele Arosio" )
+                  (mu4e-drafts-folder . "/pec/draft")
+                  (mu4e-trash-folder . "/pec/Trash")
+                  (mu4e-sent-folder   . "/pec/Sent")
+                  ( mu4e-compose-signature  .
+                                            (concat
+                                             "daniele arosio\n"
+                                             "38123 Trento\n"))))
 
        ;,(make-mu4e-context
           ;:name "Cycling"
