@@ -1,3 +1,5 @@
+(require 'elfeed-org)
+
 ;; http://pragmaticemacs.com/emacs/read-your-rss-feeds-in-emacs-with-elfeed/
 ;;functions to support syncing .elfeed between machines
 ;;makes sure elfeed reads index from disk before launching

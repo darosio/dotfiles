@@ -55,8 +55,8 @@ values."
      ;; syntax-checking
      ;; version-control
      elfeed
-     (elfeed :variables rmh-elfeed-org-files (list "~/Sync/elfeed/1.org"
-                                                   "~/Sync/elfeed/2.org"))
+     (elfeed :variables rmh-elfeed-org-files (list "/data/Sync/elfeed/1.org"
+                                                   "/data/Sync/elfeed/2.org"))
 
      )
    ;; List of additional packages that will be installed without being
