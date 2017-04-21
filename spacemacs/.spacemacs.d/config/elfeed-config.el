@@ -97,13 +97,13 @@
 
 (setq httpd-port 8181)
 
-;; ;; Load elfeed
-;; (use-package elfeed
-;;   :ensure t
-;;   :bind (:map elfeed-search-mode-map
-;;                                         ;              ("A" . bjm/elfeed-show-all)
-;;                                         ;              ("E" . bjm/elfeed-show-emacs)
-;;                                         ;              ("D" . bjm/elfeed-show-daily)
-;;               ("q" . bjm/elfeed-save-db-and-bury)))
+;; Load elfeed
+(use-package elfeed
+  :ensure t
+  :bind (:map elfeed-search-mode-map
+                                        ;              ("A" . bjm/elfeed-show-all)
+                                        ;              ("E" . bjm/elfeed-show-emacs)
+                                        ;              ("D" . bjm/elfeed-show-daily)
+              ("q" . bjm/elfeed-save-db-and-bury)))
 
 (provide 'elfeed-config)
