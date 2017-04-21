@@ -8,7 +8,8 @@
   (interactive)
   (elfeed-db-load)
   (elfeed)
-  (elfeed-search-update--force))
+  (elfeed-search-update--force)
+  (elfeed-update))
 ;;write to disk when quiting
 (defun bjm/elfeed-save-db-and-bury ()
   "Wrapper to save the elfeed db to disk before burying buffer"
@@ -34,6 +35,7 @@
   (elfeed-search-update--force)
   (elfeed-update))
 
-(run-with-timer 0 (* 30 60) 'bjm/elfeed-updater)
+(bjm/elfeed-updater)
+;;(run-with-timer 0 (* 30 60) 'bjm/elfeed-updater)
 
 (provide 'elfeed-config)
