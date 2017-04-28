@@ -276,5 +276,9 @@
 
 ;; TODO
 ;; http://pragmaticemacs.com/emacs/email-templates-in-mu4e-with-yasnippet/
+;; customize the reply-quote-string
+(setq message-citation-line-format "On %a %d %b %Y at %R, %f wrote:\n")
+;; choose to use the formatted string
+(setq message-citation-line-function 'message-insert-formatted-citation-line)
 
 (provide 'mu4e-config)
