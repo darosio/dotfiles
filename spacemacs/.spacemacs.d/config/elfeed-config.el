@@ -91,7 +91,7 @@
 (defalias 'elfeed-toggle-star
   (elfeed-expose #'elfeed-search-toggle-all 'star))
 (eval-after-load 'elfeed-search
-  '(define-key elfeed-search-mode-map (kbd "m") 'elfeed-toggle-star))
+  '(define-key elfeed-search-mode-map (kbd "f") 'elfeed-toggle-star))
 
 (define-key elfeed-show-mode-map (kbd ".") 'visual-fill-column-mode)
 
