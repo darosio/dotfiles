@@ -85,8 +85,8 @@ values."
    ;; configuration in `dotspacemacs/user-config'.
    dotspacemacs-additional-packages '(org-gcal
                                       visual-fill-column
-                                      ob-ipython
-                                      zotxt)
+                                      ob-ipython)
+                                      ;; zotxt)
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
