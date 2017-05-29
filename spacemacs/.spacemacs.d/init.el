@@ -359,6 +359,7 @@ you should place your code here."
    ;; display/update images in the buffer after I evaluate
    (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
 
+   (require 'publish-config)
    (require 'org-webpage)
 
    (owp/add-project-config
