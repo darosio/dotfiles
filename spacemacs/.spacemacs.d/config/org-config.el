@@ -261,8 +261,7 @@ t))))
 
 
 ;; == Agenda ==
-
-(setq org-agenda-span 'day)
+;; TODO http://orgmode.org/worg/org-tutorials/org-custom-agenda-commands.html
 
 ;; Dim blocked tasks (and other settings)
 (setq org-enforce-todo-dependencies t)
@@ -276,7 +275,7 @@ t))))
 (setq org-agenda-time-grid
   '((daily today require-timed)
     "----------------"
-    (800 1200 1600 2000)))
+    (800 1200 1300 1800)))
 
 ;; Some helper functions for selection within agenda views
 (defun gs/select-with-tag-function (select-fun-p)
@@ -371,9 +370,9 @@ show this warning instead."
         (" " "Export Schedule"
          (
           (agenda "" ((org-agenda-overriding-header "Today's Schedule:")
-                      (org-agenda-ndays 3)
+                      (org-agenda-span 'day)
                       (org-agenda-start-on-weekday nil)
-                      (org-agenda-start-day "+0d")
+                      ;; (org-agenda-start-day "+0d")
                       (org-agenda-todo-ignore-deadlines nil)))
           (tags-todo "-CANCELLED-ARCHIVE/!NEXT"
 					   ((org-agenda-overriding-header "Next Tasks:")
@@ -388,8 +387,11 @@ show this warning instead."
 					   ((org-agenda-overriding-header "Standalone Tasks:")
 					    (org-agenda-skip-function 'gs/select-standalone-tasks)))
           (agenda "" ((org-agenda-overriding-header "Week At A Glance:")
-					    (org-agenda-ndays 5)
-					    (org-agenda-start-day"+1d")
+              ;; (org-agenda-start-day "+1d")
+              ;; ensures that repeating events appear on all relevant dates
+              (org-agenda-repeating-timestamp-show-all t)
+              ;; limits agenda view to timestamped items
+              (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline 'scheduled))
 					    (org-agenda-prefix-format '((agenda . "  %-12:c%?-12t %s [%b] ")))))
           (tags-todo "-INACTIVE-HOLD-CANCELLED-REFILE-ARCHIVE/!-NEXT"
 					   ((org-agenda-overriding-header "Remaining Project Tasks:")
@@ -441,12 +443,16 @@ show this warning instead."
         ("X" "Agenda"
          ((agenda "") (alltodo))
          (
-          (org-agenda-ndays 10)
+          (org-agenda-span 10)
           (org-agenda-start-on-weekday nil)
           (org-agenda-start-day "-1d")
           (org-agenda-start-with-log-mode t)
           (org-agenda-log-mode-items '(closed clock state))
           ))
+        ("x" "With deadline columns" alltodo ""
+         (
+          (org-agenda-overriding-columns-format "%50ITEM %DEADLINE")
+            (org-agenda-view-columns-initially t)))
         ("H" "Office and Home Lists"
          ((agenda)
           (tags-todo "@office")
@@ -458,11 +464,37 @@ show this warning instead."
           ))
         ("D" "Daily Action List"
          ((agenda ""
-                  ((org-agenda-ndays 1)
+                  ((org-agenda-span 2)
                    (org-agenda-sorting-strategy
                     (quote ((agenda time-up priority-down tag-up) )))
                    (org-deadline-warning-days 0)))
           ))
+        ("d" "Upcoming deadlines" agenda "" 
+         ((org-agenda-time-grid nil)
+          (org-deadline-warning-days 365)        ;; [1]
+          (org-agenda-entry-types '(:deadline))  ;; [2]
+          ))
+        ("g" . "GTD contexts")
+        ("go" "Office" tags-todo "@office")
+        ("gc" "Computer" tags-todo "computer")
+        ("gp" "Phone" tags-todo "phone")
+        ("gh" "Home" tags-todo "@home")
+        ("ge" "Errands" tags-todo "@errands")
+        ("G" "GTD Block Agenda"
+         ((tags-todo "office")
+          (tags-todo "computer")
+          (tags-todo "phone")
+          (tags-todo "home")
+          (tags-todo "errands"))
+         nil                      ;; i.e., no local settings
+         ("~/next-actions.html")) ;; exports block to this file with C-c a e
+        ("0" "Upcoming deadlines" agenda ""
+         ((org-agenda-entry-types '(:deadline))
+          ;; a slower way to do the same thing
+          ;; (org-agenda-skip-function '(org-agenda-skip-entry-if 'notdeadline))
+          (org-agenda-ndays 1)
+          (org-deadline-warning-days 60)
+          (org-agenda-time-grid nil)))
         ))
 
 
