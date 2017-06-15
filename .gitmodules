@@ -4,3 +4,6 @@
 [submodule "tmux/.tmux/plugins/tmux-colors-solarized"]
 	path = tmux/.tmux/plugins/tmux-colors-solarized
 	url = https://github.com/seebi/tmux-colors-solarized
+[submodule "spacemacs/.spacemacs.d/mu4e-send-delay"]
+	path = spacemacs/.spacemacs.d/mu4e-send-delay
+	url = https://github.com/bandresen/mu4e-send-delay/
