@@ -4,7 +4,7 @@
 
 (setq mu4e-confirm-quit nil)
 (setq mu4e-get-mail-command "mbsync -a"
-	  mu4e-update-interval 120
+	  mu4e-update-interval 190
       mu4e-headers-auto-update t
 	  ;; rename files when moving NEEDED FOR MBSYNC
 	  mu4e-change-filenames-when-moving t)
@@ -13,12 +13,24 @@
 
 (setq send-mail-function (quote sendmail-send-it)
       ;; message-send-mail-function 'message-send-mail-with-sendmail
-      sendmail-program "~/.local/bin/msmtp-enqueue.sh"
+      sendmail-program "msmtp-enqueue.sh"
       mail-specify-envelope-from t ;'header
       message-sendmail-f-is-evil nil
       mail-envelope-from 'header
       message-sendmail-envelope-from 'header
       mail-interactive t)
+
+;; send delay
+(add-to-list 'load-path "~/.spacemacs.d/mu4e-send-delay")
+(require 'mu4e-send-delay)
+(mu4e-send-delay-setup)
+(add-hook 'mu4e-main-mode-hook 'mu4e-send-delay-initialize-send-queue-timer)
+(add-hook 'mu4e-main-mode-hook (lambda ()
+                                 (define-key mu4e-compose-mode-map
+                                   (kbd "C-c C-c")
+                                   'mu4e-send-delay-send-and-exit)))
+(setq mu4e-send-delay-default-delay "5m"
+      mu4e-send-delay-timer 190)
 
 ;;; Reading messages ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Call EWW to display HTML messages
@@ -159,7 +171,7 @@
 ;; toggle per name with M-RET
 (setq mu4e-view-show-addresses 't)
 ;; every new email composition gets its own frame! (window)
-;; (setq mu4e-compose-in-new-frame t)
+(setq mu4e-compose-in-new-frame t)
 ;; give me ISO(ish) format date-time stamps in the header list
 (setq mu4e-headers-date-format "%Y-%m-%d %H:%M")
 ;; the headers to show in the headers list -- a pair of a field
@@ -271,8 +283,8 @@
 ;(setq org-mu4e-link-query-in-headers-mode nil)
 ; sembra non servire (http://pragmaticemacs.com/emacs/master-your-inbox-with-mu4e-and-org-mode/)
 ;; use org structures and tables in message mode
-;(add-hook 'message-mode-hook 'turn-on-orgtbl
-		  ;'message-mode-hook 'turn-on-orgstruct++)
+(add-hook 'message-mode-hook 'turn-on-orgtbl
+          'message-mode-hook 'turn-on-orgstruct++)
 
 ;; TODO
 ;; http://pragmaticemacs.com/emacs/email-templates-in-mu4e-with-yasnippet/

@@ -1,13 +1,13 @@
 [Unit]
-Description=Check Mail every fifteen minutes
+Description=Send Mail every Six  minutes
 RefuseManualStart=no
 RefuseManualStop=no
 
 [Timer]
 Persistent=false
 OnBootSec= 1min
-OnUnitActiveSec= 1min
-Unit=checkmail.service
+OnUnitActiveSec= 6min
+Unit=sendmail.service
 
 [Install]
 WantedBy=default.target

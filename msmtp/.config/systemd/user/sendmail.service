@@ -1,0 +1,8 @@
+[Unit]
+Description=send mail
+RefuseManualStart=no
+RefuseManualStop=yes
+
+[Service]
+Type=oneshot
+ExecStart=/home/dan/.local/bin/sendmail.sh
