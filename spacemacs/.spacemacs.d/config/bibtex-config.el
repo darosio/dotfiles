@@ -7,9 +7,7 @@
    ;;   '(setq zotxt-default-bibliography-style "citekey"))
 
 ;;  see org-ref for use of these variables  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(setq reftex-default-bibliography '("~/Sync/media/bibliography/biblio.bib"
-                                    ;; "~/Sync/media/bibliography/nurturing.bib"
-                                    ))
+(setq org-ref-notes-directory "$SOME/Sync/media/bibliography/")
 
 (setq org-ref-bibliography-notes  "~/Sync/media/bibliography/biblio-notes.org")
 (setq org-ref-default-bibliography '("~/Sync/media/bibliography/biblio.bib"
@@ -17,6 +15,10 @@
                                      ))
 (setq   org-ref-pdf-directory '("~/Sync/media/bibliography/misc"
                                 "~/Sync/media/bibliography/biblio"))
+
+(setq reftex-default-bibliography '("~/Sync/media/bibliography/biblio.bib"
+                                    ;; "~/Sync/media/bibliography/nurturing.bib"
+                                    ))
 
 ;; (setq helm-bibtex-pdf-open-function 'org-open-file)
 
@@ -49,8 +51,17 @@
 ;; (setq org-ref-open-pdf-function 'my/org-ref-open-pdf-at-point)
 
 ;; bibtex ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(setq helm-bibtex-bibliography "~/Sync/media/bibliography/biblio.bib" ;; where your references are stored
+      ;; where your pdfs etc are stored
+      ;; helm-bibtex-library-path "~/Sync/media/bibliography/biblio/"
+      helm-bibtex-notes-path "~/Sync/media/bibliography/biblio-notes.org" ;; where your notes are stored
+      bibtex-completion-notes-path "~/Sync/media/bibliography/biblio-notes.org"
+)
+
 (setq   bibtex-completion-pdf-field "file")
 ;; bibtex-completion-library-path "/home/dan"
+(setq bibtex-completion-library-path "~/Sync/media/bibliography/biblio/")
+
 ;; (setq bibtex-completion-notes-path     "~/biblio.org")
 (setq bibtex-completion-bibliography '("~/Sync/media/bibliography/biblio.bib"
                                        ;; "~/Sync/media/bibliography/misc.bib"
@@ -65,6 +76,7 @@
 ;;         (incollection  . "${=has-pdf=:1}${=has-note=:1} ${=type=:3} ${year:6} ${author:36} ${title:*} ${booktitle:40}")
 ;;         (inproceedings . "${=has-pdf=:1}${=has-note=:1} ${=type=:3} ${year:6} ${author:36} ${title:*} ${booktitle:40}")
 ;;         (t             . "${=has-pdf=:1}${=has-note=:1} ${=type=:3} ${year:6} ${author:36} ${title:*}")))
+
 
 
 (provide 'bibtex-config)

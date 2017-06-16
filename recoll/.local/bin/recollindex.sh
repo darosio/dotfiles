@@ -14,4 +14,4 @@ cat ~/.recoll/idxstatus.txt					   >> $out
 (time /usr/bin/recollindex)					   >> $out 2>&1
 cat ~/.recoll/idxstatus.txt					   >> $out
 
-cat $out | sudo msmtp daniele.arosio@cnr.it
+cat $out | msmtp-enqueue.sh daniele.arosio@cnr.it
