@@ -91,19 +91,19 @@
 (defalias 'elfeed-toggle-star
   (elfeed-expose #'elfeed-search-toggle-all 'star))
 (eval-after-load 'elfeed-search
-  '(define-key elfeed-search-mode-map (kbd "m") 'elfeed-toggle-star))
+  '(define-key elfeed-search-mode-map (kbd "f") 'elfeed-toggle-star))
 
 (define-key elfeed-show-mode-map (kbd ".") 'visual-fill-column-mode)
 
 (setq httpd-port 8181)
 
-;; ;; Load elfeed
-;; (use-package elfeed
-;;   :ensure t
-;;   :bind (:map elfeed-search-mode-map
-;;                                         ;              ("A" . bjm/elfeed-show-all)
-;;                                         ;              ("E" . bjm/elfeed-show-emacs)
-;;                                         ;              ("D" . bjm/elfeed-show-daily)
-;;               ("q" . bjm/elfeed-save-db-and-bury)))
+;; Load elfeed
+(use-package elfeed
+  :ensure t
+  :bind (:map elfeed-search-mode-map
+                                        ;              ("A" . bjm/elfeed-show-all)
+                                        ;              ("E" . bjm/elfeed-show-emacs)
+                                        ;              ("D" . bjm/elfeed-show-daily)
+              ("q" . bjm/elfeed-save-db-and-bury)))
 
 (provide 'elfeed-config)

@@ -16,3 +16,9 @@ checkout = hg clone 'https://darosio@bitbucket.org/darosio/molecularimaging' 'mo
 
 [pandoc_resume]
 checkout = git clone 'ssh://git@bitbucket.org/darosio/cv.git' 'pandoc_resume'
+
+[Web/pelican-octopress-theme]
+checkout = git clone 'https://github.com/jakevdp/pelican-octopress-theme.git' 'pelican-octopress-theme'
+
+[Web/metamodels]
+checkout = git clone 'ssh://git@bitbucket.org/darosio/metamodels.git' 'metamodels'

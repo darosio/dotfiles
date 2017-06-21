@@ -32,8 +32,9 @@ values."
    dotspacemacs-configuration-layers
    '(
      graphviz
-     python
-     (python :variables python-test-runner 'pytest)
+     ;; pip install --user yapf autoflake isort hy
+     (python :variables
+             python-test-runner 'pytest)
      ;(python :variables python-test-runner '(pytest nose))
      yaml
      csv
@@ -53,7 +54,9 @@ values."
      emacs-lisp
      ;; git
      ;; markdown
-     org
+     (org :variables
+          org-enable-reveal-js-support t
+          org-reveal-root "/home/examples/reveal.js")
      ;; (shell :variables
      ;;        shell-default-height 30
      ;;        shell-default-position 'bottom)
@@ -68,12 +71,26 @@ values."
      (elfeed :variables rmh-elfeed-org-files (list "~/Sync/elfeed/1.org"
                                                    "~/Sync/elfeed/2.org"))
      themes-megapack
+     pdf-tools
+     (ranger :variables
+             ranger-show-preview t)
+     pandoc
+     search-engine
+     git
+     bibtex
+     ipython-notebook
+     ess
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '(org-gcal visual-fill-column)
+   dotspacemacs-additional-packages '(org-gcal
+                                      visual-fill-column
+                                      org-webpage
+                                      ob-ipython
+                                      interleave)
+                                      ;; zotxt)
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
@@ -109,7 +126,7 @@ values."
    ;; when the current branch is not `develop'. Note that checking for
    ;; new versions works via git commands, thus it calls GitHub services
    ;; whenever you start Emacs. (default nil)
-   dotspacemacs-check-for-update nil
+   dotspacemacs-check-for-update t
    ;; If non-nil, a form that evaluates to a package directory. For example, to
    ;; use different package directories for different Emacs versions, set this
    ;; to `emacs-version'.
@@ -145,8 +162,13 @@ values."
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '(birds-of-paradise-plus
-                         spacemacs-dark
+   dotspacemacs-themes '(alect-light
+                         hemisu-dark
+                         hemisu-light
+                         farmhouse-dark
+                         farmhouse-light
+                         birds-of-paradise-plus
+   ;;                       spacemacs-dark
                          spacemacs-light)
    ;; If non nil the cursor color matches the state color in GUI Emacs.
    dotspacemacs-colorize-cursor-according-to-state t
@@ -326,13 +348,45 @@ you should place your code here."
    (require 'mu4e-config nil t)
    (require 'org-config nil t)
    (require 'elfeed-config nil t)
+   (require 'bibtex-config nil t)
    (setq deft-directory "~/Sync/notes")
    (setq deft-extensions '("org" "md" "txt" "markdown"))
    (setq deft-recursive t)
    (setq org-confirm-babel-evaluate 'never)
+
+   (require 'ob-ipython)
+   ;; don't prompt me to confirm everytime I want to evaluate a block
+   (setq org-confirm-babel-evaluate nil)
+   ;; display/update images in the buffer after I evaluate
+   (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
+
+   (require 'publish-config)
+   (require 'org-webpage)
+
+   (owp/add-project-config
+    '("darosio.bitbucket.io"
+      :repository-directory "~/workspace/arte/Web/darosio.bitbucket.io"
+      :remote (git "ssh://git@bitbucket.org/darosio/darosio.bitbucket.io.git" "master")
+      ;; you can use `rclone` with `:remote (rclone "remote-name" "/remote/path/location")` instead.
+      :site-domain "https://darosio.bitbucket.io/"
+      :site-main-title "Life, Matters and metaModels"
+      :site-sub-title "(Musings and ramblings through the world of Python and beyond)"
+      ;; :theme (worg)
+      :source-browse-url ("Sources" "https://bitbucket.org/darosio/darosio.bitbucket.io")
+      :personal-avatar "~/workspace/arte/Web/darosio.bitbucket.io/IMG_0614.JPG"
+      ;; :personal-duoshuo-shortname "tumashu-website"
+      :web-server-port 7654))
+
+   ;; (setq op/site-domain "https://darosio.bitbucket.io")
+   ;; ;; (setq op/personal-github-link "https://github.com/CodyReichert")
+   ;; (setq op/site-main-title "The One True Blog")
+   ;; (setq op/site-sub-title "Emacs, Programming, and Arch Linux")
+   ;; ;; (setq op/personal-disqus-shortname "theonetrueblog")
+
    (org-babel-do-load-languages 'org-babel-load-languages '(
                                                                            (plantuml . t)
                                                                            (python . t)
+                                                                           (ipython . t)
                                                                            (gnuplot . t)
                                                                            (R . t)
                                                                            (shell . t)))
@@ -340,6 +394,7 @@ you should place your code here."
          ;; split-window-preferred-function 'visual-fill-column-split-window-sensibly
          visual-fill-column-fringes-outside-margins t)
    ;; (global-visual-fill-column-mode)
+
 )
 
 ;; Do not write anything past this comment. This is where Emacs will
@@ -351,7 +406,7 @@ you should place your code here."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (visual-fill-column birds-of-paradise=plus-theme zonokai-theme zenburn-theme zen-and-art-theme underwater-theme ujelly-theme twilight-theme twilight-bright-theme twilight-anti-bright-theme tronesque-theme toxi-theme tao-theme tangotango-theme tango-plus-theme tango-2-theme sunny-day-theme sublime-themes subatomic256-theme subatomic-theme spacegray-theme soothe-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme seti-theme reverse-theme railscasts-theme purple-haze-theme professional-theme planet-theme phoenix-dark-pink-theme phoenix-dark-mono-theme pastels-on-dark-theme organic-green-theme omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme noctilux-theme niflheim-theme naquadah-theme mustang-theme monokai-theme monochrome-theme molokai-theme moe-theme minimal-theme material-theme majapahit-theme lush-theme light-soap-theme jbeans-theme jazz-theme ir-black-theme inkpot-theme heroku-theme hemisu-theme hc-zenburn-theme gruvbox-theme gruber-darker-theme grandshell-theme gotham-theme gandalf-theme flatui-theme flatland-theme firebelly-theme farmhouse-theme espresso-theme dracula-theme django-theme darktooth-theme autothemer darkokai-theme darkmine-theme darkburn-theme dakrone-theme cyberpunk-theme color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized clues-theme cherry-blossom-theme busybee-theme bubbleberry-theme birds-of-paradise-plus-theme badwolf-theme apropospriate-theme anti-zenburn-theme ample-zen-theme ample-theme alect-themes afternoon-theme elfeed-web simple-httpd elfeed-org elfeed-goodies ace-jump-mode noflet elfeed plantuml-mode graphviz-dot-mode org-gcal request-deferred deferred helm-company helm-c-yasnippet company-web web-completion-data company-statistics company-anaconda company auto-yasnippet yasnippet ac-ispell auto-complete deft yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode helm-pydoc cython-mode anaconda-mode pythonic yaml-mode csv-mode web-mode tagedit slim-mode scss-mode sass-mode pug-mode less-css-mode helm-css-scss haml-mode emmet-mode flyspell-correct-helm flyspell-correct auto-dictionary mmm-mode markdown-toc markdown-mode gh-md spray mu4e-alert ht org-projectile org-present org org-pomodoro alert log4e gntp org-download htmlize gnuplot ws-butler window-numbering which-key volatile-highlights vi-tilde-fringe mu4e-maildirs-extension uuidgen use-package toc-org spacemacs-theme spaceline restart-emacs request rainbow-delimiters quelpa popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint info+ indent-guide ido-vertical-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump define-word column-enforce-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line))))
+    (interleave winum solarized-theme ivy skewer-mode js2-mode company elfeed smartparens evil yasnippet helm helm-core markdown-mode deferred alert magit magit-popup git-commit with-editor async dash s org-webpage org-page git org mustache ess-smart-equals ess-R-object-popup ess-R-data-view ctable ess julia-mode ein websocket zonokai-theme zenburn-theme zen-and-art-theme yapfify yaml-mode ws-butler window-numbering which-key web-mode volatile-highlights visual-fill-column vi-tilde-fringe uuidgen use-package underwater-theme ujelly-theme twilight-theme twilight-bright-theme twilight-anti-bright-theme tronesque-theme toxi-theme toc-org tao-theme tangotango-theme tango-plus-theme tango-2-theme tagedit sunny-day-theme sublime-themes subatomic256-theme subatomic-theme spray spacemacs-theme spaceline spacegray-theme soothe-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme smeargle slim-mode seti-theme scss-mode sass-mode reverse-theme restart-emacs ranger rainbow-delimiters railscasts-theme quelpa pyvenv pytest pyenv-mode py-isort purple-haze-theme pug-mode professional-theme plantuml-mode planet-theme pip-requirements phoenix-dark-pink-theme phoenix-dark-mono-theme persp-mode pdf-tools pcre2el pastels-on-dark-theme paradox pandoc-mode ox-reveal ox-pandoc orgit organic-green-theme org-ref org-projectile org-present org-pomodoro org-plus-contrib org-gcal org-download org-bullets open-junk-file omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme ob-ipython noctilux-theme niflheim-theme neotree naquadah-theme mustang-theme mu4e-maildirs-extension mu4e-alert move-text monokai-theme monochrome-theme molokai-theme moe-theme mmm-mode minimal-theme material-theme markdown-toc majapahit-theme magit-gitflow macrostep lush-theme lorem-ipsum live-py-mode linum-relative link-hint light-soap-theme less-css-mode jbeans-theme jazz-theme ir-black-theme inkpot-theme info+ indent-guide ido-vertical-mode hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt heroku-theme hemisu-theme help-fns+ helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag hc-zenburn-theme gruvbox-theme gruber-darker-theme graphviz-dot-mode grandshell-theme gotham-theme google-translate golden-ratio gnuplot gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md gandalf-theme flyspell-correct-helm flx-ido flatui-theme flatland-theme firebelly-theme fill-column-indicator farmhouse-theme fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu espresso-theme engine-mode emmet-mode elisp-slime-nav elfeed-web elfeed-org elfeed-goodies dumb-jump dracula-theme django-theme deft define-word darktooth-theme darkokai-theme darkmine-theme darkburn-theme dakrone-theme cython-mode cyberpunk-theme csv-mode company-web company-statistics company-anaconda column-enforce-mode color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized clues-theme clean-aindent-mode cherry-blossom-theme busybee-theme bubbleberry-theme birds-of-paradise-plus-theme badwolf-theme auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile apropospriate-theme anti-zenburn-theme ample-zen-theme ample-theme alect-themes aggressive-indent afternoon-theme adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

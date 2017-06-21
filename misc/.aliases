@@ -48,6 +48,7 @@ ga-dup() {
 }
 
 alias pip_updall='pip freeze --local | grep -v '^\-e' | cut -d = -f 1  | xargs pip install -U'
+alias pip_updalluser='pip freeze --user | grep -v '^\-e' | cut -d = -f 1  | xargs pip install -U'
 alias pandoc='pandoc --latex-engine=xelatex'
 countfiles() {
     find . -type d | while read DIR; do
@@ -144,7 +145,7 @@ export UNISONLOCALHOSTNAME=dpa3
 PATH=$PATH:$HOME/.progs/bin
 PATH=$PATH:$HOME/.progs/myrepos.branchable.com
 PATH=$PATH:$HOME/.progs/bftools
-PATH=$PATH:$HOME/.cabal/bin
+PATH=$PATH:$HOME/.local/bin
 export PATH
 
 export IGNOREEOF=1
