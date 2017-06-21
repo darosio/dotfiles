@@ -33,7 +33,9 @@
   (elfeed-db-load)
   (elfeed)
   (elfeed-search-update--force)
-  (elfeed-update))
+  (elfeed-update)
+  (elfeed-db-compact)
+  (evil-quit-all))
 
 (bjm/elfeed-updater)
 ;;(run-with-timer 0 (* 30 60) 'bjm/elfeed-updater)

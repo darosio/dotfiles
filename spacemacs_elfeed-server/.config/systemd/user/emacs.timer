@@ -1,0 +1,11 @@
+[Unit]
+Description=daily elfeed update.
+
+[Timer]
+Persistent=true
+OnCalendar=daily
+#OnCalendar=*-*-* 17:23:00
+Unit=emacs.service
+
+[Install]
+WantedBy=timers.target
