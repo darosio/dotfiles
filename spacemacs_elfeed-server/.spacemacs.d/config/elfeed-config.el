@@ -34,10 +34,12 @@
   (elfeed)
   (elfeed-search-update--force)
   (elfeed-update)
-  (elfeed-db-compact)
-  (evil-quit-all))
+  (elfeed-db-compact))
+  ;;(evil-quit-all))
 
 (bjm/elfeed-updater)
 ;;(run-with-timer 0 (* 30 60) 'bjm/elfeed-updater)
+;;  (evil-quit-all)
+(elfeed-db-compact)
 
 (provide 'elfeed-config)
