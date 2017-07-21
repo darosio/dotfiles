@@ -394,6 +394,8 @@ you should place your code here."
          ;; split-window-preferred-function 'visual-fill-column-split-window-sensibly
          visual-fill-column-fringes-outside-margins t)
    ;; (global-visual-fill-column-mode)
+   ;; activate koma scripts export
+   (eval-after-load 'ox '(require 'ox-koma-letter))
 
 )
 
