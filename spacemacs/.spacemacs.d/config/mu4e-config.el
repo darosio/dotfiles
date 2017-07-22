@@ -205,6 +205,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; remove attachments ;;;
 
 ;;; Tags like ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; https://gist.github.com/lgatto/7091552
 (add-to-list 'mu4e-marks
   '(tag
      :char       "z"
