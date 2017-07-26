@@ -2,6 +2,59 @@
 ;(setq mu4e-get-mail-command "offlineimap -u quiet")
 (require 'org-mu4e)
 
+;; https://martinralbrecht.wordpress.com/2016/05/30/handling-email-with-emacs/
+(require 'helm-mu)
+(bind-key "S" #'helm-mu mu4e-main-mode-map)
+
+
+(add-hook 'message-mode-hook #'flyspell-mode)
+(add-hook 'message-mode-hook #'typo-mode)
+(add-hook 'message-mode-hook #'adict-guess-dictionary)
+(add-hook 'message-mode-hook #'footnote-mode)
+
+(helm-add-action-to-source "Attach to Email" #'mml-attach-file helm-source-locate)
+
+;; Attach multiple files from helm-ind-files-actions (and dired)
+(eval-when-compile (require 'dired))
+(defun iqbal-mu4e-file-attach-marked-files ()
+  (gnus-dired-attach (dired-map-over-marks (dired-get-file-for-visit) nil)))
+(defun iqbal-mu4e-attach-files-from-dired ()
+  (interactive)
+  (if (region-active-p)
+      (iqbal-mu4e-file-attach-files-from-region)
+    (iqbal-mu4e-file-attach-marked-files)))
+(with-eval-after-load 'dired
+  (define-key dired-mode-map (kbd "a") #'iqbal-mu4e-attach-files-from-dired))
+(with-eval-after-load 'helm-files
+  (add-to-list 'helm-find-files-actions
+               '("Attach files for mu4e" . iqbal-helm-mu4e-attach) t)
+  (defun iqbal-helm-mu4e-attach (_file)
+    (gnus-dired-attach (helm-marked-candidates))))
+;; http://www.djcbsoftware.nl/code/mu/mu4e/Dired.html#Dired
+(require 'gnus-dired)
+;; make the `gnus-dired-mail-buffers' function also work on
+;; message-mode derived modes, such as mu4e-compose-mode
+(defun gnus-dired-mail-buffers ()
+  "Return a list of active message buffers."
+  (let (buffers)
+    (save-current-buffer
+      (dolist (buffer (buffer-list t))
+        (set-buffer buffer)
+        (when (and (derived-mode-p 'message-mode)
+                   (null message-sent-message-via))
+          (push (buffer-name buffer) buffers))))
+    (nreverse buffers)))
+(setq gnus-dired-mail-mode 'mu4e-user-agent)
+(add-hook 'dired-mode-hook 'turn-on-gnus-dired-mode)
+
+
+
+
+
+
+
+
+
 (setq mu4e-confirm-quit nil)
 (setq mu4e-get-mail-command "mbsync -a"
 	  mu4e-update-interval 190
@@ -286,7 +339,6 @@
 ;; use org structures and tables in message mode
 (add-hook 'message-mode-hook 'turn-on-orgtbl
           'message-mode-hook 'turn-on-orgstruct++)
-
 ;; TODO
 ;; http://pragmaticemacs.com/emacs/email-templates-in-mu4e-with-yasnippet/
 ;; customize the reply-quote-string
