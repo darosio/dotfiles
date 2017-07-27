@@ -36,5 +36,7 @@ cd "$AUTOCD"
 export GPG_TTY='/dev/tty1'
 export GPG_AGENT_INFO=""
 
+eval "$(fasd --init auto)"
+
 # host specific bash_profile
 [[ -r .bashrc.$HOSTNAME ]] && . .bashrc.$HOSTNAME

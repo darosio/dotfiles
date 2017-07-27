@@ -31,60 +31,64 @@ values."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
+     (auto-completion :variables
+                      auto-completion-enable-snippets-in-popup t
+                      auto-completion-enable-help-tooltip t
+                      auto-completion-enable-sort-by-usage t
+                      auto-completion-private-snippets-directory "~/Sync/.yasnippets")
+     ;; better-defaults
+     bibtex
+     (colors :variables
+             colors-enable-nyan-cat-progress-bar t
+             colors-enable-rainbow-identifiers t)
+     csv
+     dash
+     deft
+     emacs-lisp
+     (elfeed :variables rmh-elfeed-org-files (list "~/Sync/.elfeed/1.org"
+                                                   "~/Sync/.elfeed/2.org"))
+     fasd
+     (git :variables
+          git-gutter-use-fringe t)
      graphviz
+     helm
+     html
+     (mu4e :variables mu4e-enable-mode-line t)
+     markdown
+     (org :variables
+          org-enable-reveal-js-support t
+          org-reveal-root "/home/examples/reveal.js"
+          org-enable-bootstrap-support t)
+     (plantuml :variables
+               org-plantuml-jar-path "/opt/plantuml/plantuml.jar"
+               plantuml-jar-path "/opt/plantuml/plantuml.jar")
      ;; pip install --user yapf autoflake isort hy
      (python :variables
              python-test-runner 'pytest)
-     ;(python :variables python-test-runner '(pytest nose))
-     yaml
-     csv
-     html
-     markdown
-     plantuml
-     (plantuml :variables plantuml-jar-path "/opt/plantuml/plantuml.jar")
-     (plantuml :variables org-plantuml-jar-path "/opt/plantuml/plantuml.jar")
-     ;; ----------------------------------------------------------------
-     ;; Example of useful layers you may want to use right away.
-     ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
-     ;; <M-m f e R> (Emacs style) to install them.
-     ;; ----------------------------------------------------------------
-     helm
-     auto-completion
-     ;; better-defaults
-     emacs-lisp
-     ;; git
-     ;; markdown
-     (org :variables
-          org-enable-reveal-js-support t
-          org-reveal-root "/home/examples/reveal.js")
+             ;; python-test-runner '(pytest nose))
      ;; (shell :variables
-     ;;        shell-default-height 30
-     ;;        shell-default-position 'bottom)
-     spell-checking
-     ;; '((spell-checking :variables spell-checking-enable-by-default nil))
-     '((spell-checking :variables spell-checking-enable-auto-dictionary t))
-     '((spell-checking :variables =enable-flyspell-auto-completion= t))
-     ;; syntax-checking
-     typography
-     '((typography :variables typography-enable-typographic-editing t))
-     ;; version-control
-     mu4e
-     (mu4e :variables mu4e-enable-mode-line t)
-     speed-reading
-     deft
-     elfeed
-     (elfeed :variables rmh-elfeed-org-files (list "~/Sync/elfeed/1.org"
-                                                   "~/Sync/elfeed/2.org"))
+     ;;        ;; shell-default-height 30
+     ;;        ;; shell-default-position 'bottom
+     ;;        shell-default-shell 'eshell)
+     shell-scripts
+     ;; -S flake8 python-pylint
+     syntax-checking
+     (spell-checking :variables
+                     spell-checking-enable-auto-dictionary t
+                     enable-flyspell-auto-completion t)
+     (typography :variables typography-enable-typographic-editing t)
+     version-control
+     (version-control :variables
+                       version-control-diff-tool 'diff-hl
+                       version-control-global-margin t)
      themes-megapack
      pdf-tools
      (ranger :variables
              ranger-show-preview t)
      pandoc
-     search-engine
-     git
-     bibtex
      ipython-notebook
      ess
+     yaml
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -93,8 +97,12 @@ values."
    dotspacemacs-additional-packages '(org-gcal
                                       visual-fill-column
                                       org-webpage
+                                      langtool
+                                      writegood-mode
+                                      artbollocks-mode
                                       ob-ipython
                                       helm-mu
+                                      synosaurus
                                       interleave)
                                       ;; zotxt)
    ;; A list of packages that cannot be updated.
@@ -168,10 +176,10 @@ values."
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '(alect-light
+   dotspacemacs-themes '(farmhouse-dark
                          hemisu-dark
                          hemisu-light
-                         farmhouse-dark
+                         alect-light
                          farmhouse-light
                          birds-of-paradise-plus
    ;;                       spacemacs-dark
@@ -181,7 +189,7 @@ values."
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
    dotspacemacs-default-font '("Dejavu Sans Mono"
-                               :size 14
+                               :size 15
                                :weight normal
                                :width normal
                                :powerline-scale 1.0)
@@ -411,8 +419,10 @@ you should place your code here."
    (define-prefix-command 'bjm-map)
    (global-set-key (kbd "C-1") 'bjm-map)
    (define-key bjm-map (kbd "m") 'mu4e)
-
-
+   (require 'langtool)
+   (setq langtool-language-tool-jar "/usr/share/java/languagetool/languagetool.jar")
+   (setq langtool-java-classpath
+         "/usr/share/java/languagetool/*")
 )
 
 ;; Do not write anything past this comment. This is where Emacs will
@@ -424,7 +434,7 @@ you should place your code here."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    ())))
+    (artbollocks-mode writegood-mode langtool git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter diff-hl flyspell-popup pdf-tools ivy markdown-mode flycheck-pos-tip skewer-mode js2-mode ess smartparens evil yasnippet company helm helm-core projectile magit with-editor org-plus-contrib hydra dash flycheck xterm-color shell-pop multi-term insert-shebang fish-mode eshell-z eshell-prompt-extras esh-help company-shell company-quickhelp pos-tip ox-twbs fasd zeal-at-point helm-dash rainbow-mode rainbow-identifiers color-identifiers-mode synosaurus zonokai-theme zenburn-theme zen-and-art-theme yapfify yaml-mode ws-butler winum which-key web-mode volatile-highlights visual-fill-column vi-tilde-fringe uuidgen use-package underwater-theme ujelly-theme typo twilight-theme twilight-bright-theme twilight-anti-bright-theme tronesque-theme toxi-theme toc-org tao-theme tangotango-theme tango-plus-theme tango-2-theme tagedit sunny-day-theme sublime-themes subatomic256-theme subatomic-theme spray spaceline spacegray-theme soothe-theme solarized-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme smeargle slim-mode seti-theme scss-mode sass-mode reverse-theme restart-emacs ranger rainbow-delimiters railscasts-theme pyvenv pytest pyenv-mode py-isort purple-haze-theme pug-mode professional-theme plantuml-mode planet-theme pip-requirements phoenix-dark-pink-theme phoenix-dark-mono-theme persp-mode pcre2el pastels-on-dark-theme paradox pandoc-mode ox-reveal ox-pandoc orgit organic-green-theme org-webpage org-ref org-projectile org-present org-pomodoro org-gcal org-download org-bullets open-junk-file omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme ob-ipython noctilux-theme niflheim-theme neotree naquadah-theme mustang-theme mu4e-maildirs-extension mu4e-alert move-text monokai-theme monochrome-theme molokai-theme moe-theme mmm-mode minimal-theme material-theme markdown-toc majapahit-theme magit-gitflow madhat2r-theme macrostep lush-theme lorem-ipsum live-py-mode linum-relative link-hint light-soap-theme less-css-mode jbeans-theme jazz-theme ir-black-theme interleave inkpot-theme info+ indent-guide hy-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt heroku-theme hemisu-theme help-fns+ helm-themes helm-swoop helm-pydoc helm-projectile helm-mu helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag hc-zenburn-theme gruvbox-theme gruber-darker-theme graphviz-dot-mode grandshell-theme gotham-theme google-translate golden-ratio gnuplot gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md gandalf-theme fuzzy flyspell-correct-helm flx-ido flatui-theme flatland-theme firebelly-theme fill-column-indicator farmhouse-theme fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu ess-smart-equals ess-R-object-popup ess-R-data-view espresso-theme engine-mode emmet-mode elisp-slime-nav elfeed-web elfeed-org elfeed-goodies ein dumb-jump dracula-theme django-theme deft define-word darktooth-theme darkokai-theme darkmine-theme darkburn-theme dakrone-theme cython-mode cyberpunk-theme csv-mode company-web company-statistics company-anaconda column-enforce-mode color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized clues-theme clean-aindent-mode cherry-blossom-theme busybee-theme bubbleberry-theme birds-of-paradise-plus-theme badwolf-theme auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile apropospriate-theme anti-zenburn-theme ample-zen-theme ample-theme alect-themes aggressive-indent afternoon-theme adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
