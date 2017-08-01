@@ -103,6 +103,7 @@ values."
                                       ob-ipython
                                       helm-mu
                                       synosaurus
+                                      outline-magic
                                       interleave)
                                       ;; zotxt)
    ;; A list of packages that cannot be updated.
@@ -418,11 +419,31 @@ you should place your code here."
    ;; set up my own map
    (define-prefix-command 'bjm-map)
    (global-set-key (kbd "C-1") 'bjm-map)
+   (define-key bjm-map (kbd "a") 'org-agenda)
+   (define-key bjm-map (kbd "f") 'elfeed)
    (define-key bjm-map (kbd "m") 'mu4e)
+   (define-key bjm-map (kbd "n") 'deft)
+   (define-key bjm-map (kbd "t") 'org-capture)
    (require 'langtool)
    (setq langtool-language-tool-jar "/usr/share/java/languagetool/languagetool.jar")
    (setq langtool-java-classpath
          "/usr/share/java/languagetool/*")
+
+   ;; ease insertion of INTERLEAVE_PDF property
+   (add-to-list 'org-structure-template-alist '("I" ":INTERLEAVE_PDF: ?"))
+
+   ;; Folding with tab similar to org-mode
+   (add-hook 'bibtex-mode-hook 'outline-minor-mode)
+   (add-hook 'python-mode-hook 'outline-minor-mode)
+   (eval-after-load 'outline
+     '(progn
+        (require 'outline-magic)
+        (define-key outline-minor-mode-map (kbd "<tab>") 'outline-cycle)))
+
+   ;; Export from org to latex with bibliography
+   (setq org-latex-pdf-process
+         '("latexmk -pdflatex='pdflatex -interaction nonstopmode' -pdf -bibtex -f %f"))
+
 )
 
 ;; Do not write anything past this comment. This is where Emacs will
