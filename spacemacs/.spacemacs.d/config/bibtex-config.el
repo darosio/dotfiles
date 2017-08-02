@@ -10,12 +10,34 @@
 ;; (setq reftex-default-bibliography '("~/Sync/media/bibliography/biblio.bib"
 ;;                                     ;; "~/Sync/media/bibliography/nurturing.bib"
 ;;                                     ))
+;; Bibtex key format
+(setq bibtex-autokey-year-length 4
+      bibtex-autokey-name-year-separator ""
+      bibtex-autokey-year-title-separator "-"
+      bibtex-autokey-titleword-separator "-"
+      bibtex-autokey-titlewords 0
+      bibtex-autokey-titlewords-stretch 1
+      bibtex-autokey-titleword-length 5
+      bibtex-autokey-name-case-convert-function 'capitalize)
 
+;; Zotero
+(setq   bibtex-completion-pdf-field "file")
+
+(defun my/org-ref-open-pdf-at-point ()
+  "Open the pdf for bibtex key under point if it exists."
+  (interactive)
+  (let* ((results (org-ref-get-bibtex-key-and-file))
+         (key (car results))
+         (pdf-file (car (bibtex-completion-find-pdf key))))
+    (if (file-exists-p pdf-file)
+        (org-open-file pdf-file)
+      (message "No PDF found for %s" key))))
+
+(setq org-ref-open-pdf-function 'my/org-ref-open-pdf-at-point)
 
 ;; bibtex ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (setq bibtex-completion-notes-path "~/Sync/biblio/biblio.org")
 (setq bibtex-completion-library-path "~/Sync/biblio/pdfs/")
-;; (setq   bibtex-completion-pdf-field "file")
 (setq bibtex-completion-bibliography '("~/Sync/biblio/biblio.bib"
                                        ;; "~/Sync/media/bibliography/misc.bib"
                                        ;; "~/Sync/media/bibliography/nurturing.bib"

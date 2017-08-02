@@ -45,8 +45,7 @@ values."
      dash
      deft
      emacs-lisp
-     (elfeed :variables rmh-elfeed-org-files (list "~/Sync/.elfeed/1.org"
-                                                   "~/Sync/.elfeed/2.org"))
+     (elfeed :variables rmh-elfeed-org-files (list "~/Sync/.elfeed/1.org"))
      fasd
      (git :variables
           git-gutter-use-fringe t)
@@ -444,6 +443,17 @@ you should place your code here."
    (setq org-latex-pdf-process
          '("latexmk -pdflatex='pdflatex -interaction nonstopmode' -pdf -bibtex -f %f"))
 
+   ;; (add-hook 'elfeed-show-mode-hook (lambda () (buffer-face-set 'variable-pitch)))
+   (progn
+     ;; use variable-width font for some modes
+     (defun xah-use-variable-width-font ()
+       "Set current buffer to use variable-width font."
+       (variable-pitch-mode 1)
+       ;; (text-scale-increase 0.5 )
+       )
+     (add-hook 'elfeed-show-mode-hook 'xah-use-variable-width-font)
+     ;; (add-hook 'emacs-lisp-mode-hook 'xah-use-variable-width-font)
+     )
 )
 
 ;; Do not write anything past this comment. This is where Emacs will

@@ -8,7 +8,7 @@
 ;;   (format-time-string "%Y-%m-%d %H:%M" (seconds-to-time date)))
 
 ;; probably temporary: hack for elfeed-goodies date column:
-(defun elfeed-goodies/search-header-draw ()
+(defun elfeed-goodies/search-header-draw 
   "Returns the string to be used as the Elfeed header."
   (if (zerop (elfeed-db-last-update))
       (elfeed-search--intro-header)
@@ -87,23 +87,191 @@
   (elfeed-db-save)
   (quit-window))
 
+
 ;; http://pragmaticemacs.com/category/elfeed/
 (defalias 'elfeed-toggle-star
   (elfeed-expose #'elfeed-search-toggle-all 'star))
 (eval-after-load 'elfeed-search
   '(define-key elfeed-search-mode-map (kbd "f") 'elfeed-toggle-star))
-
+;; (define-key elfeed-search-mode-map (kbd "f") 'elfeed-toggle-star)
 (define-key elfeed-show-mode-map (kbd ".") 'visual-fill-column-mode)
 
 (setq httpd-port 8181)
 
-;; Load elfeed
-(use-package elfeed
-  :ensure t
-  :bind (:map elfeed-search-mode-map
-                                        ;              ("A" . bjm/elfeed-show-all)
-                                        ;              ("E" . bjm/elfeed-show-emacs)
-                                        ;              ("D" . bjm/elfeed-show-daily)
-              ("q" . bjm/elfeed-save-db-and-bury)))
+
+;; Hydra macros and elfeed tags
+;; http://cestlaz.github.io/posts/using-emacs-31-elfeed-3/#.WYGkIXWxVhE
+(defun z/hasCap (s) ""
+       (let ((case-fold-search nil))
+         (string-match-p "[[:upper:]]" s)
+         ))
+
+(defun z/get-hydra-option-key (s)
+  "returns single upper case letter (converted to lower) or first"
+  (interactive)
+  (let ( (loc (z/hasCap s)))
+    (if loc
+        (downcase (substring s loc (+ loc 1)))
+      (substring s 0 1)
+      )))
+
+(defun mz/make-elfeed-cats (tags)
+  "Returns a list of lists. Each one is line for the hydra configuratio in the form
+     (c function hint)"
+  (interactive)
+  (mapcar (lambda (tag)
+            (let* (
+                   (tagstring (symbol-name tag))
+                   (c (z/get-hydra-option-key tagstring))
+                   )
+              (list c (append '(elfeed-search-set-filter) (list (format "@6-months-ago +%s" tagstring) ))tagstring  )))
+          tags))
+
+(defmacro mz/make-elfeed-hydra ()
+  `(defhydra mz/hydra-elfeed ()
+     "filter"
+     ,@(mz/make-elfeed-cats (elfeed-db-get-all-tags))
+     ("*" (elfeed-search-set-filter "@6-months-ago +star") "Flagged")
+     ("A" (elfeed-search-set-filter "@6-months-ago") "All")
+     ("T" (elfeed-search-set-filter "@1-day-ago") "Today")
+     ("q" bjm/elfeed-save-db-and-bury "Quit Elfeed" :color blue)
+     ))
+
+(defun mz/make-and-run-elfeed-hydra ()
+  ""
+  (interactive)
+  (mz/make-elfeed-hydra)
+  (mz/hydra-elfeed/body))
+
+(define-key elfeed-search-mode-map (kbd "J") 'mz/make-and-run-elfeed-hydra)
+
+(defface python-elfeed-entry
+  '((t :background "Darkseagreen1"))
+  "Marks a python Elfeed entry.")
+
+(defface emacs-elfeed-entry
+  '((t :background "Lightblue1"))
+  "Marks a python Elfeed entry.")
+
+(push '(python python-elfeed-entry)
+      elfeed-search-face-alist)
+
+(push '(emacs emacs-elfeed-entry)
+      elfeed-search-face-alist)
+
+(defun email-elfeed-entry ()
+  "Capture the elfeed entry and put it in an email."
+  (interactive)
+  (let* ((title (elfeed-entry-title elfeed-show-entry))
+         (url (elfeed-entry-link elfeed-show-entry))
+         (content (elfeed-entry-content elfeed-show-entry))
+         (entry-id (elfeed-entry-id elfeed-show-entry))
+         (entry-link (elfeed-entry-link elfeed-show-entry))
+         (entry-id-str (concat (car entry-id)
+                               "|"
+                               (cdr entry-id)
+                               "|"
+                               url)))
+    (compose-mail)
+    (message-goto-subject)
+    (insert title)
+    (message-goto-body)
+    (insert (format "You may find this interesting:
+%s\n\n" url))
+    (insert (elfeed-deref content))
+
+    (message-goto-body)
+    (while (re-search-forward "<br>" nil t)
+      (replace-match "\n\n"))
+
+    (message-goto-body)
+    (while (re-search-forward "<.*?>" nil t)
+      (replace-match ""))
+
+    (message-goto-body)
+    (fill-region (point) (point-max))
+
+    (message-goto-to)
+    (ivy-contacts nil)))
+
+(defun doi-utils-add-entry-from-elfeed-entry ()
+  "Add elfeed entry to bibtex."
+  (interactive)
+  (require 'org-ref)
+  (let* ((title (elfeed-entry-title elfeed-show-entry))
+	 (url (elfeed-entry-link elfeed-show-entry))
+	 (content (elfeed-deref (elfeed-entry-content elfeed-show-entry)))
+	 (entry-id (elfeed-entry-id elfeed-show-entry))
+	 (entry-link (elfeed-entry-link elfeed-show-entry))
+	 (entry-id-str (concat (car entry-id)
+			       "|"
+			       (cdr entry-id)
+			       "|"
+			       url)))
+    (if (string-match "DOI: \\(.*\\)$" content)
+	(doi-add-bibtex-entry (match-string 1 content)
+			      (ido-completing-read
+			       "Bibfile: "
+			       (append (f-entries "." (lambda (f)
+							(and (not (string-match "#" f))
+							     (f-ext? f "bib"))))
+				       org-ref-default-bibliography)))
+      (let ((dois (org-ref-url-scrape-dois url)))
+	(cond
+	 ;; One doi found. Assume it is what we want.
+	 ((= 1 (length dois))
+	  (doi-utils-add-bibtex-entry-from-doi
+	   (car dois)
+	   (ido-completing-read
+	    "Bibfile: "
+	    (append (f-entries "." (lambda (f)
+				     (and (not (string-match "#" f))
+					  (f-ext? f "bib"))))
+		    org-ref-default-bibliography)))
+	  action)
+	 ;; Multiple DOIs found
+	 ((> (length dois) 1)
+	  (helm :sources
+		`((name . "Select a DOI")
+		  (candidates . ,(let ((dois '()))
+				   (with-current-buffer (url-retrieve-synchronously url)
+				     (loop for doi-pattern in org-ref-doi-regexps
+					   do
+					   (goto-char (point-min))
+					   (while (re-search-forward doi-pattern nil t)
+					     (pushnew
+					      ;; Cut off the doi, sometimes
+					      ;; false matches are long.
+					      (cons (format "%40s | %s"
+							    (substring
+							     (match-string 1)
+							     0 (min
+								(length (match-string 1))
+								40))
+							    doi-pattern)
+						    (match-string 1))
+					      dois
+					      :test #'equal)))
+				     (reverse dois))))
+		  (action . (lambda (candidates)
+			      (let ((bibfile (ido-completing-read
+					      "Bibfile: "
+					      (append (f-entries "." (lambda (f)
+								       (and (not (string-match "#" f))
+									    (f-ext? f "bib"))))
+						      org-ref-default-bibliography))))
+				(loop for doi in (helm-marked-candidates)
+				      do
+				      (doi-utils-add-bibtex-entry-from-doi
+				       doi
+				       bibfile)
+				      ;; this removes two blank lines before each entry.
+				      (bibtex-beginning-of-entry)
+				      (delete-char -2)))))))))))))
+
+
+(define-key elfeed-show-mode-map (kbd "e") 'email-elfeed-entry)
+(define-key elfeed-show-mode-map (kbd "c") (lambda () (interactive) (org-capture nil "e")))
+(define-key elfeed-show-mode-map (kbd "d") 'doi-utils-add-entry-from-elfeed-entry)
 
 (provide 'elfeed-config)
