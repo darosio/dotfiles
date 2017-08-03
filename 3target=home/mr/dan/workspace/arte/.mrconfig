@@ -22,3 +22,6 @@ checkout = git clone 'https://github.com/jakevdp/pelican-octopress-theme.git' 'p
 
 [Web/metamodels]
 checkout = git clone 'ssh://git@bitbucket.org/darosio/metamodels.git' 'metamodels'
+
+[ms-quercioli]
+checkout = git clone 'ssh://git@bitbucket.org/darosio/ms-quercioli.git' 'ms-quercioli'
