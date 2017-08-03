@@ -167,7 +167,9 @@ values."
    ;; `recents' `bookmarks' `projects' `agenda' `todos'."
    ;; List sizes may be nil, in which case
    ;; `spacemacs-buffer-startup-lists-length' takes effect.
-   dotspacemacs-startup-lists '((recents . 5)
+   dotspacemacs-startup-lists '((todos . 3)
+                                (recents . 5)
+                                (bookmarks .3)
                                 (projects . 7))
    ;; True if the home buffer should respond to resize events.
    dotspacemacs-startup-buffer-responsive t
@@ -418,7 +420,8 @@ you should place your code here."
    ;; set up my own map
    (define-prefix-command 'bjm-map)
    (global-set-key (kbd "C-1") 'bjm-map)
-   (define-key bjm-map (kbd "a") 'org-agenda)
+   ;; (define-key bjm-map (kbd "a") 'org-agenda)
+   (define-key bjm-map (kbd "a") (lambda () (interactive) (org-agenda nil " ")))
    (define-key bjm-map (kbd "f") 'elfeed)
    (define-key bjm-map (kbd "m") 'mu4e)
    (define-key bjm-map (kbd "n") 'deft)
