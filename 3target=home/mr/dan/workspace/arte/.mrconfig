@@ -25,3 +25,6 @@ checkout = git clone 'ssh://git@bitbucket.org/darosio/metamodels.git' 'metamodel
 
 [ms-quercioli]
 checkout = git clone 'ssh://git@bitbucket.org/darosio/ms-quercioli.git' 'ms-quercioli'
+
+[ms-]
+checkout = git clone 'ssh://git@bitbucket.org/darosio/ms.git' 'ms-'
