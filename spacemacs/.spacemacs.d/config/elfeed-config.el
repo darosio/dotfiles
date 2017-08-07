@@ -143,6 +143,7 @@
   (mz/make-elfeed-hydra)
   (mz/hydra-elfeed/body))
 
+(define-key elfeed-search-mode-map (kbd "<DEL>") 'elfeed-search-untag-all-unread)
 (define-key elfeed-search-mode-map (kbd "J") 'mz/make-and-run-elfeed-hydra)
 
 (defface python-elfeed-entry
