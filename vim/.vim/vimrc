@@ -118,13 +118,10 @@ Plugin 'jcfaria/Vim-R-plugin'
 ""
 """
 " Colors:
+Plugin 'altercation/vim-colors-solarized'
 Plugin 'tomasr/molokai'
 Plugin 'sjl/badwolf'
-Plugin 'altercation/vim-colors-solarized'
 Plugin 'vim-scripts/wombat256.vim'
-Plugin 'nanotech/jellybeans.vim'
-Plugin 'junegunn/seoul256.vim'
-Plugin 'jnurmine/Zenburn'
 
 
 " General:
@@ -171,7 +168,7 @@ au BufRead,BufNewFile *.Rmd setfiletype markdown
 "Plugin 'vim-scripts/LanguageTool'
 Plugin 'rhysd/vim-grammarous'
 "Plugin 'goldfeld/criticmarkup-vim'
-Plugin 'junegunn/vim-easy-align'
+"Plugin 'junegunn/vim-easy-align'
 " Passive voice and such
 Plugin 'reedes/vim-wordy'
 Plugin 'jamestomasino/vim-writingsyntax'
@@ -212,7 +209,6 @@ Plugin 'scrooloose/nerdcommenter' " ,cc
 " @j: Eclim, IndentLine, Delimitmate, vim-rooter
 Plugin 'SirVer/ultisnips'
 " Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
-let g:UltiSnipsExpandTrigger="<F10>"
 let g:UltiSnipsExpandTrigger="<s-tab>"
 let g:UltiSnipsJumpForwardTrigger="<c-b>"
 let g:UltiSnipsJumpBackwardTrigger="<c-z>"
@@ -228,16 +224,6 @@ let g:SuperTabDefaultCompletionType = "context"
 "compilation"
 " Optional
 Plugin 'honza/vim-snippets'
-" Unite
-Plugin 'Shougo/unite.vim'
-Plugin 'msprev/unite-bibtex'
-
-let g:unite_bibtex_bib_files=['/home/dan/Sync/arte/My Library.bib']
-let g:unite_bibtex_cache_dir='/home/dan/.temp_dir'
-Plugin 'rafaqz/citation.vim'
-let g:citation_vim_mode="zotero"
-let g:citation_vim_zotero_folder='~/.zotero/zotero/ek4ik7y9.default/zotero/'
-let g:citation_vim_cache_path='~/.vim/thesaurus/cache/'
 
 """ Python
 " pydoc.vim @S @P
@@ -479,7 +465,7 @@ set foldenable		" enable folding
 set foldlevelstart=7 " open most folds by default
 set foldnestmax=10	" creates 10 fold levels at maximum
 " space open/closes folds
-nnoremap <space> za
+nnoremap <tab> za
 " }}}
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """ Plugins:
