@@ -428,9 +428,9 @@ you should place your code here."
    (define-key bjm-map (kbd "n") 'deft)
    (define-key bjm-map (kbd "t") 'org-capture)
    (require 'langtool)
-   (setq langtool-language-tool-jar "/usr/share/java/languagetool/languagetool.jar")
-   (setq langtool-java-classpath
-         "/usr/share/java/languagetool/*")
+   ;; (setq langtool-language-tool-jar "/usr/share/java/languagetool/languagetool.jar")
+   (setq langtool-java-classpath "/usr/share/java/languagetool/*")
+   ;; (setq langtool-java-classpath "/usr/share/languagetool:/usr/share/java/languagetool/*")
 
    ;; ease insertion of INTERLEAVE_PDF property
    (add-to-list 'org-structure-template-alist '("I" ":INTERLEAVE_PDF: ?"))
@@ -458,6 +458,8 @@ you should place your code here."
      (add-hook 'elfeed-show-mode-hook 'xah-use-variable-width-font)
      ;; (add-hook 'emacs-lisp-mode-hook 'xah-use-variable-width-font)
      )
+   (add-to-list 'load-path "~/.spacemacs.d/")
+   (require 'diction)
 )
 
 ;; Do not write anything past this comment. This is where Emacs will
