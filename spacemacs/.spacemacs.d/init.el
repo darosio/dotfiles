@@ -95,12 +95,15 @@ values."
    ;; configuration in `dotspacemacs/user-config'.
    dotspacemacs-additional-packages '(org-gcal
                                       visual-fill-column
-                                      org-webpage
+                                      ;; org-webpage
                                       langtool
                                       writegood-mode
                                       artbollocks-mode
                                       ob-ipython
                                       helm-mu
+                                      synonymous
+                                      wordnut
+                                      adaptive-wrap
                                       synosaurus
                                       outline-magic
                                       interleave)
@@ -376,22 +379,21 @@ you should place your code here."
    ;; display/update images in the buffer after I evaluate
    (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
 
-   (require 'publish-config)
-   (require 'org-webpage)
-
-   (owp/add-project-config
-    '("darosio.bitbucket.io"
-      :repository-directory "~/workspace/arte/Web/darosio.bitbucket.io"
-      :remote (git "ssh://git@bitbucket.org/darosio/darosio.bitbucket.io.git" "master")
-      ;; you can use `rclone` with `:remote (rclone "remote-name" "/remote/path/location")` instead.
-      :site-domain "https://darosio.bitbucket.io/"
-      :site-main-title "Life, Matters and metaModels"
-      :site-sub-title "(Musings and ramblings through the world of Python and beyond)"
-      ;; :theme (worg)
-      :source-browse-url ("Sources" "https://bitbucket.org/darosio/darosio.bitbucket.io")
-      :personal-avatar "~/workspace/arte/Web/darosio.bitbucket.io/IMG_0614.JPG"
-      ;; :personal-duoshuo-shortname "tumashu-website"
-      :web-server-port 7654))
+   ;; (require 'publish-config)
+   ;; (require 'org-webpage)
+   ;; (owp/add-project-config
+   ;;  '("darosio.bitbucket.io"
+   ;;    :repository-directory "~/workspace/arte/Web/darosio.bitbucket.io"
+   ;;    :remote (git "ssh://git@bitbucket.org/darosio/darosio.bitbucket.io.git" "master")
+   ;;    ;; you can use `rclone` with `:remote (rclone "remote-name" "/remote/path/location")` instead.
+   ;;    :site-domain "https://darosio.bitbucket.io/"
+   ;;    :site-main-title "Life, Matters and metaModels"
+   ;;    :site-sub-title "(Musings and ramblings through the world of Python and beyond)"
+   ;;    ;; :theme (worg)
+   ;;    :source-browse-url ("Sources" "https://bitbucket.org/darosio/darosio.bitbucket.io")
+   ;;    :personal-avatar "~/workspace/arte/Web/darosio.bitbucket.io/IMG_0614.JPG"
+   ;;    ;; :personal-duoshuo-shortname "tumashu-website"
+   ;;    :web-server-port 7654))
 
    ;; (setq op/site-domain "https://darosio.bitbucket.io")
    ;; ;; (setq op/personal-github-link "https://github.com/CodyReichert")
@@ -427,7 +429,7 @@ you should place your code here."
    (define-key bjm-map (kbd "m") 'mu4e)
    (define-key bjm-map (kbd "n") 'deft)
    (define-key bjm-map (kbd "t") 'org-capture)
-   (require 'langtool)
+   ;; (require 'langtool)
    ;; (setq langtool-language-tool-jar "/usr/share/java/languagetool/languagetool.jar")
    (setq langtool-java-classpath "/usr/share/java/languagetool/*")
    ;; (setq langtool-java-classpath "/usr/share/languagetool:/usr/share/java/languagetool/*")
@@ -444,6 +446,11 @@ you should place your code here."
         (define-key outline-minor-mode-map (kbd "<tab>") 'outline-cycle)))
 
    ;; Export from org to latex with bibliography
+
+
+   (setq org-export-latex-hyperref-format "\\ref{%s}")
+
+
    (setq org-latex-pdf-process
          '("latexmk -pdflatex='pdflatex -interaction nonstopmode' -pdf -bibtex -f %f"))
    (require 'ox-latex)
@@ -475,10 +482,14 @@ you should place your code here."
      )
    (add-to-list 'load-path "~/.spacemacs.d/")
    (require 'diction)
+
+   (global-set-key [f11] 'synonymous-synonyms)
+   (global-set-key [f12] 'wordnut-lookup-current-word)
+   (global-set-key [(control f12)] 'wordnut-search)
 )
 
 ;; Do not write anything past this comment. This is where Emacs will
-;; auto-generate custom variable definitions.
+;; auto-generate custom variable star definitions.
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -486,7 +497,7 @@ you should place your code here."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (helm-bibtex packed artbollocks-mode writegood-mode langtool git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter diff-hl flyspell-popup pdf-tools ivy markdown-mode flycheck-pos-tip skewer-mode js2-mode ess smartparens evil yasnippet company helm helm-core projectile magit with-editor org-plus-contrib hydra dash flycheck xterm-color shell-pop multi-term insert-shebang fish-mode eshell-z eshell-prompt-extras esh-help company-shell company-quickhelp pos-tip ox-twbs fasd zeal-at-point helm-dash rainbow-mode rainbow-identifiers color-identifiers-mode synosaurus zonokai-theme zenburn-theme zen-and-art-theme yapfify yaml-mode ws-butler winum which-key web-mode volatile-highlights visual-fill-column vi-tilde-fringe uuidgen use-package underwater-theme ujelly-theme typo twilight-theme twilight-bright-theme twilight-anti-bright-theme tronesque-theme toxi-theme toc-org tao-theme tangotango-theme tango-plus-theme tango-2-theme tagedit sunny-day-theme sublime-themes subatomic256-theme subatomic-theme spray spaceline spacegray-theme soothe-theme solarized-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme smeargle slim-mode seti-theme scss-mode sass-mode reverse-theme restart-emacs ranger rainbow-delimiters railscasts-theme pyvenv pytest pyenv-mode py-isort purple-haze-theme pug-mode professional-theme plantuml-mode planet-theme pip-requirements phoenix-dark-pink-theme phoenix-dark-mono-theme persp-mode pcre2el pastels-on-dark-theme paradox pandoc-mode ox-reveal ox-pandoc orgit organic-green-theme org-webpage org-ref org-projectile org-present org-pomodoro org-gcal org-download org-bullets open-junk-file omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme ob-ipython noctilux-theme niflheim-theme neotree naquadah-theme mustang-theme mu4e-maildirs-extension mu4e-alert move-text monokai-theme monochrome-theme molokai-theme moe-theme mmm-mode minimal-theme material-theme markdown-toc majapahit-theme magit-gitflow madhat2r-theme macrostep lush-theme lorem-ipsum live-py-mode linum-relative link-hint light-soap-theme less-css-mode jbeans-theme jazz-theme ir-black-theme interleave inkpot-theme info+ indent-guide hy-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt heroku-theme hemisu-theme help-fns+ helm-themes helm-swoop helm-pydoc helm-projectile helm-mu helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag hc-zenburn-theme gruvbox-theme gruber-darker-theme graphviz-dot-mode grandshell-theme gotham-theme google-translate golden-ratio gnuplot gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md gandalf-theme fuzzy flyspell-correct-helm flx-ido flatui-theme flatland-theme firebelly-theme fill-column-indicator farmhouse-theme fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu ess-smart-equals ess-R-object-popup ess-R-data-view espresso-theme engine-mode emmet-mode elisp-slime-nav elfeed-web elfeed-org elfeed-goodies ein dumb-jump dracula-theme django-theme deft define-word darktooth-theme darkokai-theme darkmine-theme darkburn-theme dakrone-theme cython-mode cyberpunk-theme csv-mode company-web company-statistics company-anaconda column-enforce-mode color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized clues-theme clean-aindent-mode cherry-blossom-theme busybee-theme bubbleberry-theme birds-of-paradise-plus-theme badwolf-theme auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile apropospriate-theme anti-zenburn-theme ample-zen-theme ample-theme alect-themes aggressive-indent afternoon-theme adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell))))
+    (magit-popup synonymous wordnut helm-wordnet helm-bibtex packed artbollocks-mode writegood-mode langtool git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter diff-hl flyspell-popup pdf-tools ivy markdown-mode flycheck-pos-tip skewer-mode js2-mode ess smartparens evil yasnippet company helm helm-core projectile magit with-editor org-plus-contrib hydra dash flycheck xterm-color shell-pop multi-term insert-shebang fish-mode eshell-z eshell-prompt-extras esh-help company-shell company-quickhelp pos-tip ox-twbs fasd zeal-at-point helm-dash rainbow-mode rainbow-identifiers color-identifiers-mode synosaurus zonokai-theme zenburn-theme zen-and-art-theme yapfify yaml-mode ws-butler winum which-key web-mode volatile-highlights visual-fill-column vi-tilde-fringe uuidgen use-package underwater-theme ujelly-theme typo twilight-theme twilight-bright-theme twilight-anti-bright-theme tronesque-theme toxi-theme toc-org tao-theme tangotango-theme tango-plus-theme tango-2-theme tagedit sunny-day-theme sublime-themes subatomic256-theme subatomic-theme spray spaceline spacegray-theme soothe-theme solarized-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme smeargle slim-mode seti-theme scss-mode sass-mode reverse-theme restart-emacs ranger rainbow-delimiters railscasts-theme pyvenv pytest pyenv-mode py-isort purple-haze-theme pug-mode professional-theme plantuml-mode planet-theme pip-requirements phoenix-dark-pink-theme phoenix-dark-mono-theme persp-mode pcre2el pastels-on-dark-theme paradox pandoc-mode ox-reveal ox-pandoc orgit organic-green-theme org-webpage org-ref org-projectile org-present org-pomodoro org-gcal org-download org-bullets open-junk-file omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme ob-ipython noctilux-theme niflheim-theme neotree naquadah-theme mustang-theme mu4e-maildirs-extension mu4e-alert move-text monokai-theme monochrome-theme molokai-theme moe-theme mmm-mode minimal-theme material-theme markdown-toc majapahit-theme magit-gitflow madhat2r-theme macrostep lush-theme lorem-ipsum live-py-mode linum-relative link-hint light-soap-theme less-css-mode jbeans-theme jazz-theme ir-black-theme interleave inkpot-theme info+ indent-guide hy-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt heroku-theme hemisu-theme help-fns+ helm-themes helm-swoop helm-pydoc helm-projectile helm-mu helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag hc-zenburn-theme gruvbox-theme gruber-darker-theme graphviz-dot-mode grandshell-theme gotham-theme google-translate golden-ratio gnuplot gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md gandalf-theme fuzzy flyspell-correct-helm flx-ido flatui-theme flatland-theme firebelly-theme fill-column-indicator farmhouse-theme fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu ess-smart-equals ess-R-object-popup ess-R-data-view espresso-theme engine-mode emmet-mode elisp-slime-nav elfeed-web elfeed-org elfeed-goodies ein dumb-jump dracula-theme django-theme deft define-word darktooth-theme darkokai-theme darkmine-theme darkburn-theme dakrone-theme cython-mode cyberpunk-theme csv-mode company-web company-statistics company-anaconda column-enforce-mode color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized clues-theme clean-aindent-mode cherry-blossom-theme busybee-theme bubbleberry-theme birds-of-paradise-plus-theme badwolf-theme auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile apropospriate-theme anti-zenburn-theme ample-zen-theme ample-theme alect-themes aggressive-indent afternoon-theme adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
