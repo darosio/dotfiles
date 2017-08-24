@@ -90,7 +90,7 @@ Slave :gmail-local:archive
 # Expunge None
 
 Channel gmail-draft
-Master :gmail-remote:[Gmail]/Drafts
+Master ":gmail-remote:[Gmail]/Drafts"
 Slave :gmail-local:draft
 
 Channel gmail-sent
@@ -128,5 +128,5 @@ Channel gmail-archive
 #############################################################################
 Group INBOXES
 Channel cnr:INBOX
-Channel gmail:INBOX
+Channel gmail-inbox
 Channel pec:INBOX

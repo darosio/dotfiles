@@ -141,12 +141,10 @@
           :name "cnr"
           :enter-func (lambda () (mu4e-message "Entering Cnr context"))
           :leave-func (lambda () (mu4e-message "Leaving Cnr context"))
-          ;; we match based on the contact-fields of the message
+          ;; we match based on the maildir folder http://cachestocaches.com/2017/3/complete-guide-email-emacs-using-mu-and-/
           :match-func (lambda (msg)
-                        (when msg 
-                          (string= (mu4e-message-field msg :maildir) "/cnr/*/")))
-                          ;; (mu4e-message-contact-field-matches msg 
-                            ;; :to "daniele.arosio@cnr.it")))
+                        (when msg
+                          (string-prefix-p "/cnr" (mu4e-message-field msg :maildir))))
           :vars '( ( user-mail-address      . "daniele.arosio@cnr.it"  )
                    ( user-full-name         . "Daniele Arosio" )
 				   ( mu4e-sent-folder   . "/cnr/Sent" )
@@ -164,10 +162,9 @@
           :name "gmail"
           :enter-func (lambda () (mu4e-message "Switch to the gmail context"))
           ;; no leave-func
-          ;; we match based on the contact-fields of the message
           :match-func (lambda (msg)
                         (when msg
-                          (string= (mu4e-message-field msg :maildir) "/gmail/Inbox")))
+                          (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
           :vars '( ( user-mail-address       . "danielepietroarosio@gmail.com" )
                    ( user-full-name          . "daniele arosio" )
                    (mu4e-drafts-folder . "/gmail/draft")
@@ -178,19 +175,15 @@
                        "38123 Trento\n"))))
        ,(make-mu4e-context
          :name "pec"
-         :enter-func (lambda () (mu4e-message "Switch to the gmail context"))
-         ;; no leave-func
-         ;; we match based on the contact-fields of the message
          :match-func (lambda (msg)
                        (when msg
-                         (mu4e-message-contact-field-matches msg 
-                         :from "daniele.arosio@pec.it")))
-         :vars '( ( user-mail-address       . "daniele.arosio@pec.it" )
-                  ( user-full-name          . "Daniele Arosio" )
+                         (string-prefix-p "/pec" (mu4e-message-field msg :maildir))))
+         :vars '( (user-mail-address  . "daniele.arosio@pec.it" )
+                  (user-full-name     . "Daniele Arosio" )
                   (mu4e-drafts-folder . "/pec/draft")
-                  (mu4e-trash-folder . "/pec/Trash")
+                  (mu4e-trash-folder  . "/pec/Trash")
                   (mu4e-sent-folder   . "/pec/Sent")
-                  ( mu4e-compose-signature  .
+                  (mu4e-compose-signature .
                                             (concat
                                              "daniele arosio\n"
                                              "38123 Trento\n"))))
@@ -210,10 +203,8 @@
         ))
 ;; start with the first (default) context; 
 ;; default is to ask-if-none (ask when there's no context yet, and none match)
-(setq mu4e-context-policy 'pick-first)
-;; compose with the current context is no context matches;
-;; default is to ask 
-(setq mu4e-compose-context-policy nil)
+(setq mu4e-context-policy 'pick-first
+      mu4e-compose-context-policy 'ask-if-none)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; contexts ;;;
 
 
