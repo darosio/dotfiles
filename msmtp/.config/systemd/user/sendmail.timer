@@ -6,7 +6,7 @@ RefuseManualStop=no
 [Timer]
 Persistent=false
 OnBootSec= 1min
-OnUnitActiveSec= 6min
+OnUnitActiveSec= 1min
 Unit=sendmail.service
 
 [Install]
