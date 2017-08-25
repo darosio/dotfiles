@@ -2,9 +2,11 @@
 SyncState *
 
 # Automatically create missing mailboxes, both locally and on the server
-Create Slave
+Create Both  # default None
 Remove Both
-Expunge Slave
+#https://mail.google.com/mail/u/0/?tab=cm#settings/fwdandpop
+# IMAP server does not auto-expunge OFF
+Expunge Both
 CopyArrivalDate yes
 
 #
@@ -86,8 +88,10 @@ Slave :gmail-local:Inbox
 Channel gmail-archive
 Master ":gmail-remote:[Gmail]/All Mail"
 Slave :gmail-local:archive
-# Sync Push Flags
-# Expunge None
+Expunge Both
+#Sync Push Flags
+# se archivio (or "D") da Sent resta copia in All Mail che devo ricancellare
+# in local gmail/archive
 
 Channel gmail-draft
 Master ":gmail-remote:[Gmail]/Drafts"
@@ -104,6 +108,7 @@ Slave :gmail-local:spam
 Channel gmail-trash
 Master :gmail-remote:[Gmail]/Trash
 Slave :gmail-local:trash
+Expunge None
 
 # Labels
 Channel gmail-rest

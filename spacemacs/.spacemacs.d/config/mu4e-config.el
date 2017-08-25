@@ -84,6 +84,12 @@
                                    'mu4e-send-delay-send-and-exit)))
 (setq mu4e-send-delay-default-delay "5m"
       mu4e-send-delay-timer 190)
+;; TODO
+;; http://pragmaticemacs.com/emacs/migrating-from-offlineimap-to-mbsync-for-mu4e/
+;; ;;set up queue for offline email
+;; ;;use mu mkdir  ~/Maildir/queue to set up first
+;; (setq smtpmail-queue-mail nil  ;; start in normal mode
+;;       smtpmail-queue-dir   "~/Maildir/queue/cur")
 
 ;;; Reading messages ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Call EWW to display HTML messages
@@ -180,9 +186,9 @@
                          (string-prefix-p "/pec" (mu4e-message-field msg :maildir))))
          :vars '( (user-mail-address  . "daniele.arosio@pec.it" )
                   (user-full-name     . "Daniele Arosio" )
-                  (mu4e-drafts-folder . "/pec/draft")
-                  (mu4e-trash-folder  . "/pec/Trash")
-                  (mu4e-sent-folder   . "/pec/Sent")
+                  (mu4e-drafts-folder . "/pec/Bozze")
+                  (mu4e-trash-folder  . "/pec/Cestino")
+                  (mu4e-sent-folder   . "/pec/Inviata")
                   (mu4e-compose-signature .
                                             (concat
                                              "daniele arosio\n"
@@ -266,7 +272,7 @@
                     ;; must come before proc-move since retag runs
                     ;; 'sed' on the file
                     (mu4e-action-retag-message msg "-\\Inbox")
-                    (mu4e~proc-move docid nil "+S-u-N"))))
+                    (mu4e~proc-move docid nil "+S-u-N"))))
 
 (mu4e~headers-defun-mark-for tag)
 (define-key mu4e-headers-mode-map (kbd "z") 'mu4e-headers-mark-for-tag)
