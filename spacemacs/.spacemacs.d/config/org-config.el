@@ -1,10 +1,10 @@
 ;; Some general settings
 (setq-default org-directory "~/Sync/notes/")
-(setq org-default-notes-file "~/Sync/share/phone/box/notes/refile.org")
+(setq org-default-notes-file "~/Sync/share/phone/box/notes/inbox.org")
 ;; (setq org-agenda-include-diary t)
 ;; (setq org-agenda-include-all-todo t) ;;only in http://sachachua.com/blog/tag/gtd/#post-4543
-(setq org-agenda-files (quote ("~/Sync/share/phone/box/notes/todo.org"
-                               "~/Sync/share/phone/box/notes/refile.org"
+(setq org-agenda-files (quote ("~/Sync/share/phone/box/notes/gtd.org"
+                               "~/Sync/share/phone/box/notes/inbox.org"
                                "~/Sync/share/phone/box/notes/gcal"
                                "~/Sync/notes/proj"
                                "~/Sync/notes/work"
@@ -27,10 +27,11 @@
 ;; == Tags ==
 (setq org-tag-alist (quote ((:startgroup)
                               ("@errands" . ?e)
-                              ("@office" . ?o)
+                              ("@internet" . ?i)
                               ("@home" . ?h)
-                              ("@phone" . ?t)
+                              ("@office" . ?o)
                               ("@email" . ?m)
+                              ("@phone" . ?t)
                             (:endgroup)
                             ("PERSONAL" . ?p)
                             ("WORK" . ?w)
@@ -98,14 +99,14 @@
     ;; ideas.org
     ("i" "idea" entry (file "~/Sync/share/phone/box/notes/ideas.org")
      "* %? :IDEA: \n%u")
-    ;; todo.org
-    ("h" "Habit" entry (file+headline "~/Sync/share/phone/box/notes/todo.org" "Habits")
+    ;; gtd.org
+    ("h" "Habit" entry (file+headline "~/Sync/share/phone/box/notes/gtd.org" "Habits")
      "* NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:REPEAT_TO_STATE: NEXT\n:END:\n")
-    ("n" "Next Task" entry (file+headline "~/Sync/share/phone/box/notes/todo.org" "Tasks")
+    ("n" "Next Task" entry (file+headline "~/Sync/share/phone/box/notes/gtd.org" "Tasks")
      "** NEXT %? \nDEADLINE: %t")
-    ("r" "respond" entry (file+headline "~/Sync/share/phone/box/notes/todo.org" "Reply")
+    ("r" "respond" entry (file+headline "~/Sync/share/phone/box/notes/gtd.org" "Reply")
      "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
-    ("w" "waiting reply" entry (file+headline "~/Sync/share/phone/box/notes/todo.org" "Reply")
+    ("w" "waiting reply" entry (file+headline "~/Sync/share/phone/box/notes/gtd.org" "Reply")
      "* WAITING Reply from %:from on %:subject\n %U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
     ;; spesa.org
     ("s" "Spesa" entry (file+headline "~/Sync/share/phone/box/notes/spesa.org" "Supermarket")
@@ -118,11 +119,10 @@
 ;; == Refile ==
 ;; Targets include this file and any file contributing to the agenda - up to 9 levels deep
 (setq org-refile-targets (quote ((org-agenda-files :maxlevel . 2)
-                                 ("~/Sync/share/phone/box/notes/todo.org" :maxlevel . 3) ;; ???
+                                 ("~/Sync/share/phone/box/notes/gtd.org" :maxlevel . 3) ;; ???
                                  ("~/Sync/share/phone/box/notes/ideas.org" :maxlevel . 2)
                                  ("~/Sync/share/phone/box/notes/someday.org" :level . 1)
                                  )))
-                                 ;; ("~/Sync/share/phone/box/notes/todo.org" :maxlevel . 9)
                                  ;; (org-default-notes-file :maxlevel . 9)
                                  ;; )))
 ;;  Be sure to use the full path for refile setup
@@ -485,11 +485,12 @@ show this warning instead."
         ("gh" "Home" tags-todo "@home")
         ("ge" "Errands" tags-todo "@errands")
         ("G" "GTD Block Agenda"
-         ((tags-todo "office")
-          (tags-todo "computer")
-          (tags-todo "phone")
-          (tags-todo "home")
-          (tags-todo "errands"))
+         ((tags-todo "@office")
+          (tags-todo "@email")
+          (tags-todo "@internet")
+          (tags-todo "@phone")
+          (tags-todo "@home")
+          (tags-todo "@errands"))
          nil                      ;; i.e., no local settings
          ("~/next-actions.html")) ;; exports block to this file with C-c a e
         ("0" "Upcoming deadlines" agenda ""
