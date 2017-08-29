@@ -5,9 +5,10 @@
 ;; (setq org-agenda-include-all-todo t) ;;only in http://sachachua.com/blog/tag/gtd/#post-4543
 (setq org-agenda-files (quote ("~/Sync/share/phone/box/notes/todo.org"
                                "~/Sync/share/phone/box/notes/refile.org"
-                               "~/Sync/notes/home"
-                               "~/Sync/notes/gcal"
+                               "~/Sync/share/phone/box/notes/gcal"
                                "~/Sync/notes/proj"
+                               "~/Sync/notes/work"
+                               "~/Sync/notes/home"
                                "~/Sync/notes/arch")))
 
 ;; a global-set-key example
@@ -25,15 +26,14 @@
 
 ;; == Tags ==
 (setq org-tag-alist (quote ((:startgroup)
-                              ("@errand" . ?e)
+                              ("@errands" . ?e)
                               ("@office" . ?o)
                               ("@home" . ?h)
+                              ("@phone" . ?t)
+                              ("@email" . ?m)
                             (:endgroup)
                             ("PERSONAL" . ?p)
                             ("WORK" . ?w)
-                            ("NOTE" . ?n)
-                            ("IDEA" . ?i)
-                            ("FLAGGED" . ??)
                             (:startgroup)
                               ("NEXT" . ?N)
                               ("WAITING" . ?W)
@@ -80,45 +80,49 @@
 ;; S-left S-right skipping setting timespamps  DEF
 ;; (setq org-treat-S-cursor-todo-selection-as-state-change nil)
 
-
+(add-hook 'org-capture-mode-hook 'evil-insert-state)
 ;; == Captures ==
 (defvar org-capture-templates
-  ;; '(("t" "todo" entry (file org-default-notes-file)
   '(("t" "todo" entry (file org-default-notes-file)
        "* TODO %?\n%U\n%a\n" :clock-in t :clock-resume t)
-    ("a" "Appointment" entry (file  "~/Sync/notes/gcal/dpa.org" )
-     "* %?\n\n%^T\n%a\n:PROPERTIES:\n\n:END:\n\n")
     ("b" "Blank" entry (file org-default-notes-file)
      "* %?\n%u")
-    ("d" "Diary" entry (file+datetree "~/Sync/share/phone/box/notes/diary.org")
-     "* %?\n%U\n" :clock-in t :clock-resume t)
-    ("i" "idea" entry (file+headline "~/Sync/share/phone/box/notes/todo.org" "Ideas")
-     "* IDEA %? :IDEA: \n%u" :clock-in t :clock-resume t)
     ("m" "Meeting" entry (file org-default-notes-file)
      "* MEETING with %? :MEETING:\n%t" :clock-in t :clock-resume t)
+    ;; diary.org
+    ("a" "Appointment" entry (file  "~/Sync/share/phone/box/notes/gcal/dpa.org" )
+     "* %?\n\n%^T\n%a\n:PROPERTIES:\n\n:END:\n\n")
+    ;; diary.org
+    ("d" "Diary" entry (file+datetree "~/Sync/share/phone/box/notes/diary.org")
+     "* %?\n%U\n" :clock-in t :clock-resume t)
+    ;; ideas.org
+    ("i" "idea" entry (file "~/Sync/share/phone/box/notes/ideas.org")
+     "* %? :IDEA: \n%u")
+    ;; todo.org
+    ("h" "Habit" entry (file+headline "~/Sync/share/phone/box/notes/todo.org" "Habits")
+     "* NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:REPEAT_TO_STATE: NEXT\n:END:\n")
     ("n" "Next Task" entry (file+headline "~/Sync/share/phone/box/notes/todo.org" "Tasks")
      "** NEXT %? \nDEADLINE: %t")
     ("r" "respond" entry (file+headline "~/Sync/share/phone/box/notes/todo.org" "Reply")
      "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
     ("w" "waiting reply" entry (file+headline "~/Sync/share/phone/box/notes/todo.org" "Reply")
      "* WAITING Reply from %:from on %:subject\n %U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
+    ;; spesa.org
+    ("s" "Spesa" entry (file+headline "~/Sync/share/phone/box/notes/spesa.org" "Supermarket")
+     "* TODO %? \n")
     ))
-           ;("n" "note" entry (file "~/git/org/refile.org")
-            ;"* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)
-           ;("j" "Journal" entry (file+datetree "~/git/org/diary.org")
-            ;"* %?\n%U\n" :clock-in t :clock-resume t)
            ;("w" "org-protocol" entry (file "~/git/org/refile.org")
             ;"* TODO Review %c\n%U\n" :immediate-finish t)
-           ;("h" "Habit" entry (file "~/git/org/refile.org")
-            ;"* NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n"))))
 
 
 ;; == Refile ==
 ;; Targets include this file and any file contributing to the agenda - up to 9 levels deep
-(setq org-refile-targets (quote ((nil :maxlevel . 9)
-                                 (org-agenda-files :maxlevel . 9))))
+(setq org-refile-targets (quote ((org-agenda-files :maxlevel . 2)
+                                 ("~/Sync/share/phone/box/notes/todo.org" :maxlevel . 3) ;; ???
+                                 ("~/Sync/share/phone/box/notes/ideas.org" :maxlevel . 2)
+                                 ("~/Sync/share/phone/box/notes/someday.org" :level . 1)
+                                 )))
                                  ;; ("~/Sync/share/phone/box/notes/todo.org" :maxlevel . 9)
-                                 ;; ("~/Sync/notes/gcal/dpa.org" :maxlevel . 1)
                                  ;; (org-default-notes-file :maxlevel . 9)
                                  ;; )))
 ;;  Be sure to use the full path for refile setup

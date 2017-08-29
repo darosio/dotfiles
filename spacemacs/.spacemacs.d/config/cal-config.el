@@ -3,13 +3,14 @@
 
 (setq org-gcal-client-id "100447390762-1unqkpjv30do2uq0r5uetd8pkr9ha81s.apps.googleusercontent.com"
       org-gcal-client-secret "EhuKxnNmAoM2XMPjCFOpiLDK"
-      org-gcal-file-alist '(("danielepietroarosio@gmail.com" .  "~/Sync/notes/gcal/dpa.org")
+      org-gcal-file-alist '(("danielepietroarosio@gmail.com" .
+                             "~/Sync/share/phone/box/notes/gcal/dpa.org")
                             ("c87gevr5pc3191on8c7nh8b4nc@group.calendar.google.com" .
-                             "~/Sync/notes/gcal/figli.org")
+                             "~/Sync/share/phone/box/notes/gcal/figli.org")
                             ;; ("cfaned8dou8gm2qciies0itso4@group.calendar.google.com" .
                             ;;  "~/Sync/notes/gcal/deadlines.org")
                             ("tq1af7efj4l9h8glgqi2g5vmsg@group.calendar.google.com" .
-                             "~/Sync/notes/gcal/IBF.org")
+                             "~/Sync/share/phone/box/notes/gcal/IBF.org")
                             ;; ("i_217.77.81.46#sunrise@group.v.calendar.google.com" .
                             ;;  "~/Sync/notes/gcal/sunrise.org")
                             ;; ("it.italian#holiday@group.v.calendar.google.com" .
