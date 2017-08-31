@@ -180,8 +180,6 @@ alias vga_onr='xrandr --output VGA1 --auto --right-of LVDS1'
 alias vga_off='xrandr --output VGA1 --off'
 alias impress='impressive -t none --nologo'
 alias fbk0='sudo ~/.progs/bin/pulsesvc -h sslgate.fbk.eu -r Fbk_AD_realm -u darosio -p CEaMW6osqy'
-alias fbk1='pass email/fbk | sudo openconnect --juniper sslgate.fbk.eu -u darosio --passwd-on-stdin'
-alias swan='sshpass -p CEaME2oSQY2 ssh darosio%swan@gate.fbk.eu'
 alias omero='sshpass -p CEaMW2oSQY2 ssh darosio%omero@gate.fbk.eu'
 #alias omero-data='sshfs  darosio%omero@gate.fbk.eu:/data /media/omero/'
 alias omero-data0='sshfs  omero:/hardmnt/data0 /media/omero0/'
@@ -241,28 +239,6 @@ TNv() {
  wget http://www.meteotrentino.it/bollettini/today/valanghe_it.pdf
  xdg-open valanghe_it.pdf
  }
-
-fbkold() {
-# sudo ifconfig eth0 down
- sudo iwconfig wlan0 essid "GuestsFbk"
- sudo dhcpcd wlan0
- firefox "http://wfgate.fbk.eu" &
- }
-
-unis() {
- sudo ifconfig eth0 192.168.1.2 up
- unison-x11 &
- }
-
-en() {
- tw www.freetranslation.com.it-en "$*"
- tw translate.google.com.it-en "$*"
- } 
-
-it() {
- tw www.freetranslation.com.en-it "$*"
- tw translate.google.com.en-it "$*"
- } 
 
 grepp() {
  if test -z "$1" || test -z "$2" ; then
