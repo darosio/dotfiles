@@ -3,13 +3,14 @@
 (setq org-default-notes-file "~/Sync/share/phone/box/notes/inbox.org")
 ;; (setq org-agenda-include-diary t)
 ;; (setq org-agenda-include-all-todo t) ;;only in http://sachachua.com/blog/tag/gtd/#post-4543
-(setq org-agenda-files (quote ("~/Sync/share/phone/box/notes/gtd.org"
+(load-library "find-lisp")
+(setq org-agenda-files (append '("~/Sync/share/phone/box/notes/gtd.org"
                                "~/Sync/share/phone/box/notes/inbox.org"
                                "~/Sync/share/phone/box/notes/gcal"
                                "~/Sync/notes/proj"
                                "~/Sync/notes/work"
                                "~/Sync/notes/home"
-                               "~/Sync/notes/arch")))
+                               ) (find-lisp-find-files "~/Sync/notes/arch" "\.org$")))
 
 ;; a global-set-key example
 (global-set-key (kbd "<f7> <f8>") 'calendar)    ; F7 F8
@@ -362,7 +363,7 @@ show this warning instead."
 ;; Variables for ignoring tasks with deadlines
 (defvar gs/hide-deadline-next-tasks t)
 (setq org-agenda-tags-todo-honor-ignore-options t)
-(setq org-deadline-warning-days 10)
+(setq org-deadline-warning-days 90)
 
 ;; Custom agenda command definitions
 (setq org-agenda-custom-commands
@@ -389,6 +390,7 @@ show this warning instead."
 					    (org-agenda-skip-function 'gs/select-projects)))
           (tags-todo "-INACTIVE-HOLD-CANCELLED-REFILE-ARCHIVE-STYLE=\"habit\"/!-NEXT"
 					   ((org-agenda-overriding-header "Standalone Tasks:")
+              ;; (org-agenda-skip-entry-if 'deadline)
 					    (org-agenda-skip-function 'gs/select-standalone-tasks)))
           (agenda "" ((org-agenda-overriding-header "Week At A Glance:")
               ;; (org-agenda-start-day "+1d")
@@ -452,7 +454,9 @@ show this warning instead."
           (org-agenda-start-day "-1d")
           (org-agenda-start-with-log-mode t)
           (org-agenda-log-mode-items '(closed clock state))
-          ))
+          )
+         (org-agenda-sorting-strategy '(tag-up effort-down))
+         )
         ("x" "With deadline columns" alltodo ""
          (
           (org-agenda-overriding-columns-format "%50ITEM %DEADLINE")
@@ -492,14 +496,29 @@ show this warning instead."
           (tags-todo "@home")
           (tags-todo "@errands"))
          nil                      ;; i.e., no local settings
-         ("~/next-actions.html")) ;; exports block to this file with C-c a e
-        ("0" "Upcoming deadlines" agenda ""
-         ((org-agenda-entry-types '(:deadline))
-          ;; a slower way to do the same thing
-          ;; (org-agenda-skip-function '(org-agenda-skip-entry-if 'notdeadline))
-          (org-agenda-ndays 1)
-          (org-deadline-warning-days 60)
-          (org-agenda-time-grid nil)))
+        ("~/next-actions.pdf"))
+("P" "Printed agenda"
+         ((agenda "" ((org-agenda-ndays 7)                      ;; overview of appointments
+                      (org-agenda-start-on-weekday nil)         ;; calendar begins today
+                      (org-agenda-repeating-timestamp-show-all t)
+                      (org-agenda-entry-types '(:timestamp :sexp))))
+          (agenda "" ((org-agenda-ndays 1)                      ;; daily agenda
+                      (org-deadline-warning-days 700)             ;; 7 day advanced warning for deadlines
+                      (org-agenda-todo-keyword-format "[ ]")
+                      (org-agenda-scheduled-leaders '("" ""))
+                      (org-agenda-prefix-format "%t%s")))
+          (todo "TODO"                                          ;; todos sorted by context
+                ((org-agenda-prefix-format "[ ] %T: ")
+                 (org-agenda-sorting-strategy '(tag-up priority-down))
+                 (org-agenda-todo-keyword-format "")
+                 (org-agenda-overriding-header "\nTasks by Context\n------------------\n"))))
+         ((org-agenda-with-colors nil)
+          (org-agenda-compact-blocks t)
+          (org-agenda-remove-tags t)
+          (ps-number-of-columns 2)
+           (ps-landscape-mode t))
+         ("~/agenda.pdf"))
+        ;; other commands go here
         ))
 
 

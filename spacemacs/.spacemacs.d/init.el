@@ -366,7 +366,7 @@ you should place your code here."
    (push "~/.spacemacs.d/config/" load-path)
    (require 'mu4e-config nil t)
    (require 'org-config nil t)
-   (require 'elfeed-config nil t)
+   ;; (require 'elfeed-config nil t)
    (require 'bibtex-config nil t)
    (setq deft-directory "~/Sync/notes")
    (setq deft-extensions '("org" "md" "txt" "markdown"))
