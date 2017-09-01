@@ -1,8 +1,6 @@
 ;; Some general settings
 (setq-default org-directory "~/Sync/notes/")
 (setq org-default-notes-file "~/Sync/share/phone/box/notes/inbox.org")
-;; (setq org-agenda-include-diary t)
-;; (setq org-agenda-include-all-todo t) ;;only in http://sachachua.com/blog/tag/gtd/#post-4543
 (load-library "find-lisp")
 (setq org-agenda-files (append '("~/Sync/share/phone/box/notes/gtd.org"
                                "~/Sync/share/phone/box/notes/inbox.org"
@@ -12,6 +10,8 @@
                                "~/Sync/notes/home"
                                ) (find-lisp-find-files "~/Sync/notes/arch" "\.org$")))
 
+(setq org-agenda-include-diary nil)
+(setq org-agenda-diary-file "~/Sync/share/phone/box/notes/diary.org")
 ;; a global-set-key example
 (global-set-key (kbd "<f7> <f8>") 'calendar)    ; F7 F8
 
@@ -282,6 +282,9 @@ t))))
     "----------------"
     (800 1200 1300 1800)))
 
+;; Include agenda archive files when searching for things
+(setq org-agenda-text-search-extra-files (quote (agenda-archives)))
+
 ;; Some helper functions for selection within agenda views
 (defun gs/select-with-tag-function (select-fun-p)
   (save-restriction
@@ -447,15 +450,22 @@ show this warning instead."
           (org-agenda-todo-ignore-scheduled t)
           ))
         ("X" "Agenda"
-         ((agenda "") (alltodo))
+         ((agenda "") (alltodo)
          (
           (org-agenda-span 10)
           (org-agenda-start-on-weekday nil)
           (org-agenda-start-day "-1d")
           (org-agenda-start-with-log-mode t)
           (org-agenda-log-mode-items '(closed clock state))
-          )
-         (org-agenda-sorting-strategy '(tag-up effort-down))
+          ))
+         ;;(org-agenda-sorting-strategy '((tag-up effort-down)))
+          ((ps-number-of-columns 2)
+          (ps-landscape-mode t)
+          (org-agenda-prefix-format " [ ] ")
+          (org-agenda-with-colors nil)
+          (ps-print-color-p 'black-white)
+          (org-agenda-remove-tags t))
+         ("~/theagenda.pdf")
          )
         ("x" "With deadline columns" alltodo ""
          (
@@ -479,6 +489,8 @@ show this warning instead."
           ))
         ("d" "Upcoming deadlines" agenda "" 
          ((org-agenda-time-grid nil)
+          (org-agenda-span 1)
+          (org-agenda-overriding-header "\nUpcoming deadlines\n------------------\n")
           (org-deadline-warning-days 365)        ;; [1]
           (org-agenda-entry-types '(:deadline))  ;; [2]
           ))
@@ -515,9 +527,10 @@ show this warning instead."
          ((org-agenda-with-colors nil)
           (org-agenda-compact-blocks t)
           (org-agenda-remove-tags t)
+          (htmlize-output-type 'css)
           (ps-number-of-columns 2)
            (ps-landscape-mode t))
-         ("~/agenda.pdf"))
+         ("~/agenda.pdf" "~/agenda.html"))
         ;; other commands go here
         ))
 
