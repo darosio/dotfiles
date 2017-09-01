@@ -446,6 +446,16 @@ show this warning instead."
           (org-agenda-todo-ignore-deadlines 'near)
           (org-agenda-todo-ignore-scheduled t)
           ))
+        ("3" "Daily agenda and all TODOs"
+         ((tags "PRIORITY=\"A\""
+                ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+                 (org-agenda-overriding-header "High-priority unfinished tasks:")))
+          (agenda "" ((org-agenda-ndays 1)))
+          (alltodo ""
+                   ((org-agenda-skip-function '(or 
+                                                   (org-agenda-skip-if nil '(scheduled deadline))))
+                    (org-agenda-overriding-header "ALL normal priority tasks:"))))
+         ((org-agenda-compact-blocks t)))
         ("X" "Agenda"
          ((agenda "") (alltodo))
          (
