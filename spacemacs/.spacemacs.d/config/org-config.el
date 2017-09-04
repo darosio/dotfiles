@@ -31,6 +31,7 @@
                               ("@internet" . ?i)
                               ("@home" . ?h)
                               ("@office" . ?o)
+                              ("@dati" . ?d)
                               ("@email" . ?m)
                               ("@phone" . ?t)
                             (:endgroup)
@@ -119,7 +120,7 @@
 
 ;; == Refile ==
 ;; Targets include this file and any file contributing to the agenda - up to 9 levels deep
-(setq org-refile-targets (quote ((org-agenda-files :maxlevel . 2)
+(setq org-refile-targets (quote ((org-agenda-files :maxlevel . 3)
                                  ("~/Sync/share/phone/box/notes/gtd.org" :maxlevel . 3) ;; ???
                                  ("~/Sync/share/phone/box/notes/ideas.org" :maxlevel . 2)
                                  ("~/Sync/share/phone/box/notes/someday.org" :level . 1)
@@ -364,9 +365,8 @@ show this warning instead."
       "")))
 
 ;; Variables for ignoring tasks with deadlines
-(defvar gs/hide-deadline-next-tasks t)
 (setq org-agenda-tags-todo-honor-ignore-options t)
-(setq org-deadline-warning-days 90)
+(setq org-deadline-warning-days 70)
 
 ;; Custom agenda command definitions
 (setq org-agenda-custom-commands
@@ -378,9 +378,9 @@ show this warning instead."
         (" " "Export Schedule"
          (
           (agenda "" ((org-agenda-overriding-header "Today's Schedule:")
-                      (org-agenda-span 'day)
+                      (org-agenda-span 2)
                       (org-agenda-start-on-weekday nil)
-                      ;; (org-agenda-start-day "+0d")
+                      (org-agenda-start-day "+0d")
                       (org-agenda-todo-ignore-deadlines nil)))
           (tags-todo "-CANCELLED-ARCHIVE/!NEXT"
 					   ((org-agenda-overriding-header "Next Tasks:")
@@ -393,132 +393,72 @@ show this warning instead."
 					    (org-agenda-skip-function 'gs/select-projects)))
           (tags-todo "-INACTIVE-HOLD-CANCELLED-REFILE-ARCHIVE-STYLE=\"habit\"/!-NEXT"
 					   ((org-agenda-overriding-header "Standalone Tasks:")
-              ;; (org-agenda-skip-entry-if 'deadline)
 					    (org-agenda-skip-function 'gs/select-standalone-tasks)))
-          (agenda "" ((org-agenda-overriding-header "Week At A Glance:")
-              ;; (org-agenda-start-day "+1d")
-              ;; ensures that repeating events appear on all relevant dates
-              (org-agenda-repeating-timestamp-show-all t)
-              ;; limits agenda view to timestamped items
-              (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline 'scheduled))
-					    (org-agenda-prefix-format '((agenda . "  %-12:c%?-12t %s [%b] ")))))
+          (todo ""
+           ((org-agenda-overriding-header "Upcoming deadlines:")
+            (org-agenda-todo-ignore-deadlines 'near)
+            (org-agenda-skip-function '(org-agenda-skip-entry-if 'notdeadline))))
           (tags-todo "-INACTIVE-HOLD-CANCELLED-REFILE-ARCHIVE/!-NEXT"
 					   ((org-agenda-overriding-header "Remaining Project Tasks:")
 					    (org-agenda-skip-function 'gs/select-project-tasks)))
-          (tags "INACTIVE-ARCHIVE"
+          (tags "HOLD-ARCHIVE"
 				      ((org-agenda-overriding-header "Inactive Projects and Tasks")
 				       (org-tags-match-list-sublevels nil)))
-;; from ref 1
-         ;; (tags-todo "-REFILE-CANCELLED-WAITING-HOLD/!"
-         ;;                   ((org-agenda-overriding-header (concat "Standalone Tasks"
-         ;;                                                          (if bh/hide-scheduled-and-waiting-next-tasks
-         ;;                                                              ""
-         ;;                                                            " (including WAITING and SCHEDULED tasks)")))
-         ;;                    (org-agenda-skip-function 'bh/skip-project-tasks)
-         ;;                    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
-         ;;                    (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks)
-         ;;                    (org-agenda-todo-ignore-with-date bh/hide-scheduled-and-waiting-next-tasks)
-         ;;                    (org-agenda-sorting-strategy
-         ;;                     '(category-keep))))
-         ;;        (tags-todo "-CANCELLED+WAITING|HOLD/!"
-         ;;                   ((org-agenda-overriding-header (concat "Waiting and Postponed Tasks"
-         ;;                                                          (if bh/hide-scheduled-and-waiting-next-tasks
-         ;;                                                              ""
-         ;;                                                            " (including WAITING and SCHEDULED tasks)")))
-         ;;                    (org-agenda-skip-function 'bh/skip-non-tasks)
-         ;;                    (org-tags-match-list-sublevels nil)
-         ;;                    (org-agenda-todo-ignore-scheduled bh/hide-scheduled-and-waiting-next-tasks)
-         ;;                    (org-agenda-todo-ignore-deadlines bh/hide-scheduled-and-waiting-next-tasks)))
-        (tags "-REFILE/"
+          (todo ""
+           ((org-agenda-overriding-header "Someday/maybe Projects and Tasks")
+            (org-agenda-files '("~/Sync/share/phone/box/notes/someday.org"))))
+          ;; from ref 1
+          (tags "-REFILE/"
                       ((org-agenda-overriding-header "Tasks to Archive")
                        (org-agenda-skip-function 'bh/skip-non-archivable-tasks)
                        (org-tags-match-list-sublevels nil)))
-	  		(tags "ENDOFAGENDA"
-	  		      ((org-agenda-overriding-header "End of Agenda")
-	  		       (org-tags-match-list-sublevels nil)))
         )
          (
           ;; (org-agenda-start-with-log-mode t)
-          ;; ;; (org-agenda-log-mode-items '(clock))
           ;; (org-agenda-log-mode-items 'clock)
           (org-agenda-prefix-format '((agenda . "  %-12:c%?-12t %(gs/org-agenda-add-location-string)% s")
 	  		      (timeline . "  % s")
 	  		      (todo . "  %-12:c %(gs/org-agenda-prefix-string) ")
 	  		      (tags . "  %-12:c %(gs/org-agenda-prefix-string) ")
 	  		      (search . "  %i %-12:c")))
-          (org-agenda-todo-ignore-deadlines 'near)
-          (org-agenda-todo-ignore-scheduled t)
-          ))
-        ("3" "Daily agenda and all TODOs"
-         ((tags "PRIORITY=\"A\""
-                ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-                 (org-agenda-overriding-header "High-priority unfinished tasks:")))
-          (agenda "" ((org-agenda-ndays 1)))
-          (alltodo ""
-                   ((org-agenda-skip-function '(or 
-                                                   (org-agenda-skip-if nil '(scheduled deadline))))
-                    (org-agenda-overriding-header "ALL normal priority tasks:"))))
-         ((org-agenda-compact-blocks t)))
-        ("X" "Agenda"
-         ((agenda "") (alltodo)
-         (
-          (org-agenda-span 10)
-          (org-agenda-start-on-weekday nil)
-          (org-agenda-start-day "-1d")
-          (org-agenda-start-with-log-mode t)
-          (org-agenda-log-mode-items '(closed clock state))
-          ))
-         ;;(org-agenda-sorting-strategy '((tag-up effort-down)))
-          ((ps-number-of-columns 2)
+          ;; (org-agenda-todo-ignore-deadlines 'near)
+          (org-agenda-todo-ignore-scheduled nil)
+          (org-agenda-todo-ignore-deadlines t)
+
+         (ps-number-of-columns 2)
           (ps-landscape-mode t)
-          (org-agenda-prefix-format " [ ] ")
-          (org-agenda-with-colors nil)
           (ps-print-color-p 'black-white)
-          (org-agenda-remove-tags t))
+          )
          ("~/theagenda.pdf")
          )
-        ("x" "With deadline columns" alltodo ""
+
+        ("c" "Context lists"
          (
-          (org-agenda-overriding-columns-format "%50ITEM %DEADLINE")
-            (org-agenda-view-columns-initially t)))
-        ("H" "Office and Home Lists"
-         ((agenda)
-          (tags-todo "@office")
-          (tags-todo "@home")
-          (tags-todo "@pc")
-          (tags-todo "WORK")
-          (tags-todo "PERSONAL")
-          (tags "IDEA")
-          ))
-        ("D" "Daily Action List"
-         ((agenda ""
-                  ((org-agenda-span 2)
-                   (org-agenda-sorting-strategy
-                    (quote ((agenda time-up priority-down tag-up) )))
-                   (org-deadline-warning-days 0)))
-          ))
-        ("d" "Upcoming deadlines" agenda "" 
-         ((org-agenda-time-grid nil)
-          (org-agenda-span 1)
-          (org-agenda-overriding-header "\nUpcoming deadlines\n------------------\n")
-          (org-deadline-warning-days 365)        ;; [1]
-          (org-agenda-entry-types '(:deadline))  ;; [2]
-          ))
-        ("g" . "GTD contexts")
-        ("go" "Office" tags-todo "@office")
-        ("gc" "Computer" tags-todo "computer")
-        ("gp" "Phone" tags-todo "phone")
-        ("gh" "Home" tags-todo "@home")
-        ("ge" "Errands" tags-todo "@errands")
-        ("G" "GTD Block Agenda"
-         ((tags-todo "@office")
-          (tags-todo "@email")
-          (tags-todo "@internet")
-          (tags-todo "@phone")
-          (tags-todo "@home")
-          (tags-todo "@errands"))
-         nil                      ;; i.e., no local settings
-        ("~/next-actions.pdf"))
+          (tags "@office")
+          (tags "@home")
+          (tags "@dati")
+          (tags "@internet")
+          (tags "@phone")
+          (tags "@email")
+          (tags "@errands")
+          )
+         (
+          (ps-number-of-columns 2)
+          (ps-landscape-mode t)
+          (ps-print-color-p 'black-white)
+          (htmlize-output-type 'css)
+          )
+         ("~/context-lists.pdf" "~/context-lists.html")
+         )
+
+        ;;(tags "+DEADLINE={.+}" ))
+        ("d" "Upcoming deadlines" agenda "display deadlines and exclude scheduled"
+         ((org-agenda-span 'year)
+          (org-agenda-time-grid nil)
+          (org-agenda-show-all-dates nil)
+          (org-agenda-entry-types '(:deadline)) ;; this entry excludes :scheduled
+          (org-deadline-warning-days 365)))
+
 ("P" "Printed agenda"
          ((agenda "" ((org-agenda-ndays 7)                      ;; overview of appointments
                       (org-agenda-start-on-weekday nil)         ;; calendar begins today
