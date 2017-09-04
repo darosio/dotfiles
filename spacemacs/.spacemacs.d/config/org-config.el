@@ -388,12 +388,15 @@ show this warning instead."
           (tags "REFILE-ARCHIVE-REFILE=\"nil\""
 				      ((org-agenda-overriding-header "Tasks to Refile:")
 				       (org-tags-match-list-sublevels nil)))
-          (tags-todo "-INACTIVE-HOLD-CANCELLED-REFILE-ARCHIVEr/!"
-					   ((org-agenda-overriding-header "Active Projects:")
-					    (org-agenda-skip-function 'gs/select-projects)))
-          (tags-todo "-INACTIVE-HOLD-CANCELLED-REFILE-ARCHIVE-STYLE=\"habit\"/!-NEXT"
+          (tags-todo "-INACTIVE-HOLD-CANCELLED-REFILE-ARCHIVE-STYLE=\"habit\"-CATEGORY=\"Habits\"/!-NEXT-WAITING"
 					   ((org-agenda-overriding-header "Standalone Tasks:")
 					    (org-agenda-skip-function 'gs/select-standalone-tasks)))
+          (tags-todo "-INACTIVE-HOLD-CANCELLED-REFILE-ARCHIVEr/!"
+                     ((org-agenda-overriding-header "Active Projects:")
+                      (org-agenda-skip-function 'gs/select-projects)))
+          (tags-todo "-CANCELLED-ARCHIVE/!WAITING"
+                     ((org-agenda-overriding-header "Waiting-for Tasks:")
+                      (org-agenda-skip-function 'gs/select-standalone-tasks)))
           (todo ""
            ((org-agenda-overriding-header "Upcoming deadlines:")
             (org-agenda-todo-ignore-deadlines 'near)
