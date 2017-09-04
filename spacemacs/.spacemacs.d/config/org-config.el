@@ -22,7 +22,7 @@
 (setq org-agenda-sticky t)
 
 ;; Set default column view headings: Task Effort Clock_Summary DEF ?
-(setq org-columns-default-format "%50ITEM(Task) %10Effort(Effort){:} %10CLOCKSUM %16TIMESTAMP_IA")
+(setq org-columns-default-format "%50ITEM(Task) %7Effort(Effort){:} %7CLOCKSUM %1PRIORITY %TAGS %SCHEDULED %DEADLINE")
 
 
 ;; == Tags ==
