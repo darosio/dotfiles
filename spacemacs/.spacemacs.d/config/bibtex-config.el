@@ -1,4 +1,5 @@
-
+;; (require 'org-ref-scopus)
+;; https://www.reddit.com/r/emacs/comments/4gudyw/help_me_with_my_orgmode_workflow_for_notetaking/d2l16uj/
 ;;  see org-ref for use of these variables  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (setq org-ref-bibliography-notes     "~/Sync/biblio/biblio.org")
 (setq org-ref-default-bibliography '("~/Sync/biblio/biblio.bib"
@@ -59,5 +60,27 @@
 ;; You'll need to install mkbehr-short into your style manager first.
 ;; (eval-after-load "zotxt"
 ;;   '(setq zotxt-default-bibliography-style "citekey"))
+
+;; org-ref notes style only
+(require 'helm-bibtex)
+(require 'org-ref)
+;; (defun my/org-ref-notes-function (candidates)
+;;   (let ((key (helm-marked-candidates)))
+;;     (funcall org-ref-notes-function (car key))))
+;; (helm-delete-action-from-source "Edit notes" helm-source-bibtex)
+;; (helm-add-action-to-source "Edit notes" 'my/org-ref-notes-function helm-source-bibtex 7)
+
+;; Add notes to annotated bibliography (or edit existing notes) with C-c 9
+(setq bibtex-completion-notes-template-one-file
+      (format
+       "\n** TODO ${=key=}: ${title}\n  :PROPERTIES:\n  :Custom_ID: ${=key=}\n  :INTERLEAVE_PDF: ./pdfs/${=key=}.pdf\n  :END:\n\ncite:${=key=}\n\n"))
+(setq org-ref-notes-function
+      (lambda (thekey)
+        (let ((bibtex-completion-bibliography (org-ref-find-bibliography)))
+          (bibtex-completion-edit-notes
+           (list (car (org-ref-get-bibtex-key-and-file thekey)))))))
+(add-hook 'org-mode-hook
+          (lambda ()
+            (define-key org-mode-map  (kbd "C-c 9") 'org-ref-open-notes-at-point)))
 
 (provide 'bibtex-config)
