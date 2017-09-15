@@ -7,3 +7,6 @@
 [submodule "spacemacs/.spacemacs.d/mu4e-send-delay"]
 	path = spacemacs/.spacemacs.d/mu4e-send-delay
 	url = https://github.com/bandresen/mu4e-send-delay/
+[submodule "pandoc/.pandoc/reveal.js"]
+	path = pandoc/.pandoc/reveal.js
+	url = https://github.com/hakimel/reveal.js.git

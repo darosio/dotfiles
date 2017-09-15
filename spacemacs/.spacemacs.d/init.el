@@ -487,6 +487,7 @@ you should place your code here."
    (global-set-key [f11] 'synonymous-synonyms)
    (global-set-key [f12] 'wordnut-lookup-current-word)
    (global-set-key [(control f12)] 'wordnut-search)
+   (require 'helm-bookmark)
 )
 
 ;; Do not write anything past this comment. This is where Emacs will
