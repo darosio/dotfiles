@@ -4,6 +4,7 @@
 ;; can now say nil or 'next
 (setq org-agenda-show-future-repeats 'next)
 
+(setq org-highlight-latex-and-related '(latex))
 ;; Some general settings
 (setq-default org-directory "~/Sync/notes/")
 (setq org-default-notes-file "~/Sync/share/phone/box/notes/inbox.org")
