@@ -402,12 +402,18 @@ you should place your code here."
    ;; (setq op/site-sub-title "Emacs, Programming, and Arch Linux")
    ;; ;; (setq op/personal-disqus-shortname "theonetrueblog")
 
+   ;; (defun my/fix-inline-images ()
+   ;;   (when org-inline-image-overlays
+   ;;     (org-redisplay-inline-images)))
+   ;; (add-hook 'org-babel-after-execute-hook 'my/fix-inline-images)
+
    (org-babel-do-load-languages 'org-babel-load-languages '(
                                                                            (plantuml . t)
                                                                            (python . t)
                                                                            (ipython . t)
                                                                            (gnuplot . t)
                                                                            (R . t)
+                                                                           (dot . t)
                                                                            (shell . t)))
    (setq visual-fill-column-center-text t
          ;; split-window-preferred-function 'visual-fill-column-split-window-sensibly
@@ -488,6 +494,8 @@ you should place your code here."
    (global-set-key [f12] 'wordnut-lookup-current-word)
    (global-set-key [(control f12)] 'wordnut-search)
    (require 'helm-bookmark)
+   (setq bookmark-save-flag 1
+         bookmark-default-file "~/.spacemacs.d/bookmarks" )
 )
 
 ;; Do not write anything past this comment. This is where Emacs will
