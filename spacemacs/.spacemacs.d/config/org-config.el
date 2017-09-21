@@ -1,3 +1,9 @@
+;; If you have a repeating task in your agenda, say every other day,
+;; and you show the agenda for, say, the next 15 days, it is quite
+;; annoying to see that task displayed for seven or eight days. You
+;; can now say nil or 'next
+(setq org-agenda-show-future-repeats 'next)
+
 ;; Some general settings
 (setq-default org-directory "~/Sync/notes/")
 (setq org-default-notes-file "~/Sync/share/phone/box/notes/inbox.org")
@@ -103,7 +109,7 @@
      "* %? :IDEA: \n%u")
     ;; gtd.org
     ("h" "Habit" entry (file+headline "~/Sync/share/phone/box/notes/gtd.org" "Habits")
-     "* NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:REPEAT_TO_STATE: NEXT\n:END:\n")
+     "* TODO %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:REPEAT_TO_STATE: TODO\n:END:\n")
     ("n" "Next Task" entry (file+headline "~/Sync/share/phone/box/notes/gtd.org" "Tasks")
      "** NEXT %? \nDEADLINE: %t")
     ("r" "respond" entry (file+headline "~/Sync/share/phone/box/notes/gtd.org" "Reply")
@@ -382,7 +388,7 @@ show this warning instead."
                       (org-agenda-start-on-weekday nil)
                       (org-agenda-start-day "+0d")
                       (org-agenda-todo-ignore-deadlines nil)))
-          (tags-todo "-CANCELLED-ARCHIVE/!NEXT"
+          (tags-todo "-CANCELLED-ARCHIVE/NEXT"
 					   ((org-agenda-overriding-header "Next Tasks:")
 					    ))
           (tags "REFILE-ARCHIVE-REFILE=\"nil\""
