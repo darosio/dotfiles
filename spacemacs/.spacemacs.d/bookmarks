@@ -1,10 +1,1 @@
-;;;; Emacs Bookmark Format Version 1 ;;;;
-;;; This format is meant to be slightly human-readable;
-;;; nevertheless, you probably don't want to edit it.
-;;; -*- End Of Bookmark File Format Version Stamp -*-
-(("bib"
- (filename . "~/Sync/biblio/biblio.bib")
- (front-context-string)
- (rear-context-string . ":22 2017},\n}\n\n\n\n")
- (position . 46394))
-)
+/home/dan/Sync/.emacs-bookmarks
