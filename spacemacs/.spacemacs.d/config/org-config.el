@@ -284,11 +284,11 @@ t))))
 ;; Compact the block agenda view (disabled)
 (setq org-agenda-compact-blocks nil)
 
-;; Set the times to display in the time grid
-(setq org-agenda-time-grid
-  '((daily today require-timed)
-    "----------------"
-    (800 1200 1300 1800)))
+;; ;; Set the times to display in the time grid
+;; (setq org-agenda-time-grid
+;;   '((daily today require-timed)
+;;     "----------------"
+;;     (800 1200 1300 1800)))
 
 ;; Include agenda archive files when searching for things
 (setq org-agenda-text-search-extra-files (quote (agenda-archives)))

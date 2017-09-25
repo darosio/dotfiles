@@ -68,7 +68,8 @@
   (elfeed-expose #'elfeed-search-toggle-all 'star))
 ;; (eval-after-load 'elfeed-search
 ;;   '(define-key elfeed-search-mode-map (kbd "f") 'elfeed-toggle-star))
-(define-key elfeed-show-mode-map (kbd ".") 'visual-fill-column-mode)
+;; as for mu4e
+(define-key elfeed-show-mode-map (kbd "w") 'visual-line-mode)
 
 
 ;; Hydra macros and elfeed tags

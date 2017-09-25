@@ -277,7 +277,6 @@
 (mu4e~headers-defun-mark-for tag)
 (define-key mu4e-headers-mode-map (kbd "z") 'mu4e-headers-mark-for-tag)
 
-(define-key mu4e-view-mode-map (kbd ".") 'visual-fill-column-mode)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Tags like ;;;
 
 ;;; shortcuts ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -288,6 +287,7 @@
          ("/cnr/Sent"         . ?s)
          ("/cnr/Templates"    . ?t)
          ("/archive"          . ?a)
+         ("/cnr/refs"         . ?r)
          ("/cnr/Drafts"       . ?d)))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; shortcuts ;;;
 
