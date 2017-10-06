@@ -504,6 +504,10 @@ you should place your code here."
    (require 'helm-bookmark)
    (setq bookmark-save-flag 1
          bookmark-default-file "~/.spacemacs.d/bookmarks" )
+
+   ;; make cursor the width of the character it is under
+   ;; i.e. full width of a TAB
+   (setq x-stretch-cursor t)
 )
 
 ;; Do not write anything past this comment. This is where Emacs will
