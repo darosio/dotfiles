@@ -370,7 +370,8 @@ you should place your code here."
    (push "~/.spacemacs.d/config/" load-path)
    (require 'mu4e-config nil t)
    (require 'org-config nil t)
-   (require 'elfeed-config nil t)
+   (with-eval-after-load 'elfeed
+     (require 'elfeed-config))
    (require 'bibtex-config nil t)
    (setq deft-directory "~/Sync/notes")
    (setq deft-extensions '("org" "md" "txt" "markdown"))
@@ -490,11 +491,13 @@ you should place your code here."
      (defun xah-use-variable-width-font ()
        "Set current buffer to use variable-width font."
        (variable-pitch-mode 1)
-       ;; (text-scale-increase 0.5 )
+       (text-scale-increase 1.5 )
+       (visual-line-mode)
        )
      (add-hook 'elfeed-show-mode-hook 'xah-use-variable-width-font)
      ;; (add-hook 'emacs-lisp-mode-hook 'xah-use-variable-width-font)
      )
+
    (add-to-list 'load-path "~/.spacemacs.d/")
    (require 'diction)
 
