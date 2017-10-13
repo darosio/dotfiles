@@ -86,7 +86,7 @@ values."
      (ranger :variables
              ranger-show-preview t)
      pandoc
-     ipython-notebook
+     ;; ipython-notebook
      ;; ess
      yaml
      )
@@ -247,7 +247,7 @@ values."
    ;; Size (in MB) above which spacemacs will prompt to open the large file
    ;; literally to avoid performance issues. Opening a file literally means that
    ;; no major mode or minor modes are active. (default is 1)
-   dotspacemacs-large-file-size 1
+   dotspacemacs-large-file-size 4
    ;; Location where to auto-save files. Possible values are `original' to
    ;; auto-save the file in-place, `cache' to auto-save the file to another
    ;; file stored in the cache directory and `nil' to disable auto-saving.
@@ -376,13 +376,6 @@ you should place your code here."
    (setq deft-directory "~/Sync/notes")
    (setq deft-extensions '("org" "md" "txt" "markdown"))
    (setq deft-recursive t)
-   (setq org-confirm-babel-evaluate 'never)
-
-   (require 'ob-ipython)
-   ;; don't prompt me to confirm everytime I want to evaluate a block
-   (setq org-confirm-babel-evaluate nil)
-   ;; display/update images in the buffer after I evaluate
-   (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
 
    ;; (require 'publish-config)
    ;; (require 'org-webpage)
@@ -411,14 +404,20 @@ you should place your code here."
    ;;     (org-redisplay-inline-images)))
    ;; (add-hook 'org-babel-after-execute-hook 'my/fix-inline-images)
 
-   (org-babel-do-load-languages 'org-babel-load-languages '(
-                                                                           (plantuml . t)
-                                                                           (python . t)
-                                                                           (ipython . t)
-                                                                           (gnuplot . t)
-                                                                           ;; (R . t)
-                                                                           (dot . t)
-                                                                           (shell . t)))
+   (org-babel-do-load-languages 'org-babel-load-languages '((plantuml . t)
+                                                            (python . t)
+                                                            (ipython . t)
+                                                            (gnuplot . t)
+                                                            ;; (R . t)
+                                                            (dot . t)
+                                                            (shell . t)))
+   (require 'ob-ipython)
+   ;; don't prompt me to confirm everytime I want to evaluate a block
+   ;; (setq org-confirm-babel-evaluate 'never)
+   (setq org-confirm-babel-evaluate nil)
+   ;; display/update images in the buffer after I evaluate
+   (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
+
    (setq visual-fill-column-center-text t
          ;; split-window-preferred-function 'visual-fill-column-split-window-sensibly
          visual-fill-column-fringes-outside-margins t)
@@ -511,6 +510,7 @@ you should place your code here."
    ;; make cursor the width of the character it is under
    ;; i.e. full width of a TAB
    (setq x-stretch-cursor t)
+
 )
 
 ;; Do not write anything past this comment. This is where Emacs will
