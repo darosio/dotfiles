@@ -86,7 +86,7 @@ values."
      (ranger :variables
              ranger-show-preview t)
      pandoc
-     ;; ipython-notebook
+     ipython-notebook
      ;; ess
      yaml
      )
