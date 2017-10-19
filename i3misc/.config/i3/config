@@ -48,6 +48,11 @@ bindsym $mod+d exec dmenu_run -nb "#eee8d5" -nf "#073642" -sb "#dc322f" -fn "-mi
 # shipping a .desktop file. It is a wrapper around dmenu, so you need that
 # installed.
 # bindsym $mod+d exec --no-startup-id i3-dmenu-desktop
+#bindsym $mod+space exec --no-startup-id j4-dmenu-desktop --dmenu='rofi -dmenu -i'
+bindsym --release $mod+space exec  rofi -show drun -matching fuzzy
+# list open windows to switch to
+bindsym $mod+Tab exec rofi -show window
+bindsym $mod+Shift+s exec rofi -show ssh
 
 # change focus
 bindsym $mod+j focus left
@@ -245,17 +250,11 @@ bindsym $mod+Print exec xfce4-screenshooter
 bindsym $mod+F11 exec xrdb -DSOLARIZED_DARK -merge .Xresources 
 bindsym $mod+F12 exec xrdb -DSOLARIZED_LIGHT -merge .Xresources 
 
-bindsym $mod+space exec --no-startup-id j4-dmenu-desktop --dmenu='rofi -dmenu -i'
-# list open windows to switch to
-bindsym $mod+Tab exec rofi -show window
-bindsym $mod+Shift+s exec rofi -show ssh
-# another favorite program
-bindsym $mod+x exec keepassx
+# Favorite programs
 # F2 and F3 for thunderbird and firefox
 #bindsym $mod+F2 workspace 2; exec thunderbird
 bindsym $mod+F2 workspace 2; exec emacs
 bindsym $mod+F3 workspace 3; exec firefox
-bindsym $mod+F5 workspace 5; exec zim
 
 # turn bell off
 exec xset -b
