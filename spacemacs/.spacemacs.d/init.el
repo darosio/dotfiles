@@ -424,6 +424,8 @@ you should place your code here."
    (setq visual-line-mode-hook 'visual-fill-column-mode)
    ;; allow splitting windows with wide margins
    (setq split-window-preferred-function 'visual-fill-column-split-window-sensibly)
+   ;; set right curly arrow even when visual line mode is wrapping logical lines into visual ones.
+   (setq visual-line-fringe-indicators '(arrow right-curly-arrow))
    ;; adjust margins upon text resize 
    (advice-add 'text-scale-adjust :after
                #'visual-fill-column-adjust)
