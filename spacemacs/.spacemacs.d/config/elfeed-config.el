@@ -1,5 +1,5 @@
-(require 'elfeed)
-(require 'elfeed-goodies)
+;; (require 'elfeed)
+;; (require 'elfeed-goodies)
 (elfeed-goodies/setup)
 (setq httpd-port 8181)
 ;; (setq elfeed-search-trailing-width 23)
