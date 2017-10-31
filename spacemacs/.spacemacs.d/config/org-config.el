@@ -103,7 +103,7 @@
     ("a" "Appointment" entry (file  "~/Sync/share/phone/box/notes/gcal/dpa.org" )
      "* %?\n\n%^T\n%a\n:PROPERTIES:\n\n:END:\n\n")
     ;; diary.org
-    ("d" "Diary" entry (file+datetree "~/Sync/share/phone/box/notes/diary.org")
+    ("d" "Diary" entry (file+olp+datetree "~/Sync/share/phone/box/notes/diary.org")
      "* %?\n%U\n" :clock-in t :clock-resume t)
     ;; ideas.org
     ("i" "idea" entry (file "~/Sync/share/phone/box/notes/ideas.org")
@@ -550,7 +550,9 @@ show this warning instead."
 	  )))))
 (add-hook 'org-finalize-agenda-hook 'gs/remove-agenda-regions)
 
-;(push "~/.spacemacs.d/config/" load-path)
+(setq-default dotspacemacs-configuration-layers
+              '((org :variables org-projectile-file "TODOs.org")))
+
 (require 'cal-config nil t)
 
 (provide 'org-config)
