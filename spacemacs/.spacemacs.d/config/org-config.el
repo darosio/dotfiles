@@ -4,7 +4,10 @@
 ;; can now say nil or 'next
 (setq org-agenda-show-future-repeats 'next)
 
+;; Then inline latex like $y=mx+c$ will appear in a different colour in an
+;; org-mode file to help it stand out.
 (setq org-highlight-latex-and-related '(latex))
+
 ;; Some general settings
 (setq-default org-directory "~/Sync/notes/")
 (setq org-default-notes-file "~/Sync/share/phone/box/notes/inbox.org")
@@ -19,8 +22,6 @@
 
 (setq org-agenda-include-diary nil)
 (setq org-agenda-diary-file "~/Sync/share/phone/box/notes/diary.org")
-;; a global-set-key example
-(global-set-key (kbd "<f7> <f8>") 'calendar)    ; F7 F8
 
 ;; Display properties DEF ?
 (setq org-cycle-separator-lines 0)

@@ -89,8 +89,8 @@ values."
                        version-control-global-margin t)
      themes-megapack
      (pdf-tools :variables
-                pdf-annot-activate-created-annotations t
-                pdf-view-set-slice-from-bounding-box t)
+                pdf-annot-activate-created-annotations t)
+                ;; pdf-view-set-slice-from-bounding-box t)
      ;; (ranger :variables
      ;;         ranger-show-preview t)
      pandoc
@@ -198,6 +198,8 @@ values."
    dotspacemacs-themes '(farmhouse-dark
                          hemisu-dark
                          hemisu-light
+                         monokai
+                         zenburn
                          alect-light
                          farmhouse-light
                          birds-of-paradise-plus
@@ -207,12 +209,14 @@ values."
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
-   dotspacemacs-default-font '("Dejavu Sans Mono"
+   ;; dotspacemacs-default-font '("Dejavu Sans Mono"
    ;; dotspacemacs-default-font '("Fira Code"
    ;; dotspacemacs-default-font '("Input Mono"
+   ;; dotspacemacs-default-font '("Tamsyn"
+   dotspacemacs-default-font '("Hack"
                                :size 15
-                               :weight normal
-                               ;; :width condensed
+                               ;; :weight normal
+                               ;; :width normal
                                :powerline-scale 0.8)
    ;; The leader key
    dotspacemacs-leader-key "SPC"
@@ -550,16 +554,16 @@ you should place your code here."
 
    ;; EWW
    ;; http://irreal.org/blog/?p=6278
-   (defalias 'gk-urls-external-browser 'browse-url-xdg-open)
-   (defun gk-browse-url (&rest args)
-     "Prompt for whether or not to browse with EWW, if no browse
-with external browser."
-     (apply::
-      (if (y-or-n-p "Browse with EWW? ")
-          'eww-browse-url
-        #'gk-urls-external-browser)
-      args))
-   (setq browse-url-browser-function #'gk-browse-url)
+;;    (defalias 'gk-urls-external-browser 'browse-url-xdg-open)
+;;    (defun gk-browse-url (&rest args)
+;;      "Prompt for whether or not to browse with EWW, if no browse
+;; with external browser."
+;;      (apply::
+;;       (if (y-or-n-p "Browse with EWW? ")
+;;           'eww-browse-url
+;;         #'gk-urls-external-browser)
+;;       args))
+;;    (setq browse-url-browser-function #'gk-browse-url)
 )
 
 ;; Do not write anything past this comment. This is where Emacs will
@@ -571,7 +575,7 @@ with external browser."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (xterm-color unfill shell-pop mwim multi-term eshell-z eshell-prompt-extras esh-help zenburn-theme zen-and-art-theme zeal-at-point yapfify yaml-mode ws-butler writegood-mode wordnut winum which-key web-mode volatile-highlights visual-fill-column vi-tilde-fringe uuidgen use-package underwater-theme ujelly-theme typo twilight-theme twilight-bright-theme twilight-anti-bright-theme toxi-theme toc-org tao-theme tangotango-theme tango-plus-theme tango-2-theme tagedit synosaurus synonymous sunny-day-theme sublime-themes subatomic256-theme subatomic-theme spaceline spacegray-theme soothe-theme solarized-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme smeargle slim-mode seti-theme scss-mode sass-mode reverse-theme restart-emacs ranger rainbow-mode rainbow-delimiters railscasts-theme pyvenv pytest pyenv-mode py-isort purple-haze-theme pug-mode professional-theme pocket-reader plantuml-mode planet-theme pip-requirements phoenix-dark-pink-theme phoenix-dark-mono-theme persp-mode pcre2el paradox pandoc-mode ox-twbs ox-reveal ox-pandoc outline-magic orgit organic-green-theme org-ref org-projectile org-present org-pomodoro org-gcal org-download org-bullets open-junk-file omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme ob-ipython noctilux-theme neotree naquadah-theme mustang-theme mu4e-maildirs-extension mu4e-alert move-text monokai-theme monochrome-theme molokai-theme moe-theme mmm-mode minimal-theme material-theme markdown-toc majapahit-theme magit-gitflow madhat2r-theme macrostep lush-theme lorem-ipsum live-py-mode linum-relative link-hint light-soap-theme less-css-mode langtool jbeans-theme jazz-theme ir-black-theme interleave insert-shebang inkpot-theme info+ indent-guide hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt heroku-theme hemisu-theme help-fns+ helm-themes helm-swoop helm-pydoc helm-projectile helm-mu helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-dash helm-css-scss helm-company helm-c-yasnippet helm-ag hc-zenburn-theme gruvbox-theme gruber-darker-theme graphviz-dot-mode grandshell-theme gotham-theme google-translate golden-ratio gnuplot gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gh-md gandalf-theme fuzzy flyspell-popup flyspell-correct-helm flycheck-pos-tip flx-ido flatui-theme flatland-theme fish-mode fill-column-indicator fasd farmhouse-theme fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu espresso-theme emmet-mode elisp-slime-nav elfeed-web elfeed-org elfeed-goodies ein dumb-jump dracula-theme django-theme diff-hl deft define-word darktooth-theme darkokai-theme darkmine-theme darkburn-theme dakrone-theme cython-mode cyberpunk-theme csv-mode company-web company-statistics company-shell company-quickhelp company-anaconda column-enforce-mode color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized color-identifiers-mode clues-theme clean-aindent-mode cherry-blossom-theme busybee-theme bubbleberry-theme birds-of-paradise-plus-theme badwolf-theme auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile artbollocks-mode apropospriate-theme anti-zenburn-theme ample-zen-theme ample-theme alect-themes aggressive-indent afternoon-theme adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell))))
+    ())))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
