@@ -253,7 +253,7 @@ bindsym $mod+F12 exec xrdb -DSOLARIZED_LIGHT -merge .Xresources
 # Favorite programs
 # F2 and F3 for thunderbird and firefox
 #bindsym $mod+F2 workspace 2; exec thunderbird
-bindsym $mod+F2 workspace 2; exec emacs
+bindsym $mod+F1 workspace 1; exec emacs
 bindsym $mod+F3 workspace 3; exec firefox
 
 # turn bell off
