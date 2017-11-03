@@ -74,13 +74,15 @@
 (setq bibtex-completion-notes-template-one-file
       (format
        "\n** TODO ${=key=}: ${title}\n  :PROPERTIES:\n  :Custom_ID: ${=key=}\n  :INTERLEAVE_PDF: ./pdfs/${=key=}.pdf\n  :END:\n\ncite:${=key=}\n\n"))
-(setq org-ref-notes-function
-      (lambda (thekey)
-        (let ((bibtex-completion-bibliography (org-ref-find-bibliography)))
-          (bibtex-completion-edit-notes
-           (list (car (org-ref-get-bibtex-key-and-file thekey)))))))
-(add-hook 'org-mode-hook
-          (lambda ()
-            (define-key org-mode-map  (kbd "C-c 9") 'org-ref-open-notes-at-point)))
+
+;; (setq org-ref-notes-function
+;;       (lambda (thekey)
+;;         (let ((bibtex-completion-bibliography (org-ref-find-bibliography)))
+;;           (bibtex-completion-edit-notes
+;;            (list (car (org-ref-get-bibtex-key-and-file thekey)))))))
+;; (add-hook 'org-mode-hook
+;;           (lambda ()
+;;             (define-key org-mode-map  (kbd "C-c 9") 'org-ref-open-notes-at-point)))
+;; To be deleted
 
 (provide 'bibtex-config)

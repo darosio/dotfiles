@@ -1,6 +1,5 @@
-;; gcalendar
+;; (1) gcalendar
 (require 'org-gcal)
-
 (setq org-gcal-client-id "100447390762-1unqkpjv30do2uq0r5uetd8pkr9ha81s.apps.googleusercontent.com"
       org-gcal-client-secret "EhuKxnNmAoM2XMPjCFOpiLDK"
       org-gcal-file-alist '(("danielepietroarosio@gmail.com" .
@@ -22,12 +21,13 @@
 ;; syncs with my Google calendar when I capture.
 ;(add-hook 'org-capture-after-finalize-hook (lambda () (org-gcal-sync) ))
 
-;; Sunrise and sunset
+;; (2) Sunrise and sunset
 (setq calendar-latitude 46.067270) ; Borino
 (setq calendar-longitude 11.166153)
 (setq calendar-location-name "Trento")
 (setq calendar-time-zone 60)
-;; Holidays (setq holiday-general-holidays '(
+
+;; (3) Holidays (setq holiday-general-holidays '(
 (setq holiday-other-holidays
       '((holiday-fixed 1 1 "Capodanno")
         (holiday-fixed 5 1 "1 Maggio")

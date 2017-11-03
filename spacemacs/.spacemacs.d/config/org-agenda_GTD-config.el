@@ -1,40 +1,27 @@
-;; If you have a repeating task in your agenda, say every other day,
-;; and you show the agenda for, say, the next 15 days, it is quite
-;; annoying to see that task displayed for seven or eight days. You
-;; can now say nil or 'next
-(setq org-agenda-show-future-repeats 'next)
 
-;; Then inline latex like $y=mx+c$ will appear in a different colour in an
-;; org-mode file to help it stand out.
-(setq org-highlight-latex-and-related '(latex))
+;; Agenda ======================================================================
+(progn
+  ;; Some general settings
+  (setq-default org-directory "~/Sync/notes/")
+  (setq org-default-notes-file "~/Sync/share/phone/box/notes/inbox.org")
+  (load-library "find-lisp")
+  (setq org-agenda-files (append '("~/Sync/share/phone/box/notes/gtd.org"
+                                   "~/Sync/share/phone/box/notes/inbox.org"
+                                   "~/Sync/share/phone/box/notes/gcal"
+                                   "~/Sync/notes/proj"
+                                   "~/Sync/notes/work"
+                                   "~/Sync/notes/home"
+                                   )
+                             (find-lisp-find-files "~/Sync/notes/arch" "\.org$")))
+  (setq org-agenda-include-diary nil
+        org-agenda-diary-file "~/Sync/share/phone/box/notes/diary.org")
+  ;; If you have a repeating task in your agenda, say every other day, and you
+  ;; show the agenda for, say, the next 15 days, it is quite annoying to see
+  ;; that task displayed for seven or eight days. You can now say nil or 'next
+  (setq org-agenda-show-future-repeats 'next)
 
-;; Some general settings
-(setq-default org-directory "~/Sync/notes/")
-(setq org-default-notes-file "~/Sync/share/phone/box/notes/inbox.org")
-(load-library "find-lisp")
-(setq org-agenda-files (append '("~/Sync/share/phone/box/notes/gtd.org"
-                               "~/Sync/share/phone/box/notes/inbox.org"
-                               "~/Sync/share/phone/box/notes/gcal"
-                               "~/Sync/notes/proj"
-                               "~/Sync/notes/work"
-                               "~/Sync/notes/home"
-                               ) (find-lisp-find-files "~/Sync/notes/arch" "\.org$")))
-
-(setq org-agenda-include-diary nil)
-(setq org-agenda-diary-file "~/Sync/share/phone/box/notes/diary.org")
-
-;; Display properties DEF ?
-(setq org-cycle-separator-lines 0)
-(setq org-tags-column 80)
-(setq org-agenda-tags-column org-tags-column)
-(setq org-agenda-sticky t)
-
-;; Set default column view headings: Task Effort Clock_Summary DEF ?
-(setq org-columns-default-format "%50ITEM(Task) %7Effort(Effort){:} %7CLOCKSUM %1PRIORITY %TAGS %SCHEDULED %DEADLINE")
-
-
-;; == Tags ==
-(setq org-tag-alist (quote ((:startgroup)
+  ;; == Tags ==
+  (setq org-tag-alist (quote ((:startgroup)
                               ("@errands" . ?e)
                               ("@internet" . ?i)
                               ("@home" . ?h)
@@ -42,88 +29,103 @@
                               ("@dati" . ?d)
                               ("@email" . ?m)
                               ("@phone" . ?t)
-                            (:endgroup)
-                            ("PERSONAL" . ?p)
-                            ("WORK" . ?w)
-                            (:startgroup)
+                              (:endgroup)
+                              ("PERSONAL" . ?p)
+                              ("WORK" . ?w)
+                              (:startgroup)
                               ("NEXT" . ?N)
                               ("WAITING" . ?W)
                               ("HOLD" . ?H)
                               ("CANCELLED" . ?C)
-                            (:endgroup) )))
-;; Allow setting single tags without the menu
-;; (setq org-fast-tag-selection-single-key 'expert)
-;; Include the todo keywords
-;; (setq org-fast-tag-selection-include-todo t)
-;; For tag searches ignore tasks with scheduled and deadline dates
-;; (setq org-agenda-tags-todo-honor-ignore-options t)
+                              (:endgroup) )))
+  ;; Allow setting single tags without the menu
+  (setq org-fast-tag-selection-single-key 'expert)
+  ;; Include the todo keywords
+  (setq org-fast-tag-selection-include-todo t)
 
 
-;; == STATES ==
-;; todo keywords -   TYP_TODO | SEQ_TODO
-;; (setq org-use-fast-todo-selection t) ;; DEF
-(setq org-todo-keywords
-      '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
-        (sequence "APPT(a)")
-        (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "MEETING")) )
-        ;; (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING"))))
-;; Custom colors for the keywords
-(setq org-todo-keyword-faces
-            '(("TODO" :foreground "red" :weight bold)
-              ("NEXT" :foreground "light blue" :weight bold)
-              ("APPT" :foreground "yellow" :weight bold)
-              ("DONE" :foreground "forest green" :weight bold)
-              ("WAITING" :foreground "orange" :weight bold)
-              ("HOLD" :foreground "magenta" :weight bold)
-              ("CANCELLED" :foreground "forest green" :weight bold)
-              ("MEETING" :foreground "forest green" :weight bold)
-              ;; ("PHONE" :foreground "forest green" :weight bold)
-              ))
-;; Auto-update tags whenever the state ref""is changed
-(setq org-todo-state-tags-triggers
-      '(("CANCELLED" ("CANCELLED" . t))
-        ("WAITING" ("WAITING" . t))
-        ("HOLD" ("WAITING") ("HOLD" . t))
-        (done ("WAITING") ("HOLD"))
-        ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
-        ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
-        ("DONE" ("WAITING") ("CANCELLED") ("HOLD")) ))
-;; S-left S-right skipping setting timespamps  DEF
-;; (setq org-treat-S-cursor-todo-selection-as-state-change nil)
+  ;; == STATES ==
+  ;; todo keywords -   TYP_TODO | SEQ_TODO
+  ;; (setq org-use-fast-todo-selection t) ;; DEF
+  (setq org-todo-keywords
+        '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
+          (sequence "APPT(a)")
+          (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "MEETING")) )
+  ;; (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING"))))
+  ;; Custom colors for the keywords
+  (setq org-todo-keyword-faces
+        '(("TODO" :foreground "red" :weight bold)
+          ("NEXT" :foreground "light blue" :weight bold)
+          ("APPT" :foreground "yellow" :weight bold)
+          ("DONE" :foreground "forest green" :weight bold)
+          ("WAITING" :foreground "orange" :weight bold)
+          ("HOLD" :foreground "magenta" :weight bold)
+          ("CANCELLED" :foreground "forest green" :weight bold)
+          ("MEETING" :foreground "forest green" :weight bold)
+          ;; ("PHONE" :foreground "forest green" :weight bold)
+          ))
+  ;; Auto-update tags whenever the state ref""is changed
+  (setq org-todo-state-tags-triggers
+        '(("CANCELLED" ("CANCELLED" . t))
+          ("WAITING" ("WAITING" . t))
+          ("HOLD" ("WAITING") ("HOLD" . t))
+          (done ("WAITING") ("HOLD"))
+          ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
+          ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
+          ("DONE" ("WAITING") ("CANCELLED") ("HOLD")) ))
+  ;; S-left S-right skipping setting timespamps  DEF
+  ;; (setq org-treat-S-cursor-todo-selection-as-state-change nil)
 
-(add-hook 'org-capture-mode-hook 'evil-insert-state)
-;; == Captures ==
-(defvar org-capture-templates
-  '(("t" "todo" entry (file org-default-notes-file)
+  ;; == Captures ==
+  (defvar org-capture-templates
+    '(("t" "todo" entry (file org-default-notes-file)
        "* TODO %?\n%U\n%a\n" :clock-in t :clock-resume t)
-    ("b" "Blank" entry (file org-default-notes-file)
-     "* %?\n%u")
-    ("m" "Meeting" entry (file org-default-notes-file)
-     "* MEETING with %? :MEETING:\n%t" :clock-in t :clock-resume t)
-    ;; diary.org
-    ("a" "Appointment" entry (file  "~/Sync/share/phone/box/notes/gcal/dpa.org" )
-     "* %?\n\n%^T\n%a\n:PROPERTIES:\n\n:END:\n\n")
-    ;; diary.org
-    ("d" "Diary" entry (file+olp+datetree "~/Sync/share/phone/box/notes/diary.org")
-     "* %?\n%U\n" :clock-in t :clock-resume t)
-    ;; ideas.org
-    ("i" "idea" entry (file "~/Sync/share/phone/box/notes/ideas.org")
-     "* %? :IDEA: \n%u")
-    ;; gtd.org
-    ("h" "Habit" entry (file+headline "~/Sync/share/phone/box/notes/gtd.org" "Habits")
-     "* TODO %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:REPEAT_TO_STATE: TODO\n:END:\n")
-    ("n" "Next Task" entry (file+headline "~/Sync/share/phone/box/notes/gtd.org" "Tasks")
-     "** NEXT %? \nDEADLINE: %t")
-    ("r" "respond" entry (file+headline "~/Sync/share/phone/box/notes/gtd.org" "Reply")
-     "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
-    ("w" "waiting reply" entry (file+headline "~/Sync/share/phone/box/notes/gtd.org" "Reply")
-     "* WAITING Reply from %:from on %:subject\n %U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
-    ;; spesa.org
-    ("s" "Spesa" entry (file+headline "~/Sync/share/phone/box/notes/spesa.org" "Supermarket")
-     "* TODO %? \n")
-    ))
+      ("b" "Blank" entry (file org-default-notes-file)
+       "* %?\n%u")
+      ("m" "Meeting" entry (file org-default-notes-file)
+       "* MEETING with %? :MEETING:\n%t" :clock-in t :clock-resume t)
+      ;; diary.org
+      ("a" "Appointment" entry (file  "~/Sync/share/phone/box/notes/gcal/dpa.org" )
+       "* %?\n\n%^T\n%a\n:PROPERTIES:\n\n:END:\n\n")
+      ;; diary.org
+      ("d" "Diary" entry (file+olp+datetree "~/Sync/share/phone/box/notes/diary.org")
+       "* %?\n%U\n" :clock-in t :clock-resume t)
+      ;; ideas.org
+      ("i" "idea" entry (file "~/Sync/share/phone/box/notes/ideas.org")
+       "* %? :IDEA: \n%u")
+      ;; gtd.org
+      ("h" "Habit" entry (file+headline "~/Sync/share/phone/box/notes/gtd.org" "Habits")
+       "* TODO %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:REPEAT_TO_STATE: TODO\n:END:\n")
+      ("n" "Next Task" entry (file+headline "~/Sync/share/phone/box/notes/gtd.org" "Tasks")
+       "** NEXT %? \nDEADLINE: %t")
+      ("r" "respond" entry (file+headline "~/Sync/share/phone/box/notes/gtd.org" "Reply")
+       "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
+      ("w" "waiting reply" entry (file+headline "~/Sync/share/phone/box/notes/gtd.org" "Reply")
+       "* WAITING Reply from %:from on %:subject\n %U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
+      ;; spesa.org
+      ("s" "Spesa" entry (file+headline "~/Sync/share/phone/box/notes/spesa.org" "Supermarket")
+       "* TODO %? \n")
+      ))
            ;("w" "org-protocol" entry (file "~/git/org/refile.org")
             ;"* TODO Review %c\n%U\n" :immediate-finish t)
+  (add-hook 'org-capture-mode-hook 'evil-insert-state)
+
+  ;; Display properties DEF ?
+  (setq org-cycle-separator-lines 0)
+  (setq org-tags-column 80)
+  (setq org-agenda-tags-column org-tags-column)
+  (setq org-agenda-sticky t)
+  ;; Set default column view headings: Task Effort Clock_Summary DEF ?
+  (setq org-columns-default-format "%50ITEM(Task)
+                                     %7Effort(Effort){:}
+                                     %7CLOCKSUM
+                                     %1PRIORITY
+                                      %TAGS %SCHEDULED %DEADLINE")
+)
+
+
+
+
 
 
 ;; == Refile ==
@@ -181,7 +183,6 @@
 
 ;; ;; == Habits ==
 (require 'org-habit)
-
 ;; (setq org-modules '(org-habit))
 ;; (setq org-habit-show-habits-only-for-today t)
 
@@ -372,7 +373,7 @@ show this warning instead."
 	(concat "{" loc "} ")
       "")))
 
-;; Variables for ignoring tasks with deadlines
+;; For tag searches ignore tasks with scheduled and deadline dates
 (setq org-agenda-tags-todo-honor-ignore-options t)
 (setq org-deadline-warning-days 70)
 
@@ -551,9 +552,7 @@ show this warning instead."
 	  )))))
 (add-hook 'org-finalize-agenda-hook 'gs/remove-agenda-regions)
 
-(setq-default dotspacemacs-configuration-layers
-              '((org :variables org-projectile-file "TODOs.org")))
 
 (require 'cal-config nil t)
 
-(provide 'org-config)
+(provide 'org-agenda_GTD-config)

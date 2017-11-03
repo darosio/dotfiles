@@ -1,11 +1,10 @@
-;; (require 'elfeed)
-;; (require 'elfeed-goodies)
 (elfeed-goodies/setup)
 (setq httpd-port 8181)
-;; (setq elfeed-search-trailing-width 23)
-;; (setq elfeed-search-title-max-width 190)
-;; (defun elfeed-search-format-date (date)
-;;   (format-time-string "%Y-%m-%d %H:%M" (seconds-to-time date)))
+
+(setq elfeed-search-trailing-width 23)
+(setq elfeed-search-title-max-width 190)
+(defun elfeed-search-format-date (date)
+  (format-time-string "%Y-%m-%d %H:%M" (seconds-to-time date)))
 
 
 (defun elfeed-goodies/entry-line-draw (entry)
@@ -65,10 +64,10 @@
 
 ;; starred flagged "f"
 ;; http://pragmaticemacs.com/category/elfeed/
-;; (defalias 'elfeed-toggle-star
-;;   (elfeed-expose #'elfeed-search-toggle-all 'star)
-;; (eval-after-load 'elfeed-search
-;;   '(define-key elfeed-search-mode-map (kbd "f") 'elfeed-toggle-star))
+(defalias 'elfeed-toggle-star
+  (elfeed-expose #'elfeed-search-toggle-all 'star)
+(eval-after-load 'elfeed-search
+  '(define-key elfeed-search-mode-map (kbd "t") 'elfeed-toggle-star)))
 
 ;; as for mu4e
 (define-key elfeed-show-mode-map (kbd "w") 'visual-line-mode)
@@ -106,7 +105,7 @@
   `(defhydra mz/hydra-elfeed ()
      "filter"
      ,@(mz/make-elfeed-cats (elfeed-db-get-all-tags))
-     ("*" (elfeed-search-set-filter "@6-months-ago +star") "Flagged")
+     ("s" (elfeed-search-set-filter "@6-months-ago +star") "Flagged")
      ("A" (elfeed-search-set-filter "@6-months-ago") "All")
      ("T" (elfeed-search-set-filter "@1-day-ago") "Today")
      ("q" bjm/elfeed-save-db-and-bury "Quit Elfeed" :color blue)

@@ -62,9 +62,12 @@ values."
            mu4e-enable-mode-line t)
      markdown
      (org :variables
+          org-enable-bootstrap-support t
+          org-enable-github-support t
           org-enable-reveal-js-support t
           org-reveal-root "/home/examples/reveal.js"
-          org-enable-bootstrap-support t)
+          org-projectile-file "TODOs.org")
+
      (plantuml :variables
                org-plantuml-jar-path "/opt/plantuml/plantuml.jar"
                plantuml-jar-path "/opt/plantuml/plantuml.jar")
@@ -96,8 +99,7 @@ values."
      pandoc
      ipython-notebook
      ;; ess
-     yaml
-     )
+     yaml)
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
@@ -110,8 +112,10 @@ values."
                                       artbollocks-mode
                                       ob-ipython
                                       helm-mu
-                                      synonymous
+                                      ;; synonymous
                                       wordnut
+                                      ;; helm-dictionary
+                                      sdcv
                                       adaptive-wrap
                                       synosaurus
                                       outline-magic
@@ -203,7 +207,7 @@ values."
                          alect-light
                          farmhouse-light
                          birds-of-paradise-plus
-   ;;                       spacemacs-dark
+                         spacemacs-dark
                          spacemacs-light)
    ;; If non nil the cursor color matches the state color in GUI Emacs.
    dotspacemacs-colorize-cursor-according-to-state t
@@ -392,30 +396,30 @@ This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
 
-   (setq google-translate-translation-directions-alist '(("it" . "en") ))
+  ;; (require 'org-projectile)
+  (require 'helm-bookmark)
+  (setq bookmark-save-flag 1
+        bookmark-default-file "~/.spacemacs.d/bookmarks" )
 
-   (push "~/.spacemacs.d/config/" load-path)
+  ;; (use-package mu4e-config :defer t)
+  ;; (with-eval-after-load 'elfeed (autoload 'elfeed-config "elfeed-config"))
+  (push "~/.spacemacs.d/config/" load-path)
    (with-eval-after-load 'mu4e
-     (require 'mu4e-config)
-     )
+     (require 'mu4e-config))
    (with-eval-after-load 'org
-     (require 'org-config)
-     )
-   ;; (use-package mu4e-config :defer t)
-   ;; (with-eval-after-load 'elfeed (autoload 'elfeed-config "elfeed-config"))
+     (require 'org-agenda_GTD-config))
    (with-eval-after-load 'elfeed
-     (require 'elfeed-config)
-     )
+     (require 'elfeed-config))
    (with-eval-after-load 'bibtex
-     (require 'bibtex-config)
-     )
+     (require 'bibtex-config))
+
    (with-eval-after-load 'deft
      (setq deft-directory "~/Sync/notes")
      (setq deft-extensions '("org" "md" "txt" "markdown"))
-     (setq deft-recursive t)
-     )
+     (setq deft-recursive t))
 
-    
+   (setq google-translate-translation-directions-alist '(("it" . "en") ))
+
    ;; (require 'publish-config)
    ;; (require 'org-webpage)
    ;; (owp/add-project-config
@@ -442,6 +446,10 @@ you should place your code here."
    ;;   (when org-inline-image-overlays
    ;;     (org-redisplay-inline-images)))
    ;; (add-hook 'org-babel-after-execute-hook 'my/fix-inline-images)
+
+   ;; Then inline latex like $y=mx+c$ will appear in a different colour in an
+   ;; org-mode file to help it stand out.
+   (setq org-highlight-latex-and-related '(latex))
 
    (org-babel-do-load-languages 'org-babel-load-languages '((plantuml . t)
                                                             (python . t)
@@ -506,7 +514,6 @@ you should place your code here."
 
    (setq org-export-latex-hyperref-format "\\ref{%s}")
 
-
    (setq org-latex-pdf-process
          '("latexmk -pdflatex='pdflatex -interaction nonstopmode' -pdf -bibtex -f %f"))
    (require 'ox-latex)
@@ -541,12 +548,9 @@ you should place your code here."
    (add-to-list 'load-path "~/.spacemacs.d/")
    (require 'diction)
 
-   (global-set-key [f11] 'synonymous-synonyms)
+   (global-set-key [f11] 'sdcv-search-input)
    (global-set-key [f12] 'wordnut-lookup-current-word)
    (global-set-key [(control f12)] 'wordnut-search)
-   (require 'helm-bookmark)
-   (setq bookmark-save-flag 1
-         bookmark-default-file "~/.spacemacs.d/bookmarks" )
 
    ;; make cursor the width of the character it is under
    ;; i.e. full width of a TAB
@@ -564,7 +568,46 @@ you should place your code here."
 ;;         #'gk-urls-external-browser)
 ;;       args))
 ;;    (setq browse-url-browser-function #'gk-browse-url)
-)
+   (require 'browse-url) ; part of gnu emacs
+
+   (defun my-lookup-wikipedia ()
+     "Look up the word under cursor in Wikipedia.
+If there is a text selection (a phrase), use that. This command
+switches to browser."
+     (interactive)
+     (let (word)
+       (setq word
+             (if (use-region-p)
+                 (buffer-substring-no-properties (region-beginning) (region-end))
+               (current-word)))
+       (setq word (replace-regexp-in-string " " "_" word))
+       (eww (concat "http://en.wikipedia.org/wiki/" word))
+       ;; (eww myUrl) ; emacs's own browser
+       ))
+   (defun my-lookup-wiktionary ()
+     "Look up the word under cursor in Wikipedia.
+If there is a text selection (a phrase), use that. This command
+switches to browser."
+     (interactive)
+     (let (word)
+       (setq word
+             (if (use-region-p)
+                 (buffer-substring-no-properties (region-beginning) (region-end))
+               (current-word)))
+       (setq word (replace-regexp-in-string " " "_" word))
+       (eww (concat "http://en.wiktionary.org/wiki/" word))
+       ;; (eww myUrl) ; emacs's own browser
+       ))
+
+   (require 'sdcv)
+   (eval-after-load 'sdcv
+     '(progn
+        (define-key sdcv-mode-map (kbd "C-q") 'delete-window)
+        (define-key sdcv-mode-map (kbd "C-J") 'sdcv-next-dictionary)
+        (define-key sdcv-mode-map (kbd "C-K") 'sdcv-previous-dictionary)))
+
+
+   )
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
@@ -575,7 +618,7 @@ you should place your code here."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    ())))
+    (sdcv showtip synonyms helm-dictionary ox-gfm helm-make color-theme-sanityinc-tomorrow js2-mode projectile helm helm-core magit s zenburn-theme zen-and-art-theme zeal-at-point yapfify yaml-mode xterm-color ws-butler writegood-mode wordnut winum which-key web-mode volatile-highlights visual-fill-column vi-tilde-fringe uuidgen use-package unfill underwater-theme ujelly-theme twilight-theme twilight-bright-theme twilight-anti-bright-theme toxi-theme toc-org tao-theme tangotango-theme tango-plus-theme tango-2-theme tagedit synosaurus synonymous sunny-day-theme sublime-themes subatomic256-theme subatomic-theme spaceline spacegray-theme soothe-theme solarized-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme smeargle slim-mode shell-pop seti-theme scss-mode sass-mode reverse-theme restart-emacs rainbow-mode rainbow-delimiters railscasts-theme pyvenv pytest pyenv-mode py-isort purple-haze-theme pug-mode professional-theme pocket-reader plantuml-mode planet-theme pip-requirements phoenix-dark-pink-theme phoenix-dark-mono-theme persp-mode pcre2el paradox pandoc-mode ox-twbs ox-reveal ox-pandoc outline-magic orgit organic-green-theme org-ref org-projectile org-present org-pomodoro org-gcal org-download org-bullets open-junk-file omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme ob-ipython noctilux-theme neotree naquadah-theme mwim mustang-theme multi-term mu4e-maildirs-extension mu4e-alert move-text monokai-theme monochrome-theme molokai-theme moe-theme mmm-mode minimal-theme material-theme markdown-toc majapahit-theme magit-gitflow madhat2r-theme macrostep lush-theme lorem-ipsum live-py-mode linum-relative link-hint light-soap-theme less-css-mode langtool jbeans-theme jazz-theme ir-black-theme interleave insert-shebang inkpot-theme info+ indent-guide hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt heroku-theme hemisu-theme help-fns+ helm-themes helm-swoop helm-pydoc helm-projectile helm-mu helm-mode-manager helm-gitignore helm-flx helm-descbinds helm-dash helm-css-scss helm-company helm-c-yasnippet helm-ag hc-zenburn-theme gruvbox-theme gruber-darker-theme graphviz-dot-mode grandshell-theme gotham-theme google-translate golden-ratio gnuplot gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gh-md gandalf-theme fuzzy flyspell-popup flyspell-correct-helm flycheck-pos-tip flx-ido flatui-theme flatland-theme fish-mode fill-column-indicator fasd farmhouse-theme fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu espresso-theme eshell-z eshell-prompt-extras esh-help emmet-mode elisp-slime-nav elfeed-web elfeed-org elfeed-goodies ein dumb-jump dracula-theme django-theme diff-hl deft define-word darktooth-theme darkokai-theme darkmine-theme darkburn-theme dakrone-theme cython-mode cyberpunk-theme csv-mode company-web company-statistics company-shell company-quickhelp company-anaconda column-enforce-mode color-theme-sanityinc-solarized color-identifiers-mode clues-theme clean-aindent-mode cherry-blossom-theme busybee-theme bubbleberry-theme birds-of-paradise-plus-theme badwolf-theme auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile artbollocks-mode apropospriate-theme anti-zenburn-theme ample-zen-theme ample-theme alect-themes aggressive-indent afternoon-theme adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
