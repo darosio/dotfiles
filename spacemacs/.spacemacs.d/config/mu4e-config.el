@@ -316,6 +316,11 @@
 	  mu4e-maildirs-extension-default-collapse-level 1)
 
 
+;; starred flagged "f"
+;; http://pragmaticemacs.com/category/elfeed/
+(defalias 'mu4e-headers-mark-for-flag
+  (eval-after-load 'mu4e-header
+    '(define-key mu4e-headers-mode-map (kbd "f") 'mu4e-headers-flagged-mark)))
 
 
 ;; spell check

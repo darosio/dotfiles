@@ -396,7 +396,7 @@ you should place your code here."
 
    (push "~/.spacemacs.d/config/" load-path)
    (with-eval-after-load 'mu4e
-     (require 'mu4e-config nil t)
+     (require 'mu4e-config)
      )
    (with-eval-after-load 'org
      (require 'org-config)
@@ -407,7 +407,7 @@ you should place your code here."
      (require 'elfeed-config)
      )
    (with-eval-after-load 'bibtex
-     (require 'bibtex-config nil t)
+     (require 'bibtex-config)
      )
    (with-eval-after-load 'deft
      (setq deft-directory "~/Sync/notes")
@@ -525,17 +525,17 @@ you should place your code here."
                   ("\\paragraph{%s}" . "\\paragraph*{%s}")
                   ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 
+   ;; show mode hook
    ;; (add-hook 'elfeed-show-mode-hook (lambda () (buffer-face-set 'variable-pitch)))
    (progn
      ;; use variable-width font for some modes
      (defun xah-use-variable-width-font ()
        "Set current buffer to use variable-width font."
        (variable-pitch-mode 1)
-       (text-scale-increase 1.3 )
+       (text-scale-increase 1.2)
        (visual-line-mode)
        )
      (add-hook 'elfeed-show-mode-hook 'xah-use-variable-width-font)
-     ;; (add-hook 'emacs-lisp-mode-hook 'xah-use-variable-width-font)
      )
 
    (add-to-list 'load-path "~/.spacemacs.d/")
