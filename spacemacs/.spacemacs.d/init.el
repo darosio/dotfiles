@@ -546,8 +546,8 @@ you should place your code here."
    (setq org-gcal-token-file "~/.spacemacs.d/org-gcal/.org-gcal-token"
          org-gcal-logo nil)
 
-   (add-to-list 'load-path "~/.spacemacs.d/")
-   (require 'diction)
+   ;; (add-to-list 'load-path "~/.spacemacs.d/")
+   ;; (require 'diction)
 
    (global-set-key [f11] 'sdcv-search-input)
    (global-set-key [f12] 'wordnut-lookup-current-word)

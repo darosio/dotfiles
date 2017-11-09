@@ -33,6 +33,7 @@
   '(langtool
     ;; artbollocks-mode
     writegood-mode
+    (diction :location local)
     )
   "The list of Lisp packages required by the writing layer.
 
@@ -76,6 +77,13 @@ Each entry is either:
 (defun writing/init-writegood-mode ()
   (use-package writegood-mode
     :defer t
+    ))
+
+(defun writing/init-diction ()
+  (use-package diction
+    :defer t
+    :init
+    (require 'diction)
     ))
 
 ;;; packages.el ends here
