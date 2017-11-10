@@ -106,6 +106,7 @@ Each entry is either:
       (define-key sdcv-mode-map (kbd "C-q") 'delete-window)
       (define-key sdcv-mode-map (kbd "C-J") 'sdcv-next-dictionary)
       (define-key sdcv-mode-map (kbd "C-K") 'sdcv-previous-dictionary))
+    ))
 
 (defun writing/init-diction ()
   (use-package diction
