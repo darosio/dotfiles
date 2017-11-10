@@ -33,6 +33,10 @@
   '(langtool
     ;; artbollocks-mode
     writegood-mode
+    ;; helm-dictionary
+    sdcv
+    wordnut
+    synosaurus
     )
   "The list of Lisp packages required by the writing layer.
 
@@ -76,6 +80,37 @@ Each entry is either:
 (defun writing/init-writegood-mode ()
   (use-package writegood-mode
     :defer t
+    ))
+
+(defun writing/init-wordnut ()
+  (use-package wordnut
+    :defer t
+    :config
+    (global-set-key [f12] 'wordnut-lookup-current-word)
+    (global-set-key [(control f12)] 'wordnut-search)
+    ))
+
+
+(add-to-list 'load-path "~/.spacemacs.d/")
+(require 'diction)
+
+
+
+(defun writing/init-synosaurus ()
+  (use-package synosaurus
+    :defer t
+    ))
+
+(defun writing/init-sdcv ()
+  (use-package sdcv
+    :defer t
+    :init
+    (global-set-key [f11] 'sdcv-search-input)
+    :config
+    (progn
+      (define-key sdcv-mode-map (kbd "C-q") 'delete-window)
+      (define-key sdcv-mode-map (kbd "C-J") 'sdcv-next-dictionary)
+      (define-key sdcv-mode-map (kbd "C-K") 'sdcv-previous-dictionary))
     ))
 
 ;;; packages.el ends here
