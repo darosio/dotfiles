@@ -543,7 +543,6 @@ you should place your code here."
    (setq org-gcal-token-file "~/.spacemacs.d/org-gcal/.org-gcal-token"
          org-gcal-logo nil)
 
-
    ;; make cursor the width of the character it is under
    ;; i.e. full width of a TAB
    (setq x-stretch-cursor t)
