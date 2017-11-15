@@ -51,10 +51,6 @@
 
 
 
-
-
-
-
 (setq mu4e-confirm-quit nil)
 (setq mu4e-get-mail-command "mbsync -a"
 	  mu4e-update-interval 190
@@ -232,6 +228,7 @@
     '( (:date          .  18)    ;; alternatively, use :human-date
        (:flags         .   5)
        (:from          .  22)
+       (:mailing-list  .  12)
        (:subject       .  nil))) ;; alternatively, use :thread-subject
 ;; don't keep message buffers around
 (setq message-kill-buffer-on-exit t)
