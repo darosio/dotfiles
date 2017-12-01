@@ -1,5 +1,3 @@
-export PASSWORD_STORE_DIR=~/Sync/.pass
-export BUP_DIR=/media/rsnapshots/bup
 export PATH=$PATH:~/workspace/HIV_pipeline_mpba/HIV/library_name/
 # for data management in annexes
 copythistree() { 
