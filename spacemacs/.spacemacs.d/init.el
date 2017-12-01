@@ -126,7 +126,7 @@ values."
    ;; A list of packages that will not be installed and loaded.
    dotspacemacs-excluded-packages '(firebelly-theme
                                     niflheim-theme
-									exec-path-from-shell
+                                    exec-path-from-shell
                                     pastels-on-dark-theme
                                     zonokai-theme
                                     tronesque-theme)
