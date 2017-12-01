@@ -11,7 +11,7 @@ PASSWORD_STORE_DIR		DEFAULT=@{HOME}/Sync/.pass
 #GNUPGHOME        DEFAULT=${XDG_CONFIG_HOME}/gnupg
 
 # You can define variables as VARIABLE=VALUE pair
-EDITOR			DEFAULT=emacsclient -c
+EDITOR		DEFAULT="emacsclient -c"
 
 #Incorrect: you can't reuse other variables in VARIABLE=VALUE pair
 #GNUPGHOME=${XDG_CONFIG_HOME}/gnupg

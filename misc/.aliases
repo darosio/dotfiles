@@ -78,7 +78,6 @@ bind '"\C-o":"ranger-cd\C-m"'
 
 # Bash's binds to <F1>
 bind '"\e[24~": "urxvt &\n"'
-export EDITOR='vim'
 #alias of='o "`fzf -e`"'
 export FZF_DEFAULT_OPTS="-e -m --sort 10000"
 #export FZF_DEFAULT_COMMAND='ag -l -g ""'
@@ -135,7 +134,6 @@ alias ee='emacsclient -t'
 alias sm=".local/bin/msmtp-runqueue.sh"
 #export TODO_ACTIONS_DIR=~/Dropbox/todo/.todo.actions.d/
 #export TODO_DIR=~/Dropbox/todo/
-## export EDITOR='geany'
 #if [[ -e /usr/bin/most ]]; then  export PAGER=most; fi
 export UNISONLOCALHOSTNAME=dpa3
 #export CDPATH='.:/Data/0dan'
@@ -286,3 +284,4 @@ pdf_myReduce2() {
 #setterm -blength 0
 alias ww='xfce4-panel --disable-wm-check'
 export MAKEFLAGS='-j4'
+alias emm='systemctl --user start emacs.service'
