@@ -132,8 +132,8 @@ alias nb='ipython notebook --pylab inline'
 alias nb='jupyter notebook'
 alias ipythonp='ipython --pylab=inline'
 alias qpy='ipython qtconsole --pylab'
-alias e='emacs'
-alias ee='emacs -nw'
+alias e='emacsclient -c'
+alias ee='emacsclient -t'
 alias sm=".local/bin/msmtp-runqueue.sh"
 #export TODO_ACTIONS_DIR=~/Dropbox/todo/.todo.actions.d/
 #export TODO_DIR=~/Dropbox/todo/
