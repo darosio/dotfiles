@@ -561,6 +561,15 @@ you should place your code here."
 
    ;; EWW
    ;; http://irreal.org/blog/?p=6278
+
+   (defun eww-more-readable ()
+     "Makes eww more pleasant to use. Run it after eww buffer is loaded."
+     (interactive)
+     (setq eww-header-line-format nil)               ;; removes page title
+     (setq mode-line-format nil)                     ;; removes mode-line
+     (set-window-margins (get-buffer-window) 20 20)  ;; increases size of margins
+     (redraw-display)                                ;; apply mode-line changes
+     (eww-reload 'local))                            ;; apply eww-header changes
 ;;    (defalias 'gk-urls-external-browser 'browse-url-xdg-open)
 ;;    (defun gk-browse-url (&rest args)
 ;;      "Prompt for whether or not to browse with EWW, if no browse
