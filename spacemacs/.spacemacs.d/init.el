@@ -101,8 +101,8 @@ values."
      ;;         ranger-show-preview t)
      pandoc
      ipython-notebook
-	 ess
-	 latex
+     ess
+     latex
      writing
      yaml)
    ;; List of additional packages that will be installed without being
@@ -396,6 +396,16 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
+  ;; C-x C-0 restores the default font size
+  (global-set-key (kbd "C-+") 'text-scale-increase)
+  (global-set-key (kbd "C--") 'text-scale-decrease)
+  ;; dictionary switch
+  (define-key global-map (kbd "C-c s a") (lambda () (interactive) (ispell-change-dictionary "american")))
+  (define-key global-map (kbd "C-c s i") (lambda () (interactive) (ispell-change-dictionary "italian")))
+  (define-key global-map (kbd "C-c s r") 'flyspell-region)
+  (define-key global-map (kbd "C-c s b") 'flyspell-buffer)
+  (define-key global-map (kbd "C-c s s") 'flyspell-mode)
+
   ;; magit
   (setq magit-repository-directories '("~/workspace/"))
   (global-git-commit-mode t)
@@ -456,13 +466,56 @@ you should place your code here."
    (setq org-highlight-latex-and-related '(latex))
 
    (org-babel-do-load-languages 'org-babel-load-languages '((plantuml . t)
+                                                            (awk . t)
                                                             (python . t)
                                                             (ipython . t)
                                                             (gnuplot . t)
                                                             (haskell . t)
-                                                            ;; (R . t)
+                                                            (R . t)
+                                                            (ditaa . t)
+                                                            (octave . t)
+                                                            (sqlite . t)
+                                                            (perl . t)
+                                                            (screen . t)
+                                                            (org . t)
+                                                            (makefile . t)
                                                             (dot . t)
+                                                            (sh . t)
                                                             (shell . t)))
+
+
+(add-to-list 'org-structure-template-alist
+        '("m" "#+begin_src emacs-lisp :tangle init.el\n\n#+end_src" "<src lang=\"emacs-lisp\">\n\n</src>"))
+
+(add-to-list 'org-structure-template-alist
+        '("r" "#+begin_src R :results output :session *R* :exports both\n\n#+end_src" "<src lang=\"R\">\n\n</src>"))
+
+(add-to-list 'org-structure-template-alist
+        '("R" "#+begin_src R :results output graphics :file (org-babel-temp-file \"figure\" \".png\") :exports both :width 600 :height 400 :session *R* \n\n#+end_src" "<src lang=\"R\">\n\n</src>"))
+
+(add-to-list 'org-structure-template-alist
+        '("RR" "#+begin_src R :results output graphics :file  (org-babel-temp-file (concat (file-name-directory (or load-file-name buffer-file-name)) \"figure-\") \".png\") :exports both :width 600 :height 400 :session *R* \n\n#+end_src" "<src lang=\"R\">\n\n</src>"))
+
+(add-to-list 'org-structure-template-alist
+        '("p" "#+begin_src python :results output :exports both\n\n#+end_src" "<src lang=\"python\">\n\n</src>"))
+
+(add-to-list 'org-structure-template-alist
+        '("P" "#+begin_src python :results output :session *python* :exports both\n\n#+end_src" "<src lang=\"python\">\n\n</src>"))
+
+(add-to-list 'org-structure-template-alist
+        '("b" "#+begin_src sh :results output :exports both\n\n#+end_src" "<src lang=\"sh\">\n\n</src>"))
+
+(add-to-list 'org-structure-template-alist
+        '("B" "#+begin_src sh :session foo :results output :exports both \n\n#+end_src" "<src lang=\"sh\">\n\n</src>"))
+
+(add-to-list 'org-structure-template-alist
+        '("g" "#+begin_src dot :results output graphics :file \"/tmp/graph.png\" :exports both
+   digraph G {
+      node [color=black,fillcolor=white,shape=rectangle,style=filled,fontname=\"Helvetica\"];
+      A[label=\"A\"]
+      B[label=\"B\"]
+      A->B
+   }\n#+end_src" "<src lang=\"dot\">\n\n</src>"))
    (require 'ob-ipython)
    ;; don't prompt me to confirm everytime I want to evaluate a block
    ;; (setq org-confirm-babel-evaluate 'never)
