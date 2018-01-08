@@ -285,3 +285,4 @@ pdf_myReduce2() {
 alias ww='xfce4-panel --disable-wm-check'
 export MAKEFLAGS='-j4'
 alias emm='systemctl --user start emacs.service'
+alias ems='systemctl --user stop emacs.service'
