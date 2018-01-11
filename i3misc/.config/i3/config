@@ -291,3 +291,5 @@ for_window [class="^fiji-Main$"] floating enable, border 3, focus_follows_mouse 
 # Show the first scratchpad window
 bindsym $mod+minus scratchpad show
 bindsym $mod+Shift+minus move scratchpad
+
+for_window [class="^.*"] border pixel 0
