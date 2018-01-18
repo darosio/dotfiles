@@ -277,7 +277,7 @@ exec xsetroot -solid "#002b36"
 exec /home/dan/.progs/bin/sendmail.sh
 #
 ## Keyboard layout setting
-exec setxkbmap -layout us,it -option grp:shifts_toggle &
+#exec setxkbmap -layout us,it -option grp:shifts_toggle &
 
 # with the help of xorg-xprop
 for_window [instance="^sun-awt-X11-XFramePeer$"] floating enable
