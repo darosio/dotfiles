@@ -39,7 +39,7 @@ bindsym $mod+o exec xrandr --output VGA1 --auto --right-of LVDS1 &
 bindsym $mod+Shift+o exec xrandr --output VGA1 --off &
 
 # kill focused window
-bindsym $mod+q kill
+bindsym Mod3+q kill
 
 # start dmenu (a program launcher)
 bindsym $mod+d exec dmenu_run -nb "#eee8d5" -nf "#073642" -sb "#dc322f" -fn "-misc-monaco-medium-r-*-*-11-*" -l 30 -i -f -b
@@ -297,7 +297,8 @@ smart_borders on
 set $mode_gaps Gaps: (o) outer, (i) inner
 set $mode_gaps_outer Outer Gaps: +|-|0 (local), Shift + +|-|0 (global)
 set $mode_gaps_inner Inner Gaps: +|-|0 (local), Shift + +|-|0 (global)
-bindsym $mod+Shift+x mode "$mode_gaps"
+#bindsym $mod+Shift+x mode "$mode_gaps"
+bindsym Mod3+g mode "$mode_gaps"
 
 mode "$mode_gaps" {
         bindsym o      mode "$mode_gaps_outer"
