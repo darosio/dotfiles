@@ -10,8 +10,8 @@
 # Please see http://i3wm.org/docs/userguide.html for a complete reference!
 
 set $mod Mod4
-set $alt Mod1
-set $sup Control
+#set $alt Mod1
+#set $sup Control
 
 #exec --no-startup-id xfce4-panel --disable-wm-check
 #exec --no-startup-id xfce4-power-manager
