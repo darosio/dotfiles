@@ -26,6 +26,7 @@ fi
 # exec gnome-session
 # exec openbox-kde-session
 
+#must be before xmodmap
 setxkbmap -layout us\(intl\),it -option grp:shifts_toggle
 [[ -f ~/.Xmodmap ]] && xmodmap ~/.Xmodmap
 
