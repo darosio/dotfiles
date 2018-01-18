@@ -26,13 +26,11 @@ fi
 # exec gnome-session
 # exec openbox-kde-session
 
+setxkbmap -layout us\(intl\),it -option grp:shifts_toggle
+[[ -f ~/.Xmodmap ]] && xmodmap ~/.Xmodmap
+
 # ...or the Window Manager of your choice
 #exec enlightenment_start
 #exec startxfce4
-#if [ -s ~/.Xmodmap ]; then
-setxkbmap -layout 'us(intl)' # needed to use mod5
-#setxkbmap -layout us,it -option grp:shifts_toggle &
-[[ -f ~/.Xmodmap ]] && xmodmap ~/.Xmodmap
-#fi
 #eval "$(keychain --eval --agents ssh,gpg C08BC79E3A3F1D89AD90C0008B6A39EFA290FB41)" &
 exec i3
