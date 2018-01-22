@@ -39,7 +39,7 @@ bindsym $mod+o exec xrandr --output VGA1 --auto --right-of LVDS1 &
 bindsym $mod+Shift+o exec xrandr --output VGA1 --off &
 
 # kill focused window
-bindsym Mod3+q kill
+bindsym $mod+q kill
 
 # start dmenu (a program launcher)
 bindsym $mod+d exec dmenu_run -nb "#eee8d5" -nf "#073642" -sb "#dc322f" -fn "-misc-monaco-medium-r-*-*-11-*" -l 30 -i -f -b
