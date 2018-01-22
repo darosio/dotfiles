@@ -27,7 +27,8 @@ fi
 # exec openbox-kde-session
 
 #must be before xmodmap
-setxkbmap -layout us\(intl\),it -option grp:shifts_toggle
+#setxkbmap -layout us\(intl\),it -option grp:shifts_toggle
+setxkbmap -layout us,it -option grp:shifts_toggle
 [[ -f ~/.Xmodmap ]] && xmodmap ~/.Xmodmap
 
 # ...or the Window Manager of your choice
