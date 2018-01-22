@@ -9,11 +9,11 @@
 
 !! Esc key is mode_switch to use i j k l b in insert mode
 !keycode 9 = Mode_switch
-keycode 43 = h H Left
-keycode 44 = j J Down
-keycode 45 = k K Up
-keycode 46 = l L Right
-keycode 56 = b B BackSpace
+!keycode 43 = h H Left
+!keycode 44 = j J Down
+!keycode 45 = k K Up
+!keycode 46 = l L Right
+!keycode 56 = b B BackSpace
 
 !add Mod4 = Hyper_L
 !add Mod1 = 0x007D 0x009C Alt_L Alt_L
