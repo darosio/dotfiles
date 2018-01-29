@@ -1,19 +1,13 @@
-;; allow for updating mail using 'U' in the main view:
-;(setq mu4e-get-mail-command "offlineimap -u quiet")
-(require 'org-mu4e)
 
 ;; https://martinralbrecht.wordpress.com/2016/05/30/handling-email-with-emacs/
-(require 'helm-mu)
-(bind-key "S" #'helm-mu mu4e-main-mode-map)
+(use-package helm-mu
+  :ensure t
+  :config (progn
+            (bind-key "S" #'helm-mu mu4e-main-mode-map)))
 
 
-(add-hook 'message-mode-hook #'flyspell-mode)
-(add-hook 'message-mode-hook #'typo-mode)
-(add-hook 'message-mode-hook #'adict-guess-dictionary)
-(add-hook 'message-mode-hook #'footnote-mode)
-
+;; Attachment from locate "SPC f L" ... "C-z"
 (helm-add-action-to-source "Attach to Email" #'mml-attach-file helm-source-locate)
-
 ;; Attach multiple files from helm-ind-files-actions (and dired)
 (eval-when-compile (require 'dired))
 (defun iqbal-mu4e-file-attach-marked-files ()
@@ -25,25 +19,25 @@
     (iqbal-mu4e-file-attach-marked-files)))
 (with-eval-after-load 'dired
   (define-key dired-mode-map (kbd "a") #'iqbal-mu4e-attach-files-from-dired))
-(with-eval-after-load 'helm-files
-  (add-to-list 'helm-find-files-actions
-               '("Attach files for mu4e" . iqbal-helm-mu4e-attach) t)
-  (defun iqbal-helm-mu4e-attach (_file)
-    (gnus-dired-attach (helm-marked-candidates))))
-;; http://www.djcbsoftware.nl/code/mu/mu4e/Dired.html#Dired
-(require 'gnus-dired)
-;; make the `gnus-dired-mail-buffers' function also work on
-;; message-mode derived modes, such as mu4e-compose-mode
-(defun gnus-dired-mail-buffers ()
-  "Return a list of active message buffers."
-  (let (buffers)
-    (save-current-buffer
-      (dolist (buffer (buffer-list t))
-        (set-buffer buffer)
-        (when (and (derived-mode-p 'message-mode)
-                   (null message-sent-message-via))
-          (push (buffer-name buffer) buffers))))
-    (nreverse buffers)))
+;; (with-eval-after-load 'helm-files
+;;   (add-to-list 'helm-find-files-actions
+;;                '("Attach files for mu4e" . iqbal-helm-mu4e-attach) t)
+;;   (defun iqbal-helm-mu4e-attach (_file)
+;;     (gnus-dired-attach (helm-marked-candidates))))
+;; ;; http://www.djcbsoftware.nl/code/mu/mu4e/Dired.html#Dired
+;; (require 'gnus-dired)
+;; ;; make the `gnus-dired-mail-buffers' function also work on
+;; ;; message-mode derived modes, such as mu4e-compose-mode
+;; (defun gnus-dired-mail-buffers ()
+;;   "Return a list of active message buffers."
+;;   (let (buffers)
+;;     (save-current-buffer
+;;       (dolist (buffer (buffer-list t))
+;;         (set-buffer buffer)
+;;         (when (and (derived-mode-p 'message-mode)
+;;                    (null message-sent-message-via))
+;;           (push (buffer-name buffer) buffers))))
+;;     (nreverse buffers)))
 (setq gnus-dired-mail-mode 'mu4e-user-agent)
 (add-hook 'dired-mode-hook 'turn-on-gnus-dired-mode)
 
@@ -216,8 +210,8 @@
 ;; show full addresses in view message (instead of just names)
 ;; toggle per name with M-RET
 (setq mu4e-view-show-addresses 't)
-;; every new email composition gets its own frame! (window)
-(setq mu4e-compose-in-new-frame t)
+;; ;; every new email composition gets its own frame! (window)
+;; (setq mu4e-compose-in-new-frame t)
 ;; give me ISO(ish) format date-time stamps in the header list
 (setq mu4e-headers-date-format "%Y-%m-%d %H:%M")
 ;; the headers to show in the headers list -- a pair of a field
@@ -304,6 +298,10 @@
 			 '("size:5M..500M"       "Big messages"     ?b))
 (add-to-list 'mu4e-bookmarks
 			 '( "maildir:\"/INBOX\" and flag:flagged" "Flagged in INBOX" ?f))
+(add-to-list
+ 'mu4e-bookmarks
+ '("flag:unread NOT flag:trashed AND (flag:list OR from:trac@sagemath.org)"
+   "Unread bulk messages" ?l))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Bookmarks ;;;
 
 (setq mu4e-attachment-dir  "~/")
@@ -320,12 +318,6 @@
     '(define-key mu4e-headers-mode-map (kbd "f") 'mu4e-headers-flagged-mark)))
 
 
-;; spell check
-;(add-hook 'mu4e-compose-mode-hook
-        ;(defun my-do-compose-stuff ()
-           ;"My settings for message composition."
-           ;(set-fill-column 72)
-           ;(flyspell-mode)))
 ;; configure orgmode support in mu4e
 ;; (require 'org-mu4e)
 ;; when mail is sent, automatically convert org body to HTML
@@ -336,13 +328,32 @@
 ;(setq org-mu4e-link-query-in-headers-mode nil)
 ; sembra non servire (http://pragmaticemacs.com/emacs/master-your-inbox-with-mu4e-and-org-mode/)
 ;; use org structures and tables in message mode
-(add-hook 'message-mode-hook 'turn-on-orgtbl
-          'message-mode-hook 'turn-on-orgstruct++)
+(add-hook 'message-mode-hook #'turn-on-orgstruct)
+(add-hook 'message-mode-hook #'turn-on-orgstruct++)
+(add-hook 'message-mode-hook #'turn-on-orgtbl)
+(add-hook 'message-mode-hook #'flyspell-mode)
+;(add-hook 'message-mode-hook #'typo-mode)
+(add-hook 'message-mode-hook #'adict-guess-dictionary)
+(add-hook 'message-mode-hook #'footnote-mode)
+
 ;; TODO
 ;; http://pragmaticemacs.com/emacs/email-templates-in-mu4e-with-yasnippet/
 ;; customize the reply-quote-string
 (setq message-citation-line-format "On %a %d %b %Y at %R, %f wrote:\n")
 ;; choose to use the formatted string
 (setq message-citation-line-function 'message-insert-formatted-citation-line)
+
+;; (defun malb/fill-column-72 ()
+;;   (set-fill-column 72))
+;; (defun malb/mu4e-compose-frame ()
+;;   (toggle-frame-maximized)
+;;   (sleep-for 0.25) ;; this is a HACK
+;;   (set-frame-size (selected-frame) 80 60)
+;;   (sleep-for 0.25) ;; this is a HACK
+;;   (set-window-dedicated-p (get-buffer-window (current-buffer)) t))
+
+;; (add-hook 'mu4e-compose-mode-hook #'malb/fill-column-72)
+;; (add-hook 'mu4e-compose-mode-hook #'malb/mu4e-compose-frame)
+
 
 (provide 'mu4e-config)
