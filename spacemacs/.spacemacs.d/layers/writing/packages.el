@@ -30,7 +30,7 @@
 ;;; Code:
 
 (defconst writing-packages
-  '(langtool
+  '(;;langtool
     ;; artbollocks-mode
     writegood-mode
     ;; helm-dictionary
@@ -74,7 +74,7 @@ Each entry is either:
       (setq langtool-java-classpath "/usr/share/languagetool:/usr/share/java/languagetool/*"
             langtool-default-language "en-US"
             langtool-java-bin "/usr/bin/java"
-            langtool-mother-tongue "it-IT")
+            langtool-mother-tongue "it")
       )))
 
 
