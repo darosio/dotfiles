@@ -12,3 +12,4 @@ vim/.vim/bundle
 tmux/.tmux/resurrect/
 
 *.elc
+__pycache__/

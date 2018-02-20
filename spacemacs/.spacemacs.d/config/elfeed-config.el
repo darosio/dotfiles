@@ -71,6 +71,7 @@
 
 ;; as for mu4e
 (define-key elfeed-show-mode-map (kbd "w") 'visual-line-mode)
+(define-key elfeed-show-mode-map (kbd "w") 'visual-fill-column-mode)
 
 
 ;; Hydra macros and elfeed tags

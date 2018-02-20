@@ -5,7 +5,7 @@
 (setq org-ref-default-bibliography '("~/Sync/biblio/biblio.bib"
                                      ;; "~/Sync/media/bibliography/nurturing.bib"
                                      ))
-(setq   org-ref-pdf-directory "~/Sync/biblio/pdfs")
+(setq   org-ref-pdf-directory "~/Sync/biblio/pdfs/")  ;; trailing / affects ,hA associate pdf to entry
         ;; '(;; "~/Sync/media/bibliography/misc")
 
 ;; (setq reftex-default-bibliography '("~/Sync/media/bibliography/biblio.bib"
@@ -38,7 +38,8 @@
 
 ;; bibtex ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (setq bibtex-completion-notes-path "~/Sync/biblio/biblio.org")
-(setq bibtex-completion-library-path "~/Sync/biblio/pdfs/")
+(setq bibtex-completion-library-path '("~/Sync/biblio/pdfs/"
+                                       "~/Sync/biblio/books/"))
 (setq bibtex-completion-bibliography '("~/Sync/biblio/biblio.bib"
                                        ;; "~/Sync/media/bibliography/misc.bib"
                                        ;; "~/Sync/media/bibliography/nurturing.bib"
@@ -84,5 +85,7 @@
 ;;           (lambda ()
 ;;             (define-key org-mode-map  (kbd "C-c 9") 'org-ref-open-notes-at-point)))
 ;; To be deleted
+(add-hook 'bibtex-mode-hook 'outline-minor-mode)
+(define-key bibtex-mode-map (kbd "<tab>") (kbd "za"))
 
 (provide 'bibtex-config)

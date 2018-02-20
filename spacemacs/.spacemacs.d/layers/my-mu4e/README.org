@@ -1,35 +1,32 @@
-#+TITLE: writing layer
+#+TITLE: my-mu4e layer
 
 # The maximum height of the logo should be 200 pixels.
-[[img/writing.png]]
+[[img/my-mu4e.png]]
 
 # TOC links should be GitHub style anchors.
 * Table of Contents                                        :TOC_4_gh:noexport:
 - [[#description][Description]]
-  - [[#features][Features:]]
 - [[#install][Install]]
 - [[#key-bindings][Key bindings]]
 
 * Description
-This layer adds support for writing in english.
-It targets org-mode but it might be useful for other markup.
-
-** Features:
-   - dictionary with sdcv and any goldendict 
-   - synonymous with
-   - grammar check with ...  and 
-   - style with
+This layer configure mu4e for my email accounts and setup following features:
+  - helm-mu (for searching messages and contacts)
+  - maybe persp
 
 * Install
 To use this configuration layer, add it to your =~/.spacemacs=. You will need to
-add =writing= to the existing =dotspacemacs-configuration-layers= list in this
+add =my-mu4e= to the existing =dotspacemacs-configuration-layers= list in this
 file.
 
 * Key bindings
 
-| Key Binding | Description    |
-|-------------+----------------|
-| ~SPC x x x~ | Does thing01   |
+| Key Binding | Description       |
+|-------------+-------------------|
+| ~SPC m / ~  | helm-mu searching |
+| ~SPC m S ~  | helm-mu searching |
+| ~SPC m C ~  | helm-mu Contacts  |
+
 # Use GitHub URLs if you wish to link a Spacemacs documentation file or its heading.
 # Examples:
 # [[https://github.com/syl20bnr/spacemacs/blob/master/doc/VIMUSERS.org#sessions]]

@@ -10,3 +10,6 @@
 [submodule "pandoc/.pandoc/reveal.js"]
 	path = pandoc/.pandoc/reveal.js
 	url = https://github.com/hakimel/reveal.js.git
+[submodule "ranger/.config/ranger/plugins/ranger-annex"]
+	path = ranger/.config/ranger/plugins/ranger-annex
+	url = https://github.com/matze/ranger-annex.git
