@@ -295,7 +295,7 @@
 ;; mu4e sets up visual-line-mode and also fill (M-q) to do the right thing
 ;; each paragraph is a single long line; at sending, emacs will add the
 ;; special line continuation characters.
-;; (setq mu4e-compose-format-flowed t)
+(setq mu4e-compose-format-flowed t)
 
 ;;store org-mode links to messages
 (require 'org-mu4e)

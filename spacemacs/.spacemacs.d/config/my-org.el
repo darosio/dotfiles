@@ -5,6 +5,8 @@
 ;; (setq org-confirm-babel-evaluate 'never)
 (setq org-confirm-babel-evaluate nil)
 
+(setq org-startup-truncated nil)
+
 (org-babel-do-load-languages
  'org-babel-load-languages
  '(

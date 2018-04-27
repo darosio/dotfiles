@@ -1,300 +1,41 @@
-(defun bh/verify-refile-target ()
-  "Exclude todo keywords with a done state from refile targets"
-  (not (member (nth 2 (org-heading-components)) org-done-keywords)))
-
-(defun bh/skip-non-archivable-tasks ()
-  "Skip trees that are not available for archiving"
-  (save-restriction
-    (widen)
-    ;; Consider only tasks with done todo headings as archivable candidates
-    (let ((next-headline (save-excursion (or (outline-next-heading) (point-max))))
-          (subtree-end (save-excursion (org-end-of-subtree t))))
-      (if (member (org-get-todo-state) org-todo-keywords-1)
-          (if (member (org-get-todo-state) org-done-keywords)
-
-              (let* ((daynr (string-to-int (format-time-string "%d" (current-time))))
-                     (today (format-time-string "%Y-%m-%d" (current-time)))
-                  ;; (a-month-ago (* 60 60 24 (+ daynr 1))) ; From REF1
-                  ;; (last-month (format-time-string "%Y-%m-" (time-subtract (current-time) (seconds-to-time a-month-ago))))
-                  ;; (this-month (format-time-string "%Y-%m-" (current-time)))
-                     (subtree-is-current (save-excursion
-                                           (forward-line 1)
-                                           (and (< (point) subtree-end)
-                                                (re-search-forward (concat today) subtree-end t)))))
-                                             ;; (re-search-forward (concat last-month "\\|" this-month) subtree-end t)))))
-                (if subtree-is-current
-                    subtree-end ; Has a date in this month or last month, skip it
-                  nil))  ; available to archive
-            (or subtree-end (point-max)))
-        next-headline))))
-
-(defun bh/clock-in-to-next (kw)
-  "Switch a task from TODO to NEXT when clocking in.
-Skips capture tasks, projects, and subprojects. Switch projects
-and subprojects from NEXT back to TODO"
-  (when (not (and (boundp 'org-capture-mode) org-capture-mode))
-    (cond
-     ((and (member (org-get-todo-state) (list "TODO"))
-           (not (bh/is-project-p)))
-      "NEXT")
-     ((and (member (org-get-todo-state) (list "NEXT"))
-           (bh/is-project-p))
-      "TODO"))))
-
-(defun gs/mark-next-done-parent-tasks-todo ()
-  "Visit each parent task and change NEXT (or DONE) states to TODO."
-  ;; Don't change the value if new state is "DONE"
-  (let ((mystate (or (and (fboundp 'org-state)
-                          (member state
-                                  (list "NEXT" "TODO")))
-                     (member (nth 2 (org-heading-components))
-                             (list "NEXT" "TODO")))))
-    (when mystate
-      (save-excursion
-        (while (org-up-heading-safe)
-          (when (member (nth 2 (org-heading-components)) (list "NEXT" "DONE"))
-            (org-todo "TODO")))))))
-
-;; == bh/helper-functions ==
-(defun bh/is-project-p ()
-  "Any task with a todo keyword subtask."
-  (save-restriction
-    (widen)
-    (let ((has-subtask)
-          (subtree-end (save-excursion (org-end-of-subtree t)))
-          (is-a-task (member (nth 2 (org-heading-components)) org-todo-keywords-1)))
-      (save-excursion
-        (forward-line 1)
-        (while (and (not has-subtask)
-                    (< (point) subtree-end)
-                    (re-search-forward "^\*+ " subtree-end t))
-          (when (member (org-get-todo-state) org-todo-keywords-1)
-            (setq has-subtask t))))
-      (and is-a-task has-subtask))))
-
-(defun bh/find-project-task ()
-  "Move point to the parent (project) task if any."
-  (save-restriction
-    (widen)
-    (let ((parent-task (save-excursion (org-back-to-heading 'invisible-ok) (point))))
-      (while (org-up-heading-safe)
-        (when (member (nth 2 (org-heading-components)) org-todo-keywords-1)
-          (setq parent-task (point))))
-      (goto-char parent-task)
-      parent-task)))
-
-(defun bh/is-project-subtree-p ()
-  "Any task with a todo keyword that is in a project subtree.
-Callers of this function already widen the buffer view."
-  (let ((task (save-excursion (org-back-to-heading 'invisible-ok)
-                              (point))))
-    (save-excursion
-      (bh/find-project-task)
-      (if (equal (point) task)
-          nil
-
-t))))
-
-;; Some helper functions for selection within agenda views
-(defun gs/select-with-tag-function (select-fun-p)
-  (save-restriction
-    (widen)
-    (let ((next-headline
-	   (save-excursion (or (outline-next-heading)
-			       (point-max)))))
-      (if (funcall select-fun-p) nil next-headline))))
-
-(defun gs/select-projects ()
-  "Selects tasks which are project headers"
-  (gs/select-with-tag-function #'bh/is-project-p))
-
-(defun gs/select-project-tasks ()
-  "Skips tags which belong to projects (and is not a project itself)"
-  (gs/select-with-tag-function
-   #'(lambda () (and
-		 (not (bh/is-project-p))
-		 (bh/is-project-subtree-p)))))
-
-(defun gs/select-standalone-tasks ()
-  "Skips tags which belong to projects. Is neither a project, nor does it blong to a project"
-  (gs/select-with-tag-function
-   #'(lambda () (and
-		 (not (bh/is-project-p))
-		 (not (bh/is-project-subtree-p))))))
-
-(defun gs/select-projects-and-standalone-tasks ()
-  "Skips tags which are not projects"
-  (gs/select-with-tag-function
-   #'(lambda () (or
-		 (bh/is-project-p)
-		 (bh/is-project-subtree-p)))))
-
-(defun gs/org-agenda-project-warning ()
-  "Is a project stuck or waiting. If the project is not stuck,
-show nothing. However, if it is stuck and waiting on something,
-show this warning instead."
-  (if (gs/org-agenda-project-is-stuck)
-    (if (gs/org-agenda-project-is-waiting) " !W" " !S") ""))
-
-(setq org-stuck-projects (quote ("" nil nil "")))
-
-(defun gs/org-agenda-project-is-stuck ()
-  "Is a project stuck"
-  (if (bh/is-project-p) ; first, check that it's a project
-      (let* ((subtree-end (save-excursion (org-end-of-subtree t)))
-	     (has-next))
-	(save-excursion
-	  (forward-line 1)
-	  (while (and (not has-next)
-		      (< (point) subtree-end)
-		      (re-search-forward "^\\*+ NEXT " subtree-end t))
-	    (unless (member "WAITING" (org-get-tags-at))
-	      (setq has-next t))))
-	(if has-next nil t)) ; signify that this project is stuck
-    nil)) ; if it's not a project, return an empty string
-
-(defun gs/org-agenda-project-is-waiting ()
-  "Is a project stuck"
-  (if (bh/is-project-p) ; first, check that it's a project
-      (let* ((subtree-end (save-excursion (org-end-of-subtree t))))
-	(save-excursion
-	  (re-search-forward "^\\*+ WAITING" subtree-end t)))
-    nil)) ; if it's not a project, return an empty string
-
-;; Some helper functions for agenda views
-(defun gs/org-agenda-prefix-string ()
-  "Format"
-  (let ((path (org-format-outline-path (org-get-outline-path))) ; "breadcrumb" path
-	(stuck (gs/org-agenda-project-warning))) ; warning for stuck projects
-       (if (> (length path) 0)
-	   (concat stuck ; add stuck warning
-		   " [" path "]") ; add "breadcrumb"
-	 stuck)))
+;; I would like to simplify starting from scratch.
+;; I'll try following
+;; https://orgmode.org/worg/org-configs/org-customization-guide.html
 
 (defun gs/org-agenda-add-location-string ()
   "Gets the value of the LOCATION property"
   (let ((loc (org-entry-get (point) "LOCATION")))
     (if (> (length loc) 0)
-	(concat "{" loc "} ")
+        (concat "{" loc "} ")
       "")))
 
-;; == Agenda Navigation ==
+(setq org-stuck-projects
+      '("+proj/-DONE-HOLD" ("NEXT") nil ""))
 
-;; Search for a "=" and go to the next line
-(defun gs/org-agenda-next-section ()
-  "Go to the next section in an org agenda buffer"
-  (interactive)
-  (if (search-forward "===" nil t 1)
-      (forward-line 1)
-    (goto-char (point-max)))
-  (beginning-of-line))
-
-;; Search for a "=" and go to the previous line
-(defun gs/org-agenda-prev-section ()
-  "Go to the next section in an org agenda buffer"
-  (interactive)
-  (forward-line -2)
-  (if (search-forward "===" nil t -1)
-      (forward-line 1)
-    (goto-char (point-min))))
-
-;; == Agenda Post-processing ==
-;; Highlight the "!!" for stuck projects (for emphasis)
-(defun gs/org-agenda-project-highlight-warning ()
-  (save-excursion
-    (goto-char (point-min))
-    (while (re-search-forward "!W" nil t)
-      (progn
-	(add-face-text-property
-	 (match-beginning 0) (match-end 0)
-	 '(bold :foreground "orange"))
-	))
-    (goto-char (point-min))
-    (while (re-search-forward "!S" nil t)
-      (progn
-	(add-face-text-property
-	 (match-beginning 0) (match-end 0)
-	 '(bold :foreground "white" :background "red"))
-	))
-    ))
-
-(defun gs/remove-agenda-regions ()
-  (save-excursion
-    (goto-char (point-min))
-    (let ((region-large t))
-      (while (and (< (point) (point-max)) region-large)
-        (set-mark (point))
-        (gs/org-agenda-next-section)
-        (if (< (- (region-end) (region-beginning)) 5) (setq region-large nil)
-          (if (< (count-lines (region-beginning) (region-end)) 4)
-              (delete-region (region-beginning) (region-end)))
-          )))))
-
-
-
-
-
-
-
-
-
-;; (defun config_gtd/post-init-org ()
-  (progn
-    ;; Some general settings
-    ;; (setq-default org-directory "~/Sync/notes/")
-  (setq org-default-notes-file "~/Sync/share/phone/box/notes/inbox.org")
+;; Agenda folders and files
+(progn
+  (setq-default org-directory "~/Sync/notes/")
   (load-library "find-lisp")
-  (setq org-agenda-files (append '("~/Sync/share/phone/box/notes/gtd.org"
-                                   "~/Sync/share/phone/box/notes/inbox.org"
-                                   "~/Sync/share/phone/box/notes/gcal"
+  (setq org-agenda-files (append '("~/Sync/share/phone/box/notes/"
+                                   "~/Sync/share/phone/box/notes/gcal/"
                                    "~/Sync/notes/proj"
                                    "~/Sync/notes/work"
                                    "~/Sync/notes/home"
-                                   "~/Sync/share/phone/box/notes/diary.org"
-                                   "~/Sync/share/phone/box/notes/ideas.org"
                                    "~/Sync/notes/TODOs.org" ;; target for org-projectile
                                    )
                                  ;; traverse the whole tree
                                  (find-lisp-find-files "~/Sync/notes/arch/" "\.org$")))
-  (setq org-agenda-include-diary nil
-        org-agenda-diary-file "~/Sync/share/phone/box/notes/diary.org")
-  ;; If you have a repeating task in your agenda, say every other day, and you
-  ;; show the agenda for, say, the next 15 days, it is quite annoying to see
-  ;; that task displayed for seven or eight days. You can now say nil or 'next
-  (setq org-agenda-show-future-repeats 'next)
-  ;; == Tags ==
-  (setq org-tag-alist (quote ((:startgroup)
-                              ("@errands" . ?e)
-                              ("@internet" . ?n)
-                              ("@home" . ?h)
-                              ("@office" . ?o)
-                              ("@dati" . ?d)
-                              ("@mail" . ?m)
-                              ("@telephone" . ?t)
-                              (:endgroup)
-                              ("PERSONAL" . ?p)
-                              ("WORK" . ?k)
-                              ("idea" . ?i)
-                              ;; (:startgroup)
-                              ;; ("NEXT" . ?N)
-                              ;; ("WAITING" . ?W)
-                              ;; ("HOLD" . ?H)
-                              ;; ("CANCELLED" . ?C)
-                              ;; (:endgroup)
-                              )))
-  ;; Allow setting single tags without the menu
-  (setq org-fast-tag-selection-single-key 'expert)
-  ;; Include the todo keywords
-  (setq org-fast-tag-selection-include-todo t)
-  ;; == STATES ==
-  ;; todo keywords -   TYP_TODO | SEQ_TODO
-  ;; (setq org-use-fast-todo-selection t) ;; DEF
+  (setq org-agenda-diary-file "~/Sync/share/phone/box/notes/diary.org"
+        org-agenda-include-diary t)
+  ;; ARCHIVE
+  (setq org-archive-location "~/Sync/notes/archive/%s_archive::")
+  (defvar org-archive-file-header-format "#+FILETAGS: ARCHIVE\nArchived entries from file %s\n")
+  )
+;; TODOs
+(progn
   (setq org-todo-keywords
         '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
-          ;; (sequence "APPT(a)")
           (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "MEETING")) )
-  ;; (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING"))))
-  ;; Custom colors for the keywords
   (setq org-todo-keyword-faces
         '(("TODO" :foreground "red" :weight bold)
           ("NEXT" :foreground "light blue" :weight bold)
@@ -304,9 +45,7 @@ show this warning instead."
           ("HOLD" :foreground "magenta" :weight bold)
           ("CANCELLED" :foreground "forest green" :weight bold)
           ("MEETING" :foreground "forest green" :weight bold)
-          ;; ("PHONE" :foreground "forest green" :weight bold)
           ))
-  ;; Auto-update tags whenever the state ref""is changed
   (setq org-todo-state-tags-triggers
         '(("CANCELLED" ("CANCELLED" . t))
           ("WAITING" ("WAITING" . t))
@@ -315,9 +54,39 @@ show this warning instead."
           ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
           ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
           ("DONE" ("WAITING") ("CANCELLED") ("HOLD")) ))
+  (setq org-use-fast-todo-selection t)
   ;; S-left S-right skipping setting timespamps  DEF
-  ;; (setq org-treat-S-cursor-todo-selection-as-state-change nil)
-  ;; == Captures ==
+  (setq org-treat-S-cursor-todo-selection-as-state-change nil)
+  (setq org-log-into-drawer t)
+  (setq org-log-done 'time)
+  (setq org-enforce-todo-dependencies t)
+  )
+;; TAGs
+(progn
+  (setq org-tag-alist (quote ((:startgroup)
+                              ("@errands" . ?e)
+                              ("@home" . ?h)
+                              ("@fbk" . ?f)
+                              (:endgroup)
+                              ("@net" . ?n)
+                              ("@dati" . ?d)
+                              ("@mail" . ?m)
+                              ("@telephone" . ?t)
+                              ("PERSONAL" . ?p)
+                              ("WORK" . ?w)
+                              ("idea" . ?i)
+                              ("proj" . ?j)
+                              )))
+  ;; Allow setting single tags without the menu
+  (setq org-fast-tag-selection-single-key 'expert)
+  ;; Include the todo keywords
+  (setq org-fast-tag-selection-include-todo nil)
+  )
+;; Captures
+(progn
+  (setq org-default-notes-file "~/Sync/share/phone/box/notes/inbox.org")
+  (define-key global-map "\C-ct"
+    (lambda () (interactive) (org-capture nil "t")))
   (defvar org-capture-templates
     '(("t" "todo" entry (file org-default-notes-file)
        "* TODO %?\n%U\n%a\n" :clock-in t :clock-resume t)
@@ -325,12 +94,11 @@ show this warning instead."
        "* %?\n%u")
       ("m" "Meeting" entry (file org-default-notes-file)
        "* MEETING with %? :MEETING:\n%t" :clock-in t :clock-resume t)
-      ;; diary.org
       ("a" "Appointment" entry (file  "~/Sync/share/phone/box/notes/gcal/dpa.org" )
        "* %?\n\n%^T\n%a\n:PROPERTIES:\n\n:END:\n\n")
       ;; diary.org
       ("d" "Diary" entry (file+olp+datetree "~/Sync/share/phone/box/notes/diary.org")
-       "* %?\n%U\n" :clock-in t :clock-resume t)
+       "* %?\n%t\n" :clock-in t :clock-resume t)
       ;; ideas.org
       ("i" "idea" entry (file "~/Sync/share/phone/box/notes/ideas.org")
        "* %? :IDEA: \n%u")
@@ -347,63 +115,42 @@ show this warning instead."
       ("s" "Spesa" entry (file+headline "~/Sync/share/phone/box/notes/spesa.org" "Supermarket")
        "* TODO %? \n")
       ))
-           ;("w" "org-protocol" entry (file "~/git/org/refile.org")
-            ;"* TODO Review %c\n%U\n" :immediate-finish t)
   (add-hook 'org-capture-mode-hook 'evil-insert-state)
-  ;; Display properties DEF ?
-  (setq org-cycle-separator-lines 0)
-  (setq org-tags-column 80)
-  (setq org-agenda-tags-column org-tags-column)
-  (setq org-agenda-sticky t)
-  ;; Set default column view headings: Task Effort Clock_Summary DEF ?
-  (setq org-columns-default-format "%50ITEM(Task)
-                                     %7Effort(Effort){:}
-                                     %7CLOCKSUM
-                                     %1PRIORITY
-                                      %TAGS %SCHEDULED %DEADLINE")
-)
-   ;; )
+  )
 
-;; == Refile ==
-;; Targets include this file and any file contributing to the agenda - up to 9 levels deep
-(setq org-refile-targets (quote ((org-agenda-files :maxlevel . 3)
-                                 ("~/Sync/share/phone/box/notes/gtd.org" :maxlevel . 3) ;; ???
-                                 ("~/Sync/share/phone/box/notes/ideas.org" :maxlevel . 2)
-                                 ("~/Sync/share/phone/box/notes/someday.org" :level . 1)
-                                 )))
-                                 ;; (org-default-notes-file :maxlevel . 9)
-                                 ;; )))
-;;  Be sure to use the full path for refile setup
-(setq org-refile-use-outline-path t)
-;; Targets complete directly with IDO
-(setq org-outline-path-complete-in-steps nil)
-;; Allow refile to create parent tasks with confirmation
-(setq org-refile-allow-creating-parent-nodes 'confirm)
-;; Exclude DONE state tasks from refile targets
-(setq org-refile-target-verify-function 'bh/verify-refile-target)
+;; REFILE
+(progn
+  (setq org-refile-targets (quote ((nil :maxlevel . 9)
+                                   (org-agenda-files :maxlevel . 5))))
+  ;; Be sure to use the full path for refile setup
+  (setq org-refile-use-outline-path t)
+  ;; Targets complete directly with helm
+  (setq org-outline-path-complete-in-steps nil)
+  ;; Allow refile to create parent tasks with confirmation
+  (setq org-refile-allow-creating-parent-nodes 'confirm)
+  ;; Exclude DONE state tasks from refile targets @2MAYBE
+  (defun bh/verify-refile-target ()
+    "Exclude todo keywords with a done state from refile targets"
+    (not (member (nth 2 (org-heading-components)) org-done-keywords)))
+  (setq org-refile-target-verify-function 'bh/verify-refile-target)
+  )
 
 
-;; == Archive ==
-(setq org-archive-location "~/Sync/notes/archive/%s_archive::")
-(defvar org-archive-file-header-format "#+FILETAGS: ARCHIVE\nArchived entries from file %s\n")
+(require 'org-checklist)
+;; If you have a repeating task in your agenda, say every other day, and you
+;; show the agenda for, say, the next 15 days, it is quite annoying to see
+;; that task displayed for seven or eight days. You can now say nil or 'next
+(setq org-agenda-show-future-repeats 'next)
 
-
-
-;; ;; == Habits ==
-(require 'org-habit)  ;; FIXME
-;; (setq org-modules '(org-habit))
-;; (setq org-habit-show-habits-only-for-today t)
-
-
-;; == Clocking Functions ==
-(require 'org-clock)  ;; FIXME
-;; If not a project, clocking-in changes TODO to NEXT
-(setq org-clock-in-switch-to-state 'bh/clock-in-to-next)
-(add-hook 'org-mode-hook
-          (lambda ()
-            (define-key org-mode-map (kbd "C-c C-.") 'org-time-stamp-inactive)))
-;; Also ensure that NEXT projects are switched to TODO when clocking in
-(add-hook 'org-clock-in-hook 'gs/mark-next-done-parent-tasks-todo 'append)
+;; Display properties
+;; (setq org-startup-folded "content")
+(setq org-cycle-separator-lines 2) ;; default
+(setq org-tags-column -82)
+;; (setq org-agenda-tags-column org-tags-column)
+(setq org-agenda-tags-column -82)
+;; (setq org-agenda-sticky t)
+(setq org-columns-default-format
+      "%48ITEM(Task) %4TODO(todo) %6CLOCKSUM{:} %ALLTAGS %SCHEDULED %6Effort(Effort){:} %DEADLINE")
 
 ;; global Effort estimate values  ;http://doc.norang.ca/org-mode.html
 ;; global STYLE property values for completion
@@ -416,18 +163,32 @@ show this warning instead."
 ;; Sometimes I change tasks I'm clocking quickly - this removes clocked tasks with 0:00 duration
 (setq org-clock-out-remove-zero-time-clocks t)
 
-(add-hook 'org-after-todo-state-change-hook 'gs/mark-next-done-parent-tasks-todo 'append)
-
+;; Enable habit tracking (and a bunch of other modules)
+;; (setq org-modules (quote (org-bbdb
+;;                           org-bibtex
+;;                           org-crypt
+;;                           org-gnus
+;;                           org-id
+;;                           org-info
+;;                           org-jsinfo
+;;                           org-habit
+;;                           org-inlinetask
+;;                           org-irc
+;;                           org-mew
+;;                           org-mhe
+;;                           org-protocol
+;;                           org-rmail
+;;                           org-vm
+;;                           org-wl
+;;                           org-w3m)))
 
 
 ;; == Agenda ==
 ;; TODO http://orgmode.org/worg/org-tutorials/org-custom-agenda-commands.html
-
 ;; Dim blocked tasks (and other settings)
-(setq org-enforce-todo-dependencies t)
 (setq org-agenda-inhibit-startup nil)
+;; Do not dim blocked tasks
 (setq org-agenda-dim-blocked-tasks nil)
-
 ;; Compact the block agenda view (disabled)
 (setq org-agenda-compact-blocks nil)
 
@@ -439,123 +200,148 @@ show this warning instead."
 
 ;; Include agenda archive files when searching for things
 (setq org-agenda-text-search-extra-files (quote (agenda-archives)))
-
-
 ;; For tag searches ignore tasks with scheduled and deadline dates
 (setq org-agenda-tags-todo-honor-ignore-options t)
 (setq org-deadline-warning-days 70)
 
-;; Custom agenda command definitions
+(setq org-agenda-prefix-format '((agenda . "  %-12:c%?-12t %(gs/org-agenda-add-location-string)% s")
+                            (timeline . "  % s")
+                            (todo . "  %-12:c  ")
+                            (tags . "  %-12:c  ")
+                            (search . "  %i %-12:c")))
+
 (setq org-agenda-custom-commands
       '(
-        ("h" "Habits" agenda "STYLE=\"habit\""
+        ("H" "Habits" tags-todo "STYLE=\"habit\""
          ((org-agenda-overriding-header "Habits")
           (org-agenda-sorting-strategy '(todo-state-down effort-up category-keep)))
          )
-        ("w" "Action list at work"
-         (
-          (agenda "" ((org-agenda-overriding-header "Today's Schedule:")
-                      (org-agenda-span 'day)
-                      (org-agenda-skip-function '(org-agenda-skip-subtree-if
-                                                  'regexp ":PERSONAL:"))
-                      ))
-          (tags-todo "-PERSONAL-CANCELLED-ARCHIVE/NEXT"
-                     ((org-agenda-overriding-header "Next Tasks:")
-                      ))
+        ;; ("n" . "Next Action lists")
+        ("f" "Upcoming week and deadlines"
+         ((agenda "weeks"
+                  ((org-agenda-span 14)))
+          (agenda "deadlines"
+                  ((org-agenda-span 60)
+                   (org-agenda-overriding-header "deadlines")
+                   (org-agenda-entry-types '(:deadline)) ;; this entry excludes :scheduled
+                   (org-agenda-start-day "+14d"))))
+         ((org-agenda-time-grid nil)
+          (org-agenda-show-all-dates nil)
+          (org-deadline-warning-days 730)))
+        ("w" "Action list excluding PERSONAL"
+         ((agenda "" ((org-agenda-overriding-header "Today's Schedule:")
+                      (org-agenda-span 'day)))
+          (tags-todo "-CANCELLED/NEXT"
+                     ((org-agenda-overriding-header "Next Tasks:")))
+          (tags "REFILE"
+                ((org-agenda-overriding-header "Tasks to Refile")
+                 (org-tags-match-list-sublevels nil)))
+          (tags "-proj-NOTE-REFILE-ARCHIVE/DONE|CANCELLED"
+                ;; (tags "-proj-NOTE-REFILE-ARCHIVE+TODO=\"DONE\"\|+TODO=\"CANCELLED\""
+                ((org-agenda-overriding-header "Tasks to Archive")))
+          (tags-todo "-proj-HOLD-CANCELLED-REFILE-STYLE=\"habit\"/!-NEXT-WAITING-HOLD-CANCELLED"
+                     ((org-agenda-overriding-header "Standalone Tasks")
+                      ;; (org-use-property-inheritance t) @2DO to be used with STYLE, but prefer to ignore scheduled
+                      (org-tags-match-list-sublevels 'indented)
+                      (org-agenda-sorting-strategy '(category-keep))))
+          (tags-todo "-proj/!WAITING"
+                     ((org-agenda-overriding-header "Standalone Waiting Tasks")
+                      (org-tags-match-list-sublevels 'indented)
+                      (org-agenda-sorting-strategy '(category-keep)))))
+         ((org-agenda-tag-filter-preset '("-PERSONAL"))
+          (org-agenda-todo-ignore-scheduled t)
+          (org-agenda-todo-ignore-deadlines t)
+          ))
+        ("p" "Action list only PERSONAL"
+         ((agenda "" ((org-agenda-overriding-header "Today's Schedule:")
+                      (org-agenda-span 'day)))
+          (tags-todo "+PERSONAL-CANCELLED/NEXT"
+                     ((org-agenda-overriding-header "Next Tasks:")))
+          (tags "REFILE"
+                ((org-agenda-overriding-header "Tasks to Refile")
+                 (org-tags-match-list-sublevels nil)))
+          (tags "-proj-NOTE-REFILE-ARCHIVE/DONE|CANCELLED"
+                ((org-agenda-overriding-header "Tasks to Archive")))
+          (tags-todo "-proj-HOLD-CANCELLED-REFILE-STYLE=\"habit\"/!-NEXT-WAITING-HOLD-CANCELLED"
+                     ((org-agenda-overriding-header "Standalone Tasks")
+                      ;; (org-use-property-inheritance t) @2DO to be used with STYLE, but prefer to ignore scheduled
+                      (org-tags-match-list-sublevels 'indented)
+                      (org-agenda-sorting-strategy '(category-keep))))
+          (tags-todo "-proj/!WAITING"
+                     ((org-agenda-overriding-header "Standalone Waiting Tasks")
+                      (org-tags-match-list-sublevels 'indented)
+                      (org-agenda-sorting-strategy '(category-keep)))))
+         ((org-agenda-tag-filter-preset '("+PERSONAL"))
+          (org-agenda-todo-ignore-scheduled t)
+          (org-agenda-todo-ignore-deadlines t)
+          ))
+        ("j" "proJects"
+         ((tags "-HOLD-CANCELLED+proj"
+                ((org-agenda-overriding-header "active projects")
+                 (org-use-tag-inheritance nil)
+                 (org-tags-match-list-sublevels 'indented)
+                 (org-agenda-sorting-strategy '(category-keep))))
+          (stuck ""
+                 ((org-agenda-overriding-header "stuck projects")
+                  (org-use-tag-inheritance nil)
+                  (org-agenda-sorting-strategy '(category-keep))))
+          (tags-todo "+proj/!NEXT"
+                     ((org-agenda-overriding-header "next project tasks")
+                      (org-agenda-skip-function '(org-agenda-skip-entry-if 'regexp ":proj:"))
+                      (org-tags-match-list-sublevels 'indented)
+                      (org-agenda-sorting-strategy '(category-keep))))
+          (tags-todo "+proj/!WAITING"
+                     ((org-agenda-overriding-header "waiting project tasks")
+                      (org-agenda-skip-function '(org-agenda-skip-entry-if 'regexp ":proj:"))
+                      (org-tags-match-list-sublevels 'indented)
+                      (org-agenda-sorting-strategy '(category-keep))))
+          (tags-todo "+proj/!TODO"
+                     ((org-agenda-overriding-header "todo project tasks")
+                      (org-agenda-skip-function '(org-agenda-skip-entry-if 'regexp ":proj:"))
+                      (org-tags-match-list-sublevels 'indented)
+                      (org-agenda-sorting-strategy '(category-keep))))
+          (tags "+proj/-WAITING-TODO-NEXT"
+                ((org-agenda-overriding-header "other project headings")
+                 (org-agenda-skip-function '(org-agenda-skip-entry-if 'regexp ":proj:"))
+                 (org-tags-match-list-sublevels 'indented)
+                 (org-agenda-sorting-strategy '(category-keep))))
           )
-         )
-        ("p" "Action list at work"
          (
-          (agenda "" ((org-agenda-overriding-header "Today's Schedule:")
-                      (org-agenda-span 'day)
-                      (org-agenda-skip-function '(org-agenda-skip-subtree-if
-                                                  'regexp ":WORK:"))
-                      ))
-          (tags-todo "+PERSONAL-CANCELLED-ARCHIVE/NEXT"
-                     ((org-agenda-overriding-header "Next Tasks:")
-                      ))
-          )
-         )
-        (" " "Export Schedule"
-         (
-          (agenda "" ((org-agenda-overriding-header "Today's Schedule:")
-                      (org-agenda-span 2)
-                      (org-agenda-start-on-weekday nil)
-                      (org-agenda-start-day "+0d")
-                      (org-agenda-todo-ignore-deadlines nil)))
-          (tags-todo "-CANCELLED-ARCHIVE/NEXT"
-					   ((org-agenda-overriding-header "Next Tasks:")
-					    ))
-          (tags "REFILE-ARCHIVE-REFILE=\"nil\""
-				      ((org-agenda-overriding-header "Tasks to Refile:")
-				       (org-tags-match-list-sublevels nil)))
-          (tags-todo "-INACTIVE-HOLD-CANCELLED-REFILE-ARCHIVE-STYLE=\"habit\"-CATEGORY=\"Habits\"/!-NEXT-WAITING"
-					   ((org-agenda-overriding-header "Standalone Tasks:")
-					    (org-agenda-skip-function 'gs/select-standalone-tasks)))
-          (tags-todo "-INACTIVE-HOLD-CANCELLED-REFILE-ARCHIVEr/!"
-                     ((org-agenda-overriding-header "Active Projects:")
-                      (org-agenda-skip-function 'gs/select-projects)))
-          (tags-todo "-CANCELLED-ARCHIVE/!WAITING"
-                     ((org-agenda-overriding-header "Waiting-for Tasks:")
-                      (org-agenda-skip-function 'gs/select-standalone-tasks)))
-          (todo ""
-           ((org-agenda-overriding-header "Upcoming deadlines:")
-            (org-agenda-todo-ignore-deadlines 'near)
-            (org-agenda-skip-function '(org-agenda-skip-entry-if 'notdeadline))))
-          (tags-todo "-INACTIVE-HOLD-CANCELLED-REFILE-ARCHIVE/!-NEXT"
-					   ((org-agenda-overriding-header "Remaining Project Tasks:")
-					    (org-agenda-skip-function 'gs/select-project-tasks)))
-          (tags "HOLD-ARCHIVE"
-				      ((org-agenda-overriding-header "Inactive Projects and Tasks")
-				       (org-tags-match-list-sublevels nil)))
-          (todo ""
-           ((org-agenda-overriding-header "Someday/maybe Projects and Tasks")
-            (org-agenda-files '("~/Sync/share/phone/box/notes/someday.org"))))
-          ;; from ref 1
-          (tags "-REFILE/"
-                      ((org-agenda-overriding-header "Tasks to Archive")
-                       (org-agenda-skip-function 'bh/skip-non-archivable-tasks)
-                       (org-tags-match-list-sublevels nil)))
-        )
-         (
+          ;; (org-agenda-tag-filter-preset '("-linux" "+PERSONAL"))
           ;; (org-agenda-start-with-log-mode t)
           ;; (org-agenda-log-mode-items 'clock)
-          (org-agenda-prefix-format '((agenda . "  %-12:c%?-12t %(gs/org-agenda-add-location-string)% s")
-	  		      (timeline . "  % s")
-	  		      (todo . "  %-12:c %(gs/org-agenda-prefix-string) ")
-	  		      (tags . "  %-12:c %(gs/org-agenda-prefix-string) ")
-	  		      (search . "  %i %-12:c")))
           ;; (org-agenda-todo-ignore-deadlines 'near)
-          (org-agenda-todo-ignore-scheduled nil)
+          (org-agenda-todo-ignore-scheduled t)
           (org-agenda-todo-ignore-deadlines t)
 
-         (ps-number-of-columns 2)
+          (ps-number-of-columns 2)
           (ps-landscape-mode t)
           (ps-print-color-p 'black-white)
           )
          ("~/theagenda.pdf")
          )
-
+        ("i" "Idea and hold, maybe, someday tasks and-or projects"
+         ((tags "+idea"
+                ((org-agenda-overriding-header "Ideas")
+                 (org-tags-match-list-sublevels 'indented)
+                 (org-agenda-sorting-strategy '(category-keep priority-down))))
+          (tags-todo "HOLD|MAYBE"
+                     ((org-agenda-overriding-header "HOLD tags")
+                      (org-tags-match-list-sublevels 'indented)
+                      (org-agenda-sorting-strategy '(category-keep))))))
         ("c" "Context lists"
-         (
-          (tags "@office")
+         ((tags "@office")
           (tags "@home")
           (tags "@dati")
           (tags "@internet")
           (tags "@phone")
           (tags "@email")
-          (tags "@errands")
-          )
-         (
-          (ps-number-of-columns 2)
+          (tags "@errands"))
+         ((ps-number-of-columns 2)
           (ps-landscape-mode t)
           (ps-print-color-p 'black-white)
-          (htmlize-output-type 'css)
-          )
-         ("~/context-lists.pdf" "~/context-lists.html")
-         )
-
-        ;;(tags "+DEADLINE={.+}" ))
+          (htmlize-output-type 'css))
+         ("~/context-lists.pdf" "~/context-lists.html"))
         ("d" "Upcoming deadlines" agenda "display deadlines and exclude scheduled"
          ((org-agenda-span 'year)
           (org-agenda-time-grid nil)
@@ -563,7 +349,7 @@ show this warning instead."
           (org-agenda-entry-types '(:deadline)) ;; this entry excludes :scheduled
           (org-deadline-warning-days 365)))
 
-("P" "Printed agenda"
+        ("P" "Printed agenda"
          ((agenda "" ((org-agenda-ndays 7)                      ;; overview of appointments
                       (org-agenda-start-on-weekday nil)         ;; calendar begins today
                       (org-agenda-repeating-timestamp-show-all t)
@@ -587,13 +373,6 @@ show this warning instead."
          ("~/agenda.pdf" "~/agenda.html"))
         ;; other commands go here
         ))
-
-
-;; == Agenda Navigation ==
-(add-hook 'org-finalize-agenda-hook 'gs/org-agenda-project-highlight-warning)
-
-;; Remove empty agenda blocks
-(add-hook 'org-finalize-agenda-hook 'gs/remove-agenda-regions)
 
 
 (provide 'my-gtd)

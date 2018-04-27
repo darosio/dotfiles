@@ -19,3 +19,7 @@ I location of .dotfiles is moved please first:
 
 stow -t ~/ misc
 stoe -t ~/ bash
+
+## submodule problem
+I had once and solved the detached head problem following:
+https://stackoverflow.com/questions/18770545/why-is-my-git-submodule-head-detached-from-master

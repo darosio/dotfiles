@@ -38,8 +38,8 @@
     :init
     (progn
       (spacemacs/set-leader-keys
-        "ag" #'org-gcal-sync
-        "aG" #'org-gcal-fetch))
+        "og" #'org-gcal-sync
+        "oG" #'org-gcal-fetch))
     :config
     (progn
       ;; gcal
