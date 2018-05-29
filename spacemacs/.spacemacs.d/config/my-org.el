@@ -25,7 +25,7 @@
    (org . t)
    (makefile . t)
    (dot . t)
-   (sh . t)
+   ;; (sh . t)
    (shell . t) ;; works only with the provided 'org layer
    ))
 
