@@ -5,8 +5,7 @@
 (setq org-ref-default-bibliography '("~/Sync/biblio/biblio.bib"
                                      ;; "~/Sync/media/bibliography/nurturing.bib"
                                      ))
-(setq   org-ref-pdf-directory "~/Sync/biblio/pdfs/")  ;; trailing / affects ,hA associate pdf to entry
-        ;; '(;; "~/Sync/media/bibliography/misc")
+(setq   org-ref-pdf-directory '("~/Sync/biblio/pdfs/" "~/Sync/biblio/books/"))  ;; trailing / affects ,hA associate pdf to entry
 
 ;; (setq reftex-default-bibliography '("~/Sync/media/bibliography/biblio.bib"
 ;;                                     ;; "~/Sync/media/bibliography/nurturing.bib"
