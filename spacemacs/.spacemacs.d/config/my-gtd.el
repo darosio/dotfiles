@@ -230,7 +230,7 @@
           (org-deadline-warning-days 730)))
         ("w" "Action list excluding PERSONAL"
          ((agenda "" ((org-agenda-overriding-header "Today's Schedule:")
-                      (org-agenda-span 'day)))
+                      (org-agenda-span 2)))
           (tags-todo "-CANCELLED/NEXT"
                      ((org-agenda-overriding-header "Next Tasks:")))
           (tags "REFILE"
