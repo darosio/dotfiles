@@ -203,6 +203,9 @@
 ;; For tag searches ignore tasks with scheduled and deadline dates
 (setq org-agenda-tags-todo-honor-ignore-options t)
 (setq org-deadline-warning-days 70)
+;; (org-use-property-inheritance t) @2DO to be used with STYLE, but prefer to ignore scheduled
+;; all properties are inherited
+(setq org-use-property-inheritance t) ;; @2DO to be used with STYLE, e.g. habit not scheduled
 
 (setq org-agenda-prefix-format '((agenda . "  %-12:c%?-12t %(gs/org-agenda-add-location-string)% s")
                             (timeline . "  % s")
@@ -214,7 +217,8 @@
       '(
         ("H" "Habits" tags-todo "STYLE=\"habit\""
          ((org-agenda-overriding-header "Habits")
-          (org-agenda-sorting-strategy '(todo-state-down effort-up category-keep)))
+          (org-tags-match-list-sublevels 'indented)
+          (org-agenda-sorting-strategy '(category-keep))) ;; todo-state-down effort-up
          )
         ;; ("n" . "Next Action lists")
         ("f" "Upcoming week and deadlines"
@@ -241,7 +245,6 @@
                 ((org-agenda-overriding-header "Tasks to Archive")))
           (tags-todo "-proj-HOLD-CANCELLED-REFILE-STYLE=\"habit\"/!-NEXT-WAITING-HOLD-CANCELLED"
                      ((org-agenda-overriding-header "Standalone Tasks")
-                      ;; (org-use-property-inheritance t) @2DO to be used with STYLE, but prefer to ignore scheduled
                       (org-tags-match-list-sublevels 'indented)
                       (org-agenda-sorting-strategy '(category-keep))))
           (tags-todo "-proj/!WAITING"
@@ -264,7 +267,6 @@
                 ((org-agenda-overriding-header "Tasks to Archive")))
           (tags-todo "-proj-HOLD-CANCELLED-REFILE-STYLE=\"habit\"/!-NEXT-WAITING-HOLD-CANCELLED"
                      ((org-agenda-overriding-header "Standalone Tasks")
-                      ;; (org-use-property-inheritance t) @2DO to be used with STYLE, but prefer to ignore scheduled
                       (org-tags-match-list-sublevels 'indented)
                       (org-agenda-sorting-strategy '(category-keep))))
           (tags-todo "-proj/!WAITING"
