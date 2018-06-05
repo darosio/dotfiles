@@ -61,8 +61,8 @@ values."
            ;; mode-line notifications about new messages
            mu4e-enable-mode-line t)
      bibtex
-     (elfeed :variables
-             rmh-elfeed-org-files (list "~/Sync/.elfeed/1.org"))
+     ;; (elfeed :variables
+     ;;         rmh-elfeed-org-files (list "~/Sync/.elfeed/1.org"))
 
      emacs-lisp
      ;; importmagic epc ?
@@ -416,8 +416,8 @@ package is loaded, you should place your code here."
     (require 'my-org)
     (require 'my-org-publish)
     )
-  (with-eval-after-load 'elfeed
-    (require 'elfeed-config))
+  ;; (with-eval-after-load 'elfeed
+  ;;   (require 'elfeed-config))
   (with-eval-after-load 'bibtex
     (require 'bibtex-config))
   ;; set mu4e as default
