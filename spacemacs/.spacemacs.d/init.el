@@ -61,10 +61,11 @@ values."
            ;; mode-line notifications about new messages
            mu4e-enable-mode-line t)
      bibtex
-     (elfeed :variables
-             rmh-elfeed-org-files (list "~/Sync/.elfeed/1.org"))
+     ;; (elfeed :variables
+     ;;         rmh-elfeed-org-files (list "~/Sync/.elfeed/1.org"))
 
      emacs-lisp
+     ;; importmagic epc ?
      ;; pip install --user
      ;; pytest jedi json-rpc service_factory autoflake hy
      (python :variables
@@ -385,6 +386,7 @@ package is loaded, you should place your code here."
         ein:use-auto-complete-superpack t)
         ;; ein:use-smartrep t)
   ;; for ob-ipython: pip install importmagic epc
+<<<<<<< HEAD
   (setq org-src-window-setup 'current-window)
   (setq org-src-lang-modes '(("ipython" . python)))
   (setq org-src-fontify-natively t)
@@ -395,6 +397,9 @@ package is loaded, you should place your code here."
   (setq org-src-block-faces '(("emacs-lisp" (:background "#EEE2FF"))
                               ("ipython" (:background "#E5FFB8"))))
   ;; (global-company-mode)
+=======
+  ;; (add-to-list 'company-backends 'company-ob-ipython) ;; does not seem to work
+>>>>>>> a30925729ffeeea07dfa25ab1d893d16aa25f00c
 
   ;; required by mu4e-send-delay for sending correctly formatted email
   (prefer-coding-system 'utf-8)
@@ -425,8 +430,8 @@ package is loaded, you should place your code here."
     (require 'my-org)
     (require 'my-org-publish)
     )
-  (with-eval-after-load 'elfeed
-    (require 'elfeed-config))
+  ;; (with-eval-after-load 'elfeed
+  ;;   (require 'elfeed-config))
   (with-eval-after-load 'bibtex
     (require 'bibtex-config))
   ;; set mu4e as default
@@ -494,7 +499,11 @@ This function is called at the very end of Spacemacs initialization."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
+<<<<<<< HEAD
     (counsel swiper helm-mu org-ref pdf-tools key-chord ivy tablist helm-bibtex parsebib elfeed-web elfeed-org elfeed-goodies ace-jump-mode noflet elfeed biblio biblio-core mu4e-maildirs-extension mu4e-alert ht ob-ipython dash-functional ein skewer-mode websocket js2-mode simple-httpd helm-company helm-c-yasnippet fuzzy deft company-statistics company-quickhelp pos-tip company auto-yasnippet yasnippet ac-ispell auto-complete ox-reveal org-gcal request-deferred deferred org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download htmlize gnuplot ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint indent-guide hydra hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile pkg-info epl helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu highlight elisp-slime-nav dumb-jump f dash s diminish define-word column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core popup async))))
+=======
+    (anaconda-mode helm-mu org-ref pdf-tools key-chord ivy tablist helm-bibtex parsebib elfeed-web elfeed-org elfeed-goodies ace-jump-mode noflet elfeed biblio biblio-core mu4e-maildirs-extension mu4e-alert ht ob-ipython dash-functional ein skewer-mode websocket js2-mode simple-httpd helm-company helm-c-yasnippet fuzzy deft company-statistics company-quickhelp pos-tip company auto-yasnippet yasnippet ac-ispell auto-complete ox-reveal org-gcal request-deferred deferred org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download htmlize gnuplot ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint indent-guide hydra hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile pkg-info epl helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu highlight elisp-slime-nav dumb-jump f dash s diminish define-word column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core popup async))))
+>>>>>>> a30925729ffeeea07dfa25ab1d893d16aa25f00c
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
