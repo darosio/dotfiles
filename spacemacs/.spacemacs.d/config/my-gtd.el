@@ -232,6 +232,7 @@
                    (org-agenda-entry-types '(:deadline)) ;; this entry excludes :scheduled
                    (org-agenda-start-day "+14d"))))
          ((org-agenda-time-grid nil)
+          (org-agenda-category-filter-preset '("-Habits")) ;; exclude gtd.org/Habits by property category="Habits"
           (org-agenda-show-all-dates nil)
           (org-deadline-warning-days 730)))
         ("w" "Action list excluding PERSONAL"
@@ -241,10 +242,15 @@
                      ((org-agenda-overriding-header "Next Tasks:")))
           (tags "REFILE"
                 ((org-agenda-overriding-header "Tasks to Refile")
+                 (org-agenda-todo-ignore-scheduled nil)
+                 (org-agenda-todo-ignore-deadlines nil)
                  (org-tags-match-list-sublevels nil)))
           (tags "-proj-NOTE-REFILE-ARCHIVE/DONE|CANCELLED"
-                ;; (tags "-proj-NOTE-REFILE-ARCHIVE+TODO=\"DONE\"\|+TODO=\"CANCELLED\""
-                ((org-agenda-overriding-header "Tasks to Archive")))
+                ;; (tags "-proj-NOTE-ARCHIVE+TODO=\"DONE\"\|+TODO=\"CANCELLED\""
+                ((org-agenda-overriding-header "Tasks to Archive")
+                 (org-agenda-todo-ignore-scheduled nil)
+                 (org-agenda-todo-ignore-deadlines nil)
+                 ))
           (tags-todo "-proj-HOLD-CANCELLED-REFILE-STYLE=\"habit\"/!-NEXT-WAITING-HOLD-CANCELLED"
                      ((org-agenda-overriding-header "Standalone Tasks")
                       (org-tags-match-list-sublevels 'indented)
