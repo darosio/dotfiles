@@ -164,7 +164,8 @@
 (setq org-clock-out-remove-zero-time-clocks t)
 
 ;; Enable habit tracking (and a bunch of other modules)
-(setq org-modules (quote (org-habit)))
+;; (setq org-modules (quote (org-habit)))
+;; (setq org-habit-graph-column 60)
 ;; (setq org-modules (quote (org-bbdb
 ;;                           org-bibtex
 ;;                           org-crypt

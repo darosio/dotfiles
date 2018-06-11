@@ -61,8 +61,8 @@ values."
            ;; mode-line notifications about new messages
            mu4e-enable-mode-line t)
      bibtex
-     ;; (elfeed :variables
-     ;;         rmh-elfeed-org-files (list "~/Sync/.elfeed/1.org"))
+     (elfeed :variables
+             rmh-elfeed-org-files (list "~/Sync/.elfeed/1.org"))
 
      emacs-lisp
      ;; importmagic epc ?
@@ -389,10 +389,10 @@ package is loaded, you should place your code here."
   (setq org-src-window-setup 'current-window)
   (setq org-src-lang-modes '(("ipython" . python)))
   (setq org-src-fontify-natively t)
-  (set-face-attribute 'org-block nil :background
-                      (color-darken-name
-                       (face-attribute 'default :background) 3))
-
+  ;; (require 'color) ;; This is somehow obsolete.
+  ;; (set-face-attribute 'org-block nil :background
+  ;;                     (color-darken-name
+  ;;                      (face-attribute 'default :background) 3))
   (setq org-src-block-faces '(("emacs-lisp" (:background "#EEE2FF"))
                               ("ipython" (:background "#E5FFB8"))))
   ;; (global-company-mode)
@@ -427,8 +427,8 @@ package is loaded, you should place your code here."
     (require 'my-org)
     (require 'my-org-publish)
     )
-  ;; (with-eval-after-load 'elfeed
-  ;;   (require 'elfeed-config))
+  (with-eval-after-load 'elfeed
+    (require 'elfeed-config))
   (with-eval-after-load 'bibtex
     (require 'bibtex-config))
   ;; set mu4e as default
@@ -462,10 +462,12 @@ package is loaded, you should place your code here."
     "Set current buffer to use variable-width font."
     (variable-pitch-mode 1)
     (text-scale-increase 1.2)
-    (visual-fill-column-mode)
+    ;; (visual-fill-column-mode)
     )
   (add-hook 'elfeed-show-mode-hook 'xah-use-variable-width-font)
-  ;; (add-hook 'mu4e-view-mode-hook 'xah-use-variable-width-font)
+  (add-hook 'elfeed-show-mode-hook 'visual-fill-column-mode)
+  (add-hook 'mu4e-view-mode-hook 'xah-use-variable-width-font)
+  (add-hook 'mu4e-headers-mode-hook 'xah-use-variable-width-font)
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
