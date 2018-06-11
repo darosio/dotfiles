@@ -396,7 +396,7 @@ package is loaded, you should place your code here."
   (setq org-src-block-faces '(("emacs-lisp" (:background "#EEE2FF"))
                               ("ipython" (:background "#E5FFB8"))))
   ;; (global-company-mode)
-  ;; (add-to-list 'company-backends 'company-ob-ipython) ;; does not seem to work
+  ;; (add-to-list 'company-backends 'company-ob-ipython) ;; It is broken
 
   ;; required by mu4e-send-delay for sending correctly formatted email
   (prefer-coding-system 'utf-8)
