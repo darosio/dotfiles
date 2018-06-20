@@ -461,7 +461,7 @@ package is loaded, you should place your code here."
   (defun xah-use-variable-width-font ()
     "Set current buffer to use variable-width font."
     (variable-pitch-mode 1)
-    ;; (text-scale-increase 1.2)
+    (text-scale-increase 1.1)
     ;; (visual-fill-column-mode)
     )
   (add-hook 'elfeed-show-mode-hook 'xah-use-variable-width-font)
