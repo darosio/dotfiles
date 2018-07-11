@@ -114,6 +114,7 @@ URxvt.resize-font.smaller: C-minus
 URxvt.resize-font.bigger: C-plus
 URxvt.resize-font.reset: C-equal
 URxvt.resize-font.show: C-question
+URxvt.resize-font.step: 2
 ! URxvt*perl-ext:                       string
 URxvt*iso14755:                       false
 URxvt*iso14755_52:                    false
