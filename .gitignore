@@ -14,4 +14,4 @@ tmux/.tmux/resurrect/
 *.elc
 __pycache__/
 
-*/spacemacs.env
+*.spacemacs.env
