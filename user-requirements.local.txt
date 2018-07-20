@@ -4,20 +4,29 @@
 #
 #    pip-compile --output-file user-requirements.local.txt user-requirements.local.in
 #
+-e file:///home/dan/workspace/imgread
 autoflake==1.2
+boto3==1.7.61             # via python-bioformats
+botocore==1.10.61         # via boto3, s3transfer
 click==6.7                # via pip-tools
 cloudpickle==0.5.3        # via scikit-image
 cycler==0.10.0            # via matplotlib
 dask[array]==0.18.1       # via scikit-image
 decorator==4.3.0          # via networkx
+docopt==0.6.2
+docutils==0.14            # via botocore
 epc==0.0.5
 first==2.0.1              # via pip-tools
+future==0.16.0            # via python-bioformats
 importmagic==0.1.7
 isort==4.3.4
+javabridge==1.0.17        # via python-bioformats
+jmespath==0.9.3           # via boto3, botocore
 kiwisolver==1.0.1         # via matplotlib
+lxml==4.2.3
 matplotlib==2.2.2         # via scikit-image
 networkx==2.1             # via scikit-image
-numpy==1.14.5             # via dask, matplotlib, pywavelets, scipy
+numpy==1.14.5             # via dask, javabridge, matplotlib, pywavelets, scipy
 packaging==17.1           # via tox
 pillow==5.2.0             # via scikit-image
 pip-tools==2.0.2
@@ -27,9 +36,11 @@ py==1.5.4                 # via tox
 pyflakes==2.0.0           # via autoflake
 pyparsing==2.2.0          # via matplotlib, packaging
 pyscaffold==3.0.3
-python-dateutil==2.7.3    # via matplotlib
+python-bioformats==1.4.0
+python-dateutil==2.7.3    # via botocore, matplotlib
 pytz==2018.5              # via matplotlib
 pywavelets==0.5.2         # via scikit-image
+s3transfer==0.1.13        # via boto3
 scikit-image==0.14.0
 scipy==1.1.0              # via scikit-image
 service-factory==0.1.5
@@ -38,6 +49,3 @@ six==1.11.0               # via cycler, matplotlib, packaging, pip-tools, python
 toolz==0.9.0              # via dask
 tox==3.1.2
 virtualenv==16.0.0        # via tox
-
-# The following packages are considered to be unsafe in a requirements file:
-# pip
