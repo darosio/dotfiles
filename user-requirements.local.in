@@ -19,5 +19,3 @@ service-factory
 prody
 # python-networkx python-pillow python-cloudpickle
 scikit-image
-# mine
--e /home/dan/workspace/imgread/
