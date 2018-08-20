@@ -8,7 +8,7 @@
 #-e file:///home/dan/workspace/nimg
 #-e file:///home/dan/workspace/platereaders/prenspire
 #-e file:///home/dan/workspace/platereaders/prtecan
-imgread
+#imgread
 nimg
 prenspire
 prtecan
