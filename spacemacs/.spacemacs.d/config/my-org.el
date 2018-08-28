@@ -49,7 +49,7 @@
              '("P" "#+begin_src python :results output :session *python* :exports both\n\n#+end_src" "<src lang=\"python\">\n\n</src>"))
 
 (add-to-list 'org-structure-template-alist
-             '("pp" "#+begin_src ipython :session :results both :exports raw drawer\n\n#+end_src" "<src lang=\"python\">\n\n</src>"))
+             '("pp" "#+begin_src ipython :session :results output :exports raw drawer\n\n#+end_src" "<src lang=\"python\">\n\n</src>"))
 
 (add-to-list 'org-structure-template-alist
              '("b" "#+begin_src sh :results output :exports both\n\n#+end_src" "<src lang=\"sh\">\n\n</src>"))
