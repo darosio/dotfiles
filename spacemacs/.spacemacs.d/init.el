@@ -389,6 +389,8 @@ package is loaded, you should place your code here."
   ;; ;; not sure I need this
   ;; (setq python-shell-interpreter "ipython"
   ;;       python-shell-interpreter-args "-i --simple-prompt")
+  ;; (setq python-shell-interpreter "jupyter-console"
+  ;;       python-shell-interpreter-args "--existing")
   ;; Fix an incompatibility between the ob-async and ob-ipython packages
   (setq ob-async-no-async-languages-alist '("ipython"))
   (require 'git-annex)
