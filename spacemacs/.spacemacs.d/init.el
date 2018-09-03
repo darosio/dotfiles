@@ -35,10 +35,15 @@ This function should only modify configuration layer settings."
    dotspacemacs-configuration-layers
    '(
      ;; ----------------------------------------------------------------
-     ;; gtags
-     csv
+     ;; Example of useful layers you may want to use right away.
+     ;; Uncomment some layer names and press `SPC f e R' (Vim style) or
+     ;; `M-m f e R' (Emacs style) to install them.
+     ;; ----------------------------------------------------------------
      (deft :variables
      	 deft-directory "~/Sync/notes")
+     ;; ivy
+     helm
+     ;; auto-completion
      (auto-completion :variables
                       ;; default
                       auto-completion-return-key-behavior 'complete
@@ -51,25 +56,7 @@ This function should only modify configuration layer settings."
                       ;; auto-completion-enable-help-tooltip 'manual ;; M-h
                       auto-completion-enable-help-tooltip t
                       auto-completion-enable-sort-by-usage t)
-     ;; helm
-     ;; ivy
-     (org :variables
-          ;; org-enable-bootstrap-support t
-          ;; org-enable-github-support t
-          org-enable-reveal-js-support t
-          org-reveal-root "/home/dan/.pandoc/reveal.js"
-          org-projectile-file "/home/dan/Sync/notes/TODOs.org")
-     (mu4e :variables
-           mu4e-maildir "~/Sync/Maildir"
-           mu4e-account-alist t
-           ;;;; mu4e-enable-async-operations t
-           ;; mode-line notifications about new messages
-           mu4e-enable-mode-line t)
-     bibtex
-     ;; (elfeed :variables
-     ;;         rmh-elfeed-org-files (list "~/Sync/.elfeed/1.org"))
-
-     emacs-lisp
+     ;; better-defaults
      ;; --user importmagic epc service_factory autoflake
      ;; pytest python-jedi python-json-rpc hy yapf python-isort
      (python :variables
@@ -78,27 +65,51 @@ This function should only modify configuration layer settings."
              python-sort-imports-on-save nil  ;; ", r I"
              python-enable-yapf-format-on-save nil ;; ", ="
              )
-     ;; version-control
-     ;; (git :variables git-gutter-use-fringe t)
-     git
-     markdown
-     (pdf :variables
-          pdf-annot-activate-created-annotations t)
+     emacs-lisp
+     ;; git
+     ;; markdown
+     neotree
+     ;; org
+     (org :variables
+          ;; org-enable-bootstrap-support t
+          ;; org-enable-github-support t
+          org-enable-reveal-js-support t
+          org-reveal-root "/home/dan/.pandoc/reveal.js"
+          org-projectile-file "/home/dan/Sync/notes/TODOs.org")
+     org-gcal
+     ;; (shell :variables
+     ;;        shell-default-height 30
+     ;;        shell-default-position 'bottom)
+     (mu4e :variables
+           mu4e-spacemacs-layout-name "@Mu4e"
+           mu4e-spacemacs-layout-binding "m"
+           mu4e-spacemacs-kill-layout-on-exit t
+           mu4e-maildir "~/Sync/Maildir"
+           mu4e-account-alist t
+           ;; mu4e-enable-async-operations t ;; problem: do not send email!!!
+           mu4e-use-maildirs-extension t
+           ;; mode-line notifications about new messages
+           mu4e-enable-mode-line t)
+     ;; hunspell-{it,em_US}
      (spell-checking :variables
-                     spell-checking-enable-auto-dictionary t
-                     ;; ispell-program-name "hunspell"  ;; not so useful
-                     ;; ispell-local-dictionary "it_IT" ;; not so useful
-                     ;; ispell-local-dictionary "italian" ;; not so useful
-                     spell-checking-enable-by-default nil
+                     spell-checking-enable-by-default nil  ;; =SPC t S=
                      enable-flyspell-auto-completion t)
      ;; "SPC e l"
      ;; for python: pacaur -S flake8 or python-pylint
      (syntax-checking :variables syntax-checking-use-original-bitmaps t)
-     ipython-notebook
-     ess
-     org-gcal
+     ;; (git :variables git-gutter-use-fringe t)
+     git
+     bibtex
+     (pdf :variables
+          pdf-annot-activate-created-annotations t)
+     markdown ;;conflict with ob-ipython !! ?
+     csv
+     ;; ;; (elfeed :variables
+     ;; ;;         rmh-elfeed-org-files (list "~/Sync/.elfeed/1.org"))
+     ;; ;; ipython-notebook
+     ;; ;; ess
      graphviz
-     html
+     html ;; also non sure I need it
      (plantuml :variables
                org-plantuml-jar-path "/opt/plantuml/plantuml.jar"
                plantuml-jar-path "/opt/plantuml/plantuml.jar")
@@ -113,12 +124,14 @@ This function should only modify configuration layer settings."
    ;; Also include the dependencies as they will not be resolved automatically.
    dotspacemacs-additional-packages '(;; develop includes
                                       ;; helm-mu
-                                      ;; ob-ipython 
+                                      ob-ipython
                                       org-noter
                                       visual-fill-column
                                       git-annex ;; C-x C-q in annexed buffer; in dired instead @e @a (@g @d);
                                       magit-annex
                                       )
+
+
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
 
@@ -261,8 +274,7 @@ It should only modify the values of Spacemacs settings."
    dotspacemacs-default-font '("Dejavu Sans Mono"
                                :size 14
                                :weight normal
-                               :width normal
-                               :powerline-scale 0.9)
+                               :width normal)
 
    ;; The leader key (default "SPC")
    dotspacemacs-leader-key "SPC"
@@ -312,7 +324,8 @@ It should only modify the values of Spacemacs settings."
    ;; Size (in MB) above which spacemacs will prompt to open the large file
    ;; literally to avoid performance issues. Opening a file literally means that
    ;; no major mode or minor modes are active. (default is 1)
-   dotspacemacs-large-file-size 6
+   dotspacemacs-large-file-size 1
+
    ;; Location where to auto-save files. Possible values are `original' to
    ;; auto-save the file in-place, `cache' to auto-save the file to another
    ;; file stored in the cache directory and `nil' to disable auto-saving.
@@ -505,91 +518,33 @@ dump."
   )
 
 (defun dotspacemacs/user-config ()
-  "Configuration function for user code.
-This function is called at the very end of Spacemacs
-initialization after layers configuration. This is the place
-where most of your configurations should be done. Unless it is
-explicitly specified that a variable should be set before a
-package is loaded, you should place your code here."
-  (global-set-key (kbd "<f9>") 'imenu-list)
-  (global-set-key (kbd "C-<f9>") 'imenu-list-smart-toggle)
-  ;; need to fix python interpreter completion
-  ;; to debug
+  "Configuration for user code:
+This function is called at the very end of Spacemacs startup, after layer
+configuration.
+Put your configuration code here, except for variables that should be set
+before packages are loaded."
+  ;; ;; to debug
   ;; (setq debug-on-error t)
-  ;; fix inferior ipython startup
-  (setq python-shell-completion-native-enable nil)
-  ;; ;; not sure I need this
-  ;; (setq python-shell-interpreter "ipython"
-  ;;       python-shell-interpreter-args "-i --simple-prompt")
-  ;; (setq python-shell-interpreter "jupyter-console"
-  ;;       python-shell-interpreter-args "--existing")
-  ;; ;; Fix an incompatibility between the ob-async and ob-ipython packages
-  ;; (setq ob-async-no-async-languages-alist '("ipython"))
-  ;; ein
-  (setq ein:jupyter-default-server-command "jupyter-notebook"
-        ein:jupyter-default-notebook-directory "~/Sync/"
-        ein:use-auto-complete-superpack t)
-        ;; ein:use-smartrep t)
-  ;;Try for ob-ipython: pip install importmagic epc
-  (setq org-src-window-setup 'current-window) ;;Try
-  ;;Try (setq org-src-lang-modes '(("ipython" . python)))
-  ;; (require 'color) ;; This is somehow obsolete.
-  ;; (set-face-attribute 'org-block nil :background
-  ;;                     (color-darken-name
-  ;;                      (face-attribute 'default :background) 3))
-  ;; (setq org-src-block-faces '(("emacs-lisp" (:background "#EEE2FF"))
-  ;;                             ("ipython" (:background "#E5FFB8"))))
-  (global-company-mode)
-  (add-to-list 'company-backends 'company-ob-ipython)
-  (spacemacs/set-leader-keys "h i" 'ob-ipython-inspect)
-
-  ;; required by mu4e-send-delay for sending correctly formatted email
-  (prefer-coding-system 'utf-8)
-  (set-language-environment "UTF-8")
-
-  (add-hook 'git-commit-mode-hook 'evil-insert-state)
-  (add-hook 'pdf-view-mode-hook 'pdf-view-set-slice-from-bounding-box)
-  (define-key evil-normal-state-map (kbd "<SPC> o n") 'org-noter)
-  (setq org-noter-property-doc-file "INTERLEAVE_PDF"
-        org-noter-property-note-location "INTERLEAVE_PAGE_NOTE")
-  ;; dictionary switch
-  (define-key evil-normal-state-map (kbd "<SPC> S r") 'flyspell-region)
-  (define-key evil-normal-state-map (kbd "<SPC> S a") (lambda () (interactive) (ispell-change-dictionary "american")))
-  (define-key evil-normal-state-map (kbd "<SPC> S i") (lambda () (interactive) (ispell-change-dictionary "italian")))
-
-  ;; gtranslate =SPC x g t=
-  ;; (setq google-translate-translation-directions-alist '(("it" . "en") ))
-  (setq google-translate-default-source-language "it"
-        google-translate-default-target-language "en")
 
   ;; deft
   (setq deft-recursive t
         deft-extensions '("org" "md" "txt" "markdown"))
-  ;; personal config
-  (push "~/.spacemacs.d/config/" load-path)
-  (with-eval-after-load 'org
-    (require 'my-gtd)
-    (require 'my-org)
-    (require 'my-org-publish)
-    )
-  (with-eval-after-load 'elfeed
-    (require 'elfeed-config))
-  (with-eval-after-load 'bibtex
-    (require 'bibtex-config))
-  ;; set mu4e as default
-  (setq mail-user-agent 'mu4e-user-agent)
-  (with-eval-after-load 'mu4e
-    (require 'mu4e-config))
+
+  ;; rescale text size
   ;; C-x C-0 restores the default font size
+  (setq text-scale-mode-step 1.05)
   (global-set-key (kbd "C-+") 'text-scale-increase)
   (global-set-key (kbd "C--") 'text-scale-decrease)
-  ;; (define-key evil-normal-state-map (kbd "<tab>") (kbd "za")) ;conflict magit
-  (with-eval-after-load 'python
-    (define-key python-mode-map (kbd "<tab>") (kbd "za")))
-  (define-key emacs-lisp-mode-map (kbd "<tab>") (kbd "za"))
-  ;; magit 
-  (setq magit-repository-directories '("~/Sync/" "~/workspace/")) ;like projectile
-  (require 'git-annex)
+
+  ;; emulate ctags
+  (global-set-key (kbd "<f9>") 'imenu-list)
+  (global-set-key (kbd "C-<f9>") 'imenu-list-smart-toggle)
+
+  ;; gtranslate =SPC x g t= =SPC u SPC x g t=
+  ;; (setq google-translate-translation-directions-alist '(("it" . "en") ))
+  (setq google-translate-default-source-language "it"
+        google-translate-default-target-language "en")
+
   ;; visual-fill-colums
   (setq visual-fill-column-center-text t
         ;; ;; set right curly arrow even when visual line mode is wrapping logical lines into visual ones.
@@ -602,36 +557,59 @@ package is loaded, you should place your code here."
   (add-hook 'visual-fill-column-mode-hook #'visual-line-mode)
   ;; (add-hook 'visual-line-mode-hook #'visual-fill-column-mode)
   (define-key evil-normal-state-map (kbd "<SPC> o o") 'visual-fill-column-mode)
-  ;; 
   ;; use variable-width font for some modes
   (defun xah-use-variable-width-font ()
     "Set current buffer to use variable-width font."
     (variable-pitch-mode 1)
-    (text-scale-increase 1.1)
     ;; (visual-fill-column-mode)
-    )
-  (add-hook 'elfeed-show-mode-hook 'xah-use-variable-width-font)
-  (add-hook 'elfeed-show-mode-hook 'visual-fill-column-mode)
-  ;; (add-hook 'mu4e-view-mode-hook 'xah-use-variable-width-font)
-  ;; (add-hook 'mu4e-headers-mode-hook 'xah-use-variable-width-font)
+    (text-scale-increase 1.1))
+
+  ;; org-noter
+  (define-key evil-normal-state-map (kbd "<SPC> o n") 'org-noter)
+  (setq org-noter-property-doc-file "INTERLEAVE_PDF"
+        org-noter-property-note-location "INTERLEAVE_PAGE_NOTE")
+
+  ;; pdf
+  (add-hook 'pdf-view-mode-hook 'pdf-view-set-slice-from-bounding-box)
+
+  ;; spell-checking
+  ;; dictionary switch
+  (define-key evil-normal-state-map (kbd "<SPC> S r") 'flyspell-region)
+  ;; (define-key evil-normal-state-map (kbd "<SPC> S a") (lambda () (interactive) (ispell-change-dictionary "american")))
+  ;; (define-key evil-normal-state-map (kbd "<SPC> S i") (lambda () (interactive) (ispell-change-dictionary "italian")))
+  (with-eval-after-load 'ispell
+    (setq ispell-program-name "hunspell")
+    ;; ;; ispell-set-spellchecker-params has to be called
+    ;; ;; before ispell-hunspell-add-multi-dic will work
+    (ispell-set-spellchecker-params)
+    (ispell-hunspell-add-multi-dic "it_IT,en_US")
+    (setq ispell-dictionary "it_IT,en_US"))
+
+  ;; magit
+  (setq magit-repository-directories '("~/Sync/" "~/workspace/")) ;like projectile
+  (require 'git-annex)
+  (add-hook 'git-commit-mode-hook 'evil-insert-state)
+
+
+  ;; personal config
+  (push "~/.spacemacs.d/config/" load-path)
+  (with-eval-after-load 'org (require 'my-gtd)
+                        (require 'my-org)
+                        (require 'my-org-publish))
+  ;; (with-eval-after-load 'elfeed
+  ;;   (require 'elfeed-config))
+  (with-eval-after-load 'bibtex (require 'bibtex-config))
+  (with-eval-after-load 'mu4e (require 'mu4e-config))
+
+  ;; TAB for za
+  ;; (define-key evil-normal-state-map (kbd "<tab>") (kbd "za")) ;conflict magit
+  (with-eval-after-load 'python
+    (define-key python-mode-map (kbd "<tab>") (kbd "za")))
+  (define-key emacs-lisp-mode-map (kbd "<tab>") (kbd "za"))
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   (quote
-    (yapfify web-mode visual-fill-column tagedit smeargle slim-mode scss-mode sass-mode pyvenv pytest pyenv-mode py-isort pug-mode plantuml-mode pip-requirements orgit org-noter markdown-toc markdown-mode magit-gitflow magit-annex live-py-mode hy-mode helm-pydoc helm-gitignore helm-css-scss haml-mode gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-annex gh-md flyspell-popup flyspell-correct-helm flyspell-correct flycheck-pos-tip flycheck evil-magit magit magit-popup git-commit ghub with-editor ess-smart-equals ess-R-data-view ctable ess emmet-mode cython-mode company-web web-completion-data company-anaconda auto-dictionary pythonic anaconda-mode helm-mu org-ref pdf-tools key-chord ivy tablist helm-bibtex parsebib elfeed-web elfeed-org elfeed-goodies ace-jump-mode noflet elfeed biblio biblio-core mu4e-maildirs-extension mu4e-alert ht ob-ipython dash-functional ein skewer-mode websocket js2-mode simple-httpd helm-company helm-c-yasnippet fuzzy deft company-statistics company-quickhelp pos-tip company auto-yasnippet yasnippet ac-ispell auto-complete ox-reveal org-gcal request-deferred deferred org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download htmlize gnuplot ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint indent-guide hydra hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile pkg-info epl helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu highlight elisp-slime-nav dumb-jump f dash s diminish define-word column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core popup async))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
 (defun dotspacemacs/emacs-custom-settings ()
   "Emacs custom settings.
 This is an auto-generated function, do not modify its content directly, use
@@ -644,7 +622,7 @@ This function is called at the very end of Spacemacs initialization."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (yasnippet-snippets web-beautify symon string-inflection spaceline-all-the-icons all-the-icons memoize prettier-js pippel pipenv password-generator overseer org-brain nameless mmm-mode magit-svn importmagic epc concurrent impatient-mode helm-xref helm-purpose window-purpose imenu-list graphviz-dot-mode gitignore-templates evil-org evil-lion evil-goggles evil-cleverparens paredit editorconfig csv-mode counsel-projectile counsel swiper centered-cursor-mode font-lock+ dotenv-mode yapfify web-mode visual-fill-column tagedit smeargle slim-mode scss-mode sass-mode pyvenv pytest pyenv-mode py-isort pug-mode plantuml-mode pip-requirements orgit org-noter markdown-toc markdown-mode magit-gitflow magit-annex live-py-mode hy-mode helm-pydoc helm-gitignore helm-css-scss haml-mode gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-annex gh-md flyspell-popup flyspell-correct-helm flyspell-correct flycheck-pos-tip flycheck evil-magit magit magit-popup git-commit ghub with-editor ess-smart-equals ess-R-data-view ctable ess emmet-mode cython-mode company-web web-completion-data company-anaconda auto-dictionary pythonic anaconda-mode helm-mu org-ref pdf-tools key-chord ivy tablist helm-bibtex parsebib elfeed-web elfeed-org elfeed-goodies ace-jump-mode noflet elfeed biblio biblio-core mu4e-maildirs-extension mu4e-alert ht ob-ipython dash-functional ein skewer-mode websocket js2-mode simple-httpd helm-company helm-c-yasnippet fuzzy deft company-statistics company-quickhelp pos-tip company auto-yasnippet yasnippet ac-ispell auto-complete ox-reveal org-gcal request-deferred deferred org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download htmlize gnuplot ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint indent-guide hydra hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile pkg-info epl helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu highlight elisp-slime-nav dumb-jump f dash s diminish define-word column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core popup async))))
+    (csv-mode yasnippet-snippets yapfify ws-butler winum which-key web-mode web-beautify volatile-highlights visual-fill-column vi-tilde-fringe uuidgen use-package toc-org tagedit symon string-inflection spaceline-all-the-icons smeargle slim-mode scss-mode sass-mode restart-emacs rainbow-delimiters pyvenv pytest pyenv-mode py-isort pug-mode prettier-js popwin plantuml-mode pippel pipenv pip-requirements persp-mode pcre2el password-generator paradox ox-reveal overseer orgit org-ref org-projectile org-present org-pomodoro org-noter org-mime org-gcal org-download org-bullets org-brain open-junk-file ob-ipython neotree nameless mu4e-maildirs-extension mu4e-alert move-text mmm-mode markdown-toc magit-svn magit-gitflow magit-annex macrostep lorem-ipsum live-py-mode link-hint indent-guide importmagic impatient-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-pydoc helm-purpose helm-projectile helm-mu helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag graphviz-dot-mode google-translate golden-ratio gnuplot gitignore-templates gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-annex gh-md fuzzy font-lock+ flyspell-popup flyspell-correct-helm flycheck-pos-tip flx-ido fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-org evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu emmet-mode elisp-slime-nav editorconfig dumb-jump dotenv-mode diminish deft define-word cython-mode counsel-projectile company-web company-statistics company-quickhelp company-anaconda column-enforce-mode clean-aindent-mode centered-cursor-mode auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile aggressive-indent ace-window ace-link ace-jump-helm-line ac-ispell))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

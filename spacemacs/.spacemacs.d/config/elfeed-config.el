@@ -6,6 +6,8 @@
 (defun elfeed-search-format-date (date)
   (format-time-string "%Y-%m-%d %H:%M" (seconds-to-time date)))
 
+(add-hook 'elfeed-show-mode-hook 'xah-use-variable-width-font)
+(add-hook 'elfeed-show-mode-hook 'visual-fill-column-mode)
 
 ;; (defun elfeed-goodies/entry-line-draw (entry)
 ;;   "Print ENTRY to the buffer."

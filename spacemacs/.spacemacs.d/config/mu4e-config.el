@@ -1,9 +1,12 @@
+(provide 'mu4e-config)
 ;; ;; https://martinralbrecht.wordpress.com/2016/05/30/handling-email-with-emacs/
 ;; (use-package helm-mu
 ;;   :ensure t
 ;;   :config (progn
 ;;             (bind-key "S" #'helm-mu mu4e-main-mode-map)))
 
+;; set mu4e as default
+(setq mail-user-agent 'mu4e-user-agent)
 
 ;; enable inline images
 (setq mu4e-view-show-images t)
@@ -55,7 +58,7 @@
          (:mailing-list  .  12)
          (:subject       .  nil))) ;; alternatively, use :thread-subject
 ;; enable mu4e maildirs extension
-(mu4e-maildirs-extension)
+;; (mu4e-maildirs-extension)
 (setq ;;mu4e-maildirs-extension-maildir-collapsed-prefix "archives"
       mu4e-maildirs-extension-default-collapse-level 0)
 ;; store all attachments of an email into the same folder
@@ -106,6 +109,11 @@
 ;;           (lambda () (local-set-key (kbd "SPC m w") #'message-insert-signature)))
 (spacemacs/set-leader-keys-for-major-mode 'mu4e-compose-mode
   "w" 'message-insert-signature)
+
+(add-hook 'mu4e-compose-mode-hook 'evil-insert-state)
+;; (add-hook 'mu4e-view-mode-hook 'xah-use-variable-width-font)
+;; (add-hook 'mu4e-headers-mode-hook 'xah-use-variable-width-font)
+
 ;;; contexts ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (setq mu4e-contexts
       `( ,(make-mu4e-context
@@ -385,4 +393,13 @@
 ;; (setq mu4e-user-mail-address-list '("XXX@mac.com"
 ;;                                     "YYY@irreal.org"))
 
-(provide 'mu4e-config)
+(require 'mu4e-alert)
+(with-eval-after-load 'mu4e-alert
+  ;; (mu4e-alert-set-default-style 'notifications)) ; For linux
+  (mu4e-alert-set-default-style 'libnotify))  ; Alternative for linux
+;; (mu4e-alert-set-default-style 'notifier))   ; For Mac OSX (through the
+;; (mu4e-alert-set-default-style 'growl))      ; Alternative for Ma
+
+;; ;; required by mu4e-send-delay for sending correctly formatted email
+;; (prefer-coding-system 'utf-8)
+;; (set-language-environment "UTF-8")

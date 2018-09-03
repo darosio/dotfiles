@@ -1,0 +1,29 @@
+deft
+autocompletion
+python (completion test refactoring)
+org (babel gtd publish)
+org-gcal
+
+check:
+  1. ipython completion
+  2. python file jedi
+
+mu4e (check send, move ...)
+
+spell checking
+syntax checking
+git
+bibtex (org-noter)
+pdf
+     csv
+     ;; (elfeed :variables
+     ;;         rmh-elfeed-org-files (list "~/Sync/.elfeed/1.org"))
+     markdown
+     ;; ipython-notebook
+     ;; ess
+     graphviz
+     html
+     (plantuml :variables
+               org-plantuml-jar-path "/opt/plantuml/plantuml.jar"
+               plantuml-jar-path "/opt/plantuml/plantuml.jar")
+
