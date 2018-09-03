@@ -1,3 +1,5 @@
+(provide 'my-org-publish)
+
 ;; activate koma scripts export
 (eval-after-load 'ox '(require 'ox-koma-letter))
 
@@ -6,23 +8,21 @@
 
 (setq org-latex-pdf-process
       '("latexmk -pdflatex='pdflatex -interaction nonstopmode' -pdf -bibtex -f %f"))
-;; '("xelatex -interaction nonstopmode %f"
-;;   "xelatex -interaction nonstopmode %f")
-(require 'ox-latex)
-(add-to-list 'org-latex-classes
-             '("koma-article"
-               "\\documentclass{scrartcl}
-                \\usepackage{microtype}
-                \\usepackage{tgtermes}
-                \\usepackage[scale=.9]{tgheros}
-                \\usepackage{tgcursor}
-                \\usepackage{paralist}
-                \\newcommand{\\rc}{$^{14}C$}"
-               ("\\section{%s}" . "\\section*{%s}")
-               ("\\subsection{%s}" . "\\subsection*{%s}")
-               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-               ("\\paragraph{%s}" . "\\paragraph*{%s}")
-               ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
-(require 'ox-beamer)
+;; ;;   "xelatex -interaction nonstopmode %f"
 
-(provide 'my-org-publish)
+;; (require 'ox-latex)
+;; (add-to-list 'org-latex-classes
+;;              '("koma-article"
+;;                "\\documentclass{scrartcl}
+;;                 \\usepackage{microtype}
+;;                 \\usepackage{tgtermes}
+;;                 \\usepackage[scale=.9]{tgheros}
+;;                 \\usepackage{tgcursor}
+;;                 \\usepackage{paralist}
+;;                 \\newcommand{\\rc}{$^{14}C$}"
+;;                ("\\section{%s}" . "\\section*{%s}")
+;;                ("\\subsection{%s}" . "\\subsection*{%s}")
+;;                ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+;;                ("\\paragraph{%s}" . "\\paragraph*{%s}")
+;;                ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+;; (require 'ox-beamer)
