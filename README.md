@@ -23,3 +23,18 @@ stoe -t ~/ bash
 ## submodule problem
 I had once and solved the detached head problem following:
 https://stackoverflow.com/questions/18770545/why-is-my-git-submodule-head-detached-from-master
+
+git branch -u refs/remotes/origin/master master
+
+check .gitmodule
+or:
+ $ cd <submodule-path>
+    $ git checkout <branch>
+    $ cd <parent-repo-path>
+    # <submodule-path> is here path releative to parent repo root
+    # without starting path separator
+    $ git config -f .gitmodules submodule.<submodule-path>.branch <branch>
+
+## add new submodules
+    $ git submodule add -b <branch> <repository> [<submodule-path>]
+    $ git submodule update --remote
