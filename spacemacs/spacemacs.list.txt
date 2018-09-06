@@ -9,21 +9,224 @@ check:
   2. python file jedi
 
 mu4e (check send, move ...)
-
 spell checking
 syntax checking
 git
 bibtex (org-noter)
 pdf
-     csv
-     ;; (elfeed :variables
-     ;;         rmh-elfeed-org-files (list "~/Sync/.elfeed/1.org"))
-     markdown
-     ;; ipython-notebook
-     ;; ess
-     graphviz
-     html
-     (plantuml :variables
-               org-plantuml-jar-path "/opt/plantuml/plantuml.jar"
-               plantuml-jar-path "/opt/plantuml/plantuml.jar")
+csv
+markdown
+graphviz
+plantuml
+html? Do I need this?
+
+extra packages:
+org-noter
+
+only user conf:
+text size rescale
+<F9> imenu-list
+google translate
+visual-fill-colums
+TAB za
+
+\
+outline-mode
+writing layer
+\
+
+
+     languagetool
+     haskell
+     racket
+     ;; ----------------------------------------------------------------
+     better-defaults
+     (colors :variables
+             colors-enable-nyan-cat-progress-bar t
+             colors-enable-rainbow-identifiers t)
+     dash
+     fasd
+     (shell :variables
+            shell-default-height 30
+            shell-default-position 'bottom
+            shell-default-shell 'eshell)
+     shell-scripts
+     ;; (typography :variables typography-enable-typographic-editing t)
+     (version-control :variables
+                       version-control-diff-tool 'diff-hl
+                       version-control-global-margin t)
+     themes-megapack
+     ;; (ranger :variables
+     ;;         ranger-show-preview t)
+     pandoc
+     ess
+     latex
+     writing
+     yaml)
+
+
+
+
+   dotspacemacs-additional-packages '(
+                                      ;; org-webpage
+                                      ;; synonymous
+                                      adaptive-wrap
+                                      outline-magic
+                                      pocket-reader
+                                      pelican-mode
+                                      interleave)
+                                      ;; zotxt)
+
+
+
+   dotspacemacs-startup-lists '(;;(todos . 3)
+                                (bookmarks . 7)
+                                (recents . 5)
+                                (projects . 7))
+
+
+
+
+   dotspacemacs-themes '(professional
+                         farmhouse-dark
+                         hemisu-dark
+                         hemisu-light
+                         monokai
+                         zenburn
+                         alect-light
+                         farmhouse-light
+                         birds-of-paradise-plus
+                         spacemacs-dark
+                         spacemacs-light)
+
+
+
+                        old user config
+
+  (with-eval-after-load 'helm
+    (setq helm-display-function 'helm-default-display-buffer))
+  ;; (setq helm-display-function 'helm-display-buffer-in-own-frame
+  ;;       helm-display-buffer-reuse-frame t
+  ;;       helm-use-undecorated-frame-option t)
+
+
+  ;; (require 'org-projectile)
+  (require 'helm-bookmark)
+  (setq bookmark-save-flag 1
+        bookmark-default-file "~/.spacemacs.d/bookmarks" )
+
+
+
+
+   ;; (require 'publish-config)
+   ;; (require 'org-webpage)
+   ;; (owp/add-project-config
+   ;;  '("darosio.bitbucket.io"
+   ;;    :repository-directory "~/workspace/arte/Web/darosio.bitbucket.io"
+   ;;    :remote (git "ssh://git@bitbucket.org/darosio/darosio.bitbucket.io.git" "master")
+   ;;    ;; you can use `rclone` with `:remote (rclone "remote-name" "/remote/path/location")` instead.
+   ;;    :site-domain "https://darosio.bitbucket.io/"
+   ;;    :site-main-title "Life, Matters and metaModels"
+   ;;    :site-sub-title "(Musings and ramblings through the world of Python and beyond)"
+   ;;    ;; :theme (worg)
+   ;;    :source-browse-url ("Sources" "https://bitbucket.org/darosio/darosio.bitbucket.io")
+   ;;    :personal-avatar "~/workspace/arte/Web/darosio.bitbucket.io/IMG_0614.JPG"
+   ;;    ;; :personal-duoshuo-shortname "tumashu-website"
+   ;;    :web-server-port 7654))
+
+   ;; (setq op/site-domain "https://darosio.bitbucket.io")
+   ;; ;; (setq op/personal-github-link "https://github.com/CodyReichert")
+   ;; (setq op/site-main-title "The One True Blog")
+   ;; (setq op/site-sub-title "Emacs, Programming, and Arch Linux")
+   ;; ;; (setq op/personal-disqus-shortname "theonetrueblog")
+
+
+   ;; http://pragmaticemacs.com/emacs/use-your-digits-and-a-personal-key-map-for-super-shortcuts/
+   ;; unset C- and M- digit keys
+   (dotimes (n 10)
+     (global-unset-key (kbd (format "C-%d" n)))
+     (global-unset-key (kbd (format "M-%d" n)))
+     )
+   ;; set up my own map
+   (define-prefix-command 'bjm-map)
+   (global-set-key (kbd "C-1") 'bjm-map)
+   ;; (define-key bjm-map (kbd "a") 'org-agenda)
+   (define-key bjm-map (kbd "a") (lambda () (interactive) (org-agenda nil " ")))
+   (define-key bjm-map (kbd "f") 'bjm/elfeed-load-db-and-open)
+   (define-key bjm-map (kbd "m") 'mu4e)
+   (define-key bjm-map (kbd "n") 'deft)
+   (define-key bjm-map (kbd "t") 'org-capture)
+
+
+   ;; Folding with tab similar to org-mode
+   (add-hook 'bibtex-mode-hook 'outline-minor-mode)
+   (add-hook 'python-mode-hook 'outline-minor-mode)
+   (eval-after-load 'outline
+     '(progn
+        (require 'outline-magic)
+        (define-key outline-minor-mode-map (kbd "<tab>") 'outline-cycle)))
+
+
+   ;; make cursor the width of the character it is under
+   ;; i.e. full width of a TAB
+   (setq x-stretch-cursor t)
+
+
+   ;; EWW
+   ;; http://irreal.org/blog/?p=6278
+
+   (defun eww-more-readable ()
+     "Makes eww more pleasant to use. Run it after eww buffer is loaded."
+     (interactive)
+     (setq eww-header-line-format nil)               ;; removes page title
+     (setq mode-line-format nil)                     ;; removes mode-line
+     (set-window-margins (get-buffer-window) 20 20)  ;; increases size of margins
+     (redraw-display)                                ;; apply mode-line changes
+     (eww-reload 'local))                            ;; apply eww-header changes
+;;    (defalias 'gk-urls-external-browser 'browse-url-xdg-open)
+;;    (defun gk-browse-url (&rest args)
+;;      "Prompt for whether or not to browse with EWW, if no browse
+;; with external browser."
+;;      (apply::
+;;       (if (y-or-n-p "Browse with EWW? ")
+;;           'eww-browse-url
+;;         #'gk-urls-external-browser)
+;;       args))
+;;    (setq browse-url-browser-function #'gk-browse-url)
+   (require 'browse-url) ; part of gnu emacs
+
+   (defun my-lookup-wikipedia ()
+     "Look up the word under cursor in Wikipedia.
+If there is a text selection (a phrase), use that. This command
+switches to browser."
+     (interactive)
+     (let (word)
+       (setq word
+             (if (use-region-p)
+                 (buffer-substring-no-properties (region-beginning) (region-end))
+               (current-word)))
+       (setq word (replace-regexp-in-string " " "_" word))
+       (eww (concat "http://en.wikipedia.org/wiki/" word))
+       ;; (eww myUrl) ; emacs's own browser
+       ))
+   (defun my-lookup-wiktionary ()
+     "Look up the word under cursor in Wikipedia.
+If there is a text selection (a phrase), use that. This command
+switches to browser."
+     (interactive)
+     (let (word)
+       (setq word
+             (if (use-region-p)
+                 (buffer-substring-no-properties (region-beginning) (region-end))
+               (current-word)))
+       (setq word (replace-regexp-in-string " " "_" word))
+       (eww (concat "http://en.wiktionary.org/wiki/" word))
+       ;; (eww myUrl) ; emacs's own browser
+       ))
+
+
+   (use-package pelican-mode
+     :after (:any org rst markdown-mode adoc-mode)
+     :config
+     (pelican-global-mode))
 
