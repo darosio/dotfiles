@@ -33,6 +33,16 @@ TAB za
 \
 outline-mode
 writing layer
+  - https://github.com/syl20bnr/spacemacs/search?q=prose&type=Issues
+    - https://github.com/gbgar/wordlint.el
+    - proselint
+    - https://github.com/bnbeckwith/writegood-mode
+    - https://github.com/sachac/artbollocks-mode
+    - https://github.com/pronobis/helm-flyspell
+    - https://github.com/mhayashi1120/Emacs-langtool
+    - https://github.com/hpdeifel/synosaurus
+    - https://github.com/emacs-helm/helm-dictionary
+    - https://github.com/jorgenschaefer/typoel
 \
 
 
