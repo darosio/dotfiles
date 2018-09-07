@@ -10,6 +10,12 @@
 ;; ;; fill wrap long line, needed for org headings?
 ;; (setq org-startup-truncated nil)
 
+;; split line for new heading, item or row?
+(setq org-M-RET-may-split-line '((default . t)
+                                 (headline . nil)
+                                 (item . nil)
+                                 (table . nil)))
+
 (org-babel-do-load-languages 'org-babel-load-languages '(
                                                          (plantuml . t)
                                                          (awk . t)

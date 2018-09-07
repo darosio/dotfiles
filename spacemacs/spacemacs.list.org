@@ -37,12 +37,14 @@ writing layer
     - https://github.com/mhayashi1120/Emacs-langtool
     - dictcc
     - wordnut https://github.com/gromnitsky/wordnut
+    - sdcv which uses goldendict
+    - diction
     - https://github.com/bnbeckwith/writegood-mode
     - https://github.com/sachac/artbollocks-mode
-    - https://github.com/hpdeifel/synosaurus
-    - https://github.com/jorgenschaefer/typoel
+    - https://github.com/jorgenschaefer/typoel rather use typography layer
+    - https://github.com/hpdeifel/synosaurus not more useful than wordnut
     - https://github.com/gbgar/wordlint.el broken old
-    - https://github.com/emacs-helm/helm-dictionary prefer dictcc
+    - https://github.com/emacs-helm/helm-dictionary prefer dictcc?
 \
 
 

@@ -31,12 +31,12 @@
 
 (defconst writing-packages
   '(langtool  ;; languagetool
-    wordnut  ;; wordnet
-    ;; artbollocks-mode
+    wordnut  ;; wordnet f12 C-f12
+    sdcv  ;; sdcv f11
+    dictcc ;; f8 but use cmdline trans, please!
     writegood-mode
-    ;; sdcv
-    synosaurus
-    (diction :location local)
+    artbollocks-mode
+    (diction :location local)  ;; diction
     )
   "The list of Lisp packages required by the writing layer.
 
@@ -92,11 +92,6 @@ Each entry is either:
     ;; 'spacemacs/languagetool-next-error)
     ))
 
-(defun writing/init-writegood-mode ()
-  (use-package writegood-mode
-    :defer t
-    ))
-
 (defun writing/init-wordnut ()
   (use-package wordnut
     :defer t
@@ -105,35 +100,55 @@ Each entry is either:
     (global-set-key [(control f12)] 'wordnut-search)
     :config
     (progn
-      (local-key-binding wordnut-mode-map (kbd "q") 'quit-window)
-      (define-key wordnut-mode-map (kbd "RET") 'wordnut-lookup-current-word)
-      (define-key wordnut-mode-map (kbd "l") 'wordnut-history-backward)
-      (define-key wordnut-mode-map (kbd "r") 'wordnut-history-forward)
-      (define-key wordnut-mode-map (kbd "h") 'wordnut-history-lookup)
-      (define-key wordnut-mode-map (kbd "/") 'wordnut-search)
-      (define-key wordnut-mode-map (kbd "o") 'wordnut-show-overview)
-
+      (spacemacs/set-leader-keys-for-major-mode 'wordnut-mode "q" 'quit-window)
+      (define-key wordnut-mode-map (kbd "C-q") 'delete-window)
+      (spacemacs/set-leader-keys-for-major-mode 'wordnut-mode "RET" 'wordnut-lookup-current-word)
+      (spacemacs/set-leader-keys-for-major-mode 'wordnut-mode "l" 'wordnut-history-backward)
+      (spacemacs/set-leader-keys-for-major-mode 'wordnut-mode "r" 'wordnut-history-forward)
+      (spacemacs/set-leader-keys-for-major-mode 'wordnut-mode "h" 'wordnut-history-lookup)
+      (spacemacs/set-leader-keys-for-major-mode 'wordnut-mode "/" 'wordnut-search)
+      (spacemacs/set-leader-keys-for-major-mode 'wordnut-mode "o" 'wordnut-show-overview)
       (define-key wordnut-mode-map (kbd "C-j") 'outline-next-visible-heading)
       (define-key wordnut-mode-map (kbd "C-k") 'outline-previous-visible-heading)
-
-      (define-key wordnut-mode-map (kbd "b") 'scroll-down-command))
-    ))
-
-(defun writing/init-synosaurus ()
-  (use-package synosaurus
-    :defer t
+      (spacemacs/set-leader-keys-for-major-mode 'wordnut-mode (kbd "b") 'scroll-down-command))
     ))
 
 (defun writing/init-sdcv ()
   (use-package sdcv
     :defer t
     :init
-    (global-set-key [f11] 'sdcv-search-input)
+    (global-set-key [f11] 'sdcv-search-pointer)
     :config
     (progn
+      (spacemacs/set-leader-keys-for-major-mode 'sdcv-mode "q" 'quit-window)
       (define-key sdcv-mode-map (kbd "C-q") 'delete-window)
-      (define-key sdcv-mode-map (kbd "C-J") 'sdcv-next-dictionary)
-      (define-key sdcv-mode-map (kbd "C-K") 'sdcv-previous-dictionary))
+      (define-key sdcv-mode-map (kbd "C-j") 'sdcv-next-dictionary)
+      (define-key sdcv-mode-map (kbd "C-k") 'sdcv-previous-dictionary))
+    ))
+
+(defun writing/init-dictcc ()
+  (use-package synosaurus
+    :defer t
+    :init
+    (global-set-key [f8] 'dictcc-at-point)
+    :config
+    (setq dictcc-destination-lang "it")
+    ))
+
+(defun writing/init-writegood-mode ()
+  (use-package writegood-mode
+    :defer t
+    :init
+    (global-set-key "\C-cg" 'writegood-mode)
+    (global-set-key "\C-c\C-gg" 'writegood-grade-level)
+    (global-set-key "\C-c\C-ge" 'writegood-reading-ease)
+    ))
+
+(defun writing/init-artbollocks-mode ()
+  (use-package artbollocks-mode
+    :defer t
+    :init
+    (global-set-key "\C-c\C-ga" 'artbollocks-mode)
     ))
 
 (defun writing/init-diction ()
@@ -141,6 +156,7 @@ Each entry is either:
     :defer t
     :init
     (require 'diction)
+    (global-set-key "\C-c\C-gd" 'diction-buffer)
     ))
 
 ;;; packages.el ends here
