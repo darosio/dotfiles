@@ -30,7 +30,7 @@
 ;;; Code:
 
 (defconst writing-packages
-  '(;langtool
+  '(langtool
     ;; artbollocks-mode
     writegood-mode
     ;; helm-dictionary
