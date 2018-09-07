@@ -30,12 +30,11 @@
 ;;; Code:
 
 (defconst writing-packages
-  '(langtool
+  '(langtool  ;; languagetool
+    wordnut  ;; wordnet
     ;; artbollocks-mode
     writegood-mode
-    ;; helm-dictionary
     ;; sdcv
-    wordnut
     synosaurus
     (diction :location local)
     )
@@ -71,12 +70,27 @@ Each entry is either:
     :defer t
     :init
     (progn
+      (spacemacs/set-leader-keys
+        "Sl" 'langtool-check
+        ;; "Sl" 'spacemacs/languagetool-toggle
+        "SL" 'langtool-correct-buffer)
       (setq langtool-java-classpath "/usr/share/languagetool:/usr/share/java/languagetool/*"
-            langtool-default-language "en-US"
+            ;; langtool-default-language "en-US"
             langtool-java-bin "/usr/bin/java"
-            langtool-mother-tongue "it")
-      )))
-
+            langtool-mother-tongue "it"))
+    :config
+    ;; The whitespace rules give a lot of false positives when linting rich
+    ;; text.
+    (setq-default langtool-disabled-rules '("WHITESPACE_RULE"))
+    (global-set-key "\C-x4W" 'langtool-check-done)
+    (global-set-key "\C-x44" 'langtool-show-brief-message-at-point)
+    (define-key evil-normal-state-map (kbd "[ a")
+      'langtool-goto-previous-error)
+    ;; 'spacemacs/languagetool-previous-error)
+    (define-key evil-normal-state-map (kbd "] a")
+      'langtool-goto-next-error)
+    ;; 'spacemacs/languagetool-next-error)
+    ))
 
 (defun writing/init-writegood-mode ()
   (use-package writegood-mode
@@ -86,9 +100,23 @@ Each entry is either:
 (defun writing/init-wordnut ()
   (use-package wordnut
     :defer t
-    :config
+    :init
     (global-set-key [f12] 'wordnut-lookup-current-word)
     (global-set-key [(control f12)] 'wordnut-search)
+    :config
+    (progn
+      (local-key-binding wordnut-mode-map (kbd "q") 'quit-window)
+      (define-key wordnut-mode-map (kbd "RET") 'wordnut-lookup-current-word)
+      (define-key wordnut-mode-map (kbd "l") 'wordnut-history-backward)
+      (define-key wordnut-mode-map (kbd "r") 'wordnut-history-forward)
+      (define-key wordnut-mode-map (kbd "h") 'wordnut-history-lookup)
+      (define-key wordnut-mode-map (kbd "/") 'wordnut-search)
+      (define-key wordnut-mode-map (kbd "o") 'wordnut-show-overview)
+
+      (define-key wordnut-mode-map (kbd "C-j") 'outline-next-visible-heading)
+      (define-key wordnut-mode-map (kbd "C-k") 'outline-previous-visible-heading)
+
+      (define-key wordnut-mode-map (kbd "b") 'scroll-down-command))
     ))
 
 (defun writing/init-synosaurus ()
