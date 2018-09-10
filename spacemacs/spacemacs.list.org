@@ -1,105 +1,94 @@
 
 * summary
+** In 
+   deft
+   autocompletion
+   python (completion test refactoring)
+   org (babel gtd publish)
+   org-gcal
+
+   check:
+   1. ipython completion
+   2. python file jedi
+
+   mu4e (check send, move ...)
+   spell checking
+   syntax checking
+   git
+   bibtex (org-noter)
+   pdf
+   csv
+   markdown
+   graphviz
+   plantuml
+   html? Do I need this?
+
+   extra packages:
+   org-noter
+
+   only user conf:
+   text size rescale
+   <F9> imenu-list
+   google translate
+   visual-fill-colums
+   TAB za
   
-  deft
-  autocompletion
-  python (completion test refactoring)
-  org (babel gtd publish)
-  org-gcal
+   writing layer
+** Todo
+   dash
+   fasd
+   shell-scripts
+   ;; (ranger :variables
+   ;;         ranger-show-preview t)
+   ess
+   latex
+   yaml)
 
-  check:
-  1. ipython completion
-  2. python file jedi
+   dotspacemacs-additional-packages '(
+   ;; org-webpage
+   pocket-reader
+  
+     
+   dotspacemacs-startup-lists '(;;(todos . 3)
+   (bookmarks . 7)
+   (recents . 5)
+   (projects . 7))
 
-  mu4e (check send, move ...)
-  spell checking
-  syntax checking
-  git
-  bibtex (org-noter)
-  pdf
-  csv
-  markdown
-  graphviz
-  plantuml
-  html? Do I need this?
-
-  extra packages:
-  org-noter
-
-  only user conf:
-  text size rescale
-  <F9> imenu-list
-  google translate
-  visual-fill-colums
-  TAB za
-
-  \
-  writing layer
-  - https://github.com/syl20bnr/spacemacs/search?q=prose&type=Issues
-    - proselint working fine with flycheck
-    - https://github.com/mhayashi1120/Emacs-langtool
-    - dictcc
-    - wordnut https://github.com/gromnitsky/wordnut
-    - sdcv which uses goldendict
-    - diction
-    - https://github.com/bnbeckwith/writegood-mode
-    - https://github.com/sachac/artbollocks-mode
-    - https://github.com/jorgenschaefer/typoel rather use typography layer
-    - https://github.com/hpdeifel/synosaurus not more useful than wordnut
-    - https://github.com/gbgar/wordlint.el broken old
-    - https://github.com/emacs-helm/helm-dictionary prefer dictcc?
-  \
-
-
-  outline-mode
-
-  dash
-  fasd
-  shell-scripts
-  ;; (typography :variables typography-enable-typographic-editing t)
-  ;; (ranger :variables
-  ;;         ranger-show-preview t)
-  ess
-  latex
-  yaml)
-
-  dotspacemacs-additional-packages '(
-  ;; org-webpage
-  ;; synonymous
-  adaptive-wrap
-  outline-magic
-  pocket-reader
-  pelican-mode
-  interleave)
-  ;; zotxt)
-
-  dotspacemacs-startup-lists '(;;(todos . 3)
-  (bookmarks . 7)
-  (recents . 5)
-  (projects . 7))
-
-  dotspacemacs-themes '(professional
-  farmhouse-dark
-  hemisu-dark
-  hemisu-light
-  monokai
-  zenburn
-  alect-light
-  farmhouse-light
-  birds-of-paradise-plus
-  spacemacs-dark
-  spacemacs-light)
+   dotspacemacs-themes '(professional
+   farmhouse-dark
+   hemisu-dark
+   hemisu-light
+   monokai
+   zenburn
+   alect-light
+   farmhouse-light
+   birds-of-paradise-plus
+   spacemacs-dark
+   spacemacs-light)
                          
-* old user config
+   If not satisfied with outlines you can consider:
+   - outline-mode outshine-mode http://www.modernemacs.com/post/outline-ivy/
+   - outline-magic https://github.com/syl20bnr/spacemacs/issues/3226
+   #+BEGIN_SRC elisp
+     ;; Folding with tab similar to org-mode
+     (add-hook 'bibtex-mode-hook 'outline-minor-mode)
+     (add-hook 'python-mode-hook 'outline-minor-mode)
+     (eval-after-load 'outline
+       '(progn
+          (require 'outline-magic)
+          (define-key outline-minor-mode-map (kbd "<tab>") 'outline-cycle)))
+   #+END_SRC
 
-  (with-eval-after-load 'helm
-    (setq helm-display-function 'helm-default-display-buffer))
-  ;; (setq helm-display-function 'helm-display-buffer-in-own-frame
-  ;;       helm-display-buffer-reuse-frame t
-  ;;       helm-use-undecorated-frame-option t)
+* old user-config
+** publishing web
+   
+   pelican-mode
 
-
-
+   (use-package pelican-mode
+   :after (:any org rst markdown-mode adoc-mode)
+   :config
+   (pelican-global-mode))
+     
    ;; (require 'publish-config)
    ;; (require 'org-webpage)
    ;; (owp/add-project-config
@@ -122,13 +111,13 @@
    ;; (setq op/site-sub-title "Emacs, Programming, and Arch Linux")
    ;; ;; (setq op/personal-disqus-shortname "theonetrueblog")
 
-
+** my own map
    ;; http://pragmaticemacs.com/emacs/use-your-digits-and-a-personal-key-map-for-super-shortcuts/
    ;; unset C- and M- digit keys
    (dotimes (n 10)
-     (global-unset-key (kbd (format "C-%d" n)))
-     (global-unset-key (kbd (format "M-%d" n)))
-     )
+   (global-unset-key (kbd (format "C-%d" n)))
+   (global-unset-key (kbd (format "M-%d" n)))
+   )
    ;; set up my own map
    (define-prefix-command 'bjm-map)
    (global-set-key (kbd "C-1") 'bjm-map)
@@ -139,75 +128,31 @@
    (define-key bjm-map (kbd "n") 'deft)
    (define-key bjm-map (kbd "t") 'org-capture)
 
-
-   ;; Folding with tab similar to org-mode
-   (add-hook 'bibtex-mode-hook 'outline-minor-mode)
-   (add-hook 'python-mode-hook 'outline-minor-mode)
-   (eval-after-load 'outline
-     '(progn
-        (require 'outline-magic)
-        (define-key outline-minor-mode-map (kbd "<tab>") 'outline-cycle)))
-
-
+** cursor stretch
    ;; make cursor the width of the character it is under
    ;; i.e. full width of a TAB
    (setq x-stretch-cursor t)
-
-
-   ;; EWW
+** EWW
    ;; http://irreal.org/blog/?p=6278
 
    (defun eww-more-readable ()
-     "Makes eww more pleasant to use. Run it after eww buffer is loaded."
-     (interactive)
-     (setq eww-header-line-format nil)               ;; removes page title
-     (setq mode-line-format nil)                     ;; removes mode-line
-     (set-window-margins (get-buffer-window) 20 20)  ;; increases size of margins
-     (redraw-display)                                ;; apply mode-line changes
-     (eww-reload 'local))                            ;; apply eww-header changes
-;;    (defalias 'gk-urls-external-browser 'browse-url-xdg-open)
-;;    (defun gk-browse-url (&rest args)
-;;      "Prompt for whether or not to browse with EWW, if no browse
-;; with external browser."
-;;      (apply::
-;;       (if (y-or-n-p "Browse with EWW? ")
-;;           'eww-browse-url
-;;         #'gk-urls-external-browser)
-;;       args))
-;;    (setq browse-url-browser-function #'gk-browse-url)
+   "Makes eww more pleasant to use. Run it after eww buffer is loaded."
+   (interactive)
+   (setq eww-header-line-format nil)               ;; removes page title
+   (setq mode-line-format nil)                     ;; removes mode-line
+   (set-window-margins (get-buffer-window) 20 20)  ;; increases size of margins
+   (redraw-display)                                ;; apply mode-line changes
+   (eww-reload 'local))                            ;; apply eww-header changes
+   ;;    (defalias 'gk-urls-external-browser 'browse-url-xdg-open)
+   ;;    (defun gk-browse-url (&rest args)
+   ;;      "Prompt for whether or not to browse with EWW, if no browse
+   ;; with external browser."
+   ;;      (apply::
+   ;;       (if (y-or-n-p "Browse with EWW? ")
+   ;;           'eww-browse-url
+   ;;         #'gk-urls-external-browser)
+   ;;       args))
+   ;;    (setq browse-url-browser-function #'gk-browse-url)
    (require 'browse-url) ; part of gnu emacs
 
-   (defun my-lookup-wikipedia ()
-     "Look up the word under cursor in Wikipedia.
-If there is a text selection (a phrase), use that. This command
-switches to browser."
-     (interactive)
-     (let (word)
-       (setq word
-             (if (use-region-p)
-                 (buffer-substring-no-properties (region-beginning) (region-end))
-               (current-word)))
-       (setq word (replace-regexp-in-string " " "_" word))
-       (eww (concat "http://en.wikipedia.org/wiki/" word))
-       ;; (eww myUrl) ; emacs's own browser
-       ))
-   (defun my-lookup-wiktionary ()
-     "Look up the word under cursor in Wikipedia.
-If there is a text selection (a phrase), use that. This command
-switches to browser."
-     (interactive)
-     (let (word)
-       (setq word
-             (if (use-region-p)
-                 (buffer-substring-no-properties (region-beginning) (region-end))
-               (current-word)))
-       (setq word (replace-regexp-in-string " " "_" word))
-       (eww (concat "http://en.wiktionary.org/wiki/" word))
-       ;; (eww myUrl) ; emacs's own browser
-       ))
 
-
-   (use-package pelican-mode
-     :after (:any org rst markdown-mode adoc-mode)
-     :config
-     (pelican-global-mode))

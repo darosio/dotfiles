@@ -1,12 +1,4 @@
 (provide 'mu4e-config)
-;; ;; https://martinralbrecht.wordpress.com/2016/05/30/handling-email-with-emacs/
-;; (use-package helm-mu
-;;   :ensure t
-;;   :config (progn
-;;             (bind-key "S" #'helm-mu mu4e-main-mode-map)))
-
-;; set mu4e as default
-(setq mail-user-agent 'mu4e-user-agent)
 
 ;; enable inline images
 (setq mu4e-view-show-images t)
@@ -271,33 +263,46 @@
   )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; add Cc and Bcc headers to the message buffer
+;; ;; add Cc and Bcc headers to the message buffer
+;; (add-hook 'mu4e-compose-mode-hook
+;;           (lambda()
+;;             (let* ((ctx (mu4e-context-current))
+;;                    (name (if ctx (mu4e-context-name ctx))))
+;;               (when name
+;;                 (cond
+;;                  ((string= name "cnr")
+;;                   (save-excursion (message-add-header "Bcc: daniele.arosio@cnr.it\n")))
+;;                  ((string= name "pec")
+;;                   (save-excursion (message-add-header "Bcc: daniele.arosio@pec.it\n"))))))))
+
+;; http://www.djcbsoftware.nl/code/mu/mu4e/Compose-hooks.html
 (add-hook 'mu4e-compose-mode-hook
           (lambda()
+            "My settings for message composition."
             (let* ((ctx (mu4e-context-current))
                    (name (if ctx (mu4e-context-name ctx))))
               (when name
                 (cond
                  ((string= name "cnr")
                   (save-excursion (message-add-header "Bcc: daniele.arosio@cnr.it\n")))
-                 ((string= name "account2")
-                  (save-excursion (message-add-header "Bcc: account2@example.com\n"))))))))
-
-(add-hook 'mu4e-compose-mode-hook
-          (defun my-do-compose-stuff ()
-            "My settings for message composition."
-            ;;   (toggle-frame-maximized)
-            (set-fill-column 72)
-            (flyspell-mode)
-            (adict-guess-dictionary)))
+                 ((string= name "pec")
+                  (save-excursion (message-add-header "Bcc: daniele.arosio@pec.it\n"))))))
+            ;; (toggle-frame-maximized)
+            (set-fill-column 76)
+            (visual-fill-column-mode)
+            (turn-on-orgtbl)
+            (turn-on-orgstruct)
+            (turn-on-orgstruct++)
+            (flyspell-mode)))
+            ;; (adict-guess-dictionary)))
 ;; (add-hook 'message-mode-hook #'typo-mode)
 ;; (add-hook 'message-mode-hook #'footnote-mode)
 
-
-;; From Ben Maughan: Get some Org functionality in compose buffer
-(add-hook 'message-mode-hook 'turn-on-orgtbl)
-(add-hook 'message-mode-hook 'turn-on-orgstruct)
-(add-hook 'message-mode-hook 'turn-on-orgstruct++)
+;; ;; From Ben Maughan: Get some Org functionality in compose buffer
+;; (add-hook 'message-mode-hook 'turn-on-orgtbl)
+;; (add-hook 'message-mode-hook 'turn-on-orgstruct)
+;; (add-hook 'message-mode-hook 'turn-on-orgstruct++)
+;; (add-hook 'message-mode-hook 'flyspell-mode)
 
 ;; Set format=flowed
 ;; mu4e sets up visual-line-mode and also fill (M-q) to do the right thing
@@ -305,10 +310,11 @@
 ;; special line continuation characters.
 (setq mu4e-compose-format-flowed t)
 
-;;store org-mode links to messages
-(require 'org-mu4e)
 ;;store link to message if in header view, not to header query
 (setq org-mu4e-link-query-in-headers-mode nil)
+
+;; ;;store org-mode links to messages
+;; (require 'org-mu4e)
 ;; when composing an email, switch on the special mu4e/orgmode mode
 (define-key mu4e-compose-mode-map (kbd "C-c o") 'org~mu4e-mime-switch-headers-or-body)
 ;; when mail is sent, automatically convert org body to HTML
@@ -369,12 +375,12 @@
   :bindings
   (kbd "f") 'mu4e-headers-mark-for-flag)
 
-(spacemacs/set-leader-keys-for-major-mode 'mu4e-compose-mode
-  "t" 'message-goto-to
-  "m" 'message-goto-body
-  "b" 'message-goto-bcc
-  "c" 'message-goto-cc
-  "s" 'message-goto-subject)
+;; (spacemacs/set-leader-keys-for-major-mode 'mu4e-compose-mode
+;;   "t" 'message-goto-to
+;;   "m" 'message-goto-body
+;;   "b" 'message-goto-bcc
+;;   "c" 'message-goto-cc
+;;   "s" 'message-goto-subject)
 
 ;; TODO
 ;; (defun malb/fill-column-72 ()
@@ -388,17 +394,6 @@
 ;; (add-hook 'mu4e-compose-mode-hook #'malb/fill-column-72)
 ;; (add-hook 'mu4e-compose-mode-hook #'malb/mu4e-compose-frame)
 
-
-;; ;; the list of all of my e-mail addresses
-;; (setq mu4e-user-mail-address-list '("XXX@mac.com"
-;;                                     "YYY@irreal.org"))
-
-(require 'mu4e-alert)
-(with-eval-after-load 'mu4e-alert
-  ;; (mu4e-alert-set-default-style 'notifications)) ; For linux
-  (mu4e-alert-set-default-style 'libnotify))  ; Alternative for linux
-;; (mu4e-alert-set-default-style 'notifier))   ; For Mac OSX (through the
-;; (mu4e-alert-set-default-style 'growl))      ; Alternative for Ma
 
 ;; ;; required by mu4e-send-delay for sending correctly formatted email
 ;; (prefer-coding-system 'utf-8)
