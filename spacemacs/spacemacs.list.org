@@ -1,37 +1,40 @@
-deft
-autocompletion
-python (completion test refactoring)
-org (babel gtd publish)
-org-gcal
 
-check:
+* summary
+  
+  deft
+  autocompletion
+  python (completion test refactoring)
+  org (babel gtd publish)
+  org-gcal
+
+  check:
   1. ipython completion
   2. python file jedi
 
-mu4e (check send, move ...)
-spell checking
-syntax checking
-git
-bibtex (org-noter)
-pdf
-csv
-markdown
-graphviz
-plantuml
-html? Do I need this?
+  mu4e (check send, move ...)
+  spell checking
+  syntax checking
+  git
+  bibtex (org-noter)
+  pdf
+  csv
+  markdown
+  graphviz
+  plantuml
+  html? Do I need this?
 
-extra packages:
-org-noter
+  extra packages:
+  org-noter
 
-only user conf:
-text size rescale
-<F9> imenu-list
-google translate
-visual-fill-colums
-TAB za
+  only user conf:
+  text size rescale
+  <F9> imenu-list
+  google translate
+  visual-fill-colums
+  TAB za
 
-\
-writing layer
+  \
+  writing layer
   - https://github.com/syl20bnr/spacemacs/search?q=prose&type=Issues
     - proselint working fine with flycheck
     - https://github.com/mhayashi1120/Emacs-langtool
@@ -45,88 +48,55 @@ writing layer
     - https://github.com/hpdeifel/synosaurus not more useful than wordnut
     - https://github.com/gbgar/wordlint.el broken old
     - https://github.com/emacs-helm/helm-dictionary prefer dictcc?
-\
+  \
 
 
-outline-mode
-     haskell
-     racket
-     ;; ----------------------------------------------------------------
-     better-defaults
-     (colors :variables
-             colors-enable-nyan-cat-progress-bar t
-             colors-enable-rainbow-identifiers t)
-     dash
-     fasd
-     (shell :variables
-            shell-default-height 30
-            shell-default-position 'bottom
-            shell-default-shell 'eshell)
-     shell-scripts
-     ;; (typography :variables typography-enable-typographic-editing t)
-     (version-control :variables
-                       version-control-diff-tool 'diff-hl
-                       version-control-global-margin t)
-     themes-megapack
-     ;; (ranger :variables
-     ;;         ranger-show-preview t)
-     pandoc
-     ess
-     latex
-     writing
-     yaml)
+  outline-mode
 
+  dash
+  fasd
+  shell-scripts
+  ;; (typography :variables typography-enable-typographic-editing t)
+  ;; (ranger :variables
+  ;;         ranger-show-preview t)
+  ess
+  latex
+  yaml)
 
+  dotspacemacs-additional-packages '(
+  ;; org-webpage
+  ;; synonymous
+  adaptive-wrap
+  outline-magic
+  pocket-reader
+  pelican-mode
+  interleave)
+  ;; zotxt)
 
+  dotspacemacs-startup-lists '(;;(todos . 3)
+  (bookmarks . 7)
+  (recents . 5)
+  (projects . 7))
 
-   dotspacemacs-additional-packages '(
-                                      ;; org-webpage
-                                      ;; synonymous
-                                      adaptive-wrap
-                                      outline-magic
-                                      pocket-reader
-                                      pelican-mode
-                                      interleave)
-                                      ;; zotxt)
-
-
-
-   dotspacemacs-startup-lists '(;;(todos . 3)
-                                (bookmarks . 7)
-                                (recents . 5)
-                                (projects . 7))
-
-
-
-
-   dotspacemacs-themes '(professional
-                         farmhouse-dark
-                         hemisu-dark
-                         hemisu-light
-                         monokai
-                         zenburn
-                         alect-light
-                         farmhouse-light
-                         birds-of-paradise-plus
-                         spacemacs-dark
-                         spacemacs-light)
-
-
-
-                        old user config
+  dotspacemacs-themes '(professional
+  farmhouse-dark
+  hemisu-dark
+  hemisu-light
+  monokai
+  zenburn
+  alect-light
+  farmhouse-light
+  birds-of-paradise-plus
+  spacemacs-dark
+  spacemacs-light)
+                         
+* old user config
 
   (with-eval-after-load 'helm
     (setq helm-display-function 'helm-default-display-buffer))
   ;; (setq helm-display-function 'helm-display-buffer-in-own-frame
   ;;       helm-display-buffer-reuse-frame t
   ;;       helm-use-undecorated-frame-option t)
-
-
-  ;; (require 'org-projectile)
-  (require 'helm-bookmark)
-  (setq bookmark-save-flag 1
-        bookmark-default-file "~/.spacemacs.d/bookmarks" )
-
 
 
 
@@ -241,4 +211,3 @@ switches to browser."
      :after (:any org rst markdown-mode adoc-mode)
      :config
      (pelican-global-mode))
-

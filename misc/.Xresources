@@ -74,6 +74,7 @@ URxvt*colorUL:      #4682B4
 !URxvt*font:     xft:Fira Code:size=12
 !URxvt*font:     xft:Input Mono:size=12
 !URxvt*font:     xft:Iosevka:size=12
+!URxvt*font:     xft:Inconsolata-g:size=12
 URxvt*font:     xft:Hack:size=12
 ! URxvt*boldFont: xft:Monaco:bold:size=11
 ! URxvt*italicFont:                     fontname

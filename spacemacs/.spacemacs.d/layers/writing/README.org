@@ -8,6 +8,54 @@
 - [[#description][Description]]
   - [[#features][Features:]]
 - [[#install][Install]]
+  - [[#dictionaries][Dictionaries]]
+    - [[#webster-dictionaries-through-sdcv][Webster dictionaries through "sdcv"]]
+  - [[#emacs][emacs]]
+    - [[#for-org-mode-export-to-odt][For org-mode: export to odt]]
+    - [[#for-export-to-pdflatex-using-ox-][For export to pdf/latex using ox-…]]
+    - [[#to-run-cmdline-from-within-emacs][To run cmdline from within emacs]]
+  - [[#biblio][biblio]]
+  - [[#pandoc][pandoc]]
+  - [[#vim][vim]]
+  - [[#diff][diff]]
+  - [[#authblk][authblk]]
+  - [[#sphinx-and-rst-latex][Sphinx and Rst (latex)]]
+    - [[#grant_2010firb][grant_2010FIRB]]
+    - [[#eclipse][eclipse]]
+    - [[#lab-protocols][Lab protocols]]
+  - [[#latex][latex]]
+  - [[#other-markup-languages][other markup languages]]
+  - [[#grammar-and-style][Grammar and style]]
+  - [[#poster][poster]]
+  - [[#refs][refs]]
+  - [[#slideshow][SlideShow]]
+      - [[#revealjs][reveal.js]]
+      - [[#costumizing-beamer-][costumizing beamer ###]]
+      - [[#presentation-][Presentation ###]]
+      - [[#kdenlnive-for-video-editing-][kdenlnive for video editing ###]]
+      - [[#landslide-][landslide ###]]
+      - [[#rst2pdf-][rst2pdf ###]]
+      - [[#some-maybe-useful-rest-][some maybe useful rest ###]]
+      - [[#other-][other ###]]
+      - [[#future-next-][Future next ###]]
+    - [[#but-also][but also]]
+    - [[#bookmarks-][bookmarks ##]]
+    - [[#slideshow-template][SlideShow template]]
+      - [[#my-first-slide][My first slide]]
+      - [[#variables][Variables]]
+  - [[#docx-tricks][docx tricks]]
+- [[#vim-1][vim]]
+    - [[#dotvim][dotvim]]
+      - [[#python-sphinx][python-sphinx]]
+      - [[#python][Python]]
+      - [[#imagej][imagej]]
+    - [[#plugins][plugins]]
+      - [[#csv][csv]]
+      - [[#python-and-ide][python and IDE]]
+      - [[#use][use]]
+  - [[#old][old]]
+  - [[#latex-and-vim][Latex and vim]]
+  - [[#removed][removed]]
 - [[#key-bindings][Key bindings]]
 
 * Description
@@ -24,6 +72,551 @@ It targets org-mode but it might be useful for other markup.
 To use this configuration layer, add it to your =~/.spacemacs=. You will need to
 add =writing= to the existing =dotspacemacs-configuration-layers= list in this
 file.
+
+** Dictionaries
+*** Webster dictionaries through "sdcv"
+    #+BEGIN_SRC sh
+      pacaur -S sdcv
+      mkdir -p .stardict/dic/
+      cd .stardict/dic/
+
+      ln -s ~/.goldendict/dict_/big/stardict-American_Heritage_Dictionary_4th_Ed-2.4.2/ .
+      ln -s ~/.goldendict/dict_/big/stardict-Merriam-Webster_s_Collegiate_11th_Ed-2.4.2/ .
+      ln -s ~/.goldendict/dict_/thesaurus/ .
+      # ln -s ~/.goldendict/dict_/special/stardict-Oxford_Collocations_Dictionary_2nd_Ed-2.4.2/ .
+      ln -s ~/.goldendict/dict_/special/stardict-The_* .
+      ln -s ~/.goldendict/dict_/special/stardict-eng_irregular-2.4.2/ .
+    #+END_SRC
+
+** emacs
+ I discovered bibtex layer of spacemacs containing:
+ - helm-bibtex
+ - org-ref
+ + interleave
+ https://codearsonist.com/reading-for-programmers
+https://www.anand-iyer.com/blog/2017/research-literature-management-with-emacs.html
+ https://www.reddit.com/r/emacs/comments/4gudyw/help_me_with_my_orgmode_workflow_for_notetaking/
+
+ They can produce manuscript in pandoc starting from markdown and org (possibly).
+ They have capabilities to manage bibliography with a separate notes.
+
+ zotxt works very well, but is not for producing manuscript
+ (see also <https://bitbucket.org/egh/zot4rst>)
+
+*** For org-mode: export to odt
+  #+ODT: <text:p text:style-name="PageBreak"/>
+  Edit SPC fed
+      (setq org-odt-preferred-output-format "doc")
+
+*** For export to pdf/latex using ox-…
+  #+LATEX_HEADER: \usepackage[backend=bibtex]{biblatex}
+  #+LATEX_HEADER: \addbibresource{jose.bib}
+  #+OPTIONS: h:4 toc:3 tags:nil todo:nil ':t ^:{}
+  #+LATEX_CLASS: 
+
+  #+BEGIN_LaTeX
+    \printbibliography
+  #+END_LaTeX
+*** To run cmdline from within emacs
+  #+BEGIN_SRC sh cmdline: "-i"
+  pandoc paper.org --filter pandoc-crossref --reference-docx ~/.pandoc/doc4.docx
+  make docxo
+  #+END_SRC
+  
+** biblio
+   
+   Using emacs with org-ref ... I can store @book isong the file= entry to point to calibre db folder.
+
+zot:
++ file: .pdf .mov .doc …
++ bibtex duplicate management with better-bibtex
+
+org-ref:
++ from DOI
+
+** pandoc
+ - manual	<http://johnmacfarlane.net/pandoc/README.html>
+
+ 2. markdown + mmd_title_block
+ 3. -V toc -depth lof - title lot
+
+ -V geometry:right=2in
+
+** vim
+ vim 	<http://naperwrimo.org/wiki/index.php?title=Vim_for_Writers>
+ vim prose <http://alols.github.io/2012/11/07/writing-prose-with-vim/>
+ 
+** diff
+ wdiff
+ +git diff --color-words --word-diff-regex=.+ 
+ git diff --color-words=.
+ git diff --color-words='[^[:space:]]|(:alnum:|UTF_8_GUARD)+'
+ dwdiff a b | colordiff -
+ to format nice html diffs <https://github.com/netj/markdown-diff>
+ vbindiff	# for binary files
+ vim unified (for wdiff) 
+** authblk
+   \usepackage{authblk}
+   \author[1]{First Author}
+   \affil[1]{First Department, University1}
+   %
+   \begin{document}
+   \maketitle
+
+** Sphinx and Rst (latex)
+
+   <http://rst2pdf.ralsina.me/handbook.html>
+   forse funziona con \cite{...}
+   sphinx tutorial	<http://thomas-cokelaer.info/tutorials/sphinx/index.html>
+
+   Rst relatex <https://github.com/cjlee112/relatex>	
+   achemso, elsarticle, **article, revtex, amsart**
+
+   http://www.tompurl.com/2012-11-22-writing-a-book-with-vim.html
+   A nice plugin for vim https://github.com/Rykka/riv.vim
+   with slideshow https://github.com/regebro/hovercraft
+*** grant_2010FIRB
+  svnadmin create /home/dan/Dropbox/SVNs/Grants
+  svn mkdir <file:///home/dan/Dropbox/SVNs/Grants/2010-Firb> \
+  -m "add dir for FIRB 2010 futuro in ricerca"
+  cd ./2010-Firb
+  make clean
+  cd ../
+  svn import 2010-Firb <file:///home/dan/Dropbox/SVNs/Grants/2010-Firb> -m "initial import"
+
+*** eclipse
+  resteditor 
+  <http://resteditor.sourceforge.net/eclipse/>
+  eclipse
+  TeXlipse Update Site -- <http://texlipse.sourceforge.net>
+
+*** Lab protocols
+  create repo in bitbucket
+  create rest-sphinx in eclipse
+  commit
+  push
+  import into <http://readthedocs.org>
+  in bitbucket: admin - services 
+  choose POST add service <http://readthedocs.org/bitbucket>
+** latex
+ latex <http://www.ctan.org/pkg/datatool>
+ many templates	<http://www.latextemplates.com/>
+** other markup languages
+ - txt2tags
+ - critic Markup	<http://criticmarkup.com/users-guide.php>
+ - scholarly markdown
+ <http://www.carlboettiger.info/2012/05/06/research-workflow.html>
+ <http://www.carlboettiger.info/2014/05/06/steps-to-a-more-portable-workflow.html>
+
+** Grammar and style
+ http://www.dsl.org/cookbook/cookbook_15.html#SEC206
+
+ -S words (miscfiles)
+ -yS wordnet
+ -yS diction
+ http://wiki.christophchamp.com/index.php/Style_and_Diction
+
+ emacs https://lwn.net/Articles/692054/
+ vim better-writing "F3" solo weasel not passive (set syntax ...)
+
+** poster
+<http://www.brian-amberg.de/uni/poster/>
+
+** refs
+   http://blog.kdheepak.com/writing-papers-with-markdown.html
+ f
+** SlideShow
+
+
+ slides pandoc	<http://gregorkopf.de/blog/posts/impress.html>
+ reveal.js
+
+  from betty <http://www.nextscientist.com/improve-presentation-skills-of-phd-students/>
+
+
+
+ **pandoc + revealjs** is maybe the best:
+
+  move also vertically
+  export pdf
+
+
+ [+template](.::# template)
+ [+template](./SlideShow/template.markdown)
+
+ hovercraft: use impress.js (presentation mode, math not good, format screwed up)
+ hieroglyph: use google? (presentation mode, math of, format ok)
+ landslide: perfect but no nested slide
+ pandoc & reveal.js:
+ slidify: to be tested (<http://www.r-bloggers.com/slidify-modern-simple-presentations-written-in-r-markdown/>)
+
+**** reveal.js
+     cd ~/.pandoc
+     git clone https://github.com/hakimel/reveal.js.git
+     - export to pdf using chromium “http*?print-pdf” (or decktape)
+      
+       to install into dotfiles
+ #+BEGIN_SRC bash
+ git submodule add https://github.com/hakimel/reveal.js.git
+ git submodule init
+ git submodule update
+
+ #+END_SRC
+
+***** refs                                                                  :refs:
+ self-contained quite well documented: https://github.com/yjwen/org-reveal
+ tutorials: http://irreal.org/blog/?p=5889
+ misc maybe for publishing:  http://matt.hackinghistory.ca/blog/
+
+**** costumizing beamer ###
+
+
+ <https://kbroman.wordpress.com/2013/10/07/better-looking-latexbeamer-slides/>
+
+
+
+  <http://jeromyanglim.blogspot.it/2012/07/beamer-pandoc-markdown.html>
+
+
+ <http://www.mzlinux.org/?q=node/346>
+ <http://docs.mathjax.org/en/latest/start.html#mathjax-cdn> 
+ <http://jeromyanglim.blogspot.it/2012/07/beamer-pandoc-markdown.html>
+
+
+
+
+  Hieroglyph	<https://hieroglyph.readthedocs.org/en/latest/getting-started.html>
+
+***** in org mod
+ as simple as:
+ #+startup: beamer
+ #+LaTeX_CLASS: beamer
+
+
+ #+BEAMER_THEME: metropolis
+
+
+ 
+**** Presentation ###
+
+  <http://kaczanowscy.pl/tomek/2011-09/nice-presentations-in-no-time-with-asciidoc-and-slidy>
+  <http://pages.uoregon.edu/noeckel/PDFmovie.html>
+   from RStudio	<http://slidify.org/index.html>
+
+
+ options: impress reveal js sozi **hovercraft**
+ <http://en.wikipedia.org/wiki/Web_Based_Slideshow>
+ my requirements: pdf equations figures tables presenter_note android
+
+ landslide		# princexml
+ impressive	# deps: mplayer pdftk xdg-utils
+ -yS mathjax 
+ -yS python2-xhtml2pdf
+
+ <http://johnmacfarlane.net/pandoc/demos.html>
+ <http://johnmacfarlane.net/pandoc/demo/example9/producing-slide-shows-with-pandoc.html>
+  latex-beamer wiki2beamer jessyink{svn, movie} magicpoint and mmaker (pylize{html}) (xsw) (emacs-goby)
+  <http://projects.nuschkys.net/2011/08/21/latexbeamerpdfembedded-movies/>
+
+ 128x96 mm
+
+***** beamer ####
+
+ <http://jeromyanglim.blogspot.com.au/2010/08/getting-started-with-beamer-tips-and.html>
+
+ my opinion now 07/14/2013
+
+
+**** kdenlnive for video editing ###
+
+ Setting / Manage project profiles (per cambiare canvas size)
+ add effects/ crop / Motion / Speed
+ Usually "768x576 4:3 PAL"
+
+**** landslide ###
+
+ **.. raw:: html**
+    <script type="text/javascript"
+ src="[file:///usr/share/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML](file:///usr/share/mathjax/MathJax.js%3Fconfig%3DTeX-AMS-MML_HTMLorMML)">
+    </script>
+ **.. raw:: html**
+ <video src="<file:///home/dan/out-3.ogv>"  width="620" autoplay controls loop> </video>
+ poster='image.jpg'
+ posso importare video
+
+ <script type="text/javascript"
+ src="<http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML>">
+ </script>
+ <script type="text/javascript"
+ src="[file:///usr/share/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML](file:///usr/share/mathjax/MathJax.js%3Fconfig%3DTeX-AMS-MML_HTMLorMML)">
+ </script>
+ -yS prince [-d *.pdf]
+
+
+ 1. ``.notes:``
+ 2. ``Presenter Notes``
+
+
+
+**** rst2pdf ###
+
+ list-table
+ table-csv ??? credo non funzioni
+ insert 
+ **\pdfminorversion=4**
+ at the beginnning of *.tex if impressive read *empty*
+
+  rst2pdf  [~/Dropbox/slideshows/rst2pdf](file:///home/dan/Dropbox/slideshows/rst2pdf)	(**rst2beamer** mi sembra cumbersom)
+
+
+
+***** rst2beamer ####
+
+ /usr/lib/python2.7/site-packages/rst2beamer.py
+ BEAMER_DEFAULTS = {
+ 'use_latex_toc': True,
+ 'output_encoding': 'latin-1',
+ 'documentclass': 'beamer',
+ 'documentoptions': 't',#text is at the top of each slide rather than centered.  Changing to 'c' centers the text on each slide (vertically)
+ 'sectnum_depth': 0,
+ }
+
+**** some maybe useful rest ###
+
+ .. include:: <s5defs.txt>
+ .. load-style:: big-centered
+ .. role:: raw-math(raw)
+ :format: latex html
+ :Author: Daniele Arosio <[daniele.arosio@cnr.it](mailto:daniele.arosio@cnr.it)>
+ :License: Creative Commons Attribution-ShareAlike 3.0
+ :Date: October 10, 2012
+ :Version: 1
+ :Series: Macromolecular Imaging and Biophysical Methods (MIBM)
+
+ .. class:: small
+
+ Windows of different shapes produce entropies with differing
+ levels of spatial and temporal dependance.
+
+ .. container:: handout
+
+ To compute block entropies in two dimensional data, sliding windows are
+ used.  Three examples of different windows are shown above -- in red is a
+
+
+**** other ###
+
+ rst2slides in bitbucket
+ (bruce)
+ html5slide
+ impress elenco di immagini 
+ **impressjs** posso usare come stile in sphinx [~/Dropbox/slideshows/impressjs-sphinx](file:///home/dan/Dropbox/slideshows/impressjs-sphinx)
+
+**** Future next ###
+
+ <http://www.html5rocks.com/en/>
+ **WebGL for 3D graphics**
+
+
+*** but also
+    dblatex
+    txt2tags
+    docmark?
+
+*** bookmarks ##
+
+ <http://www.miwie.org/presentations/presentations.html>
+ (<http://www.debugmode.com/wink/>)
+ <https://pythonhosted.org/sphinxjp.themes.impressjs/_sources/index.txt>
+
+
+*** SlideShow template
+  % Title
+  % Name
+  % Date
+
+
+**** My first slide
+  --------------------
+
+  List
+
+
+   this 
+   is
+   cool
+
+
+**** Variables
+  ---------
+
+  The following variables can be defined from the command line:
+
+
+   theme
+   transition
+
+
+  ```bash
+  pandoc -t html5 --template=template-revealjs.html \
+  --standalone --section-divs \
+    --variable theme="beige" \
+    --variable transition="linear" \
+    slides.md -o slides.html
+
+** docx tricks
+ - *embedded media* rename into .zip and extract media/ but also =pandoc extract=
+ - word and git	<http://blog.martinfenner.org/2014/08/25/using-microsoft-word-with-git/>
+* vim
+gvim                      # for copying into the x-clipboard
+vim-spell-{en,it}         # for better word completion "kspell"
+adobe-source-code-pro-fonts
+aur/ttf-monaco
+aur/ttf-chromeos-fonts 
+aur/par # formatting paragraph in vim
+aur/vim-dirdiff 
+aur/bibtool
+
+[[http://vimcasts.org/]]
+animated gif: https://jaxbot.me/articles/why-i-use-vim
+book http://learnvimscriptthehardway.stevelosh.com/
+vim http://yannesposito.com/Scratch/en/blog/Learn-Vim-Progressively/
+
+*** dotvim
+  [[http://vim.wikia.com/wiki/Keep_your_vimrc_file_clean]] 
+  *Must read*  [[http://bling.github.io/dotvim/]]
+  [[http://dougblack.io/words/a-good-vimrc.html]]
+  vimrc [[http://nvie.com/posts/how-i-boosted-my-vim/]]
+  zsh + urxvt [[http://jasonwryan.com/blog/2013/08/17/terminal/]]
+  [[https://github.com/dougblack/dotfiles/blob/master/.vimrc]]
+  [[http://dougblack.io/words/a-good-vimrc.html]] 
+  spf13 [[https://github.com/spf13/spf13-vim]] # Vundle 
+  amix [[https://github.com/amix/vimrc]] # vim-pathogen
+
+  .vim/after/ftplugin to keep .vimrc clean setlocal ....
+
+  autocmd FileType tex setlocal spell spelllang=en\_us,it\_it autocmd
+  FileType plaintext setlocal spell spelllang=en\_us,it\_it set
+  spelllang=en,it set spell
+
+**** python-sphinx
+
+   aur/plantuml
+   https://pypi.python.org/pypi/sphinxcontrib-plantuml
+   cd plantuml 
+   python setup.py build 
+   sudo python setup.py install
+
+**** Python
+
+   [[http://www.sontek.net/blog/2011/05/07/turning_vim_into_a_modern_python_ide.html]]
+
+   flake8
+   python-coverage
+   python-pytest-cov
+   [[https://github.com/nvie/vim-pyunit]]
+   [[https://github.com/alfredodeza/pytest.vim]]
+
+   vim-jedi 
+   python-rope/ropevim
+
+**** imagej
+
+   git clone [[git://github.com/cmci/ImageJMacro_Highlighter.git]]
+
+*** plugins
+
+[[http://el-tramo.be/blog/my-favorite-vim-plugins/]]
+
+unite = ctrlP, ack/ag, yankring/yankstack, lustyjuggler/BufExplorer
+fzf is like unite (has git, but do not know about yanks and +buffers+)
+vim-voom text outliner
+
+**** csv
+
+-  CSV files [[http://vim.wikia.com/wiki/Working_with_CSV_files]]
+
+**** python and IDE
+
+-  [[http://michiganlabs.com/vim-python-ide/]]
+-  [[http://unlogic.co.uk/2013/02/08/vim-as-a-python-ide/]]
+-  [[https://wiki.python.org/moin/Vim]]
+-  [[http://openbookproject.net/pybiblio/tips/elkner/vim4python.php]]
+-  [[http://www.jeffknupp.com/blog/2013/12/04/my-development-environment-for-python/]]
+-  [[http://docs.python-guide.org/en/latest/dev/env/]]
+-  [[http://www.reddit.com/r/Python/comments/1x9rhb/the_best_life_jacket_for_programming_with_vim/]]
+-  setting up python in Arch
+   [[http://antarch.calepin.co/setting-up-a-python-environment-in-arch-linux-advanced.html]]
+-  [[http://nvie.com/posts/vim-flake8-flake8-for-vim/]]
+-  [[http://haridas.in/vim-as-your-ide.html]]
+-  [[http://blog.dispatched.ch/2009/05/24/vim-as-python-ide/]]
+-  [[http://www.sontek.net/blog/2011/05/07/turning_vim_into_a_modern_python_ide.html]]
+-  java [[https://julien.ponge.org/blog/java-coding-with-style/]]
+-  [[http://www.lucianofiandesio.com/vim-configuration-for-happy-java-coding]]
+-  eclim
+
+**** use
+
+-  [[http://robots.thoughtbot.com/vim-splits-move-faster-and-more-naturally]]
+-  [[http://robots.thoughtbot.com/use-rspec-vim-with-tmux-and-dispatch]]
+
+** old
+
+pair programming: wemux (tmux)
+
+If you are already using *syntastic*, you can set it to run Pyflakes on
+write and show errors and warnings in the quickfix window. An example
+configuration to do that which also shows status and warning messages in
+the statusbar would be:
+ set statusline+=%#warningmsg#
+ set statusline+=%{SyntasticStatuslineFlag()}
+ set statusline+=%*
+ let g:syntastic\_auto\_loc\_list=1
+ let g:syntastic\_loc\_list\_height=5
+ 
+** Latex and vim
+
+Edit :[[file:///home/dan/docs/4arch/etc/vimrc][/etc/vimrc]] {
+  filetype plugin indent on
+  set grepprg=grep -nH $*
+  let g:tex_flavor = "latex"
+  set VIM=/usr/share/vim
+  set runtimepath=~/.vim,$VIM/vimfiles,$VIMRUNTIME,$VIM/vimfiles/after,~/.vim/after
+  " OPTIONAL: Starting with Vim 7, the filetype of empty .tex files defaults to
+  " 'plaintex' instead of 'tex', which results in vim-latex not being loaded.
+  " The following changes the default filetype back to 'tex':
+  let g:tex\_flavor='latex' }
+
+chemfig fyenMF ... figure in ambiente *floating (figure, table)*
+[[./vim/senthil.pdf][./senthil.pdf]]
+
+E{/usr/share/vim/vim72/ftplugin/tex.vim}
+
+ " but LaTeX looks good with just a bit of indentation.
+ set sw=2
+ " TIP: if you write your \label's as \label{fig:something}, then if you 
+ " type in \ref{fig: and press @@html:<C-n>@@ you will automatically cycle through
+ " all the figure labels. Very useful!
+ set iskeyword+=:
+
+** removed
+
+ aur/python-powerline-git
+ [[http://powerline.readthedocs.org/en/latest/installation/linux.html]]
+
+	 Zsh installation
+	 ----------------
+	 Add the following line to your ~/.zshrc:
+		 . /usr/share/zsh/site-contrib/powerline.zsh
+	 Tmux installation
+	 -----------------
+	 Add the following line to your ~/.tmux.conf:
+		 source '/usr/share/tmux/powerline.conf'
+	 Optional dependencies for python-powerline-git
+		 python-psutil: improved system information
+		 python-pygit2: improved git support
+		 zsh: better shell prompt
+		 gvim: vim compiled with Python support
 
 * Key bindings
 
