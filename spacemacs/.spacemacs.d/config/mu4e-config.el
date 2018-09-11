@@ -1,24 +1,29 @@
 (provide 'mu4e-config)
 
-;; enable inline images
-(setq mu4e-view-show-images t)
-;; use imagemagick, if available
-(when (fboundp 'imagemagick-register-types)
-  (imagemagick-register-types))
 (setq mu4e-confirm-quit nil)
 
 (setq mu4e-update-interval 120)
 (setq mu4e-auto-retrieve-keys t)
 (setq mu4e-headers-leave-behavior 'apply)
 (setq mu4e-headers-visible-lines 20)
-;; (setq ;;mu4e-headers-auto-update t
-      ;; mu4e-hide-index-messages t
-      ;; mu4e-view-show-addresses t)
+(setq mu4e-headers-auto-update t  ;; this is the default
+      mu4e-hide-index-messages t  ;; hide updating messages
+      mu4e-view-show-addresses t)  ;; show full addresses
 (setq mu4e-get-mail-command "mbsync -a")
 ;; rename files when moving (Needed for mbsync)
 (setq mu4e-change-filenames-when-moving t)
 ;; don't keep message buffers around
 (setq message-kill-buffer-on-exit t)
+
+(setq mu4e-use-fancy-chars t)
+(setq mu4e-compose-forward-as-attachment t)
+
+;; VIEW ========================================================================
+;; enable inline images
+(setq mu4e-view-show-images t)
+;; use imagemagick, if available
+(when (fboundp 'imagemagick-register-types)
+  (imagemagick-register-types))
 ;; not as awesome as w3m, but preserves urls of google alerts
 ;; (setq mu4e-html2text-command "html2text| grep -v '&nbsp_place_holder;'")
 ;; (setq mu4e-html2text-command "w3m -T text/html")
@@ -49,15 +54,18 @@
          (:from          .  22)
          (:mailing-list  .  12)
          (:subject       .  nil))) ;; alternatively, use :thread-subject
-;; enable mu4e maildirs extension
-;; (mu4e-maildirs-extension)
+
+
+; Maildirs extension
 (setq ;;mu4e-maildirs-extension-maildir-collapsed-prefix "archives"
       mu4e-maildirs-extension-default-collapse-level 0)
+
 ;; store all attachments of an email into the same folder
 (setq mu4e-save-multiple-attachments-without-asking t)
 (setq mu4e-attachment-dir  "~/")
 ;; view msg with fill column (toggle "SPC o o")
-(add-hook 'mu4e-view-mode-hook #'visual-fill-column-mode)
+(add-hook 'mu4e-view-mode-hook 'visual-fill-column-mode)
+
 ;; ;; every new email composition gets its own frame! (window)
 ;; (setq mu4e-compose-in-new-frame t)
 ;; give me ISO(ish) format date-time stamps in the header list
@@ -66,7 +74,7 @@
 (setq message-citation-line-format "On %a %d %b %Y at %R, %f wrote:\n")
 ;; choose to use the formatted string
 (setq message-citation-line-function 'message-insert-formatted-citation-line)
-;; use helm for navigation
+;; use helm for navigation =j o=
 (setq  mu4e-completing-read-function 'completing-read)
 
 
@@ -263,17 +271,6 @@
   )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; ;; add Cc and Bcc headers to the message buffer
-;; (add-hook 'mu4e-compose-mode-hook
-;;           (lambda()
-;;             (let* ((ctx (mu4e-context-current))
-;;                    (name (if ctx (mu4e-context-name ctx))))
-;;               (when name
-;;                 (cond
-;;                  ((string= name "cnr")
-;;                   (save-excursion (message-add-header "Bcc: daniele.arosio@cnr.it\n")))
-;;                  ((string= name "pec")
-;;                   (save-excursion (message-add-header "Bcc: daniele.arosio@pec.it\n"))))))))
 
 ;; http://www.djcbsoftware.nl/code/mu/mu4e/Compose-hooks.html
 (add-hook 'mu4e-compose-mode-hook
@@ -288,21 +285,15 @@
                  ((string= name "pec")
                   (save-excursion (message-add-header "Bcc: daniele.arosio@pec.it\n"))))))
             ;; (toggle-frame-maximized)
-            (set-fill-column 76)
-            (visual-fill-column-mode)
+            (set-fill-column 79)
+            ;; (visual-fill-column-mode)
             (turn-on-orgtbl)
             (turn-on-orgstruct)
             (turn-on-orgstruct++)
             (flyspell-mode)))
-            ;; (adict-guess-dictionary)))
 ;; (add-hook 'message-mode-hook #'typo-mode)
 ;; (add-hook 'message-mode-hook #'footnote-mode)
 
-;; ;; From Ben Maughan: Get some Org functionality in compose buffer
-;; (add-hook 'message-mode-hook 'turn-on-orgtbl)
-;; (add-hook 'message-mode-hook 'turn-on-orgstruct)
-;; (add-hook 'message-mode-hook 'turn-on-orgstruct++)
-;; (add-hook 'message-mode-hook 'flyspell-mode)
 
 ;; Set format=flowed
 ;; mu4e sets up visual-line-mode and also fill (M-q) to do the right thing
@@ -313,19 +304,18 @@
 ;;store link to message if in header view, not to header query
 (setq org-mu4e-link-query-in-headers-mode nil)
 
-;; ;;store org-mode links to messages
-;; (require 'org-mu4e)
 ;; when composing an email, switch on the special mu4e/orgmode mode
 (define-key mu4e-compose-mode-map (kbd "C-c o") 'org~mu4e-mime-switch-headers-or-body)
 ;; when mail is sent, automatically convert org body to HTML
 (setq org-mu4e-convert-to-html t)
 
 
-;; http://pragmaticemacs.com/emacs/email-templates-in-mu4e-with-yasnippet/
-(add-hook 'mu4e-compose-mode-hook 'spacemacs/load-yasnippet)
+;; ;; http://pragmaticemacs.com/emacs/email-templates-in-mu4e-with-yasnippet/
+;; (add-hook 'mu4e-compose-mode-hook 'spacemacs/load-yasnippet)
 
 
 
+; Multiattchments ============================================================
 ;; (eval-when-compile (require 'dired))
 ;; (defun iqbal-mu4e-file-attach-marked-files ()
 ;;   (gnus-dired-attach (dired-map-over-marks (dired-get-file-for-visit) nil)))
