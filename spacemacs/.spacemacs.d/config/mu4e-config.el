@@ -18,22 +18,20 @@
 (setq mu4e-use-fancy-chars t)
 (setq mu4e-compose-forward-as-attachment t)
 
+(setq mu4e-compose-complete-addresses t)  ;; default
+(setq mu4e-compose-signature-auto-include t)  ;; default
+
 ;; VIEW ========================================================================
 ;; enable inline images
 (setq mu4e-view-show-images t)
 ;; use imagemagick, if available
-(when (fboundp 'imagemagick-register-types)
-  (imagemagick-register-types))
-;; not as awesome as w3m, but preserves urls of google alerts
-;; (setq mu4e-html2text-command "html2text| grep -v '&nbsp_place_holder;'")
-;; (setq mu4e-html2text-command "w3m -T text/html")
-;; (setq mu4e-html2text-command "lynx -dump -width 120 -stdin")
+(when (fboundp 'imagemagick-register-types) (imagemagick-register-types))
 (setq mu4e-html2text-command 'mu4e-shr2text) 
-(add-hook 'mu4e-view-mode-hook
-          (lambda()
-            ;; try to emulate some of the eww key-bindings
-            (local-set-key (kbd "<tab>") 'shr-next-link)
-            (local-set-key (kbd "<backtab>") 'shr-previous-link)))
+;; (setq mu4e-html2text-command "w3m -T text/html")
+;; (setq mu4e-html2text-command "html2text| grep -v '&nbsp_place_holder;'")
+;; (setq mu4e-html2text-command "lynx -dump -width 120 -stdin")
+(define-key 'mu4e-view-mode-map (kbd "<tab>") 'org-next-link)  ;; 'shr-next-link)
+(define-key 'mu4e-view-mode-map (kbd "<backtab>") 'org-previous-link)  ;; 'shr-previous-link
 ;; include messages that belong to the same threads, just like Gmail ("W")
 (setq mu4e-headers-include-related t)
 ;; skipping duplicates; toggle with 'C-v'
@@ -46,6 +44,7 @@
 (defun jcs-view-in-eww (msg)
   (eww-browse-url (concat "file://" (mu4e~write-body-to-html msg))))
 (add-to-list 'mu4e-view-actions '("Eww view" . jcs-view-in-eww) t)
+
 ;; the headers to show in the headers list [a pair of a field and its width]
 ;; with `nil' meaning 'unlimited' (better only use that for the last field).
 (setq mu4e-headers-fields
@@ -105,8 +104,6 @@
         mu4e-send-delay-timer 120)
   )
 (setq mu4e-compose-signature-auto-include nil)
-;; (add-hook 'mu4e-compose-mode-hook
-;;           (lambda () (local-set-key (kbd "SPC m w") #'message-insert-signature)))
 (spacemacs/set-leader-keys-for-major-mode 'mu4e-compose-mode
   "w" 'message-insert-signature)
 
