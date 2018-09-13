@@ -575,6 +575,14 @@ before packages are loaded."
   (global-set-key (kbd "<f9>") 'imenu-list)
   (global-set-key (kbd "C-<f9>") 'imenu-list-smart-toggle)
 
+  ;; emulate i3wm
+  (global-set-key (kbd "s-<left>") 'evil-window-left)
+  (global-set-key (kbd "H-<left>") 'evil-window-left)
+  (global-set-key (kbd "H-<right>") 'evil-window-right)
+  (global-set-key (kbd "H-<up>") 'evil-window-up)
+  (global-set-key (kbd "H-<down>") 'evil-window-down)
+  (global-set-key (kbd "H-q") 'evil-window-delete)
+
   ;; evil-numbers =SPC n -=
   (define-key evil-normal-state-map (kbd "C-a") 'evil-numbers/inc-at-pt)
   (define-key evil-normal-state-map (kbd "C-x") 'evil-numbers/dec-at-pt)
