@@ -34,10 +34,39 @@
    TAB za
   
    writing layer
-** Todo
-   dash
-   fasd
-   shell-scripts
+** Todo [0/6]
+
+   - [ ] jabber layer
+   - [ ] twitter layer
+     consider this snimmep
+     #+BEGIN_EXAMPLE
+   (defun setup-windows ()
+     "Organize a series of windows for ultimate distraction."
+     (interactive)
+     (delete-other-windows)
+
+     ;; Start with the Stack Overflow interface
+     (sx-tab-frontpage t nil)
+
+     ;; Put IRC on the other side
+     (split-window-horizontally)
+     (other-window 1)
+     (circe-connect-all)
+
+     ;; My RSS Feed goes on top:
+     (split-window-vertically)
+     (elfeed)
+
+     ;; And start up the Twitter interface above that:
+     (other-window 2)
+     (split-window-vertically)
+     (twit)
+
+     (window-configuration-to-register ?w))
+   #+END_EXAMPLE 
+   - [ ] dash
+   - [ ] fasd
+   - [ ] shell-scripts
    ;; (ranger :variables
    ;;         ranger-show-preview t)
    ess
@@ -46,7 +75,7 @@
 
    dotspacemacs-additional-packages '(
    ;; org-webpage
-   pocket-reader
+   - [ ] pocket-reader
   
      
    dotspacemacs-startup-lists '(;;(todos . 3)

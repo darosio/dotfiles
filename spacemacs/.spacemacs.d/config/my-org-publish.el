@@ -9,6 +9,8 @@
 (setq org-latex-pdf-process
       '("latexmk -pdflatex='pdflatex -interaction nonstopmode' -pdf -bibtex -f %f"))
 ;; ;;   "xelatex -interaction nonstopmode %f"
+;; ;; or as suggested by org-ref
+;; (setq org-latex-pdf-process (list "latexmk -shell-escape -bibtex -f -pdf %f"))
 
 ;; (require 'ox-latex)
 ;; (add-to-list 'org-latex-classes

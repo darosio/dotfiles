@@ -1,11 +1,14 @@
+(provide 'bibtex-config)
+
 ;; (require 'org-ref-scopus)
 ;; https://www.reddit.com/r/emacs/comments/4gudyw/help_me_with_my_orgmode_workflow_for_notetaking/d2l16uj/
+
 ;;  see org-ref for use of these variables  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (setq org-ref-bibliography-notes     "~/Sync/biblio/biblio.org")
 (setq org-ref-default-bibliography '("~/Sync/biblio/biblio.bib"
                                      ;; "~/Sync/media/bibliography/nurturing.bib"
                                      ))
-(setq   org-ref-pdf-directory '("~/Sync/biblio/pdfs/" "~/Sync/biblio/books/"))  ;; trailing / affects ,hA associate pdf to entry
+(setq   org-ref-pdf-directory "~/Sync/biblio/pdfs/")  ;; trailing / affects ,hA associate pdf to entry
 
 ;; (setq reftex-default-bibliography '("~/Sync/media/bibliography/biblio.bib"
 ;;                                     ;; "~/Sync/media/bibliography/nurturing.bib"
@@ -23,17 +26,17 @@
 ;; Zotero
 (setq   bibtex-completion-pdf-field "file")
 
-(defun my/org-ref-open-pdf-at-point ()
-  "Open the pdf for bibtex key under point if it exists."
-  (interactive)
-  (let* ((results (org-ref-get-bibtex-key-and-file))
-         (key (car results))
-         (pdf-file (car (bibtex-completion-find-pdf key))))
-    (if (file-exists-p pdf-file)
-        (org-open-file pdf-file)
-      (message "No PDF found for %s" key))))
+;; (defun my/org-ref-open-pdf-at-point ()
+;;   "Open the pdf for bibtex key under point if it exists."
+;;   (interactive)
+;;   (let* ((results (org-ref-get-bibtex-key-and-file))
+;;          (key (car results))
+;;          (pdf-file (car (bibtex-completion-find-pdf key))))
+;;     (if (file-exists-p pdf-file)
+;;         (org-open-file pdf-file)
+;;       (message "No PDF found for %s" key))))
 
-(setq org-ref-open-pdf-function 'my/org-ref-open-pdf-at-point)
+;; (setq org-ref-open-pdf-function 'my/org-ref-open-pdf-at-point)
 
 ;; bibtex ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (setq bibtex-completion-notes-path "~/Sync/biblio/biblio.org")
@@ -43,7 +46,11 @@
                                        ;; "~/Sync/media/bibliography/misc.bib"
                                        ;; "~/Sync/media/bibliography/nurturing.bib"
                                        ))
-
+;; search also in tags and keywords fields
+(setq bibtex-completion-additional-search-fields '(tags keywords))
+;; find also additional pdfs
+(setq bibtex-completion-find-additional-pdfs t)
+(setq bibtex-completion-pdf-extension '(".pdf" ".avi"))
 ;; (setq bibtex-completion-display-formats
 ;;       '((t . "${author:26} ${title:*} ${date:24} ${=has-pdf=:1}${=has-note=:1} ${=type=:7}")))
 ;; (setq bibtex-completion-display-formats
@@ -61,16 +68,15 @@
 ;; (eval-after-load "zotxt"
 ;;   '(setq zotxt-default-bibliography-style "citekey"))
 
-;; org-ref notes style only
-(require 'helm-bibtex)
-(require 'org-ref)
+;; ;; org-ref notes style only
+;; (require 'helm-bibtex)
+;; (require 'org-ref)
 ;; (defun my/org-ref-notes-function (candidates)
 ;;   (let ((key (helm-marked-candidates)))
 ;;     (funcall org-ref-notes-function (car key))))
 ;; (helm-delete-action-from-source "Edit notes" helm-source-bibtex)
 ;; (helm-add-action-to-source "Edit notes" 'my/org-ref-notes-function helm-source-bibtex 7)
 
-;; Add notes to annotated bibliography (or edit existing notes) with C-c 9
 (setq bibtex-completion-notes-template-one-file
       (format
        "\n** TODO ${=key=}: ${title}\n  :PROPERTIES:\n  :Custom_ID: ${=key=}\n  :INTERLEAVE_PDF: ./pdfs/${=key=}.pdf\n  :END:\n\ncite:${=key=}\n\n"))
@@ -86,5 +92,3 @@
 ;; To be deleted
 (add-hook 'bibtex-mode-hook 'outline-minor-mode)
 (define-key bibtex-mode-map (kbd "<tab>") (kbd "za"))
-
-(provide 'bibtex-config)
