@@ -1,18 +1,19 @@
 (provide 'bibtex-config)
 
+;; org-ref ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; (require 'org-ref-scopus)
 ;; https://www.reddit.com/r/emacs/comments/4gudyw/help_me_with_my_orgmode_workflow_for_notetaking/d2l16uj/
+;; (require 'org-ref-sci-id)
 
-;;  see org-ref for use of these variables  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(setq org-ref-bibliography-notes     "~/Sync/biblio/biblio.org")
 (setq org-ref-default-bibliography '("~/Sync/biblio/biblio.bib"
                                      ;; "~/Sync/media/bibliography/nurturing.bib"
                                      ))
-(setq   org-ref-pdf-directory "~/Sync/biblio/pdfs/")  ;; trailing / affects ,hA associate pdf to entry
+;; trailing / affects ,hA associate pdf to entry
+(setq   org-ref-pdf-directory "~/Sync/biblio/pdfs/")
+(setq org-ref-bibliography-notes     "~/Sync/biblio/biblio.org")
 
-;; (setq reftex-default-bibliography '("~/Sync/media/bibliography/biblio.bib"
-;;                                     ;; "~/Sync/media/bibliography/nurturing.bib"
-;;                                     ))
+;; (setq reftex-default-bibliography '("~/Sync/media/bibliography/biblio.bib"))
+
 ;; Bibtex key format
 (setq bibtex-autokey-year-length 4
       bibtex-autokey-name-year-separator ""
@@ -23,22 +24,20 @@
       bibtex-autokey-titleword-length 5
       bibtex-autokey-name-case-convert-function 'capitalize)
 
-;; Zotero
+;; Zotero ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (setq   bibtex-completion-pdf-field "file")
+(defun my/org-ref-open-pdf-at-point ()
+  "Open the pdf for bibtex key under point if it exists."
+  (interactive)
+  (let* ((results (org-ref-get-bibtex-key-and-file))
+         (key (car results))
+	       (pdf-file (car (bibtex-completion-find-pdf key))))
+    (if (file-exists-p pdf-file)
+	      (org-open-file pdf-file)
+      (message "No PDF found for %s" key))))
+(setq org-ref-open-pdf-function 'my/org-ref-open-pdf-at-point)
 
-;; (defun my/org-ref-open-pdf-at-point ()
-;;   "Open the pdf for bibtex key under point if it exists."
-;;   (interactive)
-;;   (let* ((results (org-ref-get-bibtex-key-and-file))
-;;          (key (car results))
-;;          (pdf-file (car (bibtex-completion-find-pdf key))))
-;;     (if (file-exists-p pdf-file)
-;;         (org-open-file pdf-file)
-;;       (message "No PDF found for %s" key))))
-
-;; (setq org-ref-open-pdf-function 'my/org-ref-open-pdf-at-point)
-
-;; bibtex ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; helm-bibtex ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (setq bibtex-completion-notes-path "~/Sync/biblio/biblio.org")
 (setq bibtex-completion-library-path '("~/Sync/biblio/pdfs/"
                                        "~/Sync/biblio/books/"))
@@ -68,18 +67,22 @@
 ;; (eval-after-load "zotxt"
 ;;   '(setq zotxt-default-bibliography-style "citekey"))
 
-;; ;; org-ref notes style only
-;; (require 'helm-bibtex)
-;; (require 'org-ref)
+
+;; org-ref notes style only
+(setq bibtex-completion-notes-template-one-file
+      (format
+       "\n** TODO ${=key=}: ${title}\n  :PROPERTIES:\n  :Custom_ID: ${=key=}\n  :INTERLEAVE_PDF: ./pdfs/${=key=}.pdf\n  :END:\n\ncite:${=key=}\n\n"))
+
+;; (setq org-ref-open-bibtex-notes
+;;       (format
+;;        "\n** TODO ${=key=}: ${title}\n  :PROPERTIES:\n  :Custom_ID: ${=key=}\n  :INTERLEAVE_PDF: ./pdfs/${=key=}.pdf\n  :END:\n\ncite:${=key=}\n\n"))
+
 ;; (defun my/org-ref-notes-function (candidates)
 ;;   (let ((key (helm-marked-candidates)))
 ;;     (funcall org-ref-notes-function (car key))))
 ;; (helm-delete-action-from-source "Edit notes" helm-source-bibtex)
+;; ;; Note that 7 is a magic number of the index where you want to insert the command. You may need to change yours.
 ;; (helm-add-action-to-source "Edit notes" 'my/org-ref-notes-function helm-source-bibtex 7)
-
-(setq bibtex-completion-notes-template-one-file
-      (format
-       "\n** TODO ${=key=}: ${title}\n  :PROPERTIES:\n  :Custom_ID: ${=key=}\n  :INTERLEAVE_PDF: ./pdfs/${=key=}.pdf\n  :END:\n\ncite:${=key=}\n\n"))
 
 ;; (setq org-ref-notes-function
 ;;       (lambda (thekey)
@@ -90,5 +93,6 @@
 ;;           (lambda ()
 ;;             (define-key org-mode-map  (kbd "C-c 9") 'org-ref-open-notes-at-point)))
 ;; To be deleted
+
 (add-hook 'bibtex-mode-hook 'outline-minor-mode)
 (define-key bibtex-mode-map (kbd "<tab>") (kbd "za"))
