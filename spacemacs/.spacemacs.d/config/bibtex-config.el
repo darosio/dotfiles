@@ -26,16 +26,23 @@
 
 ;; Zotero ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (setq   bibtex-completion-pdf-field "file")
-(defun my/org-ref-open-pdf-at-point ()
-  "Open the pdf for bibtex key under point if it exists."
-  (interactive)
-  (let* ((results (org-ref-get-bibtex-key-and-file))
-         (key (car results))
-	       (pdf-file (car (bibtex-completion-find-pdf key))))
-    (if (file-exists-p pdf-file)
-	      (org-open-file pdf-file)
-      (message "No PDF found for %s" key))))
-(setq org-ref-open-pdf-function 'my/org-ref-open-pdf-at-point)
+;; (defun my/org-ref-open-pdf-at-point ()
+;;   "Open the pdf for bibtex key under point if it exists."
+;;   (interactive)
+;;   (let* ((results (org-ref-get-bibtex-key-and-file))
+;;          (key (car results))
+;; 	       (pdf-file (car (bibtex-completion-find-pdf key))))
+;;     (if (file-exists-p pdf-file)
+;; 	      (org-open-file pdf-file)
+;;       (message "No PDF found for %s" key))))
+;; (setq org-ref-open-pdf-function 'my/org-ref-open-pdf-at-point)
+
+;; Activate org-zotxt-mode in org-mode buffers
+;; (add-hook 'org-mode-hook (lambda () (org-zotxt-mode 1)))
+;; Change citation format to be less cumbersome in files.
+;; You'll need to install mkbehr-short into your style manager first.
+;; (eval-after-load "zotxt"
+;;   '(setq zotxt-default-bibliography-style "citekey"))
 
 ;; helm-bibtex ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (setq bibtex-completion-notes-path "~/Sync/biblio/biblio.org")
@@ -60,19 +67,25 @@
 ;;         (t             . "${=has-pdf=:1}${=has-note=:1} ${=type=:3} ${year:6} ${author:36} ${title:*}")))
 
 
-;; Activate org-zotxt-mode in org-mode buffers
-;; (add-hook 'org-mode-hook (lambda () (org-zotxt-mode 1)))
-;; Change citation format to be less cumbersome in files.
-;; You'll need to install mkbehr-short into your style manager first.
-;; (eval-after-load "zotxt"
-;;   '(setq zotxt-default-bibliography-style "citekey"))
-
-
-;; org-ref notes style only
 (setq bibtex-completion-notes-template-one-file
       (format
-       "\n** TODO ${=key=}: ${title}\n  :PROPERTIES:\n  :Custom_ID: ${=key=}\n  :INTERLEAVE_PDF: ./pdfs/${=key=}.pdf\n  :END:\n\ncite:${=key=}\n\n"))
+       "\n** TODO ${=key=}: ${title}\n \
+ :PROPERTIES:\n \
+  :Custom_ID: ${=key=}\n \
+  :INTERLEAVE_PDF: ./pdfs/${=key=}.pdf\n \
+ :END:\n\ncite:${=key=}\n\n"))
 
+;; org-ref notes style only
+;; https://github.com/jkitchin/org-ref/issues/225
+;; (setq org-ref-notes-function
+;;       (lambda (thekey)
+;;         (let ((bibtex-completion-bibliography (org-ref-find-bibliography)))
+;;           (bibtex-completion-edit-notes
+;;            (list (car (org-ref-get-bibtex-key-and-file thekey)))))))
+
+;; try to set one-file format for org-ref
+;; ;; (setq org-ref-notes-function-one-file
+;; ;; (setq org-ref-note-title-format
 ;; (setq org-ref-open-bibtex-notes
 ;;       (format
 ;;        "\n** TODO ${=key=}: ${title}\n  :PROPERTIES:\n  :Custom_ID: ${=key=}\n  :INTERLEAVE_PDF: ./pdfs/${=key=}.pdf\n  :END:\n\ncite:${=key=}\n\n"))
@@ -94,5 +107,5 @@
 ;;             (define-key org-mode-map  (kbd "C-c 9") 'org-ref-open-notes-at-point)))
 ;; To be deleted
 
-(add-hook 'bibtex-mode-hook 'outline-minor-mode)
-(define-key bibtex-mode-map (kbd "<tab>") (kbd "za"))
+(add-hook 'bibtex-mode-hook 'outline-minor-mode)  ;; =z M=
+(define-key bibtex-mode-map (kbd "<tab>") (kbd "za"))  ;; =TAB=
