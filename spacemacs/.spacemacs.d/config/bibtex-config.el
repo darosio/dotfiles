@@ -1,5 +1,8 @@
 (provide 'bibtex-config)
 
+;; multiple bib projects
+;; https://emacs.stackexchange.com/questions/30095/org-ref-managing-multiple-projects-each-with-own-notes-org-files-and-bibtex-pd#30113
+
 ;; org-ref ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; (require 'org-ref-scopus)
 ;; https://www.reddit.com/r/emacs/comments/4gudyw/help_me_with_my_orgmode_workflow_for_notetaking/d2l16uj/
