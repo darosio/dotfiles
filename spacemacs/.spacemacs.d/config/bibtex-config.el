@@ -56,7 +56,8 @@
                                        ;; "~/Sync/media/bibliography/nurturing.bib"
                                        ))
 ;; search also in tags and keywords fields
-(setq bibtex-completion-additional-search-fields '(tags keywords))
+;; (setq bibtex-completion-additional-search-fields '(keywords))
+(setq bibtex-completion-additional-search-fields '(tags))
 ;; find also additional pdfs
 (setq bibtex-completion-find-additional-pdfs t)
 (setq bibtex-completion-pdf-extension '(".pdf" ".avi"))
