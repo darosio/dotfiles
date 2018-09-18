@@ -104,8 +104,9 @@ This function should only modify configuration layer settings."
      git
      bibtex
      (pdf :variables
+          pdf-view-resize-factor 1.1
           pdf-annot-activate-created-annotations t)
-     markdown ;;conflict with ob-ipython !! ?
+     markdown
      csv
      ;; ;; (elfeed :variables
      ;; ;;         rmh-elfeed-org-files (list "~/Sync/.elfeed/1.org"))
@@ -120,6 +121,7 @@ This function should only modify configuration layer settings."
      writing
      typography  ;; =SPC t T= to enable
      ;; themes-megapack
+     themes-selected
      )
 
    ;; List of additional packages that will be installed without being
@@ -135,26 +137,6 @@ This function should only modify configuration layer settings."
                                       git-annex ;; C-x C-q in annexed buffer; in dired instead @e @a (@g @d);
                                       magit-annex
                                       fzf
-                                      ;; selected themes
-                                      subatomic256-theme
-                                      spacegray-theme
-                                      zen-and-art-theme
-                                      material-theme
-                                      smyx-theme
-                                      afternoon-theme
-                                      ample-zen-theme
-                                      color-theme-sanityinc-tomorrow
-                                      color-theme-sanityinc-solarized
-                                      solarized-theme
-                                      tango-plus-theme
-                                      tangotango-theme
-                                      soft-stone-theme
-                                      soft-morning-theme
-                                      badwolf-theme
-                                      doom-themes
-                                      molokai-theme
-                                      monokai-theme
-                                      flatui-theme
                                       )
 
 
@@ -279,9 +261,12 @@ It should only modify the values of Spacemacs settings."
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press `SPC T n' to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '(spacemacs-dark
-                         spacemacs-light
+   dotspacemacs-themes '(monokai
+                         sanityinc-solarized-dark
+                         sanityinc-solarized-light
                          subatomic256
+                         spacemacs-dark
+                         spacemacs-light
                          spacegray
                          zen-and-art
                          material
@@ -309,8 +294,8 @@ It should only modify the values of Spacemacs settings."
    ;; to create your own spaceline theme. Value can be a symbol or list with\
    ;; additional properties.
    ;; (default '(spacemacs :separator wave :separator-scale 1.5))
-   ;; dotspacemacs-mode-line-theme '(spacemacs :separator chamfer :separator-scale 0.6)
-   dotspacemacs-mode-line-theme '(vim-powerline)
+   dotspacemacs-mode-line-theme '(spacemacs :separator wave :separator-scale 1.0)
+   ;; dotspacemacs-mode-line-theme '(vim-powerline)
 
    ;; If non-nil the cursor color matches the state color in GUI Emacs.
    ;; (default t)
@@ -664,12 +649,13 @@ before packages are loaded."
         org-noter-property-note-location "INTERLEAVE_PAGE_NOTE"
         org-noter-default-notes-file-names "~/Sync/biblio/biblio.org"
         org-noter-always-create-frame nil
-        org-noter-doc-property-in-notes t
+        ;; org-noter-doc-property-in-notes t
         org-noter-doc-split-fraction '(0.7 . 0.5)
         )
   (with-eval-after-load 'org-noter
     (define-key org-noter-notes-mode-map (kbd "C-M-k") 'org-noter-create-skeleton)
     (define-key org-noter-doc-mode-map (kbd "C-M-k") 'org-noter-create-skeleton))
+  (add-hook 'text-mode-hook 'evil-insert-state)
 
 
   ;; pdf
@@ -727,7 +713,7 @@ This function is called at the very end of Spacemacs initialization."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (sublime-themes zen-and-art-theme yasnippet-snippets yapfify ws-butler writegood-mode wordnut winum which-key web-mode web-beautify volatile-highlights visual-fill-column vi-tilde-fringe uuidgen use-package typo toc-org tangotango-theme tango-plus-theme tagedit symon subatomic256-theme string-inflection spaceline-all-the-icons spacegray-theme solarized-theme soft-stone-theme soft-morning-theme smyx-theme smeargle slim-mode sdcv scss-mode sass-mode restart-emacs rainbow-delimiters pyvenv pytest pyenv-mode py-isort pug-mode prettier-js popwin plantuml-mode pippel pipenv pip-requirements persp-mode pcre2el password-generator paradox pandoc-mode ox-reveal ox-pandoc overseer orgit org-ref org-projectile org-present org-pomodoro org-noter org-mime org-gcal org-download org-bullets org-brain open-junk-file ob-ipython neotree nameless mu4e-maildirs-extension mu4e-alert move-text monokai-theme molokai-theme mmm-mode material-theme markdown-toc magit-svn magit-gitflow magit-annex macrostep lorem-ipsum live-py-mode link-hint langtool indent-guide importmagic impatient-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-pydoc helm-purpose helm-projectile helm-mu helm-mode-manager helm-make helm-gitignore helm-git-grep helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag graphviz-dot-mode google-translate golden-ratio gnuplot gitignore-templates gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-annex gh-md fzf fuzzy font-lock+ flyspell-popup flyspell-correct-helm flycheck-pos-tip flx-ido flatui-theme fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-org evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu emmet-mode elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-themes doom-modeline diminish dictcc deft define-word cython-mode csv-mode counsel-projectile company-web company-statistics company-quickhelp company-anaconda column-enforce-mode color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized clean-aindent-mode centered-cursor-mode badwolf-theme auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile artbollocks-mode ample-zen-theme aggressive-indent afternoon-theme ace-window ace-link ace-jump-helm-line ac-ispell))))
+    (borland-blue-theme zen-and-art-theme yasnippet-snippets yapfify xresources-theme ws-butler writegood-mode wordnut winum which-key web-mode web-beautify volatile-highlights visual-fill-column vi-tilde-fringe uuidgen use-package typo twilight-bright-theme toc-org theme-changer tangotango-theme tango-plus-theme tagedit symon sublime-themes subatomic256-theme string-inflection spaceline-all-the-icons spacegray-theme solarized-theme soft-stone-theme soft-morning-theme smyx-theme smeargle slim-mode sdcv scss-mode sass-mode restart-emacs rainbow-delimiters pyvenv pytest pyenv-mode py-isort pug-mode prettier-js popwin plantuml-mode pippel pipenv pip-requirements persp-mode pcre2el password-generator paradox pandoc-mode ox-reveal ox-pandoc overseer orgit org-ref org-projectile org-present org-pomodoro org-noter org-mime org-gcal org-download org-bullets org-brain open-junk-file ob-ipython neotree nameless mu4e-maildirs-extension mu4e-alert move-text monokai-theme molokai-theme mmm-mode material-theme markdown-toc magit-svn magit-gitflow magit-annex macrostep lorem-ipsum live-py-mode link-hint langtool intellij-theme indent-guide importmagic impatient-mode idea-darkula-theme hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-pydoc helm-purpose helm-projectile helm-mu helm-mode-manager helm-make helm-gitignore helm-git-grep helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag graphviz-dot-mode google-translate golden-ratio gnuplot gitignore-templates gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-annex gh-md fzf fuzzy font-lock+ flyspell-popup flyspell-correct-helm flycheck-pos-tip flx-ido flatui-theme fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-org evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu emmet-mode elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-themes doom-modeline diminish dictcc deft define-word darcula-theme cython-mode csv-mode counsel-projectile company-web company-statistics company-quickhelp company-anaconda column-enforce-mode color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized clean-aindent-mode centered-cursor-mode blackboard-theme badwolf-theme auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile atom-one-dark-theme atom-dark-theme artbollocks-mode ample-zen-theme airline-themes aggressive-indent afternoon-theme ace-window ace-link ace-jump-helm-line ac-ispell))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
