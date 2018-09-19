@@ -65,7 +65,7 @@
 (setq bibtex-completion-additional-search-fields '(tags))
 ;; find also additional pdfs
 (setq bibtex-completion-find-additional-pdfs t)
-(setq bibtex-completion-pdf-extension '(".pdf" ".avi" "ppd" "odp" "md" "docx"))
+(setq bibtex-completion-pdf-extension '(".pdf" ".avi" ".ppt" ".odp" ".md" ".doc" ".docx" ".html"))
 ;; (setq bibtex-completion-display-formats
 ;;       '((t . "${author:26} ${title:*} ${date:24} ${=has-pdf=:1}${=has-note=:1} ${=type=:7}")))
 ;; (setq bibtex-completion-display-formats
