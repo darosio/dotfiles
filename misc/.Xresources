@@ -163,6 +163,7 @@ xterm*faceSize: 12
 ! -- Colours -- !
 #include "/home/dan/.config/colours/solarized0"
 #include "/home/dan/.config/colours/solarized"
+!#include "/home/dan/.config/colours/molokai"
 ! https://web.archive.org/web/20090130061234/http://phraktured.net/terminal-colors/
 !#include "/home/dan/.config/colours/thirteen"
 ! http://www.xcolors.net/

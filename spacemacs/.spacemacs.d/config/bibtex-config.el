@@ -1,6 +1,6 @@
 (provide 'bibtex-config)
 
-;; multiple bib projects
+;; multiple bib projects, but didn't work
 ;; https://emacs.stackexchange.com/questions/30095/org-ref-managing-multiple-projects-each-with-own-notes-org-files-and-bibtex-pd#30113
 
 ;; org-ref ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -9,26 +9,29 @@
 ;; (require 'org-ref-sci-id)
 
 (setq org-ref-default-bibliography '("~/Sync/biblio/biblio.bib"
+                                     "~/Sync/biblio/MY.bib"
                                      ;; "~/Sync/media/bibliography/nurturing.bib"
                                      ))
 ;; trailing / affects ,hA associate pdf to entry
-(setq   org-ref-pdf-directory "~/Sync/biblio/pdfs/")
-(setq org-ref-bibliography-notes     "~/Sync/biblio/biblio.org")
+(setq org-ref-pdf-directory "~/Sync/biblio/pdfs/")
+(setq org-ref-bibliography-notes  "~/Sync/biblio/biblio.org")
 
 ;; (setq reftex-default-bibliography '("~/Sync/media/bibliography/biblio.bib"))
 
 ;; Bibtex key format
-(setq bibtex-autokey-year-length 4
+(setq bibtex-autokey-name-case-convert-function 'capitalize
       bibtex-autokey-name-year-separator ""
-      bibtex-autokey-year-title-separator "-"
-      bibtex-autokey-titleword-separator "-"
-      bibtex-autokey-titlewords 0
-      bibtex-autokey-titlewords-stretch 1
+      ;; bibtex-autokey-year-length 2
+      ;; bibtex-autokey-year-title-separator "_"
+      bibtex-autokey-titleword-separator ""
+      bibtex-autokey-titlewords 3
+      bibtex-autokey-titleword-case-convert 'capitalize
       bibtex-autokey-titleword-length 5
-      bibtex-autokey-name-case-convert-function 'capitalize)
+      )
 
 ;; Zotero ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (setq   bibtex-completion-pdf-field "file")
+;; ;; might be need by org-ref
 ;; (defun my/org-ref-open-pdf-at-point ()
 ;;   "Open the pdf for bibtex key under point if it exists."
 ;;   (interactive)
@@ -50,8 +53,10 @@
 ;; helm-bibtex ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (setq bibtex-completion-notes-path "~/Sync/biblio/biblio.org")
 (setq bibtex-completion-library-path '("~/Sync/biblio/pdfs/"
+                                       "~/Sync/biblio/MY/"
                                        "~/Sync/biblio/books/"))
 (setq bibtex-completion-bibliography '("~/Sync/biblio/biblio.bib"
+                                       "~/Sync/biblio/MY.bib"
                                        ;; "~/Sync/media/bibliography/misc.bib"
                                        ;; "~/Sync/media/bibliography/nurturing.bib"
                                        ))
@@ -60,7 +65,7 @@
 (setq bibtex-completion-additional-search-fields '(tags))
 ;; find also additional pdfs
 (setq bibtex-completion-find-additional-pdfs t)
-(setq bibtex-completion-pdf-extension '(".pdf" ".avi"))
+(setq bibtex-completion-pdf-extension '(".pdf" ".avi" "ppd" "odp" "md" "docx"))
 ;; (setq bibtex-completion-display-formats
 ;;       '((t . "${author:26} ${title:*} ${date:24} ${=has-pdf=:1}${=has-note=:1} ${=type=:7}")))
 ;; (setq bibtex-completion-display-formats
