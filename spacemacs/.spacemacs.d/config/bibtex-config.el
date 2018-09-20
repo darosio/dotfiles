@@ -65,7 +65,8 @@
 (setq bibtex-completion-additional-search-fields '(tags))
 ;; find also additional pdfs
 (setq bibtex-completion-find-additional-pdfs t)
-(setq bibtex-completion-pdf-extension '(".pdf" ".avi" ".ppt" ".odp" ".md" ".doc" ".docx" ".html"))
+;; works only from helm-bibtex. less common e.g. ".md" can go into file={...} 
+(setq bibtex-completion-pdf-extension '(".pdf" ".avi" ".ppt" ".odp" ".odt" ".doc" ".docx"))
 ;; (setq bibtex-completion-display-formats
 ;;       '((t . "${author:26} ${title:*} ${date:24} ${=has-pdf=:1}${=has-note=:1} ${=type=:7}")))
 ;; (setq bibtex-completion-display-formats
