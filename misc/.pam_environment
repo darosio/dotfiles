@@ -12,7 +12,7 @@ WORKON_HOME           DEFAULT=@{HOME}/.venvs/
 #GNUPGHOME        DEFAULT=${XDG_CONFIG_HOME}/gnupg
 
 # You can define variables as VARIABLE=VALUE pair
-EDITOR		DEFAULT="emacsclient -c"
+EDITOR		DEFAULT="em"
 
 #Incorrect: you can't reuse other variables in VARIABLE=VALUE pair
 #GNUPGHOME=${XDG_CONFIG_HOME}/gnupg
