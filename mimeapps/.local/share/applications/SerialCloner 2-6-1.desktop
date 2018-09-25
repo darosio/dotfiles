@@ -1,10 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=SerialCloner 2-6-1
-Comment=PlayOnLinux
 Type=Application
-Exec=/usr/share/playonlinux/playonlinux --run "SerialCloner 2-6-1" %F
-Icon=/home/dan/.PlayOnLinux//icones/full_size/SerialCloner 2-6-1
-Name[fr_FR]=SerialCloner 2-6-1
-StartupWMClass=SerialCloner 2-6-1.exe
-Categories=
+Exec=wine '/.progs/SerialCloner2-6_/SerialCloner 2-6-1.exe' %f
+Categories=wine

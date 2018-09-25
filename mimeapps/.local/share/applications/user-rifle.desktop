@@ -1,8 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=rifle
-Exec=rifle %f
-Categories=Other;
-NoDisplay=true
-MimeType=*/*
-Terminal=false

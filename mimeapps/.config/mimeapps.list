@@ -1,15 +1,6 @@
 [Added Associations]
-application/*=userapp-rifle.desktop
-*/*=user-rifle.desktop
 image/x-tga=SerialCloner 2-6-1.desktop;
 
 [Default Applications]
-application/*=userapp-rifle.desktop
-*/*=user-rifle.desktop
 image/x-tga=SerialCloner 2-6-1.desktop
 text/plain=userapp-rifle.desktop
-
-[Removed Associations]
-text/plain=rifle-usercreated-1.desktop;
-audio/ogg=rifle-usercreated-2.desktop;
-application/x-wine-extension-opj=rifle-usercreated-3.desktop;
