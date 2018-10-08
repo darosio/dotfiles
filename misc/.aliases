@@ -121,11 +121,6 @@ source /usr/bin/virtualenvwrapper.sh
 
 source /usr/share/bash-completion/completions/git
 source /usr/share/bash-completion/completions/hg
-alias ligplus='java -jar ~/.progs/LigPlus/LigPlus.jar'
-alias ape='~/.progs/ape/tclkit ~/.progs/ape/ApE.vfs/main.tcl'
-alias serialcloner='~/.progs/SerialCloner2-6/SerialCloner2.6.1'
-alias fiji='~/.progs/Fiji.app/ImageJ-linux64'
-alias icy='java -jar ~/.progs/icy/updater.jar'
 export TERMINAL=urxvt
 #avoid duplicates in history
 export HISTCONTROL=ignoredups
@@ -151,9 +146,6 @@ alias sm=".local/bin/msmtp-runqueue.sh"
 #export CDPATH='.:/Data/0dan'
 
 # PATH
-PATH=$PATH:$HOME/.progs/bin
-PATH=$PATH:$HOME/.progs/myrepos.branchable.com
-PATH=$PATH:$HOME/.progs/bftools
 PATH=$PATH:$HOME/.local/bin
 export PATH
 
@@ -187,7 +179,6 @@ alias vga='xrandr --output VGA1 --auto --same-as LVDS1'
 alias vga_onr='xrandr --output VGA1 --auto --right-of LVDS1'
 alias vga_off='xrandr --output VGA1 --off'
 alias impress='impressive -t none --nologo'
-alias fbk0='sudo ~/.progs/bin/pulsesvc -h sslgate.fbk.eu -r Fbk_AD_realm -u darosio -p CEaMW6osqy'
 alias omero='sshpass -p CEaMW2oSQY2 ssh darosio%omero@gate.fbk.eu'
 #alias omero-data='sshfs  darosio%omero@gate.fbk.eu:/data /media/omero/'
 alias omero-data0='sshfs  omero:/hardmnt/data0 /media/omero0/'

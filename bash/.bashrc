@@ -14,6 +14,7 @@ export PATH
 
 alias ls='ls --color=auto'
 source $HOME/.aliases
+source $HOME/.progs/bashrc
 
 #PS1='[\u@\h \W]\$ '
 source /usr/share/git/completion/git-prompt.sh
