@@ -33,7 +33,6 @@
                                       sublime-themes
                                       borland-blue-theme
                                       twilight-bright-theme
-                                      spaceline-all-the-icons
                                       atom-dark-theme
                                       darcula-theme
                                       theme-changer
