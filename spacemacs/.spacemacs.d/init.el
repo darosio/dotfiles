@@ -69,6 +69,14 @@ This function should only modify configuration layer settings."
      ;; org
      (org :variables
           ;; org-enable-bootstrap-support t
+          org-enable-org-journal-support t
+          org-journal-dir "~/Sync/share/phone/box/journal/"
+          org-journal-date-prefix "#+TITLE: "
+          org-journal-date-format "%A, %B %d %Y"
+          org-journal-time-prefix "* "
+          org-journal-time-format ""
+          org-journal-find-file 'find-file
+          org-journal-enable-agenda-integration t
           ;; org-enable-github-support t
           org-enable-reveal-js-support t
           org-reveal-root "/home/dan/.pandoc/reveal.js"
@@ -711,21 +719,13 @@ This function is called at the very end of Spacemacs initialization."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(evil-want-Y-yank-to-eol nil)
  '(package-selected-packages
    (quote
-    (toc-org org-noter org-download editorconfig doom-modeline projectile pdf-tools magit zen-and-art-theme yasnippet-snippets yapfify xresources-theme ws-butler writegood-mode wordnut winum which-key web-mode web-beautify volatile-highlights visual-fill-column vi-tilde-fringe uuidgen use-package typo twilight-bright-theme theme-changer tangotango-theme tango-plus-theme tagedit tablist symon sublime-themes subatomic256-theme string-inflection spaceline-all-the-icons spacegray-theme solarized-theme soft-stone-theme soft-morning-theme smyx-theme smeargle slim-mode shrink-path sdcv scss-mode sass-mode restart-emacs rainbow-delimiters pyvenv pytest pyenv-mode py-isort pug-mode prettier-js popwin plantuml-mode pippel pipenv pip-requirements persp-mode pcre2el password-generator paradox pandoc-mode ox-reveal ox-pandoc overseer orgit org-ref org-projectile org-present org-pomodoro org-mime org-gcal org-bullets org-brain open-junk-file ob-ipython neotree nameless mu4e-maildirs-extension mu4e-alert move-text monokai-theme molokai-theme mmm-mode material-theme markdown-toc magit-svn magit-gitflow magit-annex macrostep lorem-ipsum live-py-mode link-hint langtool intellij-theme indent-guide importmagic impatient-mode idea-darkula-theme hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-pydoc helm-purpose helm-projectile helm-mu helm-mode-manager helm-make helm-gitignore helm-git-grep helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag graphviz-dot-mode google-translate golden-ratio gnuplot gitignore-templates gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-commit git-annex ghub gh-md fzf fuzzy font-lock+ flyspell-popup flyspell-correct-helm flycheck-pos-tip flx-ido flatui-theme fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-org evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu emmet-mode elisp-slime-nav eldoc-eval dumb-jump dotenv-mode doom-themes diminish dictcc deft define-word darcula-theme cython-mode csv-mode counsel-projectile company-web company-statistics company-quickhelp company-anaconda column-enforce-mode color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized clean-aindent-mode centered-cursor-mode borland-blue-theme blackboard-theme badwolf-theme auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile atom-dark-theme artbollocks-mode ample-zen-theme aggressive-indent afternoon-theme ace-window ace-link ace-jump-helm-line ac-ispell)))
- '(safe-local-variable-values
-   (quote
-    ((eval bibtex-set-dialect
-           (quote biblatex))
-     (org-ref-pdf-directory . "~/Sync/biblio/MY/")
-     (bibtex-completion-notes-path . "~/Sync/biblio/MY.org")
-     (org-ref-bibliography-notes . "~/Sync/biblio/MY.org")))))
+    (dumb-jump doom-themes doom-modeline projectile ivy magit zen-and-art-theme yasnippet-snippets yapfify xresources-theme ws-butler writegood-mode wordnut winum which-key web-mode web-beautify volatile-highlights visual-fill-column vi-tilde-fringe uuidgen use-package typo twilight-bright-theme toc-org theme-changer tangotango-theme tango-plus-theme tagedit symon sublime-themes subatomic256-theme string-inflection spaceline-all-the-icons spacegray-theme solarized-theme soft-stone-theme soft-morning-theme smyx-theme smeargle slim-mode shrink-path sdcv scss-mode sass-mode restart-emacs rainbow-delimiters pyvenv pytest pyenv-mode py-isort pug-mode prettier-js popwin plantuml-mode pippel pipenv pip-requirements persp-mode pcre2el password-generator paradox pandoc-mode ox-reveal ox-pandoc overseer orgit org-ref org-projectile org-present org-pomodoro org-noter org-mime org-journal org-gcal org-download org-bullets org-brain open-junk-file ob-ipython neotree nameless mu4e-maildirs-extension mu4e-alert move-text monokai-theme molokai-theme mmm-mode material-theme markdown-toc magit-svn magit-gitflow magit-annex macrostep lorem-ipsum live-py-mode link-hint langtool intellij-theme indent-guide importmagic impatient-mode idea-darkula-theme hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-pydoc helm-purpose helm-projectile helm-org-rifle helm-mu helm-mode-manager helm-make helm-gitignore helm-git-grep helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag graphviz-dot-mode google-translate golden-ratio gnuplot gitignore-templates gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-commit git-annex ghub gh-md fzf fuzzy font-lock+ flyspell-popup flyspell-correct-helm flycheck-pos-tip flx-ido flatui-theme fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-org evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu emmet-mode elisp-slime-nav eldoc-eval editorconfig dotenv-mode diminish dictcc deft define-word darcula-theme cython-mode csv-mode counsel-projectile company-web company-statistics company-quickhelp company-anaconda column-enforce-mode color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized clean-aindent-mode centered-cursor-mode borland-blue-theme blackboard-theme badwolf-theme auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile atom-dark-theme artbollocks-mode ample-zen-theme aggressive-indent afternoon-theme ace-window ace-link ace-jump-helm-line ac-ispell))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:background nil)))))
+ )
 )

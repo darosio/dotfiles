@@ -99,6 +99,9 @@
       ;; diary.org
       ("d" "Diary" entry (file+olp+datetree "~/Sync/share/phone/box/notes/diary.org")
        "* %?\n%t\n" :clock-in t :clock-resume t)
+      ;; diary.org
+      ("D" "Diary" entry (file+datetree+prompt org-default-notes-file)
+       "* %?\n%t\n" :clock-in t :clock-resume t)
       ;; ideas.org
       ("i" "idea" entry (file "~/Sync/share/phone/box/notes/ideas.org")
        "* %? :IDEA: \n%u")
