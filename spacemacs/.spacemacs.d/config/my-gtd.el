@@ -1,3 +1,5 @@
+(provide 'my-gtd)
+
 ;; I would like to simplify starting from scratch.
 ;; I'll try following
 ;; https://orgmode.org/worg/org-configs/org-customization-guide.html
@@ -389,5 +391,44 @@
         ;; other commands go here
         ))
 
+;; function for "planner": sync effort to scheduled start-end interval
+(defun org-schedule-effort ()
+(interactive)
+  (save-excursion
+    (org-back-to-heading t)
+    (let* (
+        (element (org-element-at-point))
+        (effort (org-element-property :EFFORT element))
+        (scheduled (org-element-property :scheduled element))
+        (ts-year-start (org-element-property :year-start scheduled))
+        (ts-month-start (org-element-property :month-start scheduled))
+        (ts-day-start (org-element-property :day-start scheduled))
+        (ts-hour-start (org-element-property :hour-start scheduled))
+        (ts-minute-start (org-element-property :minute-start scheduled)) )
+      (org-schedule nil (concat
+        (format "%s" ts-year-start)
+        "-"
+        (if (< ts-month-start 10)
+          (concat "0" (format "%s" ts-month-start))
+          (format "%s" ts-month-start))
+        "-"
+        (if (< ts-day-start 10)
+          (concat "0" (format "%s" ts-day-start))
+          (format "%s" ts-day-start))
+        " "
+        (if (< ts-hour-start 10)
+          (concat "0" (format "%s" ts-hour-start))
+          (format "%s" ts-hour-start))
+        ":"
+        (if (< ts-minute-start 10)
+          (concat "0" (format "%s" ts-minute-start))
+          (format "%s" ts-minute-start))
+        "+"
+        effort)) )))
 
-(provide 'my-gtd)
+
+(require 'org-agenda)
+(define-key org-mode-map (kbd "<SPC> o s") #'org-schedule-effort)
+;; ;; (define-key org-agenda-mode-map (kbd "o s") #'org-schedule-effort)
+;; (add-hook 'org-agenda-mode-hook (lambda ()
+;;                                   (local-set-key "s" 'org-schedule-effort)))
