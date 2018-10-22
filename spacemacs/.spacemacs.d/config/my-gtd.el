@@ -427,8 +427,8 @@
         effort)) )))
 
 
-(require 'org-agenda)
-(define-key org-mode-map (kbd "<SPC> o s") #'org-schedule-effort)
+;; (require 'org-agenda)
+;; (define-key org-mode-map (kbd "<SPC> o s") #'org-schedule-effort)
 ;; ;; (define-key org-agenda-mode-map (kbd "o s") #'org-schedule-effort)
 ;; (add-hook 'org-agenda-mode-hook (lambda ()
 ;;                                   (local-set-key "s" 'org-schedule-effort)))
