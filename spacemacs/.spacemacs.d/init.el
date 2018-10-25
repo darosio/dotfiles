@@ -575,6 +575,9 @@ This function is called at the very end of Spacemacs startup, after layer
 configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
+  (setq browse-url-browser-function 'browse-url-generic
+        engine/browser-function 'browse-url-generic
+        browse-url-generic-program "firefox")
   (set-language-environment "UTF-8")
   ;; ;; to debug
   ;; (setq debug-on-error t)
