@@ -1,0 +1,6 @@
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Type=Application
+Name=OriginViewer
+Exec= wine /home/dan/.progs/OriginViewer955/OrgView95.exe

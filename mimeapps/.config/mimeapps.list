@@ -1,6 +1,18 @@
 [Added Associations]
-image/x-tga=SerialCloner 2-6-1.desktop;
 
 [Default Applications]
-image/x-tga=SerialCloner 2-6-1.desktop
-text/plain=userapp-rifle.desktop
+audio/ogg=rifle.desktop;
+application/x-wine-extension-opj=rifle.desktop;
+audio/x-ape=ApE.desktop;
+image/png=feh.desktop;
+application/vnd.openxmlformats-officedocument.wordprocessingml.document=rifle.desktop;
+application/msword=rifle.desktop;
+application/vnd.openxmlformats-officedocument.presentationml.presentation=rifle.desktop;
+application/vnd.ms-powerpoint=rifle.desktop;
+image/jpeg=feh.desktop;
+image/bmp=feh.desktop;
+application/pdf=okularApplication_pdf.desktop;
+text/plain=rifle.desktop;
+image/tiff=ImageJ2.desktop;
+application/x-qtiplot=qtiplot.desktop;
+image/x-tga=serialcloner-2.6.1.desktop;
