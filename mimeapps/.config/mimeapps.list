@@ -16,3 +16,5 @@ text/plain=rifle.desktop;
 image/tiff=ImageJ2.desktop;
 application/x-qtiplot=qtiplot.desktop;
 image/x-tga=serialcloner-2.6.1.desktop;
+x-scheme-handler/http=firefox.desktop
+x-scheme-handler/https=firefox.desktop

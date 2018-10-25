@@ -1,6 +1,0 @@
-[Desktop Entry]
-Version=1.0
-Encoding=UTF-8
-Type=Application
-Name=SerialCloner
-Exec=wine "/home/dan/.progs/SerialCloner2-6/SerialCloner 2-6-1.exe"
