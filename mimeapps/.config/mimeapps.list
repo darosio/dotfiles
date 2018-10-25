@@ -20,3 +20,4 @@ application/x-qtiplot=qtiplot.desktop;
 image/x-tga=serialcloner-2.6.1.desktop;
 x-scheme-handler/http=firefox.desktop
 x-scheme-handler/https=firefox.desktop
+application/octet-stream=finchtv.desktop;
