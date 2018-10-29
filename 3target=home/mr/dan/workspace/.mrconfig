@@ -24,3 +24,6 @@ checkout = git clone 'git@bitbucket.org:darosio/prenspire.git' 'prenspire'
 
 [imgread]
 checkout = git clone 'git@bitbucket.org:darosio/imgread.git' 'imgread'
+
+[other/model-of-neuronal-chloride-homeostasis]
+checkout = git clone 'https://github.com/kiradust/model-of-neuronal-chloride-homeostasis.git' 'model-of-neuronal-chloride-homeostasis'
