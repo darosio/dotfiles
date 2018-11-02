@@ -56,8 +56,8 @@ This function should only modify configuration layer settings."
                       ;; auto-completion-enable-help-tooltip 'manual ;; M-h
                       auto-completion-enable-help-tooltip t
                       auto-completion-enable-sort-by-usage t)
-     ;; --user importmagic epc service_factory autoflake
-     ;; pytest python-jedi python-json-rpc hy yapf python-isort
+     ;; --user importmagic epc service_factory autoflake json-rpc
+     ;; pytest python-jedi hy yapf python-isort
      (python :variables
              python-test-runner 'pytest
              ;; python-test-runner '(pytest nose)
