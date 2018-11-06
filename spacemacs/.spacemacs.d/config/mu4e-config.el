@@ -16,7 +16,7 @@
 (setq message-kill-buffer-on-exit t)
 
 (setq mu4e-use-fancy-chars t)
-(setq mu4e-compose-forward-as-attachment t)
+(setq mu4e-compose-forward-as-attachment nil)
 
 (setq mu4e-compose-complete-addresses t)  ;; default
 (setq mu4e-compose-signature-auto-include t)  ;; default
