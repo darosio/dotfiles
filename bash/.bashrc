@@ -34,10 +34,10 @@ cd "$AUTOCD"
 
 
 #eval "$(keychain --eval --agents ssh,gpg C08BC79E3A3F1D89AD90C0008B6A39EFA290FB41)"
-export GPG_TTY='/dev/tty1'
-export GPG_AGENT_INFO=""
+export GPG_TTY=$(tty)
+gpg-connect-agent updatestartuptty /bye > /dev/null
 
-eval "$(fasd --init auto)"
+#eval "$(fasd --init auto)"
 
 # host specific bash_profile
 [[ -r .bashrc.$HOSTNAME ]] && . .bashrc.$HOSTNAME
