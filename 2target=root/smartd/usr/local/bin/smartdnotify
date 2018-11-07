@@ -8,7 +8,7 @@ fi
 #Device:$SMARTD_DEVICE Device node:$SMARTD_DEVICESTRING
 #$HOSTNAME smartd has detected $SMARTD_FAILTYPE error on $SMARTD_DEVICE
 sendmail -t << EOF
-To: daniele.arosio@cnr.it
+To: danielepietroarosio@gmail.com
 Subject: SMART error ($SMARTD_FAILTYPE) detected on host: $HOSTNAME
 
 $SMARTD_MESSAGE
