@@ -299,8 +299,8 @@
 ;; special line continuation characters.
 (setq mu4e-compose-format-flowed t)
 
-;;store link to message if in header view, not to header query
-(setq org-mu4e-link-query-in-headers-mode nil)
+;;store link to message if in header view, not to header query; or viceversa
+(setq org-mu4e-link-query-in-headers-mode t)
 
 ;; when composing an email, switch on the special mu4e/orgmode mode
 (define-key mu4e-compose-mode-map (kbd "C-c o") 'org~mu4e-mime-switch-headers-or-body)

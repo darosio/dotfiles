@@ -100,10 +100,10 @@
        "* %?\n\n%^T\n%a\n:PROPERTIES:\n\n:END:\n\n")
       ;; diary.org
       ("d" "Diary" entry (file+olp+datetree "~/Sync/share/phone/box/notes/diary.org")
-       "* %?\n%t\n" :clock-in t :clock-resume t)
+       "* %?\n%t\n" )
       ;; diary.org
       ("D" "Diary" entry (file+datetree+prompt org-default-notes-file)
-       "* %?\n%t\n" :clock-in t :clock-resume t)
+       "* %?\n%t\n" )
       ;; ideas.org
       ("i" "idea" entry (file "~/Sync/share/phone/box/notes/ideas.org")
        "* %? :IDEA: \n%u")
@@ -113,9 +113,10 @@
       ("n" "Next Task" entry (file+headline "~/Sync/share/phone/box/notes/gtd.org" "Tasks")
        "** NEXT %? \nDEADLINE: %t")
       ("r" "respond" entry (file+headline "~/Sync/share/phone/box/notes/gtd.org" "Reply")
-       "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
+       "* TODO %a to %:from \nDEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+2d\"))\n %?")
+      ;; "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n")
       ("w" "waiting reply" entry (file+headline "~/Sync/share/phone/box/notes/gtd.org" "Reply")
-       "* WAITING Reply from %:from on %:subject\n %U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
+       "* WAITING %a from %:from" :immediate-finish t)
       ;; spesa.org
       ("s" "Spesa" entry (file+headline "~/Sync/share/phone/box/notes/spesa.org" "Supermarket")
        "* TODO %? \n")
