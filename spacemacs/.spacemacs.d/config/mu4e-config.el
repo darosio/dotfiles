@@ -286,8 +286,8 @@
             ;; (toggle-frame-maximized)
             (set-fill-column 79)
             ;; (visual-fill-column-mode)
-            (turn-on-orgtbl)
-            (turn-on-orgstruct)
+            ;; (turn-on-orgtbl)   ;; this prevented flyspell correction
+            ;; (turn-on-orgstruct)  ;; probably included in ++
             (turn-on-orgstruct++)
             ;; (flyspell-mode)
             ))
