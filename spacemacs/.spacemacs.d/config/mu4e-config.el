@@ -19,7 +19,6 @@
 (setq mu4e-compose-forward-as-attachment nil)
 
 (setq mu4e-compose-complete-addresses t)  ;; default
-(setq mu4e-compose-signature-auto-include t)  ;; default
 
 ;; VIEW ========================================================================
 ;; enable inline images
@@ -107,9 +106,6 @@
 (spacemacs/set-leader-keys-for-major-mode 'mu4e-compose-mode
   "w" 'message-insert-signature)
 
-(add-hook 'mu4e-compose-mode-hook 'evil-insert-state)
-;; (add-hook 'mu4e-view-mode-hook 'xah-use-variable-width-font)
-;; (add-hook 'mu4e-headers-mode-hook 'xah-use-variable-width-font)
 
 ;;; contexts ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (setq mu4e-contexts
@@ -269,6 +265,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
+(add-hook 'mu4e-compose-mode-hook 'evil-insert-state)
+;; (add-hook 'mu4e-compose-mode-hook 'org~mu4e-mime-switch-headers-or-body)
+
+;; (add-hook 'mu4e-view-mode-hook 'xah-use-variable-width-font)
+;; (add-hook 'mu4e-headers-mode-hook 'xah-use-variable-width-font)
 ;; http://www.djcbsoftware.nl/code/mu/mu4e/Compose-hooks.html
 (add-hook 'mu4e-compose-mode-hook
           (lambda()
@@ -288,10 +289,11 @@
             (turn-on-orgtbl)
             (turn-on-orgstruct)
             (turn-on-orgstruct++)
-            (flyspell-mode)))
+            ;; (flyspell-mode)
+            ))
+;; (add-hook 'message-mode-hook 'turn-on-flyspell 'append)
 ;; (add-hook 'message-mode-hook #'typo-mode)
 ;; (add-hook 'message-mode-hook #'footnote-mode)
-
 
 ;; Set format=flowed
 ;; mu4e sets up visual-line-mode and also fill (M-q) to do the right thing
@@ -310,8 +312,6 @@
 
 ;; ;; http://pragmaticemacs.com/emacs/email-templates-in-mu4e-with-yasnippet/
 ;; (add-hook 'mu4e-compose-mode-hook 'spacemacs/load-yasnippet)
-
-
 
 ; Multiattchments ============================================================
 ;; (eval-when-compile (require 'dired))
@@ -369,19 +369,6 @@
 ;;   "b" 'message-goto-bcc
 ;;   "c" 'message-goto-cc
 ;;   "s" 'message-goto-subject)
-
-;; TODO
-;; (defun malb/fill-column-72 ()
-;;   (set-fill-column 72))
-;; (defun malb/mu4e-compose-frame ()
-;;   (toggle-frame-maximized)
-;;   (sleep-for 0.25) ;; this is a HACK
-;;   (set-frame-size (selected-frame) 80 60)
-;;   (sleep-for 0.25) ;; this is a HACK
-;;   (set-window-dedicated-p (get-buffer-window (current-buffer)) t))
-;; (add-hook 'mu4e-compose-mode-hook #'malb/fill-column-72)
-;; (add-hook 'mu4e-compose-mode-hook #'malb/mu4e-compose-frame)
-
 
 ;; ;; required by mu4e-send-delay for sending correctly formatted email
 ;; (prefer-coding-system 'utf-8)
