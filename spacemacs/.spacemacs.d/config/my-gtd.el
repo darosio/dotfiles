@@ -294,10 +294,9 @@
         ("j" "proJects"
          ((tags "-HOLD-CANCELLED+proj"
                 ((org-agenda-overriding-header "active projects")
-                 (org-use-tag-inheritance nil)
+                 (org-use-tag-inheritance nil)  ;; only headlines tagged:proj
                  (org-tags-match-list-sublevels 'indented)
-                 (org-agenda-skip-function '(org-agenda-skip-subtree-if
-                                             'notregexp "NEXT"))
+                 (org-agenda-skip-function '(org-agenda-skip-subtree-if 'nottodo '("NEXT")))
                  (org-agenda-sorting-strategy '(category-keep))))
           (stuck ""
                  ((org-agenda-overriding-header "stuck projects")

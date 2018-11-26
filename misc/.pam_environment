@@ -3,8 +3,8 @@
 #XDG_CONFIG_HOME  DEFAULT=@{HOME}/.config
 #XDG_DATA_HOME    DEFAULT=@{HOME}/.local/share
 PASSWORD_STORE_DIR		DEFAULT=@{HOME}/Sync/.pass
-WORKON_HOME           DEFAULT=@{HOME}/.venvs/
-MU_PLAY_PROGRAM			rifle
+WORKON_HOME				DEFAULT=@{HOME}/.venvs/
+MU_PLAY_PROGRAM			DEFAULT="rifle"
 
 # You can reuse XDG_RUNTIME_DIR for runtime files
 #ICEAUTHORITY    DEFAULT=${XDG_RUNTIME_DIR}/ICEauthority
