@@ -246,6 +246,7 @@
                       (org-agenda-span 2)))
           (tags-todo "-CANCELLED/NEXT"
                      ((org-agenda-overriding-header "Next Tasks:")
+                      (org-agenda-sorting-strategy '(habit-up category-keep priority-down))
                       (org-tags-match-list-sublevels 'indented)))
           (tags "REFILE"
                 ((org-agenda-overriding-header "Tasks to Refile")
@@ -261,7 +262,7 @@
           (tags-todo "-proj-HOLD-CANCELLED-REFILE-STYLE=\"habit\"/!-NEXT-WAITING-HOLD-CANCELLED"
                      ((org-agenda-overriding-header "Standalone Tasks")
                       (org-tags-match-list-sublevels 'indented)
-                      (org-agenda-sorting-strategy '(category-keep))))
+                      (org-agenda-sorting-strategy '(habit-up category-keep priority-down))))
           (tags-todo "-proj/!WAITING"
                      ((org-agenda-overriding-header "Standalone Waiting Tasks")
                       (org-tags-match-list-sublevels 'indented)
@@ -275,6 +276,7 @@
                       (org-agenda-span 'day)))
           (tags-todo "+PERSONAL-CANCELLED/NEXT"
                      ((org-agenda-overriding-header "Next Tasks:")
+                      (org-agenda-sorting-strategy '(habit-up category-keep priority-down))
                       (org-tags-match-list-sublevels 'indented)))
           (tags "REFILE"
                 ((org-agenda-overriding-header "Tasks to Refile")
@@ -288,7 +290,7 @@
           (tags-todo "-proj/!WAITING"
                      ((org-agenda-overriding-header "Standalone Waiting Tasks")
                       (org-tags-match-list-sublevels 'indented)
-                      (org-agenda-sorting-strategy '(category-keep)))))
+                      (org-agenda-sorting-strategy '(habit-up category-keep priority-down)))))
          ((org-agenda-tag-filter-preset '("+PERSONAL"))
           (org-agenda-todo-ignore-scheduled t)
           (org-agenda-todo-ignore-deadlines t)
