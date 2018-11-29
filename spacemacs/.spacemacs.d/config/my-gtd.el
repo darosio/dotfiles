@@ -245,7 +245,8 @@
          ((agenda "" ((org-agenda-overriding-header "Today's Schedule:")
                       (org-agenda-span 2)))
           (tags-todo "-CANCELLED/NEXT"
-                     ((org-agenda-overriding-header "Next Tasks:")))
+                     ((org-agenda-overriding-header "Next Tasks:")
+                      (org-tags-match-list-sublevels 'indented)))
           (tags "REFILE"
                 ((org-agenda-overriding-header "Tasks to Refile")
                  (org-agenda-todo-ignore-scheduled nil)
@@ -273,7 +274,8 @@
          ((agenda "" ((org-agenda-overriding-header "Today's Schedule:")
                       (org-agenda-span 'day)))
           (tags-todo "+PERSONAL-CANCELLED/NEXT"
-                     ((org-agenda-overriding-header "Next Tasks:")))
+                     ((org-agenda-overriding-header "Next Tasks:")
+                      (org-tags-match-list-sublevels 'indented)))
           (tags "REFILE"
                 ((org-agenda-overriding-header "Tasks to Refile")
                  (org-tags-match-list-sublevels nil)))
