@@ -199,7 +199,8 @@
 ;;; Bookmarks ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (progn
   (setq mu4e-bookmarks
-        `(("flag:unread AND NOT flag:trashed" "Unread messages" ?u)
+        `(("flag:unread AND NOT flag:trashed AND NOT maildir:/feeds" "Unread messages" ?u)
+          ("maildir:/feeds" "Feeds" ?f)
           ("date:today..now" "Today's messages" ?t)
           ("date:7d..now" "Last 7 days" ?w)
           ("mime:image/*" "Messages with images" ?p)
@@ -211,8 +212,6 @@
            "All inboxes" ?i)))
   (add-to-list 'mu4e-bookmarks
                '("size:5M..500M"       "Big messages"     ?b))
-  (add-to-list 'mu4e-bookmarks
-               '( "maildir:\"/INBOX\" and flag:flagged" "Flagged in INBOX" ?f))
   (add-to-list
    'mu4e-bookmarks
    '("flag:unread NOT flag:trashed AND (flag:list OR from:trac@sagemath.org)"
@@ -259,8 +258,12 @@
 
   (mu4e~headers-defun-mark-for tag)
   (mu4e~headers-defun-mark-for personal)
+  (mu4e~view-defun-mark-for tag)
+  (mu4e~view-defun-mark-for personal)
   (define-key mu4e-headers-mode-map (kbd "z") 'mu4e-headers-mark-for-tag)
   (define-key mu4e-headers-mode-map (kbd "p") 'mu4e-headers-mark-for-personal)
+  (define-key mu4e-view-mode-map (kbd "z") 'mu4e-view-mark-for-tag)
+  (define-key mu4e-view-mode-map (kbd "p") 'mu4e-view-mark-for-personal)
   )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
