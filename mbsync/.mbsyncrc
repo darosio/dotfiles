@@ -15,7 +15,7 @@ CopyArrivalDate yes
 IMAPAccount pec
 Host imaps.pec.aruba.it
 User daniele.arosio@pec.it
-PassCmd "pass arubapec"
+PassCmd "pass email/arubapec"
 # Use SSL
 SSLType IMAPS
 CertificateFile /etc/ssl/certs/ca-certificates.crt
