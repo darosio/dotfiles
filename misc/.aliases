@@ -104,7 +104,8 @@ export FZF_DEFAULT_OPTS="-e -m --sort 10000"
 #source /etc/profile.d/fzf.sh
 #source /etc/profile.d/fzf.bash
 source /usr/share/fzf/key-bindings.bash
-source /etc/profile.d/fzf-extras.bash
+source /usr/share/fzf/completion.bash
+source /usr/share/fzf/fzf-extras.bash
 #TODO open filemanager after searching for file or dir
 fb() {
  goobook query "" |fzf | goobook dquery `cut -f 1`
