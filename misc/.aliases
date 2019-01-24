@@ -237,8 +237,8 @@ TN() {
 
 TNv() {
  rm valanghe_it.pdf
- wget http://www.meteotrentino.it/bollettini/today/valanghe_it.pdf
- xdg-open valanghe_it.pdf
+ wget https://avalanche.report/albina_files/2019-01-10/2019-01-10_en.pdf
+ xdg-open 2019-01-10_en.pdf
  }
 
 grepp() {
