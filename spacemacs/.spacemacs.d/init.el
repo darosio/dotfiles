@@ -588,7 +588,7 @@ before packages are loaded."
         browse-url-generic-program "firefox")
   (set-language-environment "UTF-8")
   ;; ;; to debug
-  (setq debug-on-error t)
+  ;; (setq debug-on-error t)
   ;; ;; To use always only one frame fullscreen, simply.
   ;; (set-frame-parameter nil 'fullscreen 'fullboth)
 

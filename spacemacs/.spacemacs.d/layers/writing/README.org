@@ -61,6 +61,15 @@
 * Description
 This layer adds support for writing in english.
 It targets org-mode but it might be useful for other markup.
+ 
+as of today[2019-02-04 Mon] need:
+- languagetool =spc S L=
+- proselint =spc e l=
+=C-c g= writegood mode
+=C-c C-g a= artbollocks
+
+maybe in the future Rousseau, Hemingway?
+“andiamo a casa”
 
 ** Features:
    - dictionary with sdcv and any goldendict 
