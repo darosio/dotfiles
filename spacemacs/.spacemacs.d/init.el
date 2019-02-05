@@ -153,6 +153,7 @@ This function should only modify configuration layer settings."
                                       git-annex ;; C-x C-q in annexed buffer; in dired instead @e @a (@g @d);
                                       magit-annex
                                       fzf
+                                      jupyter
                                       )
 
 
