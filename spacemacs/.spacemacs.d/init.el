@@ -138,6 +138,8 @@ This function should only modify configuration layer settings."
               twittering-use-master-password t)
      systemd
      common-lisp  ;; sbcl required; provide slime
+     ess
+     ipython-notebook
      )
 
    ;; List of additional packages that will be installed without being
@@ -153,6 +155,7 @@ This function should only modify configuration layer settings."
                                       git-annex ;; C-x C-q in annexed buffer; in dired instead @e @a (@g @d);
                                       magit-annex
                                       fzf
+                                      jupyter
                                       )
 
 
