@@ -63,42 +63,42 @@
 ;;       ein:jupyter-default-notebook-directory "~/Sync/"
 ;;       ein:use-auto-complete-superpack t)
 ;;       ;; ein:use-smartrep t)
+(setq org-reveal-note-key-char nil)
+;; (add-to-list 'org-structure-template-alist
+;;              '("m" "#+BEGIN_SRC emacs-lisp :tangle init.el\n\n#+END_SRC" "<src lang=\"emacs-lisp\">\n\n</src>"))
 
-(add-to-list 'org-structure-template-alist
-             '("m" "#+BEGIN_SRC emacs-lisp :tangle init.el\n\n#+END_SRC" "<src lang=\"emacs-lisp\">\n\n</src>"))
+;; (add-to-list 'org-structure-template-alist
+;;              '("r" "#+BEGIN_SRC R :results output :session *R* :exports both\n\n#+END_SRC" "<src lang=\"R\">\n\n</src>"))
 
-(add-to-list 'org-structure-template-alist
-             '("r" "#+BEGIN_SRC R :results output :session *R* :exports both\n\n#+END_SRC" "<src lang=\"R\">\n\n</src>"))
+;; (add-to-list 'org-structure-template-alist
+;;              '("R" "#+BEGIN_SRC R :results output graphics :file (org-babel-temp-file \"figure\" \".png\") :exports both :width 600 :height 400 :session *R* \n\n#+END_SRC" "<src lang=\"R\">\n\n</src>"))
 
-(add-to-list 'org-structure-template-alist
-             '("R" "#+BEGIN_SRC R :results output graphics :file (org-babel-temp-file \"figure\" \".png\") :exports both :width 600 :height 400 :session *R* \n\n#+END_SRC" "<src lang=\"R\">\n\n</src>"))
+;; (add-to-list 'org-structure-template-alist
+;;              '("R" "#+BEGIN_SRC R :results output graphics :file  (org-babel-temp-file (concat (file-name-directory (or load-file-name buffer-file-name)) \"figure-\") \".png\") :exports both :width 600 :height 400 :session *R* \n\n#+END_SRC" "<src lang=\"R\">\n\n</src>"))
 
-(add-to-list 'org-structure-template-alist
-             '("RR" "#+BEGIN_SRC R :results output graphics :file  (org-babel-temp-file (concat (file-name-directory (or load-file-name buffer-file-name)) \"figure-\") \".png\") :exports both :width 600 :height 400 :session *R* \n\n#+END_SRC" "<src lang=\"R\">\n\n</src>"))
+;; (add-to-list 'org-structure-template-alist
+;;              '("p" "#+BEGIN_SRC python :session :results both :exports raw drawer\n\n#+END_SRC" "<src lang=\"python\">\n\n</src>"))
 
-(add-to-list 'org-structure-template-alist
-             '("p" "#+BEGIN_SRC python :session :results both :exports raw drawer\n\n#+END_SRC" "<src lang=\"python\">\n\n</src>"))
+;; (add-to-list 'org-structure-template-alist
+;;              '("P" "#+BEGIN_SRC python :results output :session *python* :exports both\n\n#+END_SRC" "<src lang=\"python\">\n\n</src>"))
 
-(add-to-list 'org-structure-template-alist
-             '("P" "#+BEGIN_SRC python :results output :session *python* :exports both\n\n#+END_SRC" "<src lang=\"python\">\n\n</src>"))
+;; (add-to-list 'org-structure-template-alist
+;;              '("p" "#+BEGIN_SRC ipython :session :results output :exports raw drawer\n\n#+END_SRC" "<src lang=\"python\">\n\n</src>"))
 
-(add-to-list 'org-structure-template-alist
-             '("pp" "#+BEGIN_SRC ipython :session :results output :exports raw drawer\n\n#+END_SRC" "<src lang=\"python\">\n\n</src>"))
+;; (add-to-list 'org-structure-template-alist
+;;              '("b" "#+BEGIN_SRC sh :results output :exports both\n\n#+END_SRC" "<src lang=\"sh\">\n\n</src>"))
 
-(add-to-list 'org-structure-template-alist
-             '("b" "#+BEGIN_SRC sh :results output :exports both\n\n#+END_SRC" "<src lang=\"sh\">\n\n</src>"))
+;; (add-to-list 'org-structure-template-alist
+;;              '("B" "#+BEGIN_SRC sh :session foo :results output :exports both \n\n#+END_SRC" "<src lang=\"sh\">\n\n</src>"))
 
-(add-to-list 'org-structure-template-alist
-             '("B" "#+BEGIN_SRC sh :session foo :results output :exports both \n\n#+END_SRC" "<src lang=\"sh\">\n\n</src>"))
-
-(add-to-list 'org-structure-template-alist
-             '("g" "#+BEGIN_SRC dot :results output graphics :file \"/tmp/graph.png\" :exports both
-   digraph G {
-      node [color=black,fillcolor=white,shape=rectangle,style=filled,fontname=\"Helvetica\"];
-      A[label=\"A\"]
-      B[label=\"B\"]
-      A->B
-   }\n#+END_SRC" "<src lang=\"dot\">\n\n</src>"))
+;; (add-to-list 'org-structure-template-alist
+;;              '("g" "#+BEGIN_SRC dot :results output graphics :file \"/tmp/graph.png\" :exports both
+;;    digraph G {
+;;       node [color=black,fillcolor=white,shape=rectangle,style=filled,fontname=\"Helvetica\"];
+;;       A[label=\"A\"]
+;;       B[label=\"B\"]
+;;       A->B
+;;    }\n#+END_SRC" "<src lang=\"dot\">\n\n</src>"))
 
 ;; (defun my/fix-inline-images ()
 ;;   (when org-inline-image-overlays
