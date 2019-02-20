@@ -33,7 +33,7 @@
                                                          (makefile . t)
                                                          (dot . t)
                                                          ;; (sh . t)
-                                                         ;; (shell . t) ;; works only with the provided 'org layer
+                                                         (shell . t) ;; works only with the provided 'org layer
                                                          ))
 
 ;; ob-ipython
