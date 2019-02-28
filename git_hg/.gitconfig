@@ -1,3 +1,5 @@
+[core]
+	editor = emacsclient -c
 [user]
 	email = daniele.arosio@cnr.it
 	name = daniele arosio
