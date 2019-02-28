@@ -255,6 +255,7 @@ bindsym $mod+x exec em
 bindsym $mod+Shift+x exec emacsclient -c -n -e '(switch-to-buffer nil)'
 bindsym $mod+F3 workspace 3; exec firefox
 
+
 # turn bell off
 exec xset -b
 #autostart
