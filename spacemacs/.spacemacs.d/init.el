@@ -589,8 +589,10 @@ configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
   (frames-only-mode)
-  (setq frames-only-mode-reopen-frames-from-hidden-x11-virtual-desktops t)
-  ;; (setq org-agenda-window-setup 'other-frame)
+  ;; -S wmctrl
+  ;; (setq frames-only-mode-reopen-frames-from-hidden-x11-virtual-desktops t)
+  ;; (setq org-agenda-window-setup 'current-window)
+  (setq org-agenda-window-setup 'only-window)
   ;; (setq org-src-window-setup 'other-frame)
 
   (setq browse-url-browser-function 'browse-url-generic
