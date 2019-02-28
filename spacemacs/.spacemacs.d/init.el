@@ -588,6 +588,11 @@ This function is called at the very end of Spacemacs startup, after layer
 configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
+  (frames-only-mode)
+  (setq frames-only-mode-reopen-frames-from-hidden-x11-virtual-desktops t)
+  ;; (setq org-agenda-window-setup 'other-frame)
+  ;; (setq org-src-window-setup 'other-frame)
+
   (setq browse-url-browser-function 'browse-url-generic
         engine/browser-function 'browse-url-generic
         browse-url-generic-program "firefox")
