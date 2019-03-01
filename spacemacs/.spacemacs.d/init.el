@@ -590,7 +590,7 @@ Put your configuration code here, except for variables that should be set
 before packages are loaded."
   (frames-only-mode)
   ;; -S wmctrl
-  ;; (setq frames-only-mode-reopen-frames-from-hidden-x11-virtual-desktops t)
+  (setq frames-only-mode-reopen-frames-from-hidden-x11-virtual-desktops t)
   ;; (setq org-agenda-window-setup 'current-window)
   (setq org-agenda-window-setup 'only-window)
   ;; (setq org-src-window-setup 'other-frame)
