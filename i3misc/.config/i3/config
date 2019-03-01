@@ -251,8 +251,8 @@ bindsym $mod+F12 exec xrdb -DSOLARIZED_LIGHT -merge .Xresources
 #bindsym $mod+F2 workspace 2; exec thunderbird
 bindsym $mod+F2 workspace 2; exec emacs
 #bindsym $mod+x exec emacsclient --alternate-editor="" -c "$@"
-bindsym $mod+x exec em
-bindsym $mod+Shift+x exec emacsclient -c -n -e '(switch-to-buffer nil)'
+bindsym $mod+Shift+x exec em
+bindsym $mod+x exec emacsclient -c -n -e '(switch-to-buffer nil)'
 bindsym $mod+F3 workspace 3; exec firefox
 
 # turn bell off
