@@ -64,15 +64,16 @@
 ;;       ein:jupyter-default-notebook-directory "~/Sync/"
 ;;       ein:use-auto-complete-superpack t)
 ;;       ;; ein:use-smartrep t)
-(setq org-reveal-note-key-char nil)
+(add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+(add-to-list 'org-structure-template-alist '("sh" . "src sh"))
+(add-to-list 'org-structure-template-alist '("r" . "src R :results output :session *R* :exports both"))
+(require 'org-tempo)
 ;; (add-to-list 'org-structure-template-alist
 ;;              '("m" "#+BEGIN_SRC emacs-lisp :tangle init.el\n\n#+END_SRC" "<src lang=\"emacs-lisp\">\n\n</src>"))
 
 ;; (add-to-list 'org-structure-template-alist
-;;              '("r" "#+BEGIN_SRC R :results output :session *R* :exports both\n\n#+END_SRC" "<src lang=\"R\">\n\n</src>"))
-
-;; (add-to-list 'org-structure-template-alist
 ;;              '("R" "#+BEGIN_SRC R :results output graphics :file (org-babel-temp-file \"figure\" \".png\") :exports both :width 600 :height 400 :session *R* \n\n#+END_SRC" "<src lang=\"R\">\n\n</src>"))
+(add-to-list 'org-structure-template-alist '("R" . "src R :results output :session *R* :exports both :results output graphics :width 600 :height 400 :file (org-babel-temp-file \"figure\" \".png\")"))
 
 ;; (add-to-list 'org-structure-template-alist
 ;;              '("R" "#+BEGIN_SRC R :results output graphics :file  (org-babel-temp-file (concat (file-name-directory (or load-file-name buffer-file-name)) \"figure-\") \".png\") :exports both :width 600 :height 400 :session *R* \n\n#+END_SRC" "<src lang=\"R\">\n\n</src>"))
