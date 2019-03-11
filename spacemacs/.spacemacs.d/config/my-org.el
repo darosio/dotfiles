@@ -16,6 +16,7 @@
                                  (item . nil)
                                  (table . nil)))
 
+(setq org-ditaa-jar-path "/usr/share/java/ditaa/ditaa-0.11.jar")
 (org-babel-do-load-languages 'org-babel-load-languages '(
                                                          (plantuml . t)
                                                          (awk . t)

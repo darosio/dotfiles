@@ -128,8 +128,8 @@ This function should only modify configuration layer settings."
      graphviz
      html ;; also non sure I need it
      (plantuml :variables
-               org-plantuml-jar-path "/opt/plantuml/plantuml.jar"
-               plantuml-jar-path "/opt/plantuml/plantuml.jar")
+               org-plantuml-jar-path "/usr/share/java/plantuml/plantuml.jar"
+               plantuml-jar-path "/usr/share/java/plantuml/plantuml.jar")
      writing
      typography  ;; =SPC t T= to enable
      ;; themes-megapack
