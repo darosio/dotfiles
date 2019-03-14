@@ -92,8 +92,7 @@
   (defvar org-capture-templates
     '(("t" "todo" entry (file org-default-notes-file)
        "* TODO %?\n%U\n%a\n" :clock-in t :clock-resume t)
-      ("b" "Blank" entry (file org-default-notes-file)
-       "* %?\n%u")
+      ("b" "Brain" plain (function org-brain-goto-end) "* %i%?" :empty-lines 1)
       ("m" "Meeting" entry (file org-default-notes-file)
        "* MEETING with %? :MEETING:\n%t" :clock-in t :clock-resume t)
       ("a" "Appointment" entry (file  "~/Sync/share/phone/box/notes/gcal/dpa.org" )
@@ -102,8 +101,9 @@
       ("d" "Diary" entry (file+olp+datetree "~/Sync/share/phone/box/notes/diary.org")
        "* %?\n%t\n" )
       ;; diary.org
-      ("D" "Diary" entry (file+datetree+prompt org-default-notes-file)
+      ("D" "Diary prompting date" entry (file+olp+datetree+prompt org-default-notes-file)
        "* %?\n%t\n" )
+      ("e" "Empty" entry (file org-default-notes-file) "* %?\n%u")
       ;; ideas.org
       ("i" "idea" entry (file "~/Sync/share/phone/box/notes/ideas.org")
        "* %? :IDEA: \n%u")
@@ -205,6 +205,9 @@
 ;;   '((daily today require-timed)
 ;;     "----------------"
 ;;     (800 1200 1300 1800)))
+
+;; ;; for lazy boolean search =C-a a s=
+;; (setq org-agenda-search-view-always-boolean t)
 
 ;; Include agenda archive files when searching for things
 (setq org-agenda-text-search-extra-files (quote (agenda-archives)))
