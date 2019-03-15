@@ -635,6 +635,8 @@ before packages are loaded."
   (global-set-key (kbd "<f9>") 'imenu-list)
   (global-set-key (kbd "C-<f9>") 'imenu-list-smart-toggle)
 
+  (global-set-key (kbd "S-<f9>") 'clone-indirect-buffer)
+
   ;; emulate i3wm
   (global-set-key (kbd "s-<left>") 'evil-window-left)
   (global-set-key (kbd "H-<left>") 'evil-window-left)
