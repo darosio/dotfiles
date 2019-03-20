@@ -159,7 +159,6 @@ This function should only modify configuration layer settings."
                                       fzf
                                       jupyter
                                       frames-only-mode
-                                      i3wm
                                       )
 
 
