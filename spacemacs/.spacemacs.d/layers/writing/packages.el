@@ -36,6 +36,7 @@
     dictcc ;; f8 but use cmdline trans, please!
     writegood-mode
     artbollocks-mode
+    academic-phrases
     (diction :location local)  ;; diction
     )
   "The list of Lisp packages required by the writing layer.
@@ -151,6 +152,13 @@ Each entry is either:
     (global-set-key "\C-c\C-ga" 'artbollocks-mode)
     ))
 
+(defun writing/init-academic-phrases ()
+  (use-package academic-phrases
+    :defer t
+    :init
+    (global-set-key "\C-c\C-gp" 'academic-phrases)
+    (global-set-key "\C-c\C-gP" 'academic-phrases-by-section)
+    ))
 (defun writing/init-diction ()
   (use-package diction
     :defer t

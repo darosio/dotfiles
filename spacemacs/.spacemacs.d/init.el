@@ -589,6 +589,7 @@ This function is called at the very end of Spacemacs startup, after layer
 configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
+  (setq paradox-github-token "abc5e1c6710cee61646f0952091bae7b825852f3")
   (frames-only-mode)
   ;; -S wmctrl
   (setq frames-only-mode-reopen-frames-from-hidden-x11-virtual-desktops t)
