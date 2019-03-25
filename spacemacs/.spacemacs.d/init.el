@@ -126,6 +126,7 @@ This function should only modify configuration layer settings."
      ;; ;; ipython-notebook
      ;; ;; ess
      pandoc ;; need wkhtmltopdf
+     restructuredtext
      graphviz
      html ;; also non sure I need it
      (plantuml :variables
@@ -142,6 +143,7 @@ This function should only modify configuration layer settings."
      common-lisp  ;; sbcl required; provide slime
      ess
      ipython-notebook
+     xclipboard
      )
 
    ;; List of additional packages that will be installed without being
@@ -158,7 +160,10 @@ This function should only modify configuration layer settings."
                                       magit-annex
                                       fzf
                                       jupyter
-                                      frames-only-mode
+                                      ;; frames-only-mode  ;; this was for i3wm
+                                      goldendict
+                                      basic-mode
+                                      dna-mode
                                       )
 
 
@@ -283,7 +288,8 @@ It should only modify the values of Spacemacs settings."
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press `SPC T n' to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '(monokai
+   dotspacemacs-themes '(intellij
+                         monokai
                          sanityinc-solarized-dark
                          sanityinc-solarized-light
                          subatomic256
@@ -589,10 +595,12 @@ This function is called at the very end of Spacemacs startup, after layer
 configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
+  (global-set-key (kbd "C-<f11>") 'goldendict-dwim)
   (setq paradox-github-token "abc5e1c6710cee61646f0952091bae7b825852f3")
-  (frames-only-mode)
-  ;; -S wmctrl
-  (setq frames-only-mode-reopen-frames-from-hidden-x11-virtual-desktops t)
+  ;; ;; this was for i3wm
+  ;; (frames-only-mode)
+  ;; ;; -S wmctrl
+  ;; (setq frames-only-mode-reopen-frames-from-hidden-x11-virtual-desktops t)
   ;; (setq org-agenda-window-setup 'current-window)
   (setq org-agenda-window-setup 'only-window)
   ;; (setq org-src-window-setup 'other-frame)
