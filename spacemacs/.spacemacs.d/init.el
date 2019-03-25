@@ -124,7 +124,6 @@ This function should only modify configuration layer settings."
      ;; ;; (elfeed :variables
      ;; ;;         rmh-elfeed-org-files (list "~/Sync/.elfeed/1.org"))
      pandoc ;; need wkhtmltopdf
-     sphinx
      restructuredtext
      graphviz
      html ;; also non sure I need it
@@ -160,8 +159,9 @@ This function should only modify configuration layer settings."
                                       magit-annex
                                       fzf
                                       jupyter
-                                      ;; frames-only-mode
                                       helm-recoll
+                                      ;; frames-only-mode  ;; this was for i3wm
+                                      goldendict
                                       basic-mode
                                       dna-mode
                                       )
@@ -288,7 +288,8 @@ It should only modify the values of Spacemacs settings."
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press `SPC T n' to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '(monokai
+   dotspacemacs-themes '(intellij
+                         monokai
                          sanityinc-solarized-dark
                          sanityinc-solarized-light
                          subatomic256
@@ -594,8 +595,10 @@ This function is called at the very end of Spacemacs startup, after layer
 configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
+  (global-set-key (kbd "C-<f11>") 'goldendict-dwim)
   (setq paradox-github-token "abc5e1c6710cee61646f0952091bae7b825852f3")
   (helm-recoll-create-source "all" "~/.recoll")
+  ;; ;; this was for i3wm
   ;; (frames-only-mode)
   ;; ;; -S wmctrl
   ;; (setq frames-only-mode-reopen-frames-from-hidden-x11-virtual-desktops t)
