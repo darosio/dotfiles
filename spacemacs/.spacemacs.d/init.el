@@ -123,9 +123,9 @@ This function should only modify configuration layer settings."
      csv
      ;; ;; (elfeed :variables
      ;; ;;         rmh-elfeed-org-files (list "~/Sync/.elfeed/1.org"))
-     ;; ;; ipython-notebook
-     ;; ;; ess
      pandoc ;; need wkhtmltopdf
+     sphinx
+     restructuredtext
      graphviz
      html ;; also non sure I need it
      (plantuml :variables
@@ -141,7 +141,9 @@ This function should only modify configuration layer settings."
      systemd
      common-lisp  ;; sbcl required; provide slime
      ess
+     octave
      ipython-notebook
+     xclipboard
      )
 
    ;; List of additional packages that will be installed without being
@@ -158,7 +160,10 @@ This function should only modify configuration layer settings."
                                       magit-annex
                                       fzf
                                       jupyter
-                                      frames-only-mode
+                                      ;; frames-only-mode
+                                      helm-recoll
+                                      basic-mode
+                                      dna-mode
                                       )
 
 
@@ -590,9 +595,10 @@ configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
   (setq paradox-github-token "abc5e1c6710cee61646f0952091bae7b825852f3")
-  (frames-only-mode)
-  ;; -S wmctrl
-  (setq frames-only-mode-reopen-frames-from-hidden-x11-virtual-desktops t)
+  (helm-recoll-create-source "all" "~/.recoll")
+  ;; (frames-only-mode)
+  ;; ;; -S wmctrl
+  ;; (setq frames-only-mode-reopen-frames-from-hidden-x11-virtual-desktops t)
   ;; (setq org-agenda-window-setup 'current-window)
   (setq org-agenda-window-setup 'only-window)
   ;; (setq org-src-window-setup 'other-frame)

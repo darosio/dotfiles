@@ -71,19 +71,20 @@
 ;; (add-to-list 'org-structure-template-alist
 ;;              '("m" "#+BEGIN_SRC emacs-lisp :tangle init.el\n\n#+END_SRC" "<src lang=\"emacs-lisp\">\n\n</src>"))
 
+;; besides =C-c C-,=
 ;; (add-to-list 'org-structure-template-alist
 ;;              '("R" "#+BEGIN_SRC R :results output graphics :file (org-babel-temp-file \"figure\" \".png\") :exports both :width 600 :height 400 :session *R* \n\n#+END_SRC" "<src lang=\"R\">\n\n</src>"))
 (add-to-list 'org-structure-template-alist '("R"  . "src R :results output :session *R* :exports both :results output graphics :width 600 :height 400 :file (org-babel-temp-file \"figure\" \".png\")"))
 (add-to-list 'org-structure-template-alist '("rg" . "src R :results output :session *R* :exports both :results output graphics :width 600 :height 400 :file (org-babel-temp-file (concat (file-name-directory (or load-file-name buffer-file-name)) \"figure-\") \".png\")"))
 
-;; (add-to-list 'org-structure-template-alist
-;;              '("p" "#+BEGIN_SRC python :session :results both :exports raw drawer\n\n#+END_SRC" "<src lang=\"python\">\n\n</src>"))
+(add-to-list 'org-structure-template-alist
+             '("p" . "src python :session :results both :exports raw drawer \n"))
 
-;; (add-to-list 'org-structure-template-alist
-;;              '("P" "#+BEGIN_SRC python :results output :session *python* :exports both\n\n#+END_SRC" "<src lang=\"python\">\n\n</src>"))
+(add-to-list 'org-structure-template-alist
+             '("P" . "src python :results output :session *python* :exports both \n"))
 
-;; (add-to-list 'org-structure-template-alist
-;;              '("p" "#+BEGIN_SRC ipython :session :results output :exports raw drawer\n\n#+END_SRC" "<src lang=\"python\">\n\n</src>"))
+(add-to-list 'org-structure-template-alist
+             '("ip" . "src ipython :session :results output :exports raw drawer \n"))
 
 ;; (add-to-list 'org-structure-template-alist
 ;;              '("b" "#+BEGIN_SRC sh :results output :exports both\n\n#+END_SRC" "<src lang=\"sh\">\n\n</src>"))
