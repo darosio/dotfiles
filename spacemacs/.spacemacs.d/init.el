@@ -154,6 +154,7 @@ This function should only modify configuration layer settings."
    ;; Also include the dependencies as they will not be resolved automatically.
    dotspacemacs-additional-packages '(ob-ipython
                                       org-noter
+                                      interleave
                                       visual-fill-column
                                       git-annex ;; C-x C-q in annexed buffer; in dired instead @e @a (@g @d);
                                       magit-annex
