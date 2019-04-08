@@ -36,6 +36,7 @@ if [ $? -eq 0 ]; then
 		--exclude '/lost+found/' \
 		--exclude '/remotes/' \
 		--exclude '/Sync/' \
+		--exclude '/tmpSync/' \
 		--exclude '/borg/' \
 		-e '/usr/bin/ssh -c aes256-ctr -i ~/.ssh/dan@sterzing-2013-06-03 -p 23456'
 	

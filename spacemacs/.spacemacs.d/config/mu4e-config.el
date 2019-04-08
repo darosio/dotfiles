@@ -1,4 +1,6 @@
 (provide 'mu4e-config)
+;; ;; tech preview
+;; (setq mu4e-view-use-gnus t)
 
 (setq mu4e-confirm-quit nil)
 
