@@ -39,10 +39,12 @@ This function should only modify configuration layer settings."
      ;; Uncomment some layer names and press `SPC f e R' (Vim style) or
      ;; `M-m f e R' (Emacs style) to install them.
      ;; ----------------------------------------------------------------
+     lsp
      (deft :variables
      	 deft-directory "~/Sync/notes")
-     ;; ivy
-     helm
+     ;; helm
+     (ivy :variables
+          ivy-enable-advanced-buffer-information t)
      ;; better-defaults
      (auto-completion :variables
                       ;; default
@@ -160,7 +162,7 @@ This function should only modify configuration layer settings."
                                       magit-annex
                                       fzf
                                       jupyter
-                                      helm-recoll
+                                      ;; helm-recoll
                                       ;; frames-only-mode  ;; this was for i3wm
                                       goldendict
                                       basic-mode
@@ -598,7 +600,7 @@ Put your configuration code here, except for variables that should be set
 before packages are loaded."
   (global-set-key (kbd "C-<f11>") 'goldendict-dwim)
   (setq paradox-github-token "abc5e1c6710cee61646f0952091bae7b825852f3")
-  (helm-recoll-create-source "all" "~/.recoll")
+  ;; (helm-recoll-create-source "all" "~/.recoll")
   ;; ;; this was for i3wm
   ;; (frames-only-mode)
   ;; ;; -S wmctrl
