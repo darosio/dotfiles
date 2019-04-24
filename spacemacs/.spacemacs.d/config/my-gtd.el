@@ -62,6 +62,8 @@
   (setq org-log-into-drawer t)
   (setq org-log-done 'time)
   (setq org-enforce-todo-dependencies t)
+  ;; for when I set a task as e.g. Canceled open the buffer in insert state
+  (add-hook 'org-log-buffer-setup-hook 'evil-insert-state)
   )
 ;; TAGs
 (progn

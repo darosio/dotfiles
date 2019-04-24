@@ -1,3 +1,5 @@
+
+
 ;; -*- mode: emacs-lisp; lexical-binding: t -*-
 ;; This file is loaded by Spacemacs at startup.
 ;; It must be stored in your home directory.
@@ -168,6 +170,7 @@ This function should only modify configuration layer settings."
                                       goldendict
                                       basic-mode
                                       dna-mode
+                                      ;; evil-vimish-fold  ;; didn't work very well python bibtex... use simple =za=
                                       )
 
 
@@ -740,12 +743,11 @@ before packages are loaded."
   (with-eval-after-load 'bibtex (require 'bibtex-config))
   (with-eval-after-load 'mu4e (require 'mu4e-config))
 
-  ;; TAB for za
-  ;; (define-key evil-normal-state-map (kbd "<tab>") (kbd "za")) ;conflict magit
-  (with-eval-after-load 'python
-    (define-key python-mode-map (kbd "<tab>") (kbd "za")))
-  (define-key emacs-lisp-mode-map (kbd "<tab>") (kbd "za"))
-
+  ;; ;; TAB for za
+  ;; ;; (define-key evil-normal-state-map (kbd "<tab>") (kbd "za")) ;conflict magit
+  ;; (with-eval-after-load 'python
+  ;;   (define-key python-mode-map (kbd "<tab>") (kbd "za")))
+  ;; (define-key emacs-lisp-mode-map (kbd "<tab>") (kbd "za"))
   ;; (add-hook 'python-mode-hook (lambda nil (load-theme 'wombat )))
   )
 
