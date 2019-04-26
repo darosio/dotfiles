@@ -44,7 +44,12 @@ This function should only modify configuration layer settings."
      lsp  ;; need clang
           ;; pip install --user python-language-server[all]
      (deft :variables
-     	 deft-directory "~/Sync/notes")
+     	 deft-directory "~/Sync/notes"
+       deft-recursive t
+       deft-use-filename-as-title nil
+       deft-file-naming-rules '((nospace . "_") (case-fn . downcase)) ;; to preserve slashes
+       deft-extensions '("org" "md" "txt" "markdown"))
+
      ;; helm
      (ivy :variables
           ivy-enable-advanced-buffer-information t)
@@ -637,10 +642,6 @@ before packages are loaded."
     :modes (text-mode markdown-mode gfm-mode message-mode mu4e-modes org-mode))
   (add-to-list 'flycheck-checkers 'proselint)
   )
-
-  ;; deft
-  (setq deft-recursive t
-        deft-extensions '("org" "md" "txt" "markdown"))
 
   ;; rescale text size
   ;; C-x C-0 restores the default font size
