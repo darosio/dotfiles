@@ -46,7 +46,7 @@ This function should only modify configuration layer settings."
      (deft :variables
      	 deft-directory "~/Sync/notes"
        deft-recursive t
-       deft-use-filename-as-title nil
+       ;; deft-use-filename-as-title nil
        deft-file-naming-rules '((nospace . "_") (case-fn . downcase)) ;; to preserve slashes
        deft-extensions '("org" "md" "txt" "markdown"))
 
@@ -345,11 +345,11 @@ It should only modify the values of Spacemacs settings."
    ;; quickly tweak the mode-line size to make separators look not too crappy.
    dotspacemacs-default-font '(;;
                                ;; "DejaVu Sans Mono"
-                               ;; "Hack"
+                               "Hack"
                                ;; "Source Code Pro"
                                ;; "Inconsolata-g"
                                ;; "Fira Code Retina"
-                               "Fira Code"
+                               ;; "Fira Code"
                                ;; "Meslo LG S"
                                ;; "Fantasque Sans Mono"
                                ;; "Hermit"
