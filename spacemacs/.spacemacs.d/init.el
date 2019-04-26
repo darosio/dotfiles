@@ -92,7 +92,7 @@ This function should only modify configuration layer settings."
           ;; org-enable-reveal-js-support t  ;; Reveal.js
           org-reveal-root "/home/dan/.pandoc/reveal.js"
           org-enable-trello-support t  ;; Trello boards
-          org-projectile-file "/home/dan/Sync/notes/TODOs.org")
+          org-projectile-file "/home/dan/Sync/share/phone/box/org/TODOs.org")
      org-gcal
      ;; (shell :variables
      ;;        shell-default-height 30

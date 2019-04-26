@@ -1,5 +1,12 @@
 (provide 'my-gtd)
 
+;; a better word processor
+(setq org-hide-emphasis-markers t)
+
+;; Define variables
+(eval-and-compile
+  (defvar agenda-and-refile-files "~/Dropbox/"
+    "My shared folder on the Cloud"))
 ;; I would like to simplify starting from scratch.
 ;; I'll try following
 ;; https://orgmode.org/worg/org-configs/org-customization-guide.html
@@ -16,23 +23,24 @@
 
 ;; Agenda folders and files
 (progn
-  (setq-default org-directory "~/Sync/notes/")
+  (setq-default org-directory "~/Sync/share/phone/box/org")
   (load-library "find-lisp")
-  (setq org-agenda-files (append '("~/Sync/share/phone/box/notes/"
-                                   "~/Sync/share/phone/box/notes/gcal/"
+  (setq org-agenda-files (append '("~/Sync/share/phone/box/org/"
+                                   "~/Sync/share/phone/box/org/gcal/"
                                    "~/Sync/notes/proj"
                                    "~/Sync/notes/work"
                                    "~/Sync/notes/home"
-                                   "~/Sync/notes/TODOs.org" ;; target for org-projectile
+                                   "~/Sync/share/phone/box/org/TODOs.org" ;; target for org-projectile
                                    )
                                  ;; traverse the whole tree
                                  (find-lisp-find-files "~/Sync/notes/arch/" "\.org$")))
   (setq org-agenda-diary-file "~/Sync/share/phone/box/notes/diary.org"
         org-agenda-include-diary t)
   ;; ARCHIVE
-  (setq org-archive-location "~/Sync/notes/archive/%s_archive::")
+  (setq org-archive-location "~/Sync/share/phone/box/org/archives/%s_archive::")
   (defvar org-archive-file-header-format "#+FILETAGS: ARCHIVE\nArchived entries from file %s\n")
   )
+
 ;; TODOs
 (progn
   (setq org-todo-keywords
@@ -130,17 +138,19 @@
 (progn
   (setq org-refile-targets (quote ((nil :maxlevel . 9)
                                    (org-agenda-files :maxlevel . 5))))
-  ;; Be sure to use the full path for refile setup
-  (setq org-refile-use-outline-path t)
+  ;; (org-refile-targets `(((,org-default-notes-file "~/Dropbox/orgfiles/someday.org" "~/Dropbox/orgfiles/todo.org") :maxlevel . 3)))
+  ;; Be sure to use the full path preceded by filename to insert at top level
+  (setq org-refile-use-outline-path 'file)
   ;; Targets complete directly with helm
   (setq org-outline-path-complete-in-steps nil)
   ;; Allow refile to create parent tasks with confirmation
   (setq org-refile-allow-creating-parent-nodes 'confirm)
-  ;; Exclude DONE state tasks from refile targets @2MAYBE
-  (defun bh/verify-refile-target ()
-    "Exclude todo keywords with a done state from refile targets"
-    (not (member (nth 2 (org-heading-components)) org-done-keywords)))
-  (setq org-refile-target-verify-function 'bh/verify-refile-target)
+
+  ;; ;; Exclude DONE state tasks from refile targets @2MAYBE
+  ;; (defun bh/verify-refile-target ()
+  ;;   "Exclude todo keywords with a done state from refile targets"
+  ;;   (not (member (nth 2 (org-heading-components)) org-done-keywords)))
+  ;; (setq org-refile-target-verify-function 'bh/verify-refile-target)
   )
 
 
