@@ -99,6 +99,8 @@
   )
 
 ;; (6) Captures
+;; TODO: fine tune capture templates
+;; TODO: add templates for reviews day/week
 (progn
   (setq org-default-notes-file "~/Sync/share/phone/box/org/inbox.org")
   (defvar da-gtd "~/Sync/share/phone/box/org/gtd.org")
@@ -153,7 +155,7 @@
 
 
 ;; == Agenda ==
-;; TODO http://orgmode.org/worg/org-tutorials/org-custom-agenda-commands.html
+;; TODO custom agenda view http://orgmode.org/worg/org-tutorials/org-custom-agenda-commands.html
 ;; Dim blocked tasks (and other settings)
 (setq org-agenda-inhibit-startup nil)
 ;; Do not dim blocked tasks

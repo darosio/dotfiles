@@ -79,14 +79,14 @@ This function should only modify configuration layer settings."
      ;; org
      (org :variables
           org-enable-bootstrap-support t  ;; ox-twbs
-          org-enable-org-journal-support t  ;; org-journal
-          org-journal-dir "~/Sync/share/phone/box/journal/"
-          org-journal-date-prefix "#+TITLE: "
-          org-journal-date-format "%A, %B %d %Y"
-          org-journal-time-prefix "* "
-          org-journal-time-format ""
-          org-journal-find-file 'find-file
-          org-journal-enable-agenda-integration t
+          ;; org-enable-org-journal-support t  ;; org-journal
+          ;; org-journal-dir "~/Sync/share/phone/box/journal/"
+          ;; org-journal-date-prefix "#+TITLE: "
+          ;; org-journal-date-format "%A, %B %d %Y"
+          ;; org-journal-time-prefix "* "
+          ;; org-journal-time-format ""
+          ;; org-journal-find-file 'find-file
+          ;; org-journal-enable-agenda-integration t
           ;; org-enable-github-support t
           ;; FIXME: workaround
           ;; org-enable-reveal-js-support t  ;; Reveal.js
@@ -176,6 +176,7 @@ This function should only modify configuration layer settings."
                                       basic-mode
                                       dna-mode
                                       ;; evil-vimish-fold  ;; didn't work very well python bibtex... use simple =za=
+                                      magit-todos
                                       )
 
 
