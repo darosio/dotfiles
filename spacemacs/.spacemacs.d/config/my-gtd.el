@@ -3,46 +3,49 @@
 ;; a better word processor
 (setq org-hide-emphasis-markers t)
 
-;; Define variables
-(eval-and-compile
-  (defvar agenda-and-refile-files "~/Dropbox/"
-    "My shared folder on the Cloud"))
-;; I would like to simplify starting from scratch.
-;; I'll try following
+;; A bare minimum simple starting to personalizing org for gtd.
 ;; https://orgmode.org/worg/org-configs/org-customization-guide.html
 
-(defun gs/org-agenda-add-location-string ()
-  "Gets the value of the LOCATION property"
-  (let ((loc (org-entry-get (point) "LOCATION")))
-    (if (> (length loc) 0)
-        (concat "{" loc "} ")
-      "")))
+;; Define variables
+(progn
+  ;; (eval-and-compile
+  (load-library "find-lisp")
+  (defvar da-agenda-and-refile-files (append
+                                      '("~/Sync/share/phone/box/org/gtd.org"
+                                        "~/Sync/share/phone/box/org/ideas.org"
+                                        "~/Sync/share/phone/box/org/inbox.org"
+                                        "~/Sync/share/phone/box/org/someday.org"
+                                        "~/Sync/share/phone/box/org/TODOs.org" ;; target for org-projectile
+                                        "~/Sync/share/phone/box/org/spesa.org")
+                                      (find-lisp-find-files "~/Sync/notes/arch/" "\.org$")
+                                      (find-lisp-find-files "~/Sync/notes/home/" "\.org$")
+                                      (find-lisp-find-files "~/Sync/proj/" "\.org$"))
+    "Files forming the agenda and refile targets"))
 
-(setq org-stuck-projects
-      '("+proj/-DONE-HOLD" ("NEXT") nil ""))
-
-;; Agenda folders and files
+;; (1) Agenda files; (2) Archives; and (3) Refile
 (progn
   (setq-default org-directory "~/Sync/share/phone/box/org")
-  (load-library "find-lisp")
-  (setq org-agenda-files (append '("~/Sync/share/phone/box/org/"
-                                   "~/Sync/share/phone/box/org/gcal/"
-                                   "~/Sync/notes/proj"
-                                   "~/Sync/notes/work"
-                                   "~/Sync/notes/home"
-                                   "~/Sync/share/phone/box/org/TODOs.org" ;; target for org-projectile
-                                   )
-                                 ;; traverse the whole tree
-                                 (find-lisp-find-files "~/Sync/notes/arch/" "\.org$")))
-  (setq org-agenda-diary-file "~/Sync/share/phone/box/notes/diary.org"
+  (setq org-agenda-files (append da-agenda-and-refile-files
+                            '("~/Sync/share/phone/box/org/diary.org"
+                              "~/Sync/share/phone/box/org/gcal/")))
+  (setq org-agenda-diary-file "~/Sync/share/phone/box/org/diary.org"
         org-agenda-include-diary t)
   ;; ARCHIVE
   (setq org-archive-location "~/Sync/share/phone/box/org/archives/%s_archive::")
   (defvar org-archive-file-header-format "#+FILETAGS: ARCHIVE\nArchived entries from file %s\n")
-  )
+  ;; REFILE
+  (setq org-refile-targets '((da-agenda-and-refile-files :maxlevel . 5)))
+  ;; Be sure to use the full path preceded by filename to insert at top level
+  (setq org-refile-use-outline-path 'file)
+  ;; Targets complete directly with helm/ido
+  (setq org-outline-path-complete-in-steps nil)
+  ;; Allow refile to create parent tasks with confirmation
+  (setq org-refile-allow-creating-parent-nodes 'confirm))
 
-;; TODOs
+;; (4) Stuck project; and (5) TODOs and tags
 (progn
+  (setq org-stuck-projects
+        '("+proj/-DONE-HOLD" ("NEXT") nil ""))
   (setq org-todo-keywords
         '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
           (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "MEETING")) )
@@ -72,9 +75,9 @@
   (setq org-enforce-todo-dependencies t)
   ;; for when I set a task as e.g. Canceled open the buffer in insert state
   (add-hook 'org-log-buffer-setup-hook 'evil-insert-state)
-  )
-;; TAGs
-(progn
+  ;; (org-tag-persistent-alist '(("@errand" . ?e)
+  ;;                             ("@home"   . ?h)
+  ;;                             ("@office" . ?o)))
   (setq org-tag-alist (quote ((:startgroup)
                               ("@errands" . ?e)
                               ("@home" . ?h)
@@ -94,71 +97,41 @@
   ;; Include the todo keywords
   (setq org-fast-tag-selection-include-todo nil)
   )
-;; Captures
+
+;; (6) Captures
 (progn
-  (setq org-default-notes-file "~/Sync/share/phone/box/notes/inbox.org")
-  (define-key global-map "\C-ct"
-    (lambda () (interactive) (org-capture nil "t")))
-  (defvar org-capture-templates
-    '(("t" "todo" entry (file org-default-notes-file)
-       "* TODO %?\n%U\n%a\n" :clock-in t :clock-resume t)
-      ("b" "Brain" plain (function org-brain-goto-end) "* %i%?" :empty-lines 1)
-      ("m" "Meeting" entry (file org-default-notes-file)
-       "* MEETING with %? :MEETING:\n%t" :clock-in t :clock-resume t)
-      ("a" "Appointment" entry (file  "~/Sync/share/phone/box/notes/gcal/dpa.org" )
-       "* %?\n\n%^T\n%a\n:PROPERTIES:\n\n:END:\n\n")
-      ;; diary.org
-      ("d" "Diary" entry (file+olp+datetree "~/Sync/share/phone/box/notes/diary.org")
-       "* %?\n%t\n" )
-      ;; diary.org
-      ("D" "Diary prompting date" entry (file+olp+datetree+prompt org-default-notes-file)
-       "* %?\n%t\n" )
-      ("e" "Empty" entry (file org-default-notes-file) "* %?\n%u")
-      ;; ideas.org
-      ("i" "idea" entry (file "~/Sync/share/phone/box/notes/ideas.org")
-       "* %? :IDEA: \n%u")
-      ;; gtd.org
-      ("h" "Habit" entry (file+headline "~/Sync/share/phone/box/notes/gtd.org" "Habits")
-       "* TODO %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:REPEAT_TO_STATE: TODO\n:END:\n")
-      ("n" "Next Task" entry (file+headline "~/Sync/share/phone/box/notes/gtd.org" "Tasks")
-       "** NEXT %? \nDEADLINE: %t")
-      ("r" "respond" entry (file+headline "~/Sync/share/phone/box/notes/gtd.org" "Reply")
-       "* TODO %a to %:from \nDEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+2d\"))\n %?")
-      ;; "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n")
-      ("w" "waiting reply" entry (file+headline "~/Sync/share/phone/box/notes/gtd.org" "Reply")
-       "* WAITING %a from %:from" :immediate-finish t)
-      ;; spesa.org
-      ("s" "Spesa" entry (file+headline "~/Sync/share/phone/box/notes/spesa.org" "Supermarket")
-       "* TODO %? \n")
-      ))
-  (add-hook 'org-capture-mode-hook 'evil-insert-state)
-  )
-
-;; REFILE
-(progn
-  (setq org-refile-targets (quote ((nil :maxlevel . 9)
-                                   (org-agenda-files :maxlevel . 5))))
-  ;; (org-refile-targets `(((,org-default-notes-file "~/Dropbox/orgfiles/someday.org" "~/Dropbox/orgfiles/todo.org") :maxlevel . 3)))
-  ;; Be sure to use the full path preceded by filename to insert at top level
-  (setq org-refile-use-outline-path 'file)
-  ;; Targets complete directly with helm
-  (setq org-outline-path-complete-in-steps nil)
-  ;; Allow refile to create parent tasks with confirmation
-  (setq org-refile-allow-creating-parent-nodes 'confirm)
-
-  ;; ;; Exclude DONE state tasks from refile targets @2MAYBE
-  ;; (defun bh/verify-refile-target ()
-  ;;   "Exclude todo keywords with a done state from refile targets"
-  ;;   (not (member (nth 2 (org-heading-components)) org-done-keywords)))
-  ;; (setq org-refile-target-verify-function 'bh/verify-refile-target)
-  )
+  (setq org-default-notes-file "~/Sync/share/phone/box/org/inbox.org")
+  (defvar da-gtd "~/Sync/share/phone/box/org/gtd.org")
+  (define-key global-map "\C-ct" (lambda () (interactive) (org-capture nil "t")))
+  (setq org-capture-templates
+        '(("r" "Reply to" entry (file+headline da-gtd "Reply")
+           "* TODO %a to %:from \nDEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+2d\"))\n %?" :unnarrowed)
+          ("w" "Wait for Reply" entry (file+headline da-gtd "Reply")
+           "* WAITING %a from %:from" :immediate-finish t)
+          ("t" "todo" entry (file org-default-notes-file)
+           "* TODO %? \n%U\n%a\n" :clock-in t :clock-resume t :unnarrowed :kill-buffer)
+          ("a" "Appointment" entry (file  "~/Sync/share/phone/box/org/gcal/dpa.org")
+           "* %? %^{LOCATION}p\n%^T\n%a\n")
+          ("h" "new Habit" entry (file+headline da-gtd "Habits")
+           "* TODO %? \nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:REPEAT_TO_STATE: TODO\n:END:\n%a")
+          ("u" "Urgent task" entry (file+headline da-gtd "Tasks") "** NEXT %? \nDEADLINE: %t")
+          ("i" "new Idea" entry (file "~/Sync/share/phone/box/org/ideas.org") "* %^{Idea} \n%u\n%?")
+          ;; diary.org
+          ("j" "Journal" entry (file+olp+datetree "~/Sync/share/phone/box/org/diary.org") "* %?\n%t\n" )
+          ("J" "Journalp" entry (file+olp+datetree+prompt "~/Sync/share/phone/box/org/diary.org") "* %?\n%t\n" )
+          ("m" "Meeting" entry (file+olp+datetree "~/Sync/share/phone/box/org/diary.org") "* MEETING %? :MEETING:\n%T" :clock-in t :clock-resume t)
+          ;; spesa.org
+          ("s" "Spesa" entry (file+headline "~/Sync/share/phone/box/org/spesa.org" "Supermarket") ;; TODO: try checkitem
+           "* TODO %? \n")
+          ))
+  (setq org-capture-templates-contexts
+        '(("r" ((in-mode . "mu4e-view-mode")))
+          ("w" ((in-mode . "mu4e-view-mode")))))
+  (add-hook 'org-capture-mode-hook 'evil-insert-state))
 
 
-(require 'org-checklist)
-;; If you have a repeating task in your agenda, say every other day, and you
-;; show the agenda for, say, the next 15 days, it is quite annoying to see
-;; that task displayed for seven or eight days. You can now say nil or 'next
-(setq org-agenda-show-future-repeats 'next)
+
+(setq org-agenda-show-future-repeats nil)  ;; 'next to view this and the next.
 
 ;; Display properties
 ;; (setq org-startup-folded "content")
@@ -170,37 +143,13 @@
 (setq org-columns-default-format
       "%48ITEM(Task) %4TODO(todo) %6CLOCKSUM{:} %ALLTAGS %SCHEDULED %6Effort(Effort){:} %DEADLINE")
 
-;; global Effort estimate values  ;http://doc.norang.ca/org-mode.html
-;; global STYLE property values for completion
-(setq org-global-properties (quote (("Effort_ALL" . "0:15 0:30 0:45 1:00 1:30 2:00 3:00 4:00 6:00 0:00")
-                                    ("STYLE_ALL" . "habit"))))
+
 ;; Enable auto clock resolution for finding open clocks
 (setq org-clock-auto-clock-resolution (quote when-no-clock-is-running))
 ;; Resume clocking task when emacs is restarted
 (org-clock-persistence-insinuate)
 ;; Sometimes I change tasks I'm clocking quickly - this removes clocked tasks with 0:00 duration
 (setq org-clock-out-remove-zero-time-clocks t)
-
-;; Enable habit tracking (and a bunch of other modules)
-;; (setq org-modules (quote (org-habit)))
-;; (setq org-habit-graph-column 60)
-;; (setq org-modules (quote (org-bbdb
-;;                           org-bibtex
-;;                           org-crypt
-;;                           org-gnus
-;;                           org-id
-;;                           org-info
-;;                           org-jsinfo
-;;                           org-habit
-;;                           org-inlinetask
-;;                           org-irc
-;;                           org-mew
-;;                           org-mhe
-;;                           org-protocol
-;;                           org-rmail
-;;                           org-vm
-;;                           org-wl
-;;                           org-w3m)))
 
 
 ;; == Agenda ==
@@ -230,6 +179,12 @@
 ;; all properties are inherited
 (setq org-use-property-inheritance t) ;; @2DO to be used with STYLE, e.g. habit not scheduled
 
+(defun gs/org-agenda-add-location-string ()
+  "Gets the value of the LOCATION property"
+  (let ((loc (org-entry-get (point) "LOCATION")))
+    (if (> (length loc) 0)
+        (concat "{" loc "} ")
+      "")))
 (setq org-agenda-prefix-format '((agenda . "  %-12:c%?-12t %(gs/org-agenda-add-location-string)% s")
                             (timeline . "  % s")
                             (todo . "  %-12:c  ")
@@ -410,6 +365,14 @@
         ;; other commands go here
         ))
 
+
+
+;; global Effort estimate values  ;http://doc.norang.ca/org-mode.html
+;; global STYLE property values for completion
+(setq org-global-properties (quote (("Effort_ALL" . "0:15 0:30 0:45 1:00 1:30 2:00 3:00 4:00 6:00 0:00")
+                                    ("STYLE_ALL" . "habit"))))
+
+;; FIXME:
 ;; function for "planner": sync effort to scheduled start-end interval
 (defun org-schedule-effort ()
 (interactive)
@@ -444,10 +407,3 @@
           (format "%s" ts-minute-start))
         "+"
         effort)) )))
-
-
-;; (require 'org-agenda)
-;; (define-key org-mode-map (kbd "<SPC> o s") #'org-schedule-effort)
-;; ;; (define-key org-agenda-mode-map (kbd "o s") #'org-schedule-effort)
-;; (add-hook 'org-agenda-mode-hook (lambda ()
-;;                                   (local-set-key "s" 'org-schedule-effort)))

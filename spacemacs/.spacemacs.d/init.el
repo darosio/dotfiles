@@ -48,7 +48,7 @@ This function should only modify configuration layer settings."
        deft-recursive t
        ;; deft-use-filename-as-title nil
        deft-file-naming-rules '((nospace . "_") (case-fn . downcase)) ;; to preserve slashes
-       deft-extensions '("org" "md" "txt" "markdown"))
+       deft-extensions '("org" "md" "markdown"))  ;;"txt" 
 
      ;; helm
      (ivy :variables
@@ -607,6 +607,17 @@ This function is called at the very end of Spacemacs startup, after layer
 configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
+  (setq counsel-rg-base-command  ;; to --follow symbolic links
+        "rg -L -S --no-heading --line-number --color never %s .")
+  ;; this is for spacemacs/counsel-search search-project-auto =spc /= 
+  (setq spacemacs--counsel-commands
+        '(("rg" . "rg --follow --smart-case --no-heading --color never --line-number --max-columns 150 %s %S .")
+          ("ag" . "ag --nocolor --nogroup %s %S .")
+          ("pt" . "pt -e --nocolor --nogroup %s %S .")
+          ("ack" . "ack --nocolor --nogroup %s %S .")
+          ("grep" . "grep -nrP %s %S .")))
+  (setq projectile-project-search-path '("~/workspace/"))
+
   (global-set-key (kbd "C-<f11>") 'goldendict-dwim)
   (setq paradox-github-token "abc5e1c6710cee61646f0952091bae7b825852f3")
   ;; (helm-recoll-create-source "all" "~/.recoll")
@@ -781,5 +792,5 @@ This function is called at the very end of Spacemacs initialization."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:background nil)))))
+ )
 )
