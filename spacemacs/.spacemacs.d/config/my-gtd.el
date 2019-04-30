@@ -14,6 +14,7 @@
                                       '("~/Sync/share/phone/box/org/gtd.org"
                                         "~/Sync/share/phone/box/org/ideas.org"
                                         "~/Sync/share/phone/box/org/inbox.org"
+                                        "~/Sync/share/phone/box/org/projects.org"
                                         "~/Sync/share/phone/box/org/someday.org"
                                         "~/Sync/share/phone/box/org/TODOs.org" ;; target for org-projectile
                                         "~/Sync/share/phone/box/org/spesa.org")
@@ -75,20 +76,17 @@
   (setq org-enforce-todo-dependencies t)
   ;; for when I set a task as e.g. Canceled open the buffer in insert state
   (add-hook 'org-log-buffer-setup-hook 'evil-insert-state)
-  ;; (org-tag-persistent-alist '(("@errand" . ?e)
-  ;;                             ("@home"   . ?h)
-  ;;                             ("@office" . ?o)))
-  (setq org-tag-alist (quote ((:startgroup)
-                              ("@errands" . ?e)
-                              ("@home" . ?h)
-                              ("@fbk" . ?f)
-                              (:endgroup)
-                              ("@net" . ?n)
-                              ("@dati" . ?d)
+  (setq org-tag-persistent-alist '((:startgroup)  ;; mutually exclusive
+                                   ("@errand" . ?e)
+                                   ("@fbk" . ?f)
+                                   ("@home" . ?h)
+                                   ("@telephone" . ?t)
+                                   (:endgroup)
+                                   ("@net" . ?n)  ;; I doubt it is usefull
+                                   ("PERSONAL" . ?p)
+                                   ("WORK" . ?w)))
+  (setq org-tag-alist (quote (("@dati" . ?d)
                               ("@mail" . ?m)
-                              ("@telephone" . ?t)
-                              ("PERSONAL" . ?p)
-                              ("WORK" . ?w)
                               ("idea" . ?i)
                               ("proj" . ?j)
                               )))
@@ -193,8 +191,89 @@
                             (tags . "  %-12:c  ")
                             (search . "  %i %-12:c")))
 
+;; (defun nemacs-org-agenda-startup ()
+;;   (interactive)
+;;   (org-agenda :keys "gtd"))
+
+;; (defun nemacs-org-agenda-mark-as-done (&optional arg)
+;;   (interactive "P")
+;;   (org-agenda-todo "DONE"))
+
+;; (defun nemacs-org-agenda-mark-as-done-capture-follow-up (&optional arg)
+;;   (interactive "P")
+;;   (org-agenda-todo "DONE")
+;;   (org-agenda-switch-to)
+;;   (org-capture 0 "t"))
+;; :hook (org-agenda-mode . nemacs-org-agenda-hook)
+;; :bind (("C-c a" . org-agenda)
+;;        ("C-c d" . nemacs-org-agenda-startup)
+;;        (:map org-agenda-mode-map
+;;              ("g" . org-gcal-fetch)
+;;              ("x" . nemacs-org-agenda-mark-as-done)
+;;              ("X" . nemacs-org-agenda-mark-as-done-capture-follow-up)))
+
+;; (org-agenda-skip-deadline-if-done nil)
+;; (org-agenda-skip-scheduled-if-done nil)
+
+  ;; (defun nemacs-org-capture-add-basic-properties ()
+  ;;   (interactive)
+  ;;   (org-id-get-create))
+
+  ;; (defun nemacs-org-capture-review-daily ()
+  ;;   (interactive)
+  ;;   (progn
+  ;;     (org-capture nil "rd")
+  ;;     (org-capture-finalize t)
+  ;;     (org-speed-move-safe 'outline-up-heading)
+  ;;     (org-narrow-to-subtree)
+  ;;     (org-gcal-fetch)
+  ;;     (org-clock-in)))
+
+  ;; (defun nemacs-org-capture-review-weekly ()
+  ;;   (interactive)
+  ;;   (progn
+  ;;     (org-capture nil "rw")
+  ;;     (org-capture-finalize t)
+  ;;     (org-speed-move-safe 'outline-up-heading)
+  ;;     (org-narrow-to-subtree)
+  ;;     (org-gcal-fetch)
+  ;;     (org-clock-in)))
+  ;; :hook (org-capture-before-finalize . nemacs-org-capture-add-basic-properties)
+  ;; :bind (("M-m"     . nemacs-org-capture)
+  ;;        ("C-c c"   . org-capture)
+  ;;        ("C-c r d" . nemacs-org-capture-review-daily)
+  ;;        ("C-c r w" . nemacs-org-capture-review-weekly))
+  ;; :custom
+  ;; (org-capture-templates `(("t" "Add TODO Task" entry (file ,org-default-notes-file)
+  ;;                           ,nemacs-org-capture-basic-template
+  ;;                           :empty-lines 1 :immediate-finish t)
+  ;;                          ("T" "Add Linked TODO Task" entry (file ,org-default-notes-file)
+  ;;                           ,nemacs-org-capture-link-template
+  ;;                           :empty-lines 1 :immediate-finish t)
+  ;;                          ("c" "Add Contact" entry (file "~/Dropbox/orgfiles/contacts.org")
+  ;;                           ,nemacs-org-capture-contact-template
+  ;;                           :empty-lines 1)
+
+  ;;                          ("rd" "Review: Daily" entry (file+olp+datetree "/tmp/reviews.org")
+  ;;                           (file "~/Dropbox/orgfiles/templates/daily-review.template.org"))
+  ;;                          ("rw" "Review: Weekly" entry (file+olp+datetree "/tmp/reviews.org")
+  ;;                           (file "~/Dropbox/orgfiles/templates/weekly-review.template.org")))))
+
 (setq org-agenda-custom-commands
       '(
+        ("r" "Daily Review" ((tags-todo "Today")
+                             (tags-todo "Tomorrow")
+                             (agenda "" ((org-agenda-span 2)
+                                         (org-deadline-warning-days 7)
+                                         (org-agenda-start-on-weekday nil)))))
+        ("u" "Unscheduled TODOs" ((todo "TODO"
+                                        ((org-agenda-overriding-header "Unscheduled TODO")
+                                         (org-agenda-todo-ignore-scheduled 'future)))))
+        ("gtd" "My GTD Agenda" ((agenda "" ((org-agenda-overriding-header "Getting Things Done")
+                                            (org-agenda-span 1)
+                                            (org-deadline-warning-days 7)
+                                            (org-agenda-start-on-weekday nil)))))
+
         ("H" "Habits" tags-todo "STYLE=\"habit\""
          ((org-agenda-overriding-header "Habits")
           (org-tags-match-list-sublevels 'indented)
@@ -225,8 +304,7 @@
                  (org-agenda-todo-ignore-scheduled nil)
                  (org-agenda-todo-ignore-deadlines nil)
                  (org-tags-match-list-sublevels nil)))
-          (tags "-proj-NOTE-REFILE-ARCHIVE/DONE|CANCELLED"
-                ;; (tags "-proj-NOTE-ARCHIVE+TODO=\"DONE\"\|+TODO=\"CANCELLED\""
+          (tags "-NOTE-REFILE-ARCHIVE/DONE|CANCELLED"
                 ((org-agenda-overriding-header "Tasks to Archive")
                  (org-agenda-todo-ignore-scheduled nil)
                  (org-agenda-todo-ignore-deadlines nil)
@@ -243,6 +321,35 @@
           (org-agenda-todo-ignore-scheduled t)
           (org-agenda-todo-ignore-deadlines t)
           ))
+        ("A" "Agenda for Today"
+         ((agenda "" ((org-agenda-overriding-header "Today's Schedule:")
+                      (org-deadline-warning-days 0)
+                      (org-agenda-span 1)))))
+        ("z" "Agenda for Today"
+         ((agenda "" ((org-agenda-overriding-header "Today's Schedule:")
+                      (org-deadline-warning-days 0)
+                      (org-agenda-span 1)))
+          (tags "REFILE"
+                ((org-agenda-overriding-header "Tasks to Refile")
+                 (org-tags-match-list-sublevels nil) ;; I want to refile the whole tree; no need to visualize sublevels.
+                 (org-agenda-todo-ignore-scheduled nil)
+                 (org-agenda-todo-ignore-deadlines nil)))
+          (tags "-NOTE-ARCHIVE/DONE|CANCELLED"  ;; FIXME -REFILE better leave out
+                ((org-agenda-overriding-header "Tasks to Archive")
+                 (org-agenda-todo-ignore-scheduled nil)
+                 (org-agenda-todo-ignore-deadlines nil)))
+          (agenda "" ((org-agenda-overriding-header "Tomorrow's Schedule:")
+                       (org-agenda-span 2)))
+          (tags-todo "-CANCELLED/NEXT"
+                     ((org-agenda-overriding-header "Next Tasks:")
+                      (org-agenda-sorting-strategy '(habit-up category-keep priority-down))
+                      (org-tags-match-list-sublevels 'indented)))
+          (tags-todo "-proj/!WAITING"
+                     ((org-agenda-overriding-header "Standalone Waiting Tasks")
+                      (org-tags-match-list-sublevels 'indented)
+                      (org-agenda-sorting-strategy '(category-keep)))))
+         ((org-agenda-todo-ignore-scheduled t)
+          (org-agenda-todo-ignore-deadlines t)))
         ("p" "Action list only PERSONAL"
          ((agenda "" ((org-agenda-overriding-header "Today's Schedule:")
                       (org-agenda-span 'day)))
