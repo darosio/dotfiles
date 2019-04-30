@@ -73,7 +73,6 @@
   (setq org-treat-S-cursor-todo-selection-as-state-change nil)
   (setq org-log-into-drawer t)
   (setq org-log-done 'time)
-  (setq org-enforce-todo-dependencies t)
   ;; for when I set a task as e.g. Canceled open the buffer in insert state
   (add-hook 'org-log-buffer-setup-hook 'evil-insert-state)
   (setq org-tag-persistent-alist '((:startgroup)  ;; mutually exclusive
@@ -98,7 +97,6 @@
 
 ;; (6) Captures
 ;; TODO: fine tune capture templates
-;; TODO: add templates for reviews day/week
 (progn
   (setq org-default-notes-file "~/Sync/share/phone/box/org/inbox.org")
   (defvar da-gtd "~/Sync/share/phone/box/org/gtd.org")
@@ -123,6 +121,8 @@
           ;; spesa.org
           ("s" "Spesa" entry (file+headline "~/Sync/share/phone/box/org/spesa.org" "Supermarket") ;; TODO: try checkitem
            "* TODO %? \n")
+          ("rd" "Review: Daily" entry (file+olp+datetree "/tmp/reviews.org")
+           (file "~/Sync/share/phone/box/org/chklists/daily-review.template.org"))
           ))
   (setq org-capture-templates-contexts
         '(("r" ((in-mode . "mu4e-view-mode")))
@@ -131,35 +131,26 @@
 
 
 
-(setq org-agenda-show-future-repeats nil)  ;; 'next to view this and the next.
-
 ;; Display properties
-;; (setq org-startup-folded "content")
 (setq org-cycle-separator-lines 2) ;; default
 (setq org-tags-column -82)
-;; (setq org-agenda-tags-column org-tags-column)
-(setq org-agenda-tags-column -82)
+;; (setq org-agenda-tags-column -82)
 ;; (setq org-agenda-sticky t)
 (setq org-columns-default-format
       "%48ITEM(Task) %4TODO(todo) %6CLOCKSUM{:} %ALLTAGS %SCHEDULED %6Effort(Effort){:} %DEADLINE")
 
 
-;; Enable auto clock resolution for finding open clocks
-(setq org-clock-auto-clock-resolution (quote when-no-clock-is-running))
-;; Resume clocking task when emacs is restarted
-(org-clock-persistence-insinuate)
-;; Sometimes I change tasks I'm clocking quickly - this removes clocked tasks with 0:00 duration
-(setq org-clock-out-remove-zero-time-clocks t)
-
 
 ;; == Agenda ==
+(setq org-agenda-show-future-repeats nil)  ;; 'next to view this and the next.
 ;; TODO custom agenda view http://orgmode.org/worg/org-tutorials/org-custom-agenda-commands.html
-;; Dim blocked tasks (and other settings)
 (setq org-agenda-inhibit-startup nil)
-;; Do not dim blocked tasks
-(setq org-agenda-dim-blocked-tasks nil)
+;; Dim blocked tasks
+(setq org-agenda-dim-blocked-tasks t
+      org-enforce-todo-dependencies t
+      org-enforce-todo-checkbox-dependencies t)
 ;; Compact the block agenda view (disabled)
-(setq org-agenda-compact-blocks nil)
+;; (setq org-agenda-compact-blocks nil)
 
 ;; ;; Set the times to display in the time grid
 ;; (setq org-agenda-time-grid
@@ -172,7 +163,7 @@
 
 ;; Include agenda archive files when searching for things
 (setq org-agenda-text-search-extra-files (quote (agenda-archives)))
-;; For tag searches ignore tasks with scheduled and deadline dates
+;; For tag searches ignore tasks with scheduled and deadline dates FIXME better control this in each agenda custom view
 (setq org-agenda-tags-todo-honor-ignore-options t)
 (setq org-deadline-warning-days 70)
 ;; (org-use-property-inheritance t) @2DO to be used with STYLE, but prefer to ignore scheduled
@@ -219,15 +210,16 @@
   ;;   (interactive)
   ;;   (org-id-get-create))
 
-  ;; (defun nemacs-org-capture-review-daily ()
-  ;;   (interactive)
-  ;;   (progn
-  ;;     (org-capture nil "rd")
-  ;;     (org-capture-finalize t)
-  ;;     (org-speed-move-safe 'outline-up-heading)
-  ;;     (org-narrow-to-subtree)
-  ;;     (org-gcal-fetch)
-  ;;     (org-clock-in)))
+  (defun nemacs-org-capture-review-daily ()
+    (interactive)
+    (progn
+      (org-capture nil "rd")
+      (org-capture-finalize t)
+      (org-speed-move-safe 'outline-up-heading)
+      (org-narrow-to-subtree)
+      (org-gcal-fetch)
+      (org-clock-in)))
+(define-key global-map "\C-crd" 'nemacs-org-capture-review-daily)
 
   ;; (defun nemacs-org-capture-review-weekly ()
   ;;   (interactive)
@@ -254,8 +246,6 @@
   ;;                           ,nemacs-org-capture-contact-template
   ;;                           :empty-lines 1)
 
-  ;;                          ("rd" "Review: Daily" entry (file+olp+datetree "/tmp/reviews.org")
-  ;;                           (file "~/Dropbox/orgfiles/templates/daily-review.template.org"))
   ;;                          ("rw" "Review: Weekly" entry (file+olp+datetree "/tmp/reviews.org")
   ;;                           (file "~/Dropbox/orgfiles/templates/weekly-review.template.org")))))
 
@@ -475,6 +465,13 @@
         ))
 
 
+
+;; Enable auto clock resolution for finding open clocks
+(setq org-clock-auto-clock-resolution (quote when-no-clock-is-running))
+;; Resume clocking task when emacs is restarted
+(org-clock-persistence-insinuate)
+;; Sometimes I change tasks I'm clocking quickly - this removes clocked tasks with 0:00 duration
+(setq org-clock-out-remove-zero-time-clocks t)
 
 ;; global Effort estimate values  ;http://doc.norang.ca/org-mode.html
 ;; global STYLE property values for completion
