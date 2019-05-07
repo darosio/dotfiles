@@ -238,8 +238,8 @@ TN() {
 
 TNv() {
  rm valanghe_it.pdf
- wget https://avalanche.report/albina_files/`date -I`/`date -I`_en.pdf
- xdg-open `date -I`_en.pdf
+ wget https://avalanche.report/albina_files/`date -I`/`date -I`_it.pdf
+ xdg-open `date -I`_it.pdf
  }
 
 grepp() {
