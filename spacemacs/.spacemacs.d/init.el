@@ -177,6 +177,8 @@ This function should only modify configuration layer settings."
                                       dna-mode
                                       ;; evil-vimish-fold  ;; didn't work very well python bibtex... use simple =za=
                                       magit-todos
+                                      org-super-agenda
+                                      beginend
                                       )
 
 
