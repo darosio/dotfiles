@@ -504,6 +504,76 @@
             (org-agenda-todo-ignore-scheduled t)
             (org-agenda-todo-ignore-deadlines t)
             ))
+
+          ("W" "Daily review"
+           ((org-super-agenda-mode)
+            (agenda "" ((org-agenda-overriding-header "Today's Schedule:")
+                        (org-agenda-span 2)
+                        (org-super-agenda-groups
+                         '((:name "Personal"
+                                  :tag ("PERSONAL" "@home")
+                                  :order 22)
+                           (:name "Overdue"
+                                  :deadline past)
+                           (:name "Due today"
+                                  :deadline (today past))
+                           (:name "Today"
+                                  :time-grid t
+                                  :order 1)))
+                        ))
+            (tags-todo "*" ((org-agenda-overriding-header "")
+                         (org-super-agenda-groups
+                          '((:name "Next tasks"
+                                   :todo "NEXT"
+                                   :order 1)
+                            (:name "Tasks to archive"
+                                   ;; :todo "DONE"
+                                   :tag "CANCELLED"
+                                   :todo "CANCELLED")
+                            (:name "Tasks to refile"
+                                   :tag "REFILE")
+                            (:name "Waiting standalone tasks"
+                                   :tag "WAITING")
+                            ;; (:discard (:tag ("NOTE" "ARCHIVE")))
+                            (:discard (:tag "proj"))
+                            ;; (:discard (:todo ""))
+                            ))))
+            (tags "-NOTE-REFILE-ARCHIVE/DONE|CANCELLED"
+                  ((org-agenda-overriding-header "Tasks to Archive")))
+            ))
+            ;; (tags-todo "-CANCELLED/NEXT"
+            ;;            ((org-agenda-overriding-header "Next Tasks:")
+            ;;             (org-agenda-sorting-strategy '(habit-up category-keep priority-down))
+            ;;             (org-tags-match-list-sublevels 'indented)))
+            ;; (tags "REFILE"
+            ;;       ((org-agenda-overriding-header "Tasks to Refile")
+            ;;        (org-agenda-todo-ignore-scheduled nil)
+            ;;        (org-agenda-todo-ignore-deadlines nil)
+            ;;        (org-tags-match-list-sublevels nil)))
+            ;; (tags "-NOTE-REFILE-ARCHIVE/DONE|CANCELLED"
+            ;;       ((org-agenda-overriding-header "Tasks to Archive")
+            ;;        (org-agenda-todo-ignore-scheduled nil)
+            ;;        (org-agenda-todo-ignore-deadlines nil)
+            ;;        ))
+            ;; (tags-todo "-proj-HOLD-CANCELLED-REFILE-STYLE=\"habit\"/!-NEXT-WAITING-HOLD-CANCELLED"
+            ;;            ((org-agenda-overriding-header "Standalone Tasks")
+            ;;             (org-tags-match-list-sublevels 'indented)
+            ;;             (org-agenda-sorting-strategy '(habit-up category-keep priority-down))))
+            ;; (tags-todo "-proj/!WAITING"
+            ;;            ((org-agenda-overriding-header "Standalone Waiting Tasks")
+            ;;             (org-tags-match-list-sublevels 'indented)
+            ;;             (org-agenda-sorting-strategy '(category-keep))))))
+           ;; ((org-agenda-tag-filter-preset '("-PERSONAL"))
+           ;;  (org-agenda-todo-ignore-scheduled t)
+           ;;  (org-agenda-todo-ignore-deadlines t)
+           ;;  ))
+            ;; (agenda "" ((org-agenda-span 'day)
+            ;;             (org-agenda-block-separator nil)
+            ;;             (org-agenda-compact-blocks t)
+            ;;             (org-deadline-warning-days 2)
+            ;;             ;; (org-agenda-skip-scheduled-delay-if-deadline t)
+            ;;             (org-agenda-skip-deadline-prewarning-if-scheduled t)
+
           ("A" "Agenda for Today"
            ((agenda "" ((org-agenda-overriding-header "Today's Schedule:")
                         (org-deadline-warning-days 0)
