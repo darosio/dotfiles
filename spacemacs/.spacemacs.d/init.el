@@ -52,6 +52,7 @@ This function should only modify configuration layer settings."
 
      ;; helm
      (ivy :variables
+          ivy-initial-inputs-alist ()  ;; ivy always guesses wrong "^"
           ivy-enable-advanced-buffer-information t)
      ;; better-defaults
      (auto-completion :variables
