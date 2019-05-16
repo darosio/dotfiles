@@ -103,6 +103,7 @@
 (progn
   (setq org-default-notes-file "~/Sync/share/phone/box/org/inbox.org")
   (defvar da-gtd "~/Sync/share/phone/box/org/gtd.org")
+  (defvar da-wrtemplate "~/.spacemacs.d/templates/my_weeklyreviewtemplate.org")
   (define-key global-map "\C-ct" (lambda () (interactive) (org-capture nil "t")))
   (setq org-capture-templates
         '(("r" "Reply to" entry (file+headline da-gtd "Reply")
@@ -124,8 +125,10 @@
           ;; spesa.org
           ("s" "Spesa" entry (file+headline "~/Sync/share/phone/box/org/spesa.org" "Supermarket") ;; TODO: try checkitem
            "* TODO %? \n")
-          ("rd" "Review: Daily" entry (file+olp+datetree "/tmp/reviews.org")
+          ("rd" "Review: Daily" entry (file+olp+datetree "/tmp/daily-reviews.org")
            (file "~/Sync/share/phone/box/org/chklists/daily-review.template.org"))
+          ("rw" "Review: Weekly Review" entry (file+olp+datetree "/tmp/weekly-reviews.org")
+           (file "~/.spacemacs.d/templates/my_weeklyreviewtemplate.org"))
           ))
   (setq org-capture-templates-contexts
         '(("r" ((in-mode . "mu4e-view-mode")))
@@ -208,6 +211,20 @@
       (org-gcal-fetch)
       (org-clock-in)))
   (define-key global-map "\C-crd" 'nemacs-org-capture-review-daily)
+
+  (defun my-new-weekly-review ()
+    (interactive)
+    ;; (let ((org-capture-templates '(("w" "Review: Weekly Review" entry (file+olp+datetree "/tmp/reviews.org")
+    ;;                                 (file "~/Sync/share/phone/box/org/chklists/weeklyreviewtemplate.org")))))
+      (progn
+        (org-capture nil "rw")
+        (org-capture-finalize t)
+        (org-speed-move-safe 'outline-up-heading)
+        (org-narrow-to-subtree)
+        ;; (fetch-calendar)
+        (org-gcal-fetch)
+        (org-clock-in)))
+  (define-key global-map "\C-crw" 'my-new-weekly-review)
 
   ;; (defun nemacs-org-capture-review-weekly ()
   ;;   (interactive)
