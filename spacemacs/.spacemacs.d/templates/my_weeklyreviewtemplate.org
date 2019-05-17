@@ -1,42 +1,87 @@
 * Weekly review
-** my [100%]
-   SCHEDULED: <2019-05-15 Wed ++1w/8d>
-   :PROPERTIES:
-   :LAST_REPEAT: [2019-04-30 Tue 11:29]
-   :Effort:   3:00
-   :COOKIE_DATA: checkbox recursive
-   :RESET_CHECK_BOXES: t
-   :ORDERED:  t
-   :CATEGORY: Habits
-   :END:
-   
-   There is still few 2DO, FIXME, or 2MAYBE
-   maybe I can improve mu4e shortcuts / bookmarks e separare mailist (confocal)
+** Get Clear [0/3]
+   - [ ] Collect Loose Papers and Materials [0/5]
+     - [ ] Empty wallet of receipts and paper
+     - [ ] Empty backpack. Put relevant items into inbox.
+     - [ ] Get lose paper from desk and put it to inbox
+     - [ ] Purge physical inbox @office ("teca nera")
+     - [ ] meeting notes and miscellaneous notes scribbled on notebook paper
+   - [ ] Get “IN” to Zero [0/15]
+     - [ ] Empty gmail 
+       - [ ] archive =j g= deduplicate using =C-v=
+       - [ ] inbox =j j= 
+       - [ ] sent =j o sent/g=
+       - [ ] trash =j o trash/g=  DO NOT =C-v= Deduplicate!  =Del= (or =d=)
+         - restano in all mail le mail magically tagged as important.
+     - [ ] Empty cnr-email inbox =j i=; creating next actions (NAs) as required
+       - cnr/sent should be empty as draft, gmail/spam, etc.
+     - [ ] Clean up ~/home folders (hunza, sterzing)
+     - [ ] FIXME (org-)Journal (meeting notes); creating NAs, projects, waiting-fors.
+           Posso usare per prendere appunti in una data precisa. Poi weekly li ordino.
+           posso anche usa in sostituzione di diary
 
-  - [X] Get *Clear*[17/17]
-    - [X] Loose Papers[5/5]
-      - [X] Empty wallet of receipts and paper
-        - [X] Empty out backpack. Put relevant items into inbox.
-        - [X] Get lose paper from desk and put it to inbox
-        - [X] Purge physical inbox @office ("teca nera")
-        - [X] meeting notes and miscellaneous notes scribbled on notebook paper
-    - [X] "IN" to Zero[8/8]
-      - [X] Empty gmail 
-        - [X] archive =j g= deduplicate using =C-v=
-        - [X] inbox =j j= 
-        - [X] sent =j o sent/g=
-        - [X] trash =j o trash/g=  DO NOT =C-v= Deduplicate!  =Del= (or =d=)
-          - restano in all mail le mail magically tagged as important.
-      - [X] Empty cnr-email inbox =j i=; creating next actions (NAs) as required
-        - cnr/sent should be empty as draft, gmail/spam, etc.
-      - [X] Clean up ~/home folders (hunza, sterzing)
-      - [X] FIXME (org-)Journal (meeting notes); creating NAs, projects, waiting-fors.
-            Posso usare per prendere appunti in una data precisa. Poi weekly li ordino.
-            posso anche usa in sostituzione di diary
-    - [X] Empty your Head [1/1]
-      - Put in writing and process any uncaptured new projects, action
-        items, waiting-fors, someday/maybes, etc., not yet captured.
-      - [X] Set a timer for 5 minutes and write down what's in your mind
+     - [ ] Papers
+     - [ ] Physical Notebook
+     - [ ] Physical Objects
+     - [ ] Text Messages
+     - [ ] Voice Mail
+     - [ ] Email Inboxes
+           #+BEGIN_SRC emacs-lisp
+           (progn
+               (browse-url "https://mail.google.com/mail/u/0/#inbox")
+               (browse-url "https://mail.google.com/mail/u/1/#inbox")
+               (browse-url "https://mail.google.com/mail/u/2/#inbox"))
+           #+END_SRC
+     - [ ] Kindle highlights
+     - [ ] Evernote Inbox
+           #+BEGIN_SRC emacs-lisp
+   (open-evernote-osx)
+ #+END_SRC
+     - [ ] Browser Tabs
+     - [ ] Downloads Folder
+           #+BEGIN_SRC emacs-lisp
+           (dired "~/Downloads/")
+           #+END_SRC
+     - [ ] Desktop
+           #+BEGIN_SRC emacs-lisp
+           (dired "~/Desktop/")
+           #+END_SRC
+   - [ ] Empty Your Head: New projects, tasks, waiting-fors, someday/maybes, etc., not yet captured
+** Get Current [0/9]
+- [ ] Review Previous and Upcoming Calendar Data:
+      #+BEGIN_SRC emacs-lisp
+(my-org-agenda-longer-open-loops)
+#+END_SRC
+- [ ] Review Action Lists:
+      #+BEGIN_SRC emacs-lisp
+  (let ((org-agenda-files '("~/org/todo.org")))
+    (org-agenda "TODO" "T")
+    (beginend-org-agenda-mode-goto-beginning))
+#+END_SRC
+- [ ] Review Waiting For List:
+      #+BEGIN_SRC emacs-lisp
+  (org-agenda "WAITING" "T")
+#+END_SRC
+- [ ] Review [[file:~/org/clients.org][Client List]]
+- [ ] Review Project (and Larger Outcome) Lists:
+      #+BEGIN_SRC emacs-lisp
+  (project-overview)
+  (project-deadline-overview)
+#+END_SRC
+- [ ] Review Stuck Projects:
+      #+BEGIN_SRC emacs-lisp
+  (my-org-agenda-list-stuck-projects)
+#+END_SRC
+- [ ] Archive completed or inactive projects.
+- [ ] Update Budget
+      #+BEGIN_SRC emacs-lisp
+  (progn
+    (browse-url "https://app.youneedabudget.com/")
+    (browse-url "https://www.schwab.com/"))
+#+END_SRC
+- [ ] Update [[https://airtable.com/tblk92VIsS1lm44S1/viwiA1nfNIqPEIK7q?mode=twoWeek][CRM]]
+- [ ] Review Any Relevant Checklists
+  
   - [X] Get *Current* [17/17]
     - [X] Purge Refs folders [2/2]
       - Store or delete unneded items
@@ -109,6 +154,22 @@
         - TODO tree view =, / t=
     - [X] Write a short summary of the week (C-c r a)
       - [X] %U Create short Journal entry of what was bad & good last week
+        
+        
+** my [100%]
+   SCHEDULED: <2019-05-15 Wed ++1w/8d>
+   :PROPERTIES:
+   :LAST_REPEAT: [2019-04-30 Tue 11:29]
+   :Effort:   3:00
+   :COOKIE_DATA: checkbox recursive
+   :RESET_CHECK_BOXES: t
+   :ORDERED:  t
+   :CATEGORY: Habits
+   :END:
+   
+   There is still few 2DO, FIXME, or 2MAYBE
+   maybe I can improve mu4e shortcuts / bookmarks e separare mailist (confocal)
+
   - [X] Get *Creative*[4/4]]
     - [X] Review my [[file:~/Sync/share/phone/box/notes/someday.org::*Someday][Someday]], HOLD tags and Idea lists =, a i=
       - Review for any projects which may now have become active.
@@ -135,92 +196,6 @@
   
   Select all and toggle with =C-c C-x C-b=.
 
-*** - start work (TO BE Removed)
-
-     # http://doc.norang.ca/org-mode.html
-      - daily agenda first - knock off items =potrebbe essere la tua action list=
-    -[ ]] Look at entire agenda for today  =F12 SPC=
-      - then work on NEXT tasks
-
-*** export :noexport:
-
-  #+TITLE:     Weekly Review Checklist
-  #+AUTHOR:    
-  #+EMAIL:     
-  #+DATE:      
-  #+LANGUAGE:  en
-  #+OPTIONS:   H:3 num:nil toc:nil \n:nil @:t ::t |:t ^:t -:t f:t *:t TeX:t LaTeX:nil skip:nil d:nil todo:t pri:nil tags:not-in-toc
-  #+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:http://orgmode.org/org-info.js
-  #+EXPORT_SELECT_TAGS: export
-  #+EXPORT_EXCLUDE_TAGS: noexport
-  #+LINK_UP:   
-  #+LINK_HOME: 
-
-  
-** Get Clear [0/8]
-- [ ] Collect Loose Papers and Materials
-- [ ] Get “IN” to Zero
-  - [ ] Papers
-  - [ ] Physical Notebook
-  - [ ] Physical Objects
-  - [ ] Text Messages
-  - [ ] Voice Mail
-  - [ ] Email Inboxes
-#+BEGIN_SRC emacs-lisp
-(progn
-    (browse-url "https://mail.google.com/mail/u/0/#inbox")
-    (browse-url "https://mail.google.com/mail/u/1/#inbox")
-    (browse-url "https://mail.google.com/mail/u/2/#inbox"))
-#+END_SRC
-  - [ ] Kindle highlights
-  - [ ] Evernote Inbox
-#+BEGIN_SRC emacs-lisp
-  (open-evernote-osx)
-#+END_SRC
-  - [ ] Browser Tabs
-  - [ ] Downloads Folder
-#+BEGIN_SRC emacs-lisp
-(dired "~/Downloads/")
-#+END_SRC
-  - [ ] Desktop
-#+BEGIN_SRC emacs-lisp
-(dired "~/Desktop/")
-#+END_SRC
-- [ ] Empty Your Head: New projects, tasks, waiting-fors, someday/maybes?
-** Get Current [0/9]
-- [ ] Review Previous and Upcoming Calendar Data:
-#+BEGIN_SRC emacs-lisp
-(my-org-agenda-longer-open-loops)
-#+END_SRC
-- [ ] Review Action Lists:
-#+BEGIN_SRC emacs-lisp
-  (let ((org-agenda-files '("~/org/todo.org")))
-    (org-agenda "TODO" "T")
-    (beginend-org-agenda-mode-goto-beginning))
-#+END_SRC
-- [ ] Review Waiting For List:
-#+BEGIN_SRC emacs-lisp
-  (org-agenda "WAITING" "T")
-#+END_SRC
-- [ ] Review [[file:~/org/clients.org][Client List]]
-- [ ] Review Project (and Larger Outcome) Lists:
-#+BEGIN_SRC emacs-lisp
-  (project-overview)
-  (project-deadline-overview)
-#+END_SRC
-- [ ] Review Stuck Projects:
-#+BEGIN_SRC emacs-lisp
-  (my-org-agenda-list-stuck-projects)
-#+END_SRC
-- [ ] Archive completed or inactive projects.
-- [ ] Update Budget
-#+BEGIN_SRC emacs-lisp
-  (progn
-    (browse-url "https://app.youneedabudget.com/")
-    (browse-url "https://www.schwab.com/"))
-#+END_SRC
-- [ ] Update [[https://airtable.com/tblk92VIsS1lm44S1/viwiA1nfNIqPEIK7q?mode=twoWeek][CRM]]
-- [ ] Review Any Relevant Checklists
 ** Get Creative [0/5]
 - [ ] Review [[file:~/org/somedaymaybe.org][Someday Maybe List]]
 - [ ] Use RandomNote
