@@ -6,6 +6,14 @@
 ;; A bare minimum simple starting to personalizing org for gtd.
 ;; https://orgmode.org/worg/org-configs/org-customization-guide.html
 
+
+(defun internet-up-p (&optional host)
+  (= 0 (call-process "ping" nil nil nil "-c" "1" "-W" "1"
+                     (if host host "www.google.com"))))
+
+(defun fetch-calendar ()
+  (when (internet-up-p) (org-gcal-fetch)))  ;; TODO move to org-gcal
+
 ;; Define variables
 (progn
   ;; (eval-and-compile
@@ -208,7 +216,7 @@
       (org-capture-finalize t)
       (org-speed-move-safe 'outline-up-heading)
       (org-narrow-to-subtree)
-      (org-gcal-fetch)
+      (fetch-calendar)
       (org-clock-in)))
   (define-key global-map "\C-crd" 'nemacs-org-capture-review-daily)
 
@@ -254,15 +262,25 @@
   ;;                          ("rw" "Review: Weekly" entry (file+olp+datetree "/tmp/reviews.org")
   ;;                           (file "~/Dropbox/orgfiles/templates/weekly-review.template.org")))))
   ;; https://github.com/mwfogleman/.emacs.d/blob/master/michael.org
+
   (defun my-org-agenda-recent-open-loops ()
     (interactive)
     (let ((org-agenda-start-with-log-mode t)
-          (org-agenda-use-time-grid nil)
-      ;;     (org-agenda-files '("~/org/calendar/gcal.org" "~/org/calendar/maple.org")))
-      ;; (fetch-calendar)
-          )
+          (org-agenda-use-time-grid nil))
+          ;; (org-agenda-files '("~/org/calendar/gcal.org" "~/org/calendar/maple.org")))
+      (fetch-calendar)
       (org-agenda-list nil (org-read-date nil nil "-2d") 4)
       (beginend-org-agenda-mode-goto-beginning)))
+
+  (defun my-org-agenda-longer-open-loops ()
+    (interactive)
+    (let ((org-agenda-start-with-log-mode t)
+          (org-agenda-use-time-grid nil))
+          ;; (org-agenda-files '("~/org/calendar/gcal.org" "~/org/calendar/maple.org")))
+      (fetch-calendar)
+      (org-agenda-list 'file (org-read-date nil nil "-14d") 28)
+      (beginend-org-agenda-mode-goto-beginning)))
+
   ;; https://gist.github.com/mwfogleman/267b6bc7e512826a2c36cb57f0e3d854
 
 
@@ -492,6 +510,18 @@
             (org-agenda-category-filter-preset '("-Habits")) ;; exclude gtd.org/Habits by property category="Habits"
             (org-agenda-show-all-dates nil)
             (org-deadline-warning-days 730)))
+          ("d" "All future deadlines"
+           ((org-super-agenda-mode)
+            (agenda "2 years" ((org-super-agenda-groups '((:name "Personal"
+                                                                 :tag ("PERSONAL" "@home")
+                                                                 :order 22)
+                                                          (:name "Work" :tag "WORK")))
+                               (org-agenda-span 'day)
+                               (org-agenda-overriding-header "All 2-year deadlines")
+                               (org-agenda-time-grid nil)
+                               (org-agenda-show-all-dates nil)
+                               (org-agenda-entry-types '(:deadline)) ;; this entry excludes :scheduled
+                               (org-deadline-warning-days 730)))))
           ("w" "Action list excluding PERSONAL"
            ((agenda "" ((org-agenda-overriding-header "Today's Schedule:")
                         (org-agenda-span 2)))
@@ -718,12 +748,6 @@
             (ps-print-color-p 'black-white)
             (htmlize-output-type 'css))
            ("~/context-lists.pdf" "~/context-lists.html"))
-          ("d" "Upcoming deadlines" agenda "display deadlines and exclude scheduled"
-           ((org-agenda-span 'year)
-            (org-agenda-time-grid nil)
-            (org-agenda-show-all-dates nil)
-            (org-agenda-entry-types '(:deadline)) ;; this entry excludes :scheduled
-            (org-deadline-warning-days 365)))
 
           ("P" "Printed agenda"
            ((agenda "" ((org-agenda-ndays 7)                      ;; overview of appointments
