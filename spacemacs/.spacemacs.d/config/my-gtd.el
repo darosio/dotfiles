@@ -112,6 +112,8 @@
   (setq org-default-notes-file "~/Sync/share/phone/box/org/inbox.org")
   (defvar da-gtd "~/Sync/share/phone/box/org/gtd.org")
   (defvar da-wrtemplate "~/.spacemacs.d/templates/my_weeklyreviewtemplate.org")
+  (defvar da-templates "~/.spacemacs.d/templates")
+  ;; defconst (concat da-templates ".org")
   (define-key global-map "\C-ct" (lambda () (interactive) (org-capture nil "t")))
   (setq org-capture-templates
         '(("r" "Reply to" entry (file+headline da-gtd "Reply")
@@ -278,7 +280,7 @@
           (org-agenda-use-time-grid nil))
           ;; (org-agenda-files '("~/org/calendar/gcal.org" "~/org/calendar/maple.org")))
       (fetch-calendar)
-      (org-agenda-list 'file (org-read-date nil nil "-14d") 28)
+      (org-agenda-list 'file (org-read-date nil nil "-10d") 10)
       (beginend-org-agenda-mode-goto-beginning)))
 
   ;; https://gist.github.com/mwfogleman/267b6bc7e512826a2c36cb57f0e3d854
@@ -498,28 +500,27 @@
                    (:discard (:anything t)))))
             (org-todo-list))
           ;; ("n" . "Next Action lists")
-          ("f" "Upcoming week and deadlines"
-           ((agenda "weeks"
-                    ((org-agenda-span 14)))
-            (agenda "deadlines"
-                    ((org-agenda-span 60)
-                     (org-agenda-overriding-header "deadlines")
-                     (org-agenda-entry-types '(:deadline)) ;; this entry excludes :scheduled
-                     (org-agenda-start-day "+14d"))))
-           ((org-agenda-time-grid nil)
-            (org-agenda-category-filter-preset '("-Habits")) ;; exclude gtd.org/Habits by property category="Habits"
-            (org-agenda-show-all-dates nil)
-            (org-deadline-warning-days 730)))
-          ("d" "All future deadlines"
-           ((org-super-agenda-mode)
+          ("b" "Backwords calendar loops"
+           (,(my-org-agenda-longer-open-loops)))
+          ("f" "Upcoming week and future deadlines"
+           ((agenda "next week"
+                    ((org-agenda-span 7)
+                     (org-agenda-overriding-header "Next week")
+                     (org-agenda-start-day "+1d")))
+            (org-super-agenda-mode)
             (agenda "2 years" ((org-super-agenda-groups '((:name "Personal"
                                                                  :tag ("PERSONAL" "@home")
                                                                  :order 22)
-                                                          (:name "Work" :tag "WORK")))
+                                                          (:name "Overdue"
+                                                                 :deadline past)
+                                                          (:name "Work"
+                                                                 :tag "WORK"
+                                                                 :order 1)))
                                (org-agenda-span 'day)
                                (org-agenda-overriding-header "All 2-year deadlines")
                                (org-agenda-time-grid nil)
                                (org-agenda-show-all-dates nil)
+                               ;; (org-agenda-category-filter-preset '("-Habits")) ;; exclude gtd.org/Habits by property category="Habits"
                                (org-agenda-entry-types '(:deadline)) ;; this entry excludes :scheduled
                                (org-deadline-warning-days 730)))))
           ("w" "Action list excluding PERSONAL"
