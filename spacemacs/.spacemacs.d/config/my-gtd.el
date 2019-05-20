@@ -502,6 +502,23 @@
           ;; ("n" . "Next Action lists")
           ("b" "Backwords calendar loops"
            (,(my-org-agenda-longer-open-loops)))
+          ("x" "Backwords calendar loops"
+           ((org-super-agenda-mode)
+            (alltodo "" ((org-super-agenda-groups '((:name "Personal"
+                                                           :tag ("PERSONAL" "@home")
+                                                           :order 22)
+                                                    (:name "Personal Next"
+                                                           :and (:tag "PERSONAL" :todo "NEXT")
+                                                           :order 20)
+                                                    (:name "Waiting for"
+                                                           :todo "WAITING"
+                                                           :order 30)
+                                                    (:name "Work Next"
+                                                           :and (:tag "WORK" :todo "NEXT"))
+                                                    (:name "Work"
+                                                           :tag "WORK"
+                                                           :order 1)))
+                         (org-agenda-overriding-header "All TODO") ))))
           ("f" "Upcoming week and future deadlines"
            ((agenda "next week"
                     ((org-agenda-span 7)

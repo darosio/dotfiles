@@ -12,6 +12,7 @@
      - effort =, i e= 
      - schedule/deadline =, i s=
      - =C-c C-x C-c= fill up table view simply using =e= (for edit within appropriate cell)
+     - NB. to add a note  =z=  on any agenda item
   
   maybe:
   - project -> goal associatione (using tag?)
@@ -81,6 +82,7 @@
            (org-agenda "TODO" "T")
            (beginend-org-agenda-mode-goto-beginning))
        #+END_SRC
+
    - [X] Review (next) Actions Lists  =, a w= and =, a p=
      - done: agenda without deadline (al least personal)
      - Mark off completed actions. Review for reminders of further
@@ -121,7 +123,6 @@
    cfr. =, a t=  and =3 g r=
  - [ ] Review Any Relevant Checklists
   
-        
 ** Get Creative [0/4]
  - [ ] Review IDEAs !! 2DO
  - [ ] Review my [[file:~/Sync/share/phone/box/notes/someday.org::*Someday][Someday]], HOLD tags and Idea lists =, a i=
