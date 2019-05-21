@@ -504,21 +504,28 @@
            (,(my-org-agenda-longer-open-loops)))
           ("x" "Backwords calendar loops"
            ((org-super-agenda-mode)
-            (alltodo "" ((org-super-agenda-groups '((:name "Personal"
-                                                           :tag ("PERSONAL" "@home")
-                                                           :order 22)
+            (alltodo "" ((org-super-agenda-groups '(
+                                                    (:discard (:tag "proj"))
                                                     (:name "Personal Next"
-                                                           :and (:tag "PERSONAL" :todo "NEXT")
+                                                           :and (:tag ("PERSONAL" "@home") :todo "NEXT")
                                                            :order 20)
-                                                    (:name "Waiting for"
-                                                           :todo "WAITING"
-                                                           :order 30)
+                                                    (:name "Personal"
+                                                           :and (:tag ("PERSONAL" "@home") :todo "TODO")
+                                                           :order 21)
                                                     (:name "Work Next"
                                                            :and (:tag "WORK" :todo "NEXT"))
                                                     (:name "Work"
-                                                           :tag "WORK"
-                                                           :order 1)))
-                         (org-agenda-overriding-header "All TODO") ))))
+                                                           :and (:tag "WORK" :todo "TODO")
+                                                           :order 1)
+                                                    (:name "Other next actions"
+                                                           :todo "NEXT"
+                                                           :order 29)
+                                                    (:name "Other todo actions"
+                                                           :todo "TODO"
+                                                           :order 30)
+                                                    (:discard (:anything t))
+                                                    ))
+                         (org-agenda-overriding-header "Standalone Tasks") ))))
           ("f" "Upcoming week and future deadlines"
            ((agenda "next week"
                     ((org-agenda-span 7)

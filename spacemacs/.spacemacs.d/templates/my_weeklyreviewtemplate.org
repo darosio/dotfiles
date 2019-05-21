@@ -90,12 +90,13 @@
        - Set finished tasks to a "done" state 
        - Set reminders if necessary
        - Define follow up tasks
+ - [ ] Review Standalone Tasks list
+   should they be grouped into a project?
  - [ ] Review Waiting For List:
    #+BEGIN_SRC emacs-lisp
      (org-agenda "WAITING" "T")
    #+END_SRC
-   - Record appropriate actions for any needed follow-up. Check off received
-     ones.
+   - Record appropriate actions for any needed follow-up. Check off received ones.
    - This is a list of items I have delegated to others and are important enough
      to track. If something is overdue, or if I need a progress report, I send an
      e-mail and nudge the person responsible. I note in the task itself that I
@@ -117,8 +118,6 @@
      - Browse through project plans, support material, and any other
        work-in-progress material to trigger new actions, completions, waiting
        for's, etc.
- - [ ] Review Standalone Tasks list
-   should they be grouped into a project?
  - [ ] Archive completed tasks  =$=  or inactive projects
    cfr. =, a t=  and =3 g r=
  - [ ] Review Any Relevant Checklists
