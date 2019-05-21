@@ -506,12 +506,17 @@
            ((org-super-agenda-mode)
             (alltodo "" ((org-super-agenda-groups '(
                                                     (:discard (:tag "proj"))
+                                                    (:name "Habits" :habit t)
+                                                    (
+                                                           :auto-group t)
                                                     (:name "Personal Next"
                                                            :and (:tag ("PERSONAL" "@home") :todo "NEXT")
                                                            :order 20)
                                                     (:name "Personal"
                                                            :and (:tag ("PERSONAL" "@home") :todo "TODO")
                                                            :order 21)
+                                                    ;; (:name "Personal"
+                                                    ;;        (:tag ("PERSONAL" "@home") :auto-todo))
                                                     (:name "Work Next"
                                                            :and (:tag "WORK" :todo "NEXT"))
                                                     (:name "Work"

@@ -121,6 +121,9 @@
  - [ ] Archive completed tasks  =$=  or inactive projects
    cfr. =, a t=  and =3 g r=
  - [ ] Review Any Relevant Checklists
+   - habits
+   - Maintenance's
+   - recurring
   
 ** Get Creative [0/4]
  - [ ] Review IDEAs !! 2DO
