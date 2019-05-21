@@ -504,11 +504,10 @@
            (,(my-org-agenda-longer-open-loops)))
           ("x" "Backwords calendar loops"
            ((org-super-agenda-mode)
-            (alltodo "" ((org-super-agenda-groups '(
+            (alltodo "" ((org-super-agenda-groups '(;; Do not discard deadlines rather group into recurring and habits
                                                     (:discard (:tag "proj"))
-                                                    (:name "Habits" :habit t)
-                                                    (
-                                                           :auto-group t)
+                                                    (:name "Habits" :habit t :order 100)
+                                                    (:auto-group t :order 90)
                                                     (:name "Personal Next"
                                                            :and (:tag ("PERSONAL" "@home") :todo "NEXT")
                                                            :order 20)
@@ -524,7 +523,7 @@
                                                            :order 1)
                                                     (:name "Other next actions"
                                                            :todo "NEXT"
-                                                           :order 29)
+                                                           :order 2)
                                                     (:name "Other todo actions"
                                                            :todo "TODO"
                                                            :order 30)
