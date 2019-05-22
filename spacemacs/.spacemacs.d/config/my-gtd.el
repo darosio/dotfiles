@@ -177,7 +177,6 @@
   ;; For tag searches ignore tasks with scheduled and deadline dates FIXME better control this in each agenda custom view
   (setq org-agenda-tags-todo-honor-ignore-options t)
 
-  ;; (org-use-property-inheritance t) @2DO to be used with STYLE, but prefer to ignore scheduled
   ;; all properties are inherited
   (setq org-use-property-inheritance t) ;; @2DO to be used with STYLE, e.g. habit not scheduled
 
@@ -313,30 +312,20 @@
             (agenda "" ((org-agenda-span 'day)
                         (org-deadline-warning-days 2)
                         (org-agenda-compact-blocks t)
-                        (org-deadline-warning-days 2)
                         ;; (org-agenda-skip-scheduled-delay-if-deadline t)
                         (org-agenda-skip-deadline-prewarning-if-scheduled t)
                         (org-super-agenda-groups
-                         '(;;(:log t)  ; Automatically named "Log"
+                         '(
+                           ;; (:habit t :order 10)
                            (:name "Overdue"
+                                  :scheduled past
                                   :deadline past)
-                           (:name "Schedule"
-                                  :time-grid t)
-                           (:name "Due today"
-                                  :deadline today)
-                           (:name "Today"
+                           (:name "Today schedule"
+                                  :time-grid t
+                                  :deadline today
                                   :scheduled today)
-                           (:habit t)
                            (:name "Due soon"
-                                  :deadline future)
-                           (:name "Unimportant"
-                                  :todo ("SOMEDAY" "MAYBE" "CHECK" "TO-READ" "TO-WATCH")
-                                  :order 100)
-                           (:name "Waiting..."
-                                  :todo "WAITING"
-                                  :order 98)
-                           (:name "Scheduled earlier"
-                                  :scheduled past)))))
+                                  :deadline future)))))
           (alltodo "" ((org-agenda-overriding-header "")
                        (org-super-agenda-groups
                         '((:name "Next to do"
@@ -501,10 +490,18 @@
             (org-todo-list))
           ;; ("n" . "Next Action lists")
           ("b" "Backwords calendar loops"
+           ;;(:log t)  ; Automatically named "Log"
            (,(my-org-agenda-longer-open-loops)))
-          ("x" "Backwords calendar loops"
+          ("x" "Tasks to refile or archive"
+           ((tags "REFILE"
+                  ((org-agenda-overriding-header "Tasks to Refile")))
+            (tags "-NOTE-REFILE-ARCHIVE/DONE|CANCELLED"
+                  ((org-agenda-overriding-header "Tasks to Archive")))))
+          ("L" "Stadalone Tasks"
            ((org-super-agenda-mode)
             (alltodo "" ((org-super-agenda-groups '(;; Do not discard deadlines rather group into recurring and habits
+                                                    (:name "High-priority tasks"
+                                                           :priority>= "A")
                                                     (:discard (:tag "proj"))
                                                     (:name "Habits" :habit t :order 100)
                                                     (:auto-group t :order 90)
@@ -529,14 +526,23 @@
                                                            :order 30)
                                                     (:discard (:anything t))
                                                     ))
-                         (org-agenda-overriding-header "Standalone Tasks") ))))
+                         (org-agenda-overriding-header "Standalone Tasks")
+                         (org-agenda-sorting-strategy '(deadline-up category-keep priority-down))
+                         (org-tags-match-list-sublevels 'indented) ;; FIXME does nothing
+                         ))))
           ("f" "Upcoming week and future deadlines"
-           ((agenda "next week"
-                    ((org-agenda-span 7)
+           ((org-super-agenda-mode)
+            (agenda "next week"
+                    ((org-agenda-span 8)
+                     (org-agenda-start-on-weekday nil)
+                     (org-agenda-time-grid nil)
                      (org-agenda-overriding-header "Next week")
-                     (org-agenda-start-day "+1d")))
-            (org-super-agenda-mode)
-            (agenda "2 years" ((org-super-agenda-groups '((:name "Personal"
+                     (org-agenda-todo-ignore-deadlines t)
+                     (org-deadline-warning-days 0)
+                     (org-agenda-start-day "+0d")))
+            (agenda "2 years" ((org-super-agenda-groups '(
+                                                          (:discard (:not (:deadline future)))
+                                                          (:name "Personal"
                                                                  :tag ("PERSONAL" "@home")
                                                                  :order 22)
                                                           (:name "Overdue"
@@ -545,11 +551,13 @@
                                                                  :tag "WORK"
                                                                  :order 1)))
                                (org-agenda-span 'day)
+                               ;; (org-agenda-start-day "+7d")
+                               ;; (org-agenda-todo-ignore-deadlines nil)
                                (org-agenda-overriding-header "All 2-year deadlines")
-                               (org-agenda-time-grid nil)
+                               ;; (org-agenda-time-grid nil)
                                (org-agenda-show-all-dates nil)
-                               ;; (org-agenda-category-filter-preset '("-Habits")) ;; exclude gtd.org/Habits by property category="Habits"
-                               (org-agenda-entry-types '(:deadline)) ;; this entry excludes :scheduled
+                               ;; ;; (org-agenda-category-filter-preset '("-Habits")) ;; exclude gtd.org/Habits by property category="Habits"
+                               ;; (org-agenda-entry-types '(:deadline)) ;; this entry excludes :scheduled
                                (org-deadline-warning-days 730)))))
           ("w" "Action list excluding PERSONAL"
            ((agenda "" ((org-agenda-overriding-header "Today's Schedule:")
@@ -737,12 +745,12 @@
                    (org-agenda-sorting-strategy '(category-keep))))
             )
            (
-            ;; (org-agenda-tag-filter-preset '("-linux" "+PERSONAL"))
-            ;; (org-agenda-start-with-log-mode t)
-            ;; (org-agenda-log-mode-items 'clock)
-            ;; (org-agenda-todo-ignore-deadlines 'near)
-            (org-agenda-todo-ignore-scheduled t)
-            (org-agenda-todo-ignore-deadlines t)
+            ;; ;; (org-agenda-tag-filter-preset '("-linux" "+PERSONAL"))
+            ;; ;; (org-agenda-start-with-log-mode t)
+            ;; ;; (org-agenda-log-mode-items 'clock)
+            ;; ;; (org-agenda-todo-ignore-deadlines 'near)
+            ;; (org-agenda-todo-ignore-scheduled t)
+            ;; (org-agenda-todo-ignore-deadlines t)
 
             (ps-number-of-columns 2)
             (ps-landscape-mode t)

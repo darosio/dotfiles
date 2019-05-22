@@ -17,6 +17,7 @@
   maybe:
   - project -> goal associatione (using tag?)
   - project template to make sure a category property is set =, i p=
+    but also a property "proj" to auto-group in super Agenda
   - Here C-c a m WORK/PERSONAL might highlight something needing attention
     and highlight per project “<”. items (tagged?) not TODO are also listed.
   - Review projects =F12 SPC //= and =V= repeatedly to view each project
@@ -63,38 +64,30 @@
 *** Empty Your Head [1/1]
     - [X] New projects, tasks, waiting-fors, someday/maybes, etc., not yet captured
 
-** Get Current [2/9]
+** Get Current [1/8]
  - [ ] Review Previous Calendar Data
    =, a b=  (=L)=
-   Review previous week calendar and see if there is anything I missed, e.g. I
-   want to follow-up to a lunch meeting with a thank you note or a gift,
-   remaining action items, reference data, etc.
    #+BEGIN_SRC emacs-lisp
      (my-org-agenda-longer-open-loops)
    #+END_SRC
+   Review previous week calendar and see if there is anything I missed, e.g. I
+   want to follow-up to a lunch meeting with a thank you note or a gift,
+   remaining action items, reference data, etc.
  - [ ] Review Upcoming Calendar and future deadlines
    =, a f=
    Review upcoming calendar long and short term. Capture actions triggered.
- - [ ] Refile tasks/projects from inbox.org
- - [X] Review Action Lists:
-       #+BEGIN_SRC emacs-lisp
-         (let ((org-agenda-files '("~/Sync/share/phone/box/org/gtd.org")))
-           (org-agenda "TODO" "T")
-           (beginend-org-agenda-mode-goto-beginning))
-       #+END_SRC
-
-   - [X] Review (next) Actions Lists  =, a w= and =, a p=
-     - done: agenda without deadline (al least personal)
-     - Mark off completed actions. Review for reminders of further
-       action steps to record.
-       - Set finished tasks to a "done" state 
-       - Set reminders if necessary
-       - Define follow up tasks
- - [ ] Review Standalone Tasks list
+ - [ ] REFILE tasks(and projects) from inbox.org
+   =, a x=
+ - [ ] Review action list for standalone tasks
+   in place of =, a w= and =, a p= use: =, a L=
    should they be grouped into a project?
+   - Set finished tasks to a "done" state 
+   - Set reminders if necessary
+   - Define follow up tasks
  - [ ] Review Waiting For List:
-   #+BEGIN_SRC emacs-lisp
+   #+BEGIN_SRC emacs-lisp :results none
      (org-agenda "WAITING" "T")
+     (beginend-org-agenda-mode-goto-beginning))
    #+END_SRC
    - Record appropriate actions for any needed follow-up. Check off received ones.
    - This is a list of items I have delegated to others and are important enough
@@ -119,6 +112,7 @@
        work-in-progress material to trigger new actions, completions, waiting
        for's, etc.
  - [ ] Archive completed tasks  =$=  or inactive projects
+   =, a x=
    cfr. =, a t=  and =3 g r=
  - [ ] Review Any Relevant Checklists
    - habits
