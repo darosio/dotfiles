@@ -296,10 +296,6 @@
           ("u" "Unscheduled TODOs" ((todo "TODO"
                                           ((org-agenda-overriding-header "Unscheduled TODO")
                                            (org-agenda-todo-ignore-scheduled 'future)))))
-          ("gtd" "My GTD Agenda" ((agenda "" ((org-agenda-overriding-header "Getting Things Done")
-                                              (org-agenda-span 1)
-                                              (org-deadline-warning-days 7)
-                                              (org-agenda-start-on-weekday nil)))))
 
           ("H" "Habits" tags-todo "STYLE=\"habit\""
            ((org-agenda-overriding-header "Habits")
@@ -372,7 +368,6 @@
                                  :order 90)
                           (:discard (:tag ("Chore" "Routine" "Daily")))))))))
 
-
           ("0" "Today actions list"
            ((org-super-agenda-mode)
             (agenda "" ((org-agenda-span 'day)
@@ -416,7 +411,6 @@
                                   ;; :scheduled today
                                   :order 1)
                            ))))))
-
 
           ("k" "Super zaen view"
            ((org-super-agenda-mode)
@@ -483,12 +477,11 @@
                                  :order 90)
                           (:discard (:tag ("Chore" "Routine" "Daily")))))))))
           ("l" "projects"
-           ((org-super-agenda-groups
+           ((org-super-agenda-mode)
+            ((tags "*" ((org-super-agenda-groups
                  '((:name "Projects"
                           :children t)
-                   (:discard (:anything t)))))
-            (org-todo-list))
-          ;; ("n" . "Next Action lists")
+                   (:discard (:anything t)))))))))
           ("b" "Backwords calendar loops"
            ;;(:log t)  ; Automatically named "Log"
            (,(my-org-agenda-longer-open-loops)))
@@ -538,7 +531,7 @@
                      (org-agenda-time-grid nil)
                      (org-agenda-overriding-header "Next week")
                      (org-agenda-todo-ignore-deadlines t)
-                     (org-deadline-warning-days 0)
+                     (org-deadline-warning-days 5)
                      (org-agenda-start-day "+0d")))
             (agenda "2 years" ((org-super-agenda-groups '(
                                                           (:discard (:not (:deadline future)))
@@ -588,7 +581,6 @@
             (org-agenda-todo-ignore-scheduled t)
             (org-agenda-todo-ignore-deadlines t)
             ))
-
           ("W" "Daily review"
            ((org-super-agenda-mode)
             (agenda "" ((org-agenda-overriding-header "Today's Schedule:")
@@ -625,43 +617,6 @@
             (tags "-NOTE-REFILE-ARCHIVE/DONE|CANCELLED"
                   ((org-agenda-overriding-header "Tasks to Archive")))
             ))
-            ;; (tags-todo "-CANCELLED/NEXT"
-            ;;            ((org-agenda-overriding-header "Next Tasks:")
-            ;;             (org-agenda-sorting-strategy '(habit-up category-keep priority-down))
-            ;;             (org-tags-match-list-sublevels 'indented)))
-            ;; (tags "REFILE"
-            ;;       ((org-agenda-overriding-header "Tasks to Refile")
-            ;;        (org-agenda-todo-ignore-scheduled nil)
-            ;;        (org-agenda-todo-ignore-deadlines nil)
-            ;;        (org-tags-match-list-sublevels nil)))
-            ;; (tags "-NOTE-REFILE-ARCHIVE/DONE|CANCELLED"
-            ;;       ((org-agenda-overriding-header "Tasks to Archive")
-            ;;        (org-agenda-todo-ignore-scheduled nil)
-            ;;        (org-agenda-todo-ignore-deadlines nil)
-            ;;        ))
-            ;; (tags-todo "-proj-HOLD-CANCELLED-REFILE-STYLE=\"habit\"/!-NEXT-WAITING-HOLD-CANCELLED"
-            ;;            ((org-agenda-overriding-header "Standalone Tasks")
-            ;;             (org-tags-match-list-sublevels 'indented)
-            ;;             (org-agenda-sorting-strategy '(habit-up category-keep priority-down))))
-            ;; (tags-todo "-proj/!WAITING"
-            ;;            ((org-agenda-overriding-header "Standalone Waiting Tasks")
-            ;;             (org-tags-match-list-sublevels 'indented)
-            ;;             (org-agenda-sorting-strategy '(category-keep))))))
-           ;; ((org-agenda-tag-filter-preset '("-PERSONAL"))
-           ;;  (org-agenda-todo-ignore-scheduled t)
-           ;;  (org-agenda-todo-ignore-deadlines t)
-           ;;  ))
-            ;; (agenda "" ((org-agenda-span 'day)
-            ;;             (org-agenda-block-separator nil)
-            ;;             (org-agenda-compact-blocks t)
-            ;;             (org-deadline-warning-days 2)
-            ;;             ;; (org-agenda-skip-scheduled-delay-if-deadline t)
-            ;;             (org-agenda-skip-deadline-prewarning-if-scheduled t)
-
-          ("A" "Agenda for Today"
-           ((agenda "" ((org-agenda-overriding-header "Today's Schedule:")
-                        (org-deadline-warning-days 0)
-                        (org-agenda-span 1)))))
           ("z" "Agenda for Today"
            ((agenda "" ((org-agenda-overriding-header "Today's Schedule:")
                         (org-deadline-warning-days 0)
@@ -677,7 +632,8 @@
                    (org-agenda-todo-ignore-deadlines nil)))
             (agenda "" ((org-agenda-overriding-header "Tomorrow's Schedule:")
                         (org-agenda-filter-apply "Contexts")
-                        (org-agenda-span 2)))
+                        (org-agenda-start-day "+1d")
+                        (org-agenda-span 1)))
             (tags-todo "-CANCELLED/NEXT"
                        ((org-agenda-overriding-header "Next Tasks:")
                         (org-agenda-sorting-strategy '(habit-up category-keep priority-down))
@@ -688,7 +644,7 @@
                         (org-agenda-sorting-strategy '(category-keep)))))
            ((org-agenda-todo-ignore-scheduled t)
             (org-agenda-todo-ignore-deadlines t)))
-          ("p" "Action list only PERSONAL"
+          (\"p" "Action list only PERSONAL"
            ((agenda "" ((org-agenda-overriding-header "Today's Schedule:")
                         (org-agenda-span 'day)))
             (tags-todo "+PERSONAL-CANCELLED/NEXT"
