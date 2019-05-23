@@ -644,7 +644,7 @@
                         (org-agenda-sorting-strategy '(category-keep)))))
            ((org-agenda-todo-ignore-scheduled t)
             (org-agenda-todo-ignore-deadlines t)))
-          (\"p" "Action list only PERSONAL"
+          ("p" "Action list only PERSONAL"
            ((agenda "" ((org-agenda-overriding-header "Today's Schedule:")
                         (org-agenda-span 'day)))
             (tags-todo "+PERSONAL-CANCELLED/NEXT"
