@@ -531,27 +531,29 @@
                      (org-agenda-time-grid nil)
                      (org-agenda-overriding-header "Next week")
                      (org-agenda-todo-ignore-deadlines t)
-                     (org-deadline-warning-days 5)
+                     (org-deadline-warning-days 0)
                      (org-agenda-start-day "+0d")))
-            (agenda "2 years" ((org-super-agenda-groups '(
-                                                          (:discard (:not (:deadline future)))
-                                                          (:name "Personal"
-                                                                 :tag ("PERSONAL" "@home")
-                                                                 :order 22)
-                                                          (:name "Overdue"
-                                                                 :deadline past)
-                                                          (:name "Work"
-                                                                 :tag "WORK"
-                                                                 :order 1)))
-                               (org-agenda-span 'day)
-                               ;; (org-agenda-start-day "+7d")
-                               ;; (org-agenda-todo-ignore-deadlines nil)
-                               (org-agenda-overriding-header "All 2-year deadlines")
-                               ;; (org-agenda-time-grid nil)
-                               (org-agenda-show-all-dates nil)
-                               ;; ;; (org-agenda-category-filter-preset '("-Habits")) ;; exclude gtd.org/Habits by property category="Habits"
-                               ;; (org-agenda-entry-types '(:deadline)) ;; this entry excludes :scheduled
-                               (org-deadline-warning-days 730)))))
+            (agenda "" ((org-super-agenda-groups '(
+                                                   ;; (agenda "2 years" ((org-super-agenda-groups '(
+                                                   (:discard (:not (:deadline (after (org-read-date nil nil "+7d")))))
+                                                   (:name "Personal"
+                                                          :tag ("PERSONAL" "@home")
+                                                          :order 22)
+                                                   (:name "Overdue"
+                                                          :deadline past)
+                                                   (:name "Work"
+                                                          :tag "WORK"
+                                                          :order 1)))
+                        (org-agenda-span 'day)
+                        ;; (org-agenda-start-day "+7d")
+                        ;; (org-agenda-todo-ignore-deadlines nil)
+                        (org-agenda-overriding-header "All 2-year deadlines")
+                        ;; (org-agenda-time-grid nil)
+                        (org-agenda-show-all-dates nil)
+                        ;; (org-agenda-category-filter-preset '("-Habits")) ;; exclude gtd.org/Habits by property category="Habits"
+                        ;; (org-agenda-entry-types '(:deadline)) ;; this entry excludes :scheduled
+                        ;; (org-agenda-skip-function '(org-agenda-skip-subtree-if "DEADLINE<=+7d"))
+                        (org-deadline-warning-days 730)))))
           ("w" "Action list excluding PERSONAL"
            ((agenda "" ((org-agenda-overriding-header "Today's Schedule:")
                         (org-agenda-span 2)))
