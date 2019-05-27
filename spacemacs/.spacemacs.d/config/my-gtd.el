@@ -370,21 +370,39 @@
           ("0" "Today actions list"
            ((org-super-agenda-mode)
             (agenda "" ((org-agenda-span 'day)
+                        (org-deadline-warning-days 7)
+                        (org-agenda-block-separator "-")
+                        (org-agenda-compact-blocks t)
                         (org-super-agenda-groups
-                         '(
-                           (:name "Personal"
-                                  :tag ("PERSONAL" "@home")
-                                  :order 22)
-                           (:name "Today"
+                         '((:name "Overdue"
+                                  :scheduled past
+                                  :deadline past)
+                           (:name "Today schedule"
                                   :time-grid t
-                                  :date today
-                                  :todo "TODAY"
+                                  ;; :date today
+                                  ;; :todo "TODAY"
                                   :deadline today
                                   :scheduled today
-                                  :order 0)
-                           ))
-                        (org-deadline-warning-days 2)
-                        ))))
+                                  ;; :not (:deadline future)
+                                  :order 1)
+                           (:name "Due within next 2 days"
+                                  :deadline future
+                                  :order 2)))))
+            (alltodo "important"
+                     ((org-super-agenda-groups
+                       '((:name "Important"
+                                :priority>="A")
+                         (:discard (:anything t))
+                         ))))
+            ))
+          ;; (:name "Personal"
+          ;;        :tag ("PERSONAL" "@home")
+          ;;        :order 22)
+          ;; (:name "Important"
+          ;;        :tag "Important"
+          ;;        :priority "A"
+          ;;        :order 6)
+
           ("1" "Daily review"
            ((org-super-agenda-mode)
             (agenda "" ((org-agenda-span 'day)
@@ -548,6 +566,7 @@
             (org-super-agenda-mode)
             (agenda "" ((org-super-agenda-groups '(
                                                    (:discard (:not (:deadline future)))
+                                                   ;; https://github.com/alphapapa/org-super-agenda/blob/master/examples.org#concrete-dates
                                                    ;; (:discard (:not (:deadline (after (org-read-date nil nil "+7d"))))) ;; It would be nice
                                                    ;; (:discard (:not (:deadline (after "2019-06-01"))))  ;; but does not work unless explicit
                                                    (:name "Personal"
