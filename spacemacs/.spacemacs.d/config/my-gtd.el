@@ -1,4 +1,6 @@
 (provide 'my-gtd)
+(require 'org-habit)
+(require 'beginend)
 
 ;; a better word processor
 (setq org-hide-emphasis-markers t)
@@ -12,6 +14,7 @@
                      (if host host "www.google.com"))))
 
 (defun fetch-calendar ()
+  (interactive)
   (when (internet-up-p) (org-gcal-fetch)))  ;; TODO move to org-gcal
 
 ;; Define variables
@@ -209,7 +212,7 @@
   ;;   (interactive)
   ;;   (org-id-get-create))
 
-  (require 'org-habit)
+
   (defun nemacs-org-capture-review-daily ()
     (interactive)
     (progn
@@ -223,15 +226,12 @@
 
   (defun my-new-weekly-review ()
     (interactive)
-    ;; (let ((org-capture-templates '(("w" "Review: Weekly Review" entry (file+olp+datetree "/tmp/reviews.org")
-    ;;                                 (file "~/Sync/share/phone/box/org/chklists/weeklyreviewtemplate.org")))))
       (progn
         (org-capture nil "rw")
         (org-capture-finalize t)
         (org-speed-move-safe 'outline-up-heading)
         (org-narrow-to-subtree)
-        ;; (fetch-calendar)
-        (org-gcal-fetch)
+        (fetch-calendar)
         (org-clock-in)))
   (define-key global-map "\C-crw" 'my-new-weekly-review)
 
@@ -268,7 +268,6 @@
     (interactive)
     (let ((org-agenda-start-with-log-mode t)
           (org-agenda-use-time-grid nil))
-          ;; (org-agenda-files '("~/org/calendar/gcal.org" "~/org/calendar/maple.org")))
       (fetch-calendar)
       (org-agenda-list nil (org-read-date nil nil "-2d") 4)
       (beginend-org-agenda-mode-goto-beginning)))
@@ -277,13 +276,13 @@
     (interactive)
     (let ((org-agenda-start-with-log-mode t)
           (org-agenda-use-time-grid nil))
-          ;; (org-agenda-files '("~/org/calendar/gcal.org" "~/org/calendar/maple.org")))
       (fetch-calendar)
       (org-agenda-list 'file (org-read-date nil nil "-10d") 10)
       (beginend-org-agenda-mode-goto-beginning)))
 
   ;; https://gist.github.com/mwfogleman/267b6bc7e512826a2c36cb57f0e3d854
 
+  (defvar dd7 (org-read-date nil nil "+7d"))
 
 
   (setq org-agenda-custom-commands
@@ -482,9 +481,23 @@
                  '((:name "Projects"
                           :children t)
                    (:discard (:anything t)))))))))
-          ("b" "Backwords calendar loops"
+          ("b" "Backwards calendar loops"
            ;;(:log t)  ; Automatically named "Log"
            (,(my-org-agenda-longer-open-loops)))
+
+          ;; (fetch-calendar)
+          ;; (beginend-org-agenda-mode-goto-beginning)))
+          ;; (org-agenda-list 'file (org-read-date nil nil "-10d") 10)
+          ("B" "Backwards calendar loops"
+           ((org-super-agenda-mode)
+            (agenda ""
+                    ((org-agenda-overriding-header "Backwards calendar loops")
+                     (org-agenda-span 10)
+                     (org-agenda-start-day "-10d")
+                     (org-agenda-start-with-log-mode t)  ;; FIXME is not working
+                     (org-agenda-use-time-grid t)))))
+
+
           ("x" "Tasks to refile or archive"
            ((tags "REFILE"
                   ((org-agenda-overriding-header "Tasks to Refile")))
@@ -524,18 +537,19 @@
                          (org-tags-match-list-sublevels 'indented) ;; FIXME does nothing
                          ))))
           ("f" "Upcoming week and future deadlines"
-           ((org-super-agenda-mode)
+            (
             (agenda "next week"
                     ((org-agenda-span 8)
                      (org-agenda-start-on-weekday nil)
                      (org-agenda-time-grid nil)
                      (org-agenda-overriding-header "Next week")
-                     (org-agenda-todo-ignore-deadlines t)
                      (org-deadline-warning-days 0)
-                     (org-agenda-start-day "+0d")))
+                     ))
+            (org-super-agenda-mode)
             (agenda "" ((org-super-agenda-groups '(
-                                                   ;; (agenda "2 years" ((org-super-agenda-groups '(
-                                                   (:discard (:not (:deadline (after (org-read-date nil nil "+7d")))))
+                                                   (:discard (:not (:deadline future)))
+                                                   ;; (:discard (:not (:deadline (after (org-read-date nil nil "+7d"))))) ;; It would be nice
+                                                   ;; (:discard (:not (:deadline (after "2019-06-01"))))  ;; but does not work unless explicit
                                                    (:name "Personal"
                                                           :tag ("PERSONAL" "@home")
                                                           :order 22)
@@ -546,14 +560,13 @@
                                                           :order 1)))
                         (org-agenda-span 'day)
                         ;; (org-agenda-start-day "+7d")
-                        ;; (org-agenda-todo-ignore-deadlines nil)
                         (org-agenda-overriding-header "All 2-year deadlines")
-                        ;; (org-agenda-time-grid nil)
                         (org-agenda-show-all-dates nil)
                         ;; (org-agenda-category-filter-preset '("-Habits")) ;; exclude gtd.org/Habits by property category="Habits"
                         ;; (org-agenda-entry-types '(:deadline)) ;; this entry excludes :scheduled
                         ;; (org-agenda-skip-function '(org-agenda-skip-subtree-if "DEADLINE<=+7d"))
-                        (org-deadline-warning-days 730)))))
+                        (org-deadline-warning-days 730)))
+            ))
           ("w" "Action list excluding PERSONAL"
            ((agenda "" ((org-agenda-overriding-header "Today's Schedule:")
                         (org-agenda-span 2)))
