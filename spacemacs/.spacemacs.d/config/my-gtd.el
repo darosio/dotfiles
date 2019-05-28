@@ -356,6 +356,7 @@
                                :scheduled today)))))
             (alltodo "Further picks"
                      ((org-agenda-overriding-header "")
+                      (org-agenda-todo-ignore-scheduled t)
                       (org-super-agenda-groups
                        '((:name "Important"
                                 :priority>="A")
