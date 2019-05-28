@@ -285,6 +285,7 @@
   (defvar dd7 (org-read-date nil nil "+7d"))
 
 
+  (setq target-date (org-read-date nil nil "+7d"))
   (setq org-agenda-custom-commands
         '(
           ("r" "Daily Review" ((tags-todo "Today")
@@ -564,11 +565,10 @@
                      (org-deadline-warning-days 0)
                      ))
             (org-super-agenda-mode)
-            (agenda "" ((org-super-agenda-groups '(
-                                                   (:discard (:not (:deadline future)))
+            (agenda "" ((org-super-agenda-groups `(
+                                                   ;; (:discard (:not (:deadline future)))
                                                    ;; https://github.com/alphapapa/org-super-agenda/blob/master/examples.org#concrete-dates
-                                                   ;; (:discard (:not (:deadline (after (org-read-date nil nil "+7d"))))) ;; It would be nice
-                                                   ;; (:discard (:not (:deadline (after "2019-06-01"))))  ;; but does not work unless explicit
+                                                   (:discard (:not (:deadline (after ,target-date))))
                                                    (:name "Personal"
                                                           :tag ("PERSONAL" "@home")
                                                           :order 22)
