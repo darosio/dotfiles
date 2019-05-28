@@ -293,6 +293,7 @@
                                (agenda "" ((org-agenda-span 2)
                                            (org-deadline-warning-days 7)
                                            (org-agenda-start-on-weekday nil)))))
+
           ("u" "Unscheduled TODOs" ((todo "TODO"
                                           ((org-agenda-overriding-header "Unscheduled TODO")
                                            (org-agenda-todo-ignore-scheduled 'future)))))
@@ -303,210 +304,79 @@
             (org-agenda-sorting-strategy '(category-keep))) ;; todo-state-down effort-up
            )
 
-          ("s" "super ff"
-           ((org-super-agenda-mode)
-            (agenda "" ((org-agenda-span 'day)
-                        (org-deadline-warning-days 2)
-                        (org-agenda-compact-blocks t)
-                        ;; (org-agenda-skip-scheduled-delay-if-deadline t)
-                        (org-agenda-skip-deadline-prewarning-if-scheduled t)
-                        (org-super-agenda-groups
-                         '(
-                           ;; (:habit t :order 10)
-                           (:name "Overdue"
-                                  :scheduled past
-                                  :deadline past)
-                           (:name "Today schedule"
-                                  :time-grid t
-                                  :deadline today
-                                  :scheduled today)
-                           (:name "Due soon"
-                                  :deadline future)))))
-          (alltodo "" ((org-agenda-overriding-header "")
-                       (org-super-agenda-groups
-                        '((:name "Next to do"
-                                 :todo "NEXT"
-                                 :order 1)
-                          (:name "Important"
-                                 :tag "Important"
-                                 :priority "A"
-                                 :order 6)
-                          (:name "Due Today"
-                                 :deadline today
-                                 :order 2)
-                          (:name "Due Soon"
-                                 :deadline future
-                                 :order 8)
-                          (:name "Overdue"
-                                 :deadline past
-                                 :order 7)
-                          (:name "Assignments"
-                                 :tag "Assignment"
-                                 :order 10)
-                          (:name "Issues"
-                                 :tag "Issue"
-                                 :order 12)
-                          (:name "Projects"
-                                 :tag "proj"
-                                 :order 14)
-                          (:name "Emacs"
-                                 :tag "Emacs"
-                                 :order 13)
-                          (:name "Research"
-                                 :tag "Research"
-                                 :order 15)
-                          (:name "To read"
-                                 :tag "Read"
-                                 :order 30)
-                          (:name "Waiting"
-                                 :todo "WAITING"
-                                 :order 20)
-                          (:name "trivial"
-                                 :priority<= "C"
-                                 :tag ("Trivial" "Unimportant")
-                                 :todo ("SOMEDAY" )
-                                 :order 90)
-                          (:discard (:tag ("Chore" "Routine" "Daily")))))))))
-
           ("0" "Today actions list"
            ((org-super-agenda-mode)
-            (agenda "" ((org-agenda-span 'day)
-                        (org-deadline-warning-days 7)
-                        (org-agenda-block-separator "-")
-                        (org-agenda-compact-blocks t)
+            (agenda "" ((org-deadline-warning-days 4)
                         (org-super-agenda-groups
+                         ;; :tag ("PERSONAL" "@home")  ?maybe
                          '((:name "Overdue"
                                   :scheduled past
                                   :deadline past)
                            (:name "Today schedule"
                                   :time-grid t
-                                  ;; :date today
-                                  ;; :todo "TODAY"
                                   :deadline today
                                   :scheduled today
-                                  ;; :not (:deadline future)
                                   :order 1)
-                           (:name "Due within next 2 days"
+                           (:name "Due within next 4 days"
                                   :deadline future
                                   :order 2)))))
-            (alltodo "important"
-                     ((org-super-agenda-groups
+            (alltodo "Further picks"
+                     ((org-agenda-overriding-header "")
+                      (org-super-agenda-groups
                        '((:name "Important"
                                 :priority>="A")
-                         (:discard (:anything t))
-                         ))))
-            ))
-          ;; (:name "Personal"
-          ;;        :tag ("PERSONAL" "@home")
-          ;;        :order 22)
-          ;; (:name "Important"
-          ;;        :tag "Important"
-          ;;        :priority "A"
-          ;;        :order 6)
+                         (:name "Quick Picks"
+                                :and (:not (:scheduled t :deadline t)
+                                           :effort< "0:15"))
+                         (:discard (:anything t)))))))
+           ((org-agenda-span 'day)
+            (org-agenda-compact-blocks t)))
 
           ("1" "Daily review"
            ((org-super-agenda-mode)
-            (agenda "" ((org-agenda-span 'day)
-                        (org-agenda-block-separator nil)
-                        (org-agenda-compact-blocks t)
-                        (org-deadline-warning-days 2)
-                        ;; (org-agenda-skip-scheduled-delay-if-deadline t)
-                        (org-agenda-skip-deadline-prewarning-if-scheduled t)
+            (agenda "" ((org-deadline-warning-days 5)
                         (org-super-agenda-groups
-                         '(
-                           (:name "Personal"
-                                  :tag ("PERSONAL" "@home")
-                                  :order 22)
-                           (:name "Overdue"
+                         ;; :tag ("PERSONAL" "@home")  ?maybe
+                         '((:name "Overdue"
+                                  :scheduled past
                                   :deadline past)
-                           (:name "Due today"
-                                  :deadline (today past))
-                           (:name "Today"
+                           (:name "Today schedule"
                                   :time-grid t
-                                  ;; :date today
-                                  ;; :todo "TODAY"
-                                  ;; :deadline today
-                                  ;; :scheduled today
-                                  :order 1)
-                           ))))))
-
-          ("k" "Super zaen view"
-           ((org-super-agenda-mode)
-            (agenda "" ((org-agenda-span 'day)
-                        (org-super-agenda-groups
-                         '(
-                           (:name "Overdue"
-                                  :deadline past)
-                           (:name "Today"
-                                  :time-grid t
-                                  :date today
-                                  :todo "TODAY"
                                   :deadline today
                                   :scheduled today
-                                  :order 2)
-                           (:name "Due soon"
-                                  :deadline future)
-                           ))))
-          (alltodo "" ((org-agenda-overriding-header "")
-                       (org-super-agenda-groups
-                        '((:name "Next to do"
-                                 :todo "NEXT"
-                                 :order 1)
-                          (:name "Important"
-                                 :tag "Important"
-                                 :priority "A"
-                                 :order 6)
-                          (:name "Due Today"
-                                 :deadline today
-                                 :order 2)
-                          (:name "Due Soon"
-                                 :deadline future
-                                 :order 8)
-                          (:name "Overdue"
-                                 :deadline past
-                                 :order 7)
-                          (:name "Assignments"
-                                 :tag "Assignment"
-                                 :order 10)
-                          (:name "Issues"
-                                 :tag "Issue"
-                                 :order 12)
-                          (:name "Projects"
-                                 :tag "Project"
-                                 :order 14)
-                          (:name "Emacs"
-                                 :tag "Emacs"
-                                 :order 13)
-                          (:name "Research"
-                                 :tag "Research"
-                                 :order 15)
-                          (:name "To read"
-                                 :tag "Read"
-                                 :order 30)
-                          (:name "Waiting"
-                                 :todo "WAITING"
-                                 :order 20)
-                          (:name "Projects"
-                                   :children t)
-                          (:name "trivial"
-                                 :priority<= "C"
-                                 :tag ("Trivial" "Unimportant")
-                                 :todo ("SOMEDAY" )
-                                 :order 90)
-                          (:discard (:tag ("Chore" "Routine" "Daily")))))))))
-          ("l" "projects"
-           ((org-super-agenda-mode)
-            ((tags "*" ((org-super-agenda-groups
-                 '((:name "Projects"
-                          :children t)
-                   (:discard (:anything t)))))))))
+                                  :order 1)
+                           (:name "Due within next 5 days"
+                                  :deadline future
+                                  :order 2)))))
+            (agenda "" ((org-agenda-start-day "+1d")
+                        (org-super-agenda-groups
+                        '((:name "Tomorrow schedule"
+                               :time-grid t
+                               :deadline today
+                               :scheduled today)))))
+            (alltodo "Further picks"
+                     ((org-agenda-overriding-header "")
+                      (org-super-agenda-groups
+                       '((:name "Important"
+                                :priority>="A")
+                         (:discard (:anything t))))))
+            (tags "REFILE"
+                  ((org-agenda-overriding-header "Tasks to Refile")))
+            (tags "-NOTE-REFILE-ARCHIVE/DONE|CANCELLED"
+                  ((org-agenda-overriding-header "Tasks to Archive")))
+            (tags-todo "-CANCELLED/NEXT"
+                       ((org-agenda-overriding-header "Next Tasks:")
+                        (org-agenda-todo-ignore-scheduled t)
+                        (org-agenda-sorting-strategy '(habit-up category-keep priority-down))
+                        (org-tags-match-list-sublevels 'indented)))
+            )
+           ((org-agenda-span 'day)
+            (org-agenda-compact-blocks t)))
+
           ("b" "Backwards calendar loops"
            ;;(:log t)  ; Automatically named "Log"
            (,(my-org-agenda-longer-open-loops)))
 
-          ;; (fetch-calendar)
-          ;; (beginend-org-agenda-mode-goto-beginning)))
-          ;; (org-agenda-list 'file (org-read-date nil nil "-10d") 10)
           ("B" "Backwards calendar loops"
            ((org-super-agenda-mode)
             (agenda ""
@@ -516,12 +386,12 @@
                      (org-agenda-start-with-log-mode t)  ;; FIXME is not working
                      (org-agenda-use-time-grid t)))))
 
-
           ("x" "Tasks to refile or archive"
            ((tags "REFILE"
                   ((org-agenda-overriding-header "Tasks to Refile")))
             (tags "-NOTE-REFILE-ARCHIVE/DONE|CANCELLED"
                   ((org-agenda-overriding-header "Tasks to Archive")))))
+
           ("L" "Stadalone Tasks"
            ((org-super-agenda-mode)
             (alltodo "" ((org-super-agenda-groups '(;; Do not discard deadlines rather group into recurring and habits
@@ -530,6 +400,8 @@
                                                     (:discard (:tag "proj"))
                                                     (:name "Habits" :habit t :order 100)
                                                     (:auto-group t :order 90)
+                                                    (:name "With subtasks"
+                                                           :children t :order 19)
                                                     (:name "Personal Next"
                                                            :and (:tag ("PERSONAL" "@home") :todo "NEXT")
                                                            :order 20)
@@ -555,6 +427,7 @@
                          (org-agenda-sorting-strategy '(deadline-up category-keep priority-down))
                          (org-tags-match-list-sublevels 'indented) ;; FIXME does nothing
                          ))))
+
           ("f" "Upcoming week and future deadlines"
             (
             (agenda "next week"
@@ -586,6 +459,7 @@
                         ;; (org-agenda-skip-function '(org-agenda-skip-subtree-if "DEADLINE<=+7d"))
                         (org-deadline-warning-days 730)))
             ))
+
           ("w" "Action list excluding PERSONAL"
            ((agenda "" ((org-agenda-overriding-header "Today's Schedule:")
                         (org-agenda-span 2)))
@@ -651,33 +525,6 @@
             (tags "-NOTE-REFILE-ARCHIVE/DONE|CANCELLED"
                   ((org-agenda-overriding-header "Tasks to Archive")))
             ))
-          ("z" "Agenda for Today"
-           ((agenda "" ((org-agenda-overriding-header "Today's Schedule:")
-                        (org-deadline-warning-days 0)
-                        (org-agenda-span 1)))
-            (tags "REFILE"
-                  ((org-agenda-overriding-header "Tasks to Refile")
-                   (org-tags-match-list-sublevels nil) ;; I want to refile the whole tree; no need to visualize sublevels.
-                   (org-agenda-todo-ignore-scheduled nil)
-                   (org-agenda-todo-ignore-deadlines nil)))
-            (tags "-NOTE-ARCHIVE/DONE|CANCELLED"  ;; FIXME -REFILE better leave out
-                  ((org-agenda-overriding-header "Tasks to Archive")
-                   (org-agenda-todo-ignore-scheduled nil)
-                   (org-agenda-todo-ignore-deadlines nil)))
-            (agenda "" ((org-agenda-overriding-header "Tomorrow's Schedule:")
-                        (org-agenda-filter-apply "Contexts")
-                        (org-agenda-start-day "+1d")
-                        (org-agenda-span 1)))
-            (tags-todo "-CANCELLED/NEXT"
-                       ((org-agenda-overriding-header "Next Tasks:")
-                        (org-agenda-sorting-strategy '(habit-up category-keep priority-down))
-                        (org-tags-match-list-sublevels 'indented)))
-            (tags-todo "-proj/!WAITING"
-                       ((org-agenda-overriding-header "Standalone Waiting Tasks")
-                        (org-tags-match-list-sublevels 'indented)
-                        (org-agenda-sorting-strategy '(category-keep)))))
-           ((org-agenda-todo-ignore-scheduled t)
-            (org-agenda-todo-ignore-deadlines t)))
           ("p" "Action list only PERSONAL"
            ((agenda "" ((org-agenda-overriding-header "Today's Schedule:")
                         (org-agenda-span 'day)))
@@ -702,6 +549,17 @@
             (org-agenda-todo-ignore-scheduled t)
             (org-agenda-todo-ignore-deadlines t)
             ))
+
+          ("J" "proJects"
+           ((org-super-agenda-mode)
+            (tags "-HOLD-CANCELLED+proj/-DONE"
+                  (
+                   (org-agenda-overriding-header "")
+                   (org-super-agenda-groups
+                     '((:auto-category t
+                        )))
+                   ))))
+
           ("j" "proJects"
            ((tags "-HOLD-CANCELLED+proj"
                   ((org-agenda-overriding-header "active projects")
@@ -792,7 +650,6 @@
                    (org-agenda-todo-keyword-format "")
                    (org-agenda-overriding-header "\nTasks by Context\n------------------\n"))))
            ((org-agenda-with-colors nil)
-            (org-agenda-compact-blocks t)
             (org-agenda-remove-tags t)
             (htmlize-output-type 'css)
             (ps-number-of-columns 2)
