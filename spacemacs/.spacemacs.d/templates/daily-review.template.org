@@ -1,15 +1,15 @@
 * Daily Review
 ** Closing Today
-- [ ] Check Evernote, create tasks if necessary.
 - [ ] Move the tasks from [[file:~/Dropbox/orgfiles/inbox.org][Inbox]] to their respective project.
+  #+begin_src emacs-lisp :results none
+  (org-agenda nil "x")
+  #+end_src
+
 - [ ] Mark tasks finished, if any, as *DONE*.
 - [ ] Reschedule *TODO* tasks to other day.
 - [ ] Archive all *DONE* tasks from [[file:~/Dropbox/orgfiles/todo.org][projects]].
-- [ ] Check my work e-mail Inbox, create tasks if necessary.
-- [ ] Clear my work e-mail Inbox.
 - [ ] Log my work hours.
 - [ ] Clean my physical desktop.
-- [ ] Do the house-keeping tasks.
 
 ** Planning Tomorrow
 - [ ] Find out what are my free hours of work.
@@ -22,29 +22,18 @@
 - [ ] Clock out [C-c C-x C-o] and enjoy the rest of the day.
 - [ ] Start the system updater.
 
-* Daily Review
-- [ ] Clear Physical Desktop / Inbox / Notebook
-- [ ] Clear Downloads and Desktop Folders
-  #+BEGIN_SRC emacs-lisp
-  (dired "~/")
-  ;; (image-dired "~/")
-  #+END_SRC
 
-  #+RESULTS:
+* second Daily Review
+- [ ] Clear Physical Desktop / Inbox / Notebook
+
+- [ ] Check Email Inboxes, create tasks if necessary
+- [ ] Clear Email Inboxes
 
 - [ ] Collect Calendar Open Loops (+/- 2  days)
+  instead C-c a r/1
 #+BEGIN_SRC emacs-lisp
   (my-org-agenda-recent-open-loops)
 #+END_SRC
-- [ ] Clear Email Inboxes
-  #+BEGIN_SRC emacs-lisp
-  (progn
-      (browse-url "https://mail.google.com/mail/u/0/#inbox")
-      (browse-url "https://mail.google.com/mail/u/1/#inbox")
-      (browse-url "https://mail.google.com/mail/u/2/#inbox"))
-  #+END_SRC
-
-  #+RESULTS:
 
 - [ ] Process streams (Slack, [[https://twitter.com/][Twitter]]) as inboxes - record tasks, read it later, file notes
 - [ ] Capture any remaining open loops as tasks
@@ -55,8 +44,5 @@
       (org-agenda nil "a")
       (org-agenda-day-view))
   #+END_SRC
-
-  #+RESULTS:
-  : Switched to day view
 
 - [ ] Clock out.
