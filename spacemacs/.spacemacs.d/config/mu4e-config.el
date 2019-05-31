@@ -153,11 +153,11 @@
            :match-func (lambda (msg)
                          (when msg
                            (string-prefix-p "/pec" (mu4e-message-field msg :maildir))))
-           :vars '( (user-mail-address  . "daniele.arosio@pec.it" )
+           :vars '( (user-mail-address  . "daniele.arosio@postecert.it" )
                     (user-full-name     . "Daniele Arosio" )
-                    (mu4e-drafts-folder . "/pec/Bozze")
-                    (mu4e-trash-folder  . "/pec/Cestino")
-                    (mu4e-sent-folder   . "/pec/Inviata")
+                    (mu4e-drafts-folder . "/pec/Drafts")
+                    (mu4e-trash-folder  . "/pec/trash")
+                    (mu4e-sent-folder   . "/pec/Sent Items")
                     (mu4e-compose-signature .
                                             (concat
                                              "daniele arosio\n"
@@ -184,7 +184,7 @@
 ;; don't save message to Sent Messages, GMail/IMAP will take care of this
 (setq mu4e-sent-messages-behavior
       (lambda ()
-        (if (string= (message-sendmail-envelope-from) "daniele.arosio@pec.it")
+        (if (string= (message-sendmail-envelope-from) "daniele.arosio@postecert.it")
             'sent
           'delete)))
 ;;; shortcuts ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -10,12 +10,13 @@ Expunge Both
 CopyArrivalDate yes
 
 #
-# Aruba pec
+# Postecert
 #
 IMAPAccount pec
-Host imaps.pec.aruba.it
-User daniele.arosio@pec.it
-PassCmd "pass email/arubapec"
+Host mail.postecert.it
+User daniele.arosio@postecert.it
+#PassCmd "pass email/postecert"
+Pass      PecF704U
 # Use SSL
 SSLType IMAPS
 CertificateFile /etc/ssl/certs/ca-certificates.crt
