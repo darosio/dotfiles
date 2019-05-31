@@ -120,6 +120,7 @@ This function should only modify configuration layer settings."
                      enable-flyspell-auto-completion t)
      ;; "SPC e l"
      ;; for python: pacaur -S flake8 or python-pylint
+     ;; remember also bandit and pylama
      ;; (syntax-checking :variables syntax-checking-use-original-bitmaps t)
      syntax-checking
      ;; (git :variables git-gutter-use-fringe t)
@@ -339,7 +340,7 @@ It should only modify the values of Spacemacs settings."
    ;; to create your own spaceline theme. Value can be a symbol or list with\
    ;; additional properties.
    ;; (default '(spacemacs :separator wave :separator-scale 1.5))
-   dotspacemacs-mode-line-theme '(all-the-icons :separator none)
+   dotspacemacs-mode-line-theme '(all-the-icons :separator none) ;; M-x all-the-icons-install-fonts
    ;; dotspacemacs-mode-line-theme '(vim-powerline)
 
    ;; If non-nil the cursor color matches the state color in GUI Emacs.
