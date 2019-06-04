@@ -263,6 +263,7 @@
   ;;                          ("rw" "Review: Weekly" entry (file+olp+datetree "/tmp/reviews.org")
   ;;                           (file "~/Dropbox/orgfiles/templates/weekly-review.template.org")))))
   ;; https://github.com/mwfogleman/.emacs.d/blob/master/michael.org
+  ;; https://gist.github.com/mwfogleman/267b6bc7e512826a2c36cb57f0e3d854
 
   (defun my-org-agenda-recent-open-loops ()
     (interactive)
@@ -272,20 +273,9 @@
       (org-agenda-list nil (org-read-date nil nil "-2d") 4)
       (beginend-org-agenda-mode-goto-beginning)))
 
-  (defun my-org-agenda-longer-open-loops ()
-    (interactive)
-    (let ((org-agenda-start-with-log-mode t)
-          (org-agenda-use-time-grid nil))
-      (fetch-calendar)
-      (org-agenda-list 'file (org-read-date nil nil "-10d") 10)
-      (beginend-org-agenda-mode-goto-beginning)))
-
-  ;; https://gist.github.com/mwfogleman/267b6bc7e512826a2c36cb57f0e3d854
-
-  (defvar dd7 (org-read-date nil nil "+7d"))
-
 
   (setq target-date (org-read-date nil nil "+7d"))
+
   (setq org-agenda-custom-commands
         '(
           ("r" "Daily Review" ((tags-todo "Today")
@@ -376,10 +366,7 @@
             (org-agenda-compact-blocks t)))
 
           ("b" "Backwards calendar loops"
-           ;;(:log t)  ; Automatically named "Log"
-           (,(my-org-agenda-longer-open-loops)))
-
-          ("B" "Backwards calendar loops"
+           ;; (,(my-org-agenda-longer-open-loops)))
            ((org-super-agenda-mode)
             (agenda ""
                     ((org-agenda-overriding-header "Backwards calendar loops")
@@ -394,16 +381,18 @@
             (tags "-NOTE-REFILE-ARCHIVE/DONE|CANCELLED"
                   ((org-agenda-overriding-header "Tasks to Archive")))))
 
-          ("L" "Stadalone Tasks"
+          ("l" "Stadalone Tasks"
            ((org-super-agenda-mode)
             (alltodo "" ((org-super-agenda-groups '(;; Do not discard deadlines rather group into recurring and habits
+                                                    (:discard (:tag "proj"))
                                                     (:name "High-priority tasks"
                                                            :priority>= "A")
-                                                    (:discard (:tag "proj"))
                                                     (:name "Habits" :habit t :order 100)
                                                     (:auto-group t :order 90)
+                                                    (:name "Transforming into projects?"
+                                                           :children todo :order 1)
                                                     (:name "With subtasks"
-                                                           :children t :order 19)
+                                                           :children t :order 2)
                                                     (:name "Personal Next"
                                                            :and (:tag ("PERSONAL" "@home") :todo "NEXT")
                                                            :order 20)
@@ -413,13 +402,14 @@
                                                     ;; (:name "Personal"
                                                     ;;        (:tag ("PERSONAL" "@home") :auto-todo))
                                                     (:name "Work Next"
-                                                           :and (:tag "WORK" :todo "NEXT"))
+                                                           :and (:tag "WORK" :todo "NEXT")
+                                                           :order 5)
                                                     (:name "Work"
                                                            :and (:tag "WORK" :todo "TODO")
-                                                           :order 1)
+                                                           :order 10)
                                                     (:name "Other next actions"
                                                            :todo "NEXT"
-                                                           :order 2)
+                                                           :order 20)
                                                     (:name "Other todo actions"
                                                            :todo "TODO"
                                                            :order 30)
@@ -438,6 +428,9 @@
                      (org-agenda-time-grid nil)
                      (org-agenda-overriding-header "Next week")
                      (org-deadline-warning-days 0)
+                     (org-agenda-skip-deadline-prewarning-if-scheduled t)
+                     (org-agenda-skip-scheduled-delay-if-deadline t)
+                     ;; (org-agenda-skip-scheduled-if-deadline-is-shown t)
                      ))
             (org-super-agenda-mode)
             (agenda "" ((org-super-agenda-groups `(
@@ -456,9 +449,6 @@
                         ;; (org-agenda-start-day "+7d")
                         (org-agenda-overriding-header "All 2-year deadlines")
                         (org-agenda-show-all-dates nil)
-                        ;; (org-agenda-category-filter-preset '("-Habits")) ;; exclude gtd.org/Habits by property category="Habits"
-                        ;; (org-agenda-entry-types '(:deadline)) ;; this entry excludes :scheduled
-                        ;; (org-agenda-skip-function '(org-agenda-skip-subtree-if "DEADLINE<=+7d"))
                         (org-deadline-warning-days 730)))
             ))
 

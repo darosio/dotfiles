@@ -25,46 +25,48 @@
   note: There is still few 2DO, FIXME, or 2MAYBE
         maybe I can improve mu4e shortcuts / bookmarks e separare mailist (confocal)
          
-** *Get Clear*
-*** Collect Loose Papers and Materials [3/3]
-     - [X] Empty wallet of receipts and paper
-     - [X] Empty backpack. Put relevant items into inbox.
-     - [X] Get lose paper from desk and put it to inbox
-
-*** Get “IN” to Zero [8/8]
-     - [X] Purge physical inbox @fbk "teca nera"
-     - [X] Meeting and various notes scribbled on paper notebook 
-     - [X] Voice Mail
-     - [X] Gmail 
-       - [X] archive =j g= duplicate using =C-v=
-       - [X] inbox =j j= 
-       - [X] sent =j o sent/g=
-       - [X] spam ...
-       - [X] trash =j o trash/g=  DO NOT =C-v= Deduplicate!  =Del= (or =d=)
-             restano in all mail le mail magically tagged as important.
-             #+BEGIN_SRC emacs-lisp :results none
-             (progn
-                 (browse-url "https://mail.google.com/mail/u/0/#all")
-                 (browse-url "https://mail.google.com/mail/u/0/#inbox")
-                 (browse-url "https://mail.google.com/mail/u/1/#inbox"))
-             #+END_SRC
-     - [X] Cnr email ==j i== 
-           sent, draft ... should be empty
-     - [X] Clean up ~/home folders (hunza, sterzing)
+** *Get Clear* [0/0]
+ - Collect Loose Papers and Materials [0/3]
+   - [ ] Empty wallet of receipts and paper
+   - [ ] Empty backpack. Put relevant items into inbox.
+   - [ ] Get lose paper from desk and put it to inbox
+ - Get “IN” to Zero [0/9]
+   - [ ] Purge physical inbox @fbk "teca nera"
+   - [ ] Meeting and various notes scribbled on paper notebook 
+   - [ ] Voice Mail
+   - [ ] Gmail 
+     - [ ] archive =j g= duplicate using =C-v=
+     - [ ] inbox =j j= 
+     - [ ] sent =j o sent/g=
+     - [ ] spam ...
+     - [ ] trash =j o trash/g=  DO NOT =C-v= Deduplicate!  =Del= (or =d=)
+           restano in all mail le mail magically tagged as important.
            #+BEGIN_SRC emacs-lisp :results none
-             (dired "~/")
+           (progn
+               (browse-url "https://mail.google.com/mail/u/0/#all")
+               (browse-url "https://mail.google.com/mail/u/0/#inbox")
+               (browse-url "https://mail.google.com/mail/u/1/#inbox"))
            #+END_SRC
-     - [X] Purge Refs folders [2/2]
-       Store or delete unneded items
-       - [X] cnr/refs mailbox   =j r=
-       - [X] phone/box   =ranger g t=
-     - [X] Browser Tabs (hunza, sterzing)
-     - [X] flow (slack, twitter, google suggestion on phone ?)
-             
-*** Empty Your Head [1/1]
-    - [X] New projects, tasks, waiting-fors, someday/maybes, etc., not yet captured
+   - [ ] Cnr email ==j i== 
+         sent, draft ... should be empty
+   - [ ] Clean up ~/home folders (hunza, sterzing)
+         #+BEGIN_SRC emacs-lisp :results none
+           (dired "~/")
+         #+END_SRC
+   - [ ] Purge Refs folders [0/2]
+     Store or delete unneded items
+     - [ ] cnr/refs mailbox   =j r=
+     - [ ] phone/box   =ranger g t=
+   - [ ] Browser Tabs (hunza, sterzing)
+   - [ ] flow (slack, twitter, google suggestion on phone ?)
+ - Empty Your Head [0/1]
+   - [ ] New projects, tasks, waiting-fors, someday/maybes, etc., not yet captured
 
-** Get Current [1/8]
+** Get Current [0/9]
+ - [ ] Fetch gcal =SPC o g=
+   #+begin_src emacs-lisp :results none
+     (fetch-calendar)
+   #+end_src
  - [ ] Review Previous Calendar Data
    =, a b=  (=L)=
    #+BEGIN_SRC emacs-lisp
@@ -79,7 +81,7 @@
  - [ ] REFILE tasks(and projects) from inbox.org
    =, a x=
  - [ ] Review action list for standalone tasks
-   in place of =, a w= and =, a p= use: =, a L=
+   in place of =, a w= and =, a p= use: =, a l=
    should they be grouped into a project?
    - Set finished tasks to a "done" state 
    - Set reminders if necessary
@@ -94,14 +96,14 @@
      to track. If something is overdue, or if I need a progress report, I send an
      e-mail and nudge the person responsible. I note in the task itself that I
      sent a reminder.
- - [X] Review Project (and Larger Outcome) Lists:
+ - [ ] Review Project (and Larger Outcome) Lists:
        #+BEGIN_SRC emacs-lisp
          (project-overview)
          (project-deadline-overview)
        #+END_SRC
-   - [X] Review Active Project List =, a j
+   - [ ] Review Active Project List =, a j
      Progetto := tag="proj" 
-     - [X] make sure "Category" property is set; otherwise set it =, i p=
+     - [ ] make sure "Category" property is set; otherwise set it =, i p=
      - FIXME maybe remove all todo states
      - “What do I really need to accomplish this week?” Like goals, I either
        identity the next action and assign a due date for the day in the upcoming
