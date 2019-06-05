@@ -116,11 +116,9 @@
  - [ ] Archive completed tasks  =$=  or inactive projects
    =, a x=
    cfr. =, a t=  and =3 g r=
- - [ ] Review Any Relevant Checklists
-   - habits
+ - [ ] Review Unscheduled inactive Tasks list
+ - [ ] Review Habits and Recurring Checklists
    - Maintenance's
-   - recurring
-   - unscheduled ?
   
 ** Get Creative [0/4]
  - [ ] Review IDEAs !! 2DO
