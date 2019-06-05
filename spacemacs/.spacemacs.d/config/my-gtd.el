@@ -334,8 +334,8 @@
                       (org-super-agenda-groups
                        `((:name "Important" :priority>="A")
                          (:discard (:deadline (after ,target-date)))
-                         (:name "Due within next 7 days"
-                                :deadline future)))))
+                         (:name "Due within next 7 days" :deadline future)
+                         (:discard (:anything t))))))
             (tags "REFILE"
                   ((org-agenda-overriding-header "Tasks to Refile")))
             (tags "-NOTE-REFILE-ARCHIVE/DONE|CANCELLED"
