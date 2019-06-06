@@ -284,7 +284,7 @@
                                            (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline))
                                            (org-agenda-todo-ignore-scheduled 'future)))))
 
-          ("d" "Today actions list"
+          ("a" "Today actions list"
            ((org-super-agenda-mode)
             (agenda "" ((org-deadline-warning-days 1)
                         (org-super-agenda-groups
