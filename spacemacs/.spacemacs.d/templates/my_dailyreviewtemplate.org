@@ -1,11 +1,10 @@
 * Closing Today
-- [ ] Mark tasks finished, if any, and archive
-- [ ] Move the tasks from [[file:~/Dropbox/orgfiles/inbox.org][Inbox]] to their respective project, priority, tag.
-  #+begin_src emacs-lisp :results none
-  (org-agenda nil "x")
-  #+end_src
-- [ ] Archive all *DONE* tasks.
-- [ ] Reschedule tasks to other day  =, a r= 
+- [ ] Reschedule tasks to other day
+  =, a r= 
+  - Mark tasks finished, if any
+  - Move tasks from [[file:~/Sync/share/phone/box/org/inbox.org][Inbox]] to their respective project or list and set priority,
+    tags, etc.
+  - Archive *DONE and CANCELLED* tasks
 - [ ] Planning Tomorrow
   - Find out what are my free hours of work.
   - Make sure I've not over-scheduled my day.
