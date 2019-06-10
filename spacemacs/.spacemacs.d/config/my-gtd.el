@@ -226,13 +226,13 @@
 
   (defun my-new-weekly-review ()
     (interactive)
-      (progn
-        (org-capture nil "rw")
-        (org-capture-finalize t)
-        (org-speed-move-safe 'outline-up-heading)
-        (org-narrow-to-subtree)
-        (fetch-calendar)
-        (org-clock-in)))
+    (progn
+      (org-capture nil "rw")
+      (org-capture-finalize t)
+      (org-speed-move-safe 'outline-up-heading)
+      (org-narrow-to-subtree)
+      (fetch-calendar)
+      (org-clock-in)))
   (define-key global-map "\C-crw" 'my-new-weekly-review)
 
   ;; (defun nemacs-org-capture-review-weekly ()
@@ -279,11 +279,10 @@
   (setq org-agenda-custom-commands
         '(
           ("u" "Unscheduled TODOs" ((tags-todo "-proj-CANCELLED/-WAITING-HOLD"
-                                          ;; ("u" "Unscheduled TODOs" ((todo "TODO"
-                                          ((org-agenda-overriding-header "Unscheduled inactive Tasks")
-                                           (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline))
-                                           (org-agenda-todo-ignore-scheduled 'future)))))
-
+                                               ;; ("u" "Unscheduled TODOs" ((todo "TODO"
+                                               ((org-agenda-overriding-header "Unscheduled inactive Tasks")
+                                                (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline))
+                                                (org-agenda-todo-ignore-scheduled 'all)))))
           ("a" "Today actions list"
            ((org-super-agenda-mode)
             (agenda "" ((org-deadline-warning-days 1)
@@ -314,20 +313,20 @@
           ("r" "Daily review"
            ((org-super-agenda-mode)
             (agenda "Today" ((org-deadline-warning-days 0)
-                        (org-super-agenda-groups
-                         '((:name "Overdue"
-                                  :scheduled past
-                                  :deadline past)
-                           (:name "Today schedule"
-                                  :time-grid t
-                                  :deadline today
-                                  :scheduled today
-                                  :order 1)))))
+                             (org-super-agenda-groups
+                              '((:name "Overdue"
+                                       :scheduled past
+                                       :deadline past)
+                                (:name "Today schedule"
+                                       :time-grid t
+                                       :deadline today
+                                       :scheduled today
+                                       :order 1)))))
             (agenda "Tomorrow" ((org-agenda-start-day "+1d")
-                        (org-super-agenda-groups
-                        '((:name "Tomorrow schedule"
-                                 :time-grid t
-                                 :scheduled future)))))
+                                (org-super-agenda-groups
+                                 '((:name "Tomorrow schedule"
+                                          :time-grid t
+                                          :scheduled future)))))
             (alltodo "Further picks"
                      ((org-agenda-overriding-header "")
                       (org-agenda-todo-ignore-scheduled t)
@@ -369,47 +368,59 @@
                                                     (:discard (:anything t))
                                                     ))
                          (org-agenda-overriding-header "Habits and Recurring Tasks")))))
+          ("H" "Habits and Recurring Tasks"
+           ((org-super-agenda-mode)
+            (agenda "deadlines" ((org-super-agenda-groups '((:discard (:not (:deadline t)))
+                                                            (:name "Habits" :habit t)
+                                                            (:auto-group t)
+                                                            (:discard (:anything t))))
+                                 (org-agenda-overriding-header "Recurring deadlines")
+                                 (org-agenda-span 'day)
+                                 (org-deadline-warning-days 730)
+                                 (org-agenda-compact-blocks nil)))
+            (alltodo "scheduled" ((org-super-agenda-groups '((:discard (:deadline t))
+                                                             (:name "Scheduled Habits" :habit t)
+                                                             (:auto-group t)
+                                                             (:discard (:anything t))))
+                                  (org-agenda-overriding-header "Scheduled Habits and Recurring Tasks")
+                                  (org-agenda-compact-blocks nil)))))
           ("l" "Stadalone Tasks"
            ((org-super-agenda-mode)
-            (alltodo "" ((org-super-agenda-groups '(;; Do not discard deadlines rather group into recurring and habits
-                                                    (:discard (:tag "proj"))
-                                                    (:discard (:habit t))
-                                                    ;; (:discard (:auto-group t)) ;; unable to discard recurring
-                                                    (:name "High-priority tasks"
-                                                           :priority>= "A")
-                                                    (:auto-group t :order 90)
-                                                    (:name "Transforming into projects?"
-                                                           :children todo :order 1)
-                                                    (:name "With subtasks"
-                                                           :children t :order 2)
-                                                    (:name "Personal Next"
-                                                           :and (:tag ("PERSONAL" "@home") :todo "NEXT")
-                                                           :order 20)
-                                                    (:name "Personal"
-                                                           :and (:tag ("PERSONAL" "@home") :todo "TODO")
-                                                           :order 21)
-                                                    ;; (:name "Personal"
-                                                    ;;        (:tag ("PERSONAL" "@home") :auto-todo))
-                                                    (:name "Work Next"
-                                                           :and (:tag "WORK" :todo "NEXT")
-                                                           :order 5)
-                                                    (:name "Work"
-                                                           :and (:tag "WORK" :todo "TODO")
-                                                           :order 10)
-                                                    (:name "Other next actions"
-                                                           :todo "NEXT"
-                                                           :order 20)
-                                                    (:name "Other todo actions"
-                                                           :todo "TODO"
-                                                           :order 30)
-                                                    (:discard (:anything t))
-                                                    ))
-                         (org-agenda-overriding-header "Standalone Tasks")
-                         (org-agenda-sorting-strategy '(deadline-up category-keep priority-down))
-                         (org-tags-match-list-sublevels 'indented) ;; FIXME does nothing
-                         ))))
+            (tags-todo "-recurring" ((org-super-agenda-groups '((:discard (:tag "proj"))
+                                                                (:discard (:habit t))
+                                                                ;; (:discard (:auto-group t)) ;; unable to discard recurring
+                                                                (:name "High-priority tasks"
+                                                                       :priority>= "A")
+                                                                (:name "Transforming into projects?"
+                                                                       :children todo :order 1)
+                                                                (:name "With subtasks"
+                                                                       :children t :order 2)
+                                                                (:name "Personal Next"
+                                                                       :and (:tag ("PERSONAL" "@home") :todo "NEXT")
+                                                                       :order 20)
+                                                                (:name "Personal"
+                                                                       :and (:tag ("PERSONAL" "@home") :todo "TODO")
+                                                                       :order 21)
+                                                                ;; (:name "Personal"
+                                                                ;;        (:tag ("PERSONAL" "@home") :auto-todo))
+                                                                (:name "Work Next"
+                                                                       :and (:tag "WORK" :todo "NEXT")
+                                                                       :order 5)
+                                                                (:name "Work"
+                                                                       :and (:tag "WORK" :todo "TODO")
+                                                                       :order 10)
+                                                                (:name "Other next actions"
+                                                                       :todo "NEXT"
+                                                                       :order 20)
+                                                                (:name "Other todo actions"
+                                                                       :todo "TODO"
+                                                                       :order 30)
+                                                                (:discard (:anything t))))
+                                     (org-agenda-overriding-header "Standalone Tasks")
+                                     (org-agenda-sorting-strategy '(deadline-up category-keep priority-down))
+                                     (org-tags-match-list-sublevels 'indented)))))
           ("f" "Upcoming week and future deadlines"
-            ((org-super-agenda-mode)
+           ((org-super-agenda-mode)
             (agenda "next week"
                     ((org-agenda-span 8)
                      (org-agenda-start-on-weekday nil)
@@ -437,7 +448,7 @@
                         (org-agenda-overriding-header "All 2-year deadlines")
                         (org-agenda-show-all-dates nil)
                         (org-deadline-warning-days 730))))
-            ((org-agenda-compact-blocks t)))
+           ((org-agenda-compact-blocks t)))
           ("w" "Action list excluding PERSONAL"
            ((agenda "" ((org-agenda-overriding-header "Today's Schedule:")
                         (org-agenda-span 2)))
@@ -484,22 +495,22 @@
                                   :order 1)))
                         ))
             (tags-todo "*" ((org-agenda-overriding-header "")
-                         (org-super-agenda-groups
-                          '((:name "Next tasks"
-                                   :todo "NEXT"
-                                   :order 1)
-                            (:name "Tasks to archive"
-                                   ;; :todo "DONE"
-                                   :tag "CANCELLED"
-                                   :todo "CANCELLED")
-                            (:name "Tasks to refile"
-                                   :tag "REFILE")
-                            (:name "Waiting standalone tasks"
-                                   :tag "WAITING")
-                            ;; (:discard (:tag ("NOTE" "ARCHIVE")))
-                            (:discard (:tag "proj"))
-                            ;; (:discard (:todo ""))
-                            ))))
+                            (org-super-agenda-groups
+                             '((:name "Next tasks"
+                                      :todo "NEXT"
+                                      :order 1)
+                               (:name "Tasks to archive"
+                                      ;; :todo "DONE"
+                                      :tag "CANCELLED"
+                                      :todo "CANCELLED")
+                               (:name "Tasks to refile"
+                                      :tag "REFILE")
+                               (:name "Waiting standalone tasks"
+                                      :tag "WAITING")
+                               ;; (:discard (:tag ("NOTE" "ARCHIVE")))
+                               (:discard (:tag "proj"))
+                               ;; (:discard (:todo ""))
+                               ))))
             (tags "-NOTE-REFILE-ARCHIVE/DONE|CANCELLED"
                   ((org-agenda-overriding-header "Tasks to Archive")))
             ))
@@ -534,8 +545,8 @@
                   (
                    (org-agenda-overriding-header "")
                    (org-super-agenda-groups
-                     '((:auto-category t
-                        )))
+                    '((:auto-category t
+                                      )))
                    ))))
 
           ("j" "proJects"
