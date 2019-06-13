@@ -1,5 +1,4 @@
 export EDITOR='emacsclient -c'
-export  MU_PLAY_PROGRAM='rifle'
 function ediff () {
     if [ "X${2}" = "X" ]; then
         echo "USAGE: ediff <FILE 1> <FILE 2>"
