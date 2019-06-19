@@ -2,10 +2,6 @@
 # ~/.bashrc
 #
 
-PATH=$PATH:$HOME/.progs/git-annex.linux
-PATH="$(ruby -e 'print Gem.user_dir')/bin:$PATH"
-export PATH
-
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
@@ -13,8 +9,10 @@ export PATH
 ##DD [ -z "$SSH_AUTH_SOCK" ] || export SSH_AUTH_SOCK
 
 alias ls='ls --color=auto'
+
 source $HOME/.aliases
-source $HOME/.progs/bashrc
+# host specific bash_profile
+[[ -r .bashrc.$HOSTNAME ]] && . .bashrc.$HOSTNAME
 
 #PS1='[\u@\h \W]\$ '
 source /usr/share/git/completion/git-prompt.sh
@@ -39,5 +37,3 @@ gpg-connect-agent updatestartuptty /bye > /dev/null
 
 #eval "$(fasd --init auto)"
 
-# host specific bash_profile
-[[ -r .bashrc.$HOSTNAME ]] && . .bashrc.$HOSTNAME

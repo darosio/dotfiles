@@ -8,7 +8,6 @@ function ediff () {
         emacsclient -tc -a emacs -e "(ediff \"$quoted1\" \"$quoted2\")"
     fi
 }
-export PATH=$PATH:~/workspace/HIV_pipeline_mpba/HIV/library_name/
 # for data management in annexes
 copythistree() { 
     find . -type d -exec mkdir -p $1/{} \;
@@ -146,15 +145,9 @@ alias nb='jupyter notebook'
 alias ipythonp='ipython --pylab=inline'
 alias qpy='ipython qtconsole --pylab'
 alias sm=".local/bin/msmtp-runqueue.sh"
+
 #export CDPATH='.:/Data/0dan'
-
-# PATH
-PATH=$PATH:$HOME/.local/bin
-export PATH
-
 export IGNOREEOF=1
-##export VBOX_USB=usbfs
-#export PYTHONPATH=~/lib/python2.7
 
 alias pyp='sudo pacmatic -Syu'
 alias pya='pacaur -Syua'
