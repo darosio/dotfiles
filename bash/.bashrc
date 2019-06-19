@@ -11,6 +11,7 @@
 alias ls='ls --color=auto'
 
 source $HOME/.aliases
+source $HOME/.progs/bash_aliases
 # host specific bash_profile
 [[ -r .bashrc.$HOSTNAME ]] && . .bashrc.$HOSTNAME
 
