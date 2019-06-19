@@ -135,7 +135,17 @@ This function should only modify configuration layer settings."
      csv
      ;; ;; (elfeed :variables
      ;; ;;         rmh-elfeed-org-files (list "~/Sync/.elfeed/1.org"))
-     pandoc ;; need wkhtmltopdf
+     ;; need wkhtmltopdf
+     (pandoc :variables
+             ;; default options for all output formats
+             org-pandoc-options '((standalone . t))
+             ;; org-pandoc-options '((self-contained . t))
+             ;; cancel above settings only for 'docx' format
+             org-pandoc-options-for-docx '((standalone . nil))
+             ;; special settings for beamer-pdf and latex-pdf exporters
+             org-pandoc-options-for-beamer-pdf '((pdf-engine . "xelatex"))
+             org-pandoc-options-for-latex-pdf '((pdf-engine . "xelatex"))
+             )
      restructuredtext
      graphviz
      html ;; also non sure I need it
