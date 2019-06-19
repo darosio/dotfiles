@@ -15,9 +15,7 @@ CopyArrivalDate yes
 IMAPAccount pec
 Host mail.postecert.it
 User daniele.arosio@postecert.it
-#PassCmd "pass email/postecert"
-#Pass      PecF704u
-Pass	PD39\4sZRK)YmXj
+PassCmd "pass email/postecert"
 # Use SSL
 SSLType IMAPS
 CertificateFile /etc/ssl/certs/ca-certificates.crt
