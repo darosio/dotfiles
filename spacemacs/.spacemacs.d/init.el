@@ -786,41 +786,4 @@ before packages are loaded."
 This is an auto-generated function, do not modify its content directly, use
 Emacs customize menu instead.
 This function is called at the very end of Spacemacs initialization."
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(evil-want-Y-yank-to-eol nil)
- '(org-trello-current-prefix-keybinding "C-c o" nil (org-trello))
- '(package-selected-packages
-   (quote
-    (yasnippet-snippets evil-magit color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized ace-window helm magit slime zen-and-art-theme yapfify xresources-theme ws-butler writeroom-mode writegood-mode wordnut winum which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package typo twittering-mode twilight-bright-theme toc-org theme-changer tangotango-theme tango-plus-theme tagedit systemd symon sublime-themes subatomic256-theme string-inflection spaceline-all-the-icons spacegray-theme solarized-theme soft-stone-theme soft-morning-theme smyx-theme smeargle slime-company slim-mode sdcv scss-mode sass-mode restart-emacs rainbow-delimiters pyvenv pytest pyenv-mode py-isort pug-mode prettier-js popwin plantuml-mode pippel pipenv pip-requirements persp-mode pcre2el password-generator paradox pandoc-mode ox-reveal ox-pandoc overseer orgit org-ref org-projectile org-present org-pomodoro org-noter org-mime org-journal org-gcal org-download org-bullets org-brain open-junk-file ob-ipython nov neotree nameless mu4e-maildirs-extension mu4e-alert move-text monokai-theme molokai-theme mmm-mode material-theme markdown-toc magit-svn magit-gitflow magit-annex macrostep lorem-ipsum live-py-mode link-hint langtool intellij-theme indent-guide importmagic impatient-mode idea-darkula-theme hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-pydoc helm-purpose helm-projectile helm-org-rifle helm-mu helm-mode-manager helm-make helm-gitignore helm-git-grep helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag graphviz-dot-mode google-translate golden-ratio gnuplot gitignore-templates gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-commit git-annex gh-md fzf fuzzy font-lock+ flyspell-popup flyspell-correct-helm flycheck-pos-tip flx-ido flatui-theme fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-org evil-numbers evil-nerd-commenter evil-matchit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu emmet-mode elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-themes doom-modeline diminish dictcc deft define-word darcula-theme cython-mode csv-mode counsel-projectile company-web company-statistics company-quickhelp company-anaconda common-lisp-snippets column-enforce-mode clean-aindent-mode centered-cursor-mode borland-blue-theme blackboard-theme badwolf-theme auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile atom-dark-theme artbollocks-mode ample-zen-theme aggressive-indent afternoon-theme ace-link ace-jump-helm-line ac-ispell)))
- '(safe-local-variable-values
-   (quote
-    ((eval bibtex-set-dialect
-           (quote biblatex))
-     (org-ref-pdf-directory . "~/Sync/biblio/MY/")
-     (bibtex-completion-notes-path . "~/Sync/biblio/MY.org")
-     (org-ref-bibliography-notes . "~/Sync/biblio/MY.org")))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
 )
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   (quote
-    (zen-and-art-theme yapfify xresources-theme ws-butler writegood-mode wordnut winum which-key wgrep web-mode volatile-highlights visual-fill-column vi-tilde-fringe uuidgen use-package typo twittering-mode twilight-bright-theme toc-org theme-changer tangotango-theme tango-plus-theme tagedit systemd sublime-themes subatomic256-theme spaceline powerline spacegray-theme solarized-theme soft-stone-theme soft-morning-theme smyx-theme smex smeargle slime-company slime slim-mode sdcv showtip scss-mode sass-mode restart-emacs rainbow-delimiters pyvenv pytest pyenv-mode py-isort pug-mode popwin plantuml-mode pip-requirements persp-mode paradox spinner pandoc-mode ox-twbs ox-pandoc orgit org-super-agenda org-ref pdf-tools key-chord tablist org-projectile org-category-capture org-present org-pomodoro org-noter org-mime org-gcal request-deferred org-download org-bullets open-junk-file ob-ipython neotree mu4e-maildirs-extension mu4e-alert alert log4e gntp move-text monokai-theme molokai-theme mmm-mode material-theme markdown-toc magit-todos pcre2el magit-gitflow magit-popup magit-annex macrostep lorem-ipsum live-py-mode linum-relative link-hint langtool jupyter zmq ivy-hydra interleave intellij-theme indent-guide idea-darkula-theme hydra lv hy-mode dash-functional hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation helm-make helm-bibtex parsebib helm helm-core haml-mode graphviz-dot-mode google-translate goldendict golden-ratio gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-annex gh-md fzf fuzzy flyspell-popup flyspell-correct-ivy flyspell-correct flycheck-pos-tip flycheck flx-ido flx flatui-theme fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist highlight evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit magit transient git-commit with-editor evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu ess-smart-equals ess-R-data-view ctable ess julia-mode emmet-mode elisp-slime-nav ein skewer-mode markdown-mode polymode deferred request websocket js2-mode simple-httpd dumb-jump doom-themes all-the-icons memoize dna-mode diminish dictcc deft define-word darcula-theme cython-mode csv-mode counsel-projectile projectile pkg-info epl counsel swiper ivy company-web web-completion-data company-statistics company-quickhelp pos-tip company-anaconda company common-lisp-snippets column-enforce-mode color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized clean-aindent-mode borland-blue-theme blackboard-theme bind-map bind-key biblio biblio-core beginend basic-mode badwolf-theme auto-yasnippet yasnippet auto-highlight-symbol auto-dictionary auto-compile packed atom-dark-theme async artbollocks-mode anaconda-mode pythonic f ample-zen-theme aggressive-indent afternoon-theme adaptive-wrap ace-window ace-link avy academic-phrases ht s dash ac-ispell auto-complete popup))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
