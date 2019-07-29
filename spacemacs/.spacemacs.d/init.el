@@ -125,7 +125,8 @@ This function should only modify configuration layer settings."
      syntax-checking
      ;; (git :variables git-gutter-use-fringe t)
      git
-     bibtex
+     ;; bibtex
+     my-bibtex
      (pdf :variables
           pdf-misc-print-programm "/usr/bin/lpr"
           pdf-misc-print-programm-args (quote ("-o media=a4" "-o fitplot"))
@@ -768,7 +769,7 @@ before packages are loaded."
                         (require 'my-org-publish))
   ;; (with-eval-after-load 'elfeed
   ;;   (require 'elfeed-config))
-  (with-eval-after-load 'bibtex (require 'bibtex-config))
+  ;; (with-eval-after-load 'bibtex (require 'bibtex-config))
   (with-eval-after-load 'mu4e (require 'mu4e-config))
 
   ;; ;; TAB for za
