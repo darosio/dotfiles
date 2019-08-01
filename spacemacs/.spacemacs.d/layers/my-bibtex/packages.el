@@ -11,23 +11,26 @@
 
 (setq my-bibtex-packages
       '(
-        ;; auctex
-        ;; org
-        ;; markdown-mode
+        auctex
+        org
+        markdown-mode
         org-ref
-        ;; (helm-bibtex :requires helm)
         ivy-bibtex
         biblio
         biblio-core
         ))
 
-(defun bibtex/post-init-auctex ()
+(defun my-bibtex/post-init-auctex ()
   (spacemacs/set-leader-keys-for-major-mode 'latex-mode
-    "ic" 'org-ref-helm-insert-cite-link))
+    "ic" 'org-ref-icy-insert-cite-link))
 
 (defun my-bibtex/post-init-org ()
+  ;; folding in .bib =z m= and =TAB=
+  ;; (define-key bibtex-mode-map (kbd "<tab>") (kbd "za"))
+  (add-hook 'bibtex-mode-hook 'outline-minor-mode)
   (spacemacs/set-leader-keys-for-major-mode 'org-mode
-    "ic" 'org-ref-helm-insert-cite-link))
+    "ic" 'org-ref-ivy-insert-cite-link))
+  ;;   "ic" 'org-ref-helm-insert-cite-link))
 
 (defun my-bibtex/init-org-ref ()
   (use-package org-ref
@@ -62,6 +65,7 @@
         ;; Open
         "b" 'org-ref-open-in-browser
         "n" 'org-ref-open-bibtex-notes
+        ;; "n" 'org-ref-bibtex-hydra/org-ref-open-bibtex-notes
         "p" 'org-ref-open-bibtex-pdf
 
         ;; Misc
@@ -77,7 +81,8 @@
         "lp" 'pubmed-insert-bibtex-from-pmid))
     :config
     (progn
-      (setq org-ref-default-bibliography '("~/Sync/biblio/biblio.bib")
+      (setq org-ref-default-bibliography '("~/Sync/biblio/biblio.bib"
+                                           "~/Sync/biblio/MY.bib")
             org-ref-pdf-directory "~/Sync/biblio/pdfs/"
             org-ref-bibliography-notes "~/Sync/biblio/biblio.org"
             org-ref-bibliography-files '("~/Sync/biblio/biblio.bib"
@@ -92,16 +97,13 @@
             bibtex-autokey-titlewords 3
             bibtex-autokey-titleword-case-convert 'capitalize
             bibtex-autokey-titleword-length 5)
-      ;; one notes template
-      (defun my/org-ref-notes-function (candidates)
-        (let ((key (helm-marked-candidates)))
-          (funcall org-ref-notes-function (car key))))
-      (helm-delete-action-from-source "Edit notes" helm-source-bibtex)
-      ;; Note that 7 is a magic number of the index where you want to insert the command. You may need to change yours.
-      (helm-add-action-to-source "Edit notes" 'my/org-ref-notes-function helm-source-bibtex 7)
-      ;; folding in .bib
-      (add-hook 'bibtex-mode-hook 'outline-minor-mode)  ;; =z M=
-      (define-key bibtex-mode-map (kbd "<tab>") (kbd "za"))  ;; =TAB=
+      ;; ;; one notes template
+      ;; (defun my/org-ref-notes-function (candidates)
+      ;;   (let ((key (ivy-marked-candidates)))
+      ;;     (funcall org-ref-notes-function (car key))))
+      ;; (ivy-delete-action-from-source "Edit notes" ivy-source-bibtex)
+      ;; ;; Note that 7 is a magic number of the index where you want to insert the command. You may need to change yours.
+      ;; (ivy-add-action-to-source "Edit notes" 'my/org-ref-notes-function ivy-source-bibtex 7)
       )))
 
 (defun my-bibtex/pre-init-org-ref ()
@@ -109,47 +111,59 @@
 
 (defun my-bibtex/post-init-markdown-mode ()
   (spacemacs/set-leader-keys-for-major-mode 'markdown-mode
-    "ic" 'org-ref-helm-insert-cite-link))
+    "ic" 'org-ref-icy-insert-cite-link))
 
-(defun my-bibtex/init-helm-bibtex ())
+;; (defun my-bibtex/init-helm-bibtex ())
 (defun my-bibtex/init-ivy-bibtex ()
   (use-package ivy-bibtex
     :defer t
-  :config
-  (progn
-    (setq bibtex-completion-bibliography '(("~/Sync/biblio/biblio.org" . "~/Sync/biblio/biblio.bib")
-                                           ("~/Sync/biblio/MY.org" . "~/Sync/biblio/MY.bib"))
-          bibtex-completion-notes-path "~/Sync/biblio/biblio.org"
-          bibtex-completion-library-path '("~/Sync/biblio/pdfs/"
-                                           "~/Sync/biblio/MY/"
-                                           "~/Sync/biblio/books/"))
-    ;; search also in tags and keywords fields
-    (setq bibtex-completion-additional-search-fields '(tags keywords))
-    ;; find also additional pdfs
-    (setq bibtex-completion-find-additional-pdfs t)
-    ;; works only from helm-bibtex. less common e.g. ".md" can go into file={...} 
-    (setq bibtex-completion-pdf-extension '(".pdf" ".avi" ".ppt" ".odp" ".odt" ".doc" ".docx"))
-    ;; Okular =P=
-    (defun bibtex-completion-open-pdf-external (keys &optional fallback-action)
-      (let ((bibtex-completion-pdf-open-function
-             (lambda (fpath) (start-process "okular" "*helm-bibtex-okular*" "/usr/bin/okular" fpath))))
-        (bibtex-completion-open-pdf keys fallback-action)))
-    (ivy-bibtex-ivify-action bibtex-completion-open-pdf-external ivy-bibtex-open-pdf-external)
-    (ivy-add-actions
-     'ivy-bibtex
-     '(("P" ivy-bibtex-open-pdf-external "Open PDF file in external viewer (if present)")))
-    ;; Zotero
-    (setq bibtex-completion-pdf-field "file")
-    ;; Notes template (compatible with interleave)
-    (setq bibtex-completion-notes-template-one-file
-          (format
-           "\n** TODO ${=key=}: ${title}\n \
+    :config
+    (progn
+      (setq bibtex-completion-bibliography '(("~/Sync/biblio/biblio.org" . "~/Sync/biblio/biblio.bib")
+                                             ("~/Sync/biblio/MY.org" . "~/Sync/biblio/MY.bib"))
+            bibtex-completion-notes-path "~/Sync/biblio/biblio.org"
+            bibtex-completion-library-path '("~/Sync/biblio/pdfs/"
+                                             "~/Sync/biblio/MY/"
+                                             "~/Sync/biblio/books/"))
+      ;; search also in tags and keywords fields
+      (setq bibtex-completion-additional-search-fields '(tags keywords))
+      ;; find also additional pdfs
+      (setq bibtex-completion-find-additional-pdfs t)
+      ;; works only from helm-bibtex. less common e.g. ".md" can go into file={...} 
+      (setq bibtex-completion-pdf-extension '(".pdf" ".avi" ".ppt" ".odp" ".odt" ".doc" ".docx"))
+      ;; Okular =P=
+      (defun bibtex-completion-open-pdf-external (keys &optional fallback-action)
+        (let ((bibtex-completion-pdf-open-function
+               (lambda (fpath) (start-process "okular" "*helm-bibtex-okular*" "/usr/bin/okular" fpath))))
+          (bibtex-completion-open-pdf keys fallback-action)))
+      (ivy-bibtex-ivify-action bibtex-completion-open-pdf-external ivy-bibtex-open-pdf-external)
+      (ivy-add-actions
+       'ivy-bibtex
+       '(("P" ivy-bibtex-open-pdf-external "Open PDF file in external viewer (if present)")))
+      ;; Zotero
+      (setq bibtex-completion-pdf-field "file")
+      ;; Notes template (compatible with interleave)
+      (setq bibtex-completion-notes-template-one-file
+            (format
+             "\n** TODO ${=key=}: ${title}\n \
  :PROPERTIES:\n \
   :Custom_ID: ${=key=}\n \
   :INTERLEAVE_PDF: ./pdfs/${=key=}.pdf\n \
  :END:\n\ncite:${=key=}\n\n"))
-    )))
+      (ivy-add-actions
+       'ivy-bibtex
+       '(("P" ivy-bibtex-open-annotated-pdf "Open annotated PDF (if present)")))
+
+      ;; ;; one notes template
+      ;; (defun my/org-ref-notes-function (candidates)
+      ;;   (let ((key (ivy-marked-candidates)))
+      ;;     (funcall org-ref-notes-function (car key))))
+      ;; (ivy-delete-action-from-source "Edit notes" ivy-source-bibtex)
+      ;; ;; Note that 7 is a magic number of the index where you want to insert the command. You may need to change yours.
+      ;; (ivy-add-action-to-source "Edit notes" 'my/org-ref-notes-function ivy-source-bibtex 7)
+      )))
 
 (defun my-bibtex/init-biblio ())
-(defun my-bibtex/init-biblio-core ())
 
+(defun my-bibtex/init-biblio-core ())
+;; I would export to LaTeX and then use bibtool -x to extract the refereneces to a .bib
