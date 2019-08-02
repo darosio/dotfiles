@@ -181,7 +181,7 @@ This function should only modify configuration layer settings."
                                       visual-fill-column
                                       git-annex ;; C-x C-q in annexed buffer; in dired instead @e @a (@g @d);
                                       magit-annex
-                                      fzf
+                                      ;; fzf
                                       jupyter
                                       ;; helm-recoll
                                       ;; frames-only-mode  ;; this was for i3wm
@@ -189,7 +189,7 @@ This function should only modify configuration layer settings."
                                       basic-mode
                                       dna-mode
                                       ;; evil-vimish-fold  ;; didn't work very well python bibtex... use simple =za=
-                                      magit-todos
+                                      ;; magit-todos
                                       org-super-agenda
                                       beginend
                                       )
