@@ -127,11 +127,12 @@ This function should only modify configuration layer settings."
      git
      ;; bibtex
      my-bibtex
-     (pdf :variables
-          pdf-misc-print-programm "/usr/bin/lpr"
-          pdf-misc-print-programm-args (quote ("-o media=a4" "-o fitplot"))
-          pdf-view-resize-factor 1.1
-          pdf-annot-activate-created-annotations t)
+     pdf
+     ;; (pdf :variables
+     ;;      pdf-misc-print-programm "/usr/bin/lpr"
+     ;;      pdf-misc-print-programm-args (quote ("-o media=a4" "-o fitplot"))
+     ;;      pdf-view-resize-factor 1.1
+     ;;      pdf-annot-activate-created-annotations t)
      markdown
      csv
      ;; ;; (elfeed :variables
@@ -177,7 +178,7 @@ This function should only modify configuration layer settings."
    ;; Also include the dependencies as they will not be resolved automatically.
    dotspacemacs-additional-packages '(ob-ipython
                                       org-noter
-                                      interleave
+                                      ;; interleave
                                       visual-fill-column
                                       git-annex ;; C-x C-q in annexed buffer; in dired instead @e @a (@g @d);
                                       magit-annex
@@ -727,19 +728,21 @@ before packages are loaded."
   (define-key evil-normal-state-map (kbd "<SPC> o n") 'org-noter)
   (setq org-noter-property-doc-file "INTERLEAVE_PDF"
         org-noter-property-note-location "INTERLEAVE_PAGE_NOTE"
-        org-noter-default-notes-file-names "~/Sync/biblio/biblio.org"
+        org-noter-default-notes-file-names '("biblio.org")
+        org-noter-notes-search-path '("~/Sync/biblio")
         org-noter-always-create-frame nil  ;; do not create a new frame
         ;; org-noter-doc-property-in-notes t
         org-noter-doc-split-fraction '(0.7 . 0.5)
+        org-noter-separate-notes-from-heading t
         )
   (with-eval-after-load 'org-noter
     (define-key org-noter-notes-mode-map (kbd "C-M-k") 'org-noter-create-skeleton)
     (define-key org-noter-doc-mode-map (kbd "C-M-k") 'org-noter-create-skeleton))
   (add-hook 'text-mode-hook 'evil-insert-state)
 
-
   ;; pdf
-  (add-hook 'pdf-view-mode-hook 'pdf-view-set-slice-from-bounding-box)
+  ;; (add-hook 'pdf-view-mode-hook 'pdf-view-set-slice-from-bounding-box)
+  ;; this was causing the "epdfinfo: no such page 0" problem
 
   ;; spell-checking enabled in all text and derived (e.g. org latex composemail)
   (add-hook 'text-mode-hook 'flyspell-mode)
