@@ -728,7 +728,7 @@ before packages are loaded."
   (define-key evil-normal-state-map (kbd "<SPC> o n") 'org-noter)
   (setq org-noter-property-doc-file "INTERLEAVE_PDF"
         org-noter-property-note-location "INTERLEAVE_PAGE_NOTE"
-        org-noter-default-notes-file-names '("biblio.org")
+        org-noter-default-notes-file-names '("noter-othernotes.org" "biblio.org")
         org-noter-notes-search-path '("~/Sync/biblio")
         org-noter-always-create-frame nil  ;; do not create a new frame
         ;; org-noter-doc-property-in-notes t
