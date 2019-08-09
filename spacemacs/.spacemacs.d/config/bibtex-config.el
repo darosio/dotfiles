@@ -1,23 +1,17 @@
 (provide 'bibtex-config)
 
-;; multiple bib projects, but didn't work
+;; multiple bib projects, I set up My.bib 
 ;; https://emacs.stackexchange.com/questions/30095/org-ref-managing-multiple-projects-each-with-own-notes-org-files-and-bibtex-pd#30113
+;; TODO for captures
+;; https://www.reddit.com/r/emacs/comments/4gudyw/help_me_with_my_orgmode_workflow_for_notetaking/d2l16uj/
 
 ;; org-ref ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; (require 'org-ref-scopus)
-;; https://www.reddit.com/r/emacs/comments/4gudyw/help_me_with_my_orgmode_workflow_for_notetaking/d2l16uj/
-;; (require 'org-ref-sci-id)
-
-(setq org-ref-default-bibliography '("~/Sync/biblio/biblio.bib"
-                                     "~/Sync/biblio/MY.bib"
-                                     ;; "~/Sync/media/bibliography/nurturing.bib"
-                                     ))
-;; trailing / affects ,hA associate pdf to entry
-(setq org-ref-pdf-directory "~/Sync/biblio/pdfs/")
-(setq org-ref-bibliography-notes  "~/Sync/biblio/biblio.org")
-
-;; (setq reftex-default-bibliography '("~/Sync/media/bibliography/biblio.bib"))
-
+(setq org-ref-default-bibliography '("~/Sync/biblio/biblio.bib")
+      ;; trailing / affects ,hA associate pdf to entry
+      org-ref-pdf-directory "~/Sync/biblio/pdfs/"
+      org-ref-bibliography-notes "~/Sync/biblio/biblio.org"
+      ;; org-ref-bibliography-files '("~/Sync/biblio/MY.bib" "~/Sync/biblio/biblio.bib")
+      reftex-default-bibliography '("~/Sync/biblio/biblio.bib"))
 ;; Bibtex key format
 (setq bibtex-autokey-name-case-convert-function 'capitalize
       bibtex-autokey-name-year-separator ""
@@ -26,8 +20,8 @@
       bibtex-autokey-titleword-separator ""
       bibtex-autokey-titlewords 3
       bibtex-autokey-titleword-case-convert 'capitalize
-      bibtex-autokey-titleword-length 5
-      )
+      bibtex-autokey-titleword-length 5)
+
 
 ;; Zotero ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (setq   bibtex-completion-pdf-field "file")
@@ -51,15 +45,13 @@
 ;;   '(setq zotxt-default-bibliography-style "citekey"))
 
 ;; helm-bibtex ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(setq bibtex-completion-notes-path "~/Sync/biblio/biblio.org")
-(setq bibtex-completion-library-path '("~/Sync/biblio/pdfs/"
+(setq bibtex-completion-bibliography '(("~/Sync/biblio/MY.org" . "~/Sync/biblio/MY.bib")
+                                       ("~/Sync/biblio/biblio.org" . "~/Sync/biblio/biblio.bib"))
+      bibtex-completion-notes-path "~/Sync/biblio/biblio.org"
+      bibtex-completion-library-path '("~/Sync/biblio/pdfs/"
                                        "~/Sync/biblio/MY/"
                                        "~/Sync/biblio/books/"))
-(setq bibtex-completion-bibliography '("~/Sync/biblio/biblio.bib"
-                                       "~/Sync/biblio/MY.bib"
-                                       ;; "~/Sync/media/bibliography/misc.bib"
-                                       ;; "~/Sync/media/bibliography/nurturing.bib"
-                                       ))
+
 ;; search also in tags and keywords fields
 ;; (setq bibtex-completion-additional-search-fields '(keywords))
 (setq bibtex-completion-additional-search-fields '(tags))

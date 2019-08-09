@@ -125,8 +125,8 @@ This function should only modify configuration layer settings."
      syntax-checking
      ;; (git :variables git-gutter-use-fringe t)
      git
-     ;; bibtex
-     my-bibtex
+     bibtex
+     ;; my-bibtex
      pdf
      ;; (pdf :variables
      ;;      pdf-misc-print-programm "/usr/bin/lpr"
@@ -610,6 +610,7 @@ configuration.
 It is mostly for variables that should be set before packages are loaded.
 If you are unsure, try setting them in `dotspacemacs/user-config' first."
   (setq-default git-magit-status-fullscreen t)
+  ;; (setq  org-ref-completion-library 'org-ref-ivy-cite)
   )
 
 (defun dotspacemacs/user-load ()
@@ -772,7 +773,7 @@ before packages are loaded."
                         (require 'my-org-publish))
   ;; (with-eval-after-load 'elfeed
   ;;   (require 'elfeed-config))
-  ;; (with-eval-after-load 'bibtex (require 'bibtex-config))
+  (with-eval-after-load 'bibtex (require 'bibtex-config))
   (with-eval-after-load 'mu4e (require 'mu4e-config))
 
   ;; ;; TAB for za
