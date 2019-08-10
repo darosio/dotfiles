@@ -1,9 +1,7 @@
 (provide 'bibtex-config)
 
-;; multiple bib projects, I was using in My.bib and My.org
-;; https://emacs.stackexchange.com/questions/30095/org-ref-managing-multiple-projects-each-with-own-notes-org-files-and-bibtex-pd#30113
-;; TODO for captures
-;; https://www.reddit.com/r/emacs/comments/4gudyw/help_me_with_my_orgmode_workflow_for_notetaking/d2l16uj/
+(require 'helm-bibtex)
+(require 'org-ref)
 
 ;; org-ref ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (setq org-ref-default-bibliography '("~/Sync/biblio/biblio.bib")
@@ -21,35 +19,13 @@
       bibtex-autokey-titlewords 3
       bibtex-autokey-titleword-case-convert 'capitalize
       bibtex-autokey-titleword-length 5)
-
-;; try to set notes format for org-ref
+;; Notes template (compatible with interleave)
 (setq org-ref-note-title-format
-       "\n** %A %y - %l - %T\n \ :PROPERTIES:\n \  :Custom_ID: %k\n \  :INTERLEAVE_PDF: \
+       "\n** %k; %t\n \ :PROPERTIES:\n \  :Custom_ID: %k\n \  :INTERLEAVE_PDF: \
              ./pdfs/%k.pdf\n \ :END:\n")
 ;; org-ref-create-notes-hook
-;; ;; only org ref notes format
-;; (defun my/org-ref-notes-function (candidates)
-;;   (let ((key (helm-marked-candidates)))
-;;     (funcall org-ref-notes-function (car key))))
-;; (helm-delete-action-from-source "Edit notes" helm-source-bibtex)
-;; ;; Note that 7 is a magic number of the index where you want to insert the command. You may need to change yours.
-;; (helm-add-action-to-source "Edit notes" 'my/org-ref-notes-function helm-source-bibtex 7)
-;; ;; Tell org-ref to let helm-bibtex find notes for it
-;; (setq org-ref-notes-function
-;;       (lambda (thekey)
-;;         (let ((bibtex-completion-bibliography (org-ref-find-bibliography)))
-;;           (bibtex-completion-edit-notes
-;;            (list (car (org-ref-get-bibtex-key-and-file thekey)))))))
-
-;; TODO
-;; from pdf used bibtex notes
-;; disable flycheck in bibtex
-;; add a capture template r Reading
-;; still need to , hh why no bibfiles defined in advance?
 
 ;; helm-bibtex ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; (setq bibtex-completion-bibliography '(("~/Sync/biblio/MY.org" . "~/Sync/biblio/MY.bib")
-;;                                        ("~/Sync/biblio/biblio.org" . "~/Sync/biblio/biblio.bib"))
 (setq bibtex-completion-bibliography '("~/Sync/biblio/MY/MY.org" "~/Sync/biblio/biblio.org")
       bibtex-completion-notes-path "~/Sync/biblio/biblio.org"
       bibtex-completion-library-path '("~/Sync/biblio/pdfs/"
@@ -64,24 +40,42 @@
 ;; works only from helm-bibtex. less common e.g. ".md" can go into file={...} 
 (setq bibtex-completion-pdf-extension '(".pdf" ".avi" ".ppt" ".odp" ".odt" ".doc" ".docx"))
 ;; Notes template (compatible with interleave)
+;; use this (=, h h F8=) for books with "file" field and for auto-tagging with "keywords" field.
 (setq bibtex-completion-notes-template-one-file
       (format
-       "\n** cite:${=key=} ${title}\n \ :PROPERTIES:\n \  :Custom_ID: ${=key=}\n \  :INTERLEAVE_PDF: \
-             ./pdfs/${=key=}.pdf\n \ :END:\n"))
+       "\n** ${=key=}; ${title} \t :${keywords}:\n \ :PROPERTIES:\n \  :Custom_ID: ${=key=}\n \  :INTERLEAVE_PDF: \
+             ./pdfs/${=key=}.pdf ${file}\n \ :END:\ncite:${=key=}\n"))
 
-;; (with-eval-after-load 'ivy-bibtex (
-;;                                    ;; Okular =P=
-;;                                    (defun bibtex-completion-open-pdf-external (keys &optional fallback-action)
-;;                                      (let ((bibtex-completion-pdf-open-function
-;;                                             (lambda (fpath) (start-process "okular" "*helm-bibtex-okular*" "/usr/bin/okular" fpath))))
-;;                                        (bibtex-completion-open-pdf keys fallback-action)))
-;;                                    ;; (ivy-bibtex-ivify-action bibtex-completion-open-pdf-external ivy-bibtex-open-pdf-external)
-;;                                    (ivy-bibtex-ivify-action bibtex-completion-open-pdf-external ivy-bibtex-open-pdf-external)
-;;                                    (ivy-add-actions
-;;                                     'ivy-bibtex
-;;                                     '(("P" ivy-bibtex-open-pdf-external "Open PDF file in external viewer (if present)")))))
+;; rifle for helm
+(defun bibtex-completion-open-pdf-external (keys &optional fallback-action)
+  (let ((bibtex-completion-pdf-open-function
+         ;; (lambda (fpath) (start-process "okular" "*helm-bibtex-okular*" "/usr/bin/okular" fpath))))
+         (lambda (fpath) (start-process "rifle" "*helm-bibtex-external*" "/usr/bin/rifle" fpath))))
+    (bibtex-completion-open-pdf keys fallback-action)))
+(helm-bibtex-helmify-action bibtex-completion-open-pdf-external helm-bibtex-open-pdf-external)
+(helm-add-action-to-source "Open PDF using rifle" 'helm-bibtex-open-pdf-external helm-source-bibtex 2)
 
-
-
+;; folding ;;;;;;;;;;;;;;;
 (add-hook 'bibtex-mode-hook 'outline-minor-mode)  ;; =z M=
 (define-key bibtex-mode-map (kbd "<tab>") (kbd "za"))  ;; =TAB=
+
+;; TODO
+;; disable flycheck in bibtex
+;; add a capture template r Reading
+;; file a la zotero: do a test
+
+;; left over ;;;;;;;;;;;;;
+;; multiple bib projects, I was using in My.bib and My.org
+;; https://emacs.stackexchange.com/questions/30095/org-ref-managing-multiple-projects-each-with-own-notes-org-files-and-bibtex-pd#30113
+
+;; ;; only org ref notes format
+;; (defun my/org-ref-notes-function (candidates)
+;;   (interactive)
+;;   (let* ((key (helm-marked-candidates)))
+;;     (funcall org-ref-notes-function (car key))))
+;; (helm-delete-action-from-source "Edit notes" helm-source-bibtex)
+;; ;; Note that 7 is a magic number of the index where you want to insert the command. You may need to change yours.
+;; (helm-add-action-to-source "Edit notes" 'my/org-ref-notes-function helm-source-bibtex 7)
+;; ;; for org-ref-pdf-to-bibtex
+;; (setq bibtex-completion-edit-notes 'my/org-ref-notes-function)
+
