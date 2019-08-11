@@ -135,6 +135,9 @@
           ("j" "Journal" entry (file+olp+datetree "~/Sync/share/phone/box/org/diary.org") "* %?\n%t\n" )
           ("J" "Journalp" entry (file+olp+datetree+prompt "~/Sync/share/phone/box/org/diary.org") "* %?\n%t\n" )
           ("m" "Meeting" entry (file+olp+datetree "~/Sync/share/phone/box/org/diary.org") "* MEETING %? :MEETING:\n%T" :clock-in t :clock-resume t)
+          ;; reading
+          ("R" "to read" entry (file+headline da-gtd "Reading")
+           "* TODO Read %a \n%U\n" :unnarrowed :kill-buffer)
           ;; spesa.org
           ("s" "Spesa" entry (file+headline "~/Sync/share/phone/box/org/spesa.org" "Supermarket") ;; TODO: try checkitem
            "* TODO %? \n")

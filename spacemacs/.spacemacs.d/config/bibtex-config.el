@@ -21,7 +21,7 @@
       bibtex-autokey-titleword-length 5)
 ;; Notes template (compatible with interleave)
 (setq org-ref-note-title-format
-       "\n** %k; %t\n \ :PROPERTIES:\n \  :Custom_ID: %k\n \  :INTERLEAVE_PDF: \
+       "** %k; %t\n \ :PROPERTIES:\n \  :Custom_ID: %k\n \  :INTERLEAVE_PDF: \
              ./pdfs/%k.pdf\n \ :END:\n")
 ;; org-ref-create-notes-hook
 
@@ -58,11 +58,6 @@
 ;; folding ;;;;;;;;;;;;;;;
 (add-hook 'bibtex-mode-hook 'outline-minor-mode)  ;; =z M=
 (define-key bibtex-mode-map (kbd "<tab>") (kbd "za"))  ;; =TAB=
-
-;; TODO
-;; disable flycheck in bibtex
-;; add a capture template r Reading
-;; file a la zotero: do a test
 
 ;; left over ;;;;;;;;;;;;;
 ;; multiple bib projects, I was using in My.bib and My.org
