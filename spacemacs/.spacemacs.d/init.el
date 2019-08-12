@@ -177,11 +177,9 @@ This function should only modify configuration layer settings."
    ;; Also include the dependencies as they will not be resolved automatically.
    dotspacemacs-additional-packages '(ob-ipython
                                       org-noter
-                                      ;; interleave
                                       visual-fill-column
                                       git-annex ;; C-x C-q in annexed buffer; in dired instead @e @a (@g @d);
                                       magit-annex
-                                      ;; fzf
                                       jupyter
                                       ;; helm-recoll
                                       ;; frames-only-mode  ;; this was for i3wm
@@ -192,6 +190,9 @@ This function should only modify configuration layer settings."
                                       ;; magit-todos
                                       org-super-agenda
                                       beginend
+                                      zenburn-theme
+                                      gruvbox-theme
+                                      base16-theme
                                       )
 
 
@@ -316,7 +317,9 @@ It should only modify the values of Spacemacs settings."
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press `SPC T n' to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '(subatomic256
+   dotspacemacs-themes '(base16
+                         solarized-light
+                         subatomic256
                          afternoon
                          wombat
                          intellij
@@ -364,8 +367,8 @@ It should only modify the values of Spacemacs settings."
    ;; quickly tweak the mode-line size to make separators look not too crappy.
    dotspacemacs-default-font '(;;
                                ;; "DejaVu Sans Mono"
-                               ;; "Hack"
-                               "Source Code Pro"
+                               "Hack"
+                               ;; "Source Code Pro"
                                ;; "Inconsolata-g"
                                ;; "Fira Code Retina"
                                ;; "Fira Code"
