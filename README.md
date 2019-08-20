@@ -11,6 +11,11 @@ to create symlink into $HOME folder:
 	cd ~/.dotfile
 	stow package-version 
 	
+for some packages a folder must be created first, e.g.:
+
+    mkdir ~/.vim
+    then ~/.vim/bundle/Vundle.vim
+
 pick package-version as needed.
 
 Plan to use machine-specific git branches.
