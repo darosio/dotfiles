@@ -68,7 +68,7 @@ This function should only modify configuration layer settings."
                       auto-completion-enable-help-tooltip t
                       auto-completion-enable-sort-by-usage t)
      ;; --user importmagic epc service_factory autoflake json-rpc
-     ;; pytest python-jedi hy yapf python-isort
+     ;; Need: pytest python-jedi hy yapf python-isort
      (python :variables
              python-test-runner 'pytest
              ;; python-test-runner '(pytest nose)
@@ -119,10 +119,12 @@ This function should only modify configuration layer settings."
                      spell-checking-enable-by-default nil  ;; =SPC t S=
                      enable-flyspell-auto-completion t)
      ;; "SPC e l"
-     ;; for python: pacaur -S flake8 or python-pylint
+     ;; Need:for python: pacaur -S flake8 or python-pylint
      ;; remember also bandit and pylama
-     ;; (syntax-checking :variables syntax-checking-use-original-bitmaps t)
-     syntax-checking
+     (syntax-checking :variables
+                      syntax-checking-enable-tooltips nil
+                      syntax-checking-enable-by-default nil
+                      syntax-checking-use-original-bitmaps t)
      ;; (git :variables git-gutter-use-fringe t)
      git
      bibtex
@@ -136,7 +138,7 @@ This function should only modify configuration layer settings."
      csv
      ;; ;; (elfeed :variables
      ;; ;;         rmh-elfeed-org-files (list "~/Sync/.elfeed/1.org"))
-     ;; need wkhtmltopdf
+     ;; Need: wkhtmltopdf
      (pandoc :variables
              ;; default options for all output formats
              org-pandoc-options '((standalone . t))
@@ -317,7 +319,7 @@ It should only modify the values of Spacemacs settings."
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press `SPC T n' to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '(base16
+   dotspacemacs-themes '(base16-woodland
                          solarized-light
                          subatomic256
                          afternoon
@@ -366,8 +368,8 @@ It should only modify the values of Spacemacs settings."
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
    dotspacemacs-default-font '(;;
-                               ;; "DejaVu Sans Mono"
-                               "Hack"
+                               "DejaVu Sans Mono"
+                               ;; "Hack"
                                ;; "Source Code Pro"
                                ;; "Inconsolata-g"
                                ;; "Fira Code Retina"
@@ -378,7 +380,7 @@ It should only modify the values of Spacemacs settings."
                                ;; "Bitstream Vera Sans Mono"
                                ;; "Monofur"
                                ;; "Dina"
-                               :size 14
+                               :size 15
                                :weight regular
                                :width normal)
 
@@ -632,12 +634,12 @@ before packages are loaded."
   (setq counsel-rg-base-command  ;; to --follow symbolic links
         "rg -L -S --no-heading --line-number --color never %s .")
   ;; this is for spacemacs/counsel-search search-project-auto =spc /= 
-  (setq spacemacs--counsel-commands
-        '(("rg" . "rg --follow --smart-case --no-heading --color never --line-number --max-columns 150 %s %S .")
-          ("ag" . "ag --nocolor --nogroup %s %S .")
-          ("pt" . "pt -e --nocolor --nogroup %s %S .")
-          ("ack" . "ack --nocolor --nogroup %s %S .")
-          ("grep" . "grep -nrP %s %S .")))
+  ;; (setq spacemacs--counsel-commands
+  ;;       '(("rg" . "rg --follow --smart-case --no-heading --color never --line-number --max-columns 150 %s %S .")
+  ;;         ("ag" . "ag --nocolor --nogroup %s %S .")
+  ;;         ("pt" . "pt -e --nocolor --nogroup %s %S .")
+  ;;         ("ack" . "ack --nocolor --nogroup %s %S .")
+  ;;         ("grep" . "grep -nrP %s %S .")))
   (setq projectile-project-search-path '("~/workspace/"))
 
   (global-set-key (kbd "C-<f11>") 'goldendict-dwim)
@@ -656,25 +658,26 @@ before packages are loaded."
         browse-url-generic-program "firefox")
   (set-language-environment "UTF-8")
   ;; ;; to debug
-  ;; (setq debug-on-error t)
+  (setq debug-on-error t)
   ;; ;; To use always only one frame fullscreen, simply.
   ;; (set-frame-parameter nil 'fullscreen 'fullboth)
 
-  ;; proselint in org and mu4e modes
-  (add-to-list 'flycheck-global-modes 'markdown-mode)
-  (add-to-list 'flycheck-global-modes 'org-mode)
-  (add-to-list 'flycheck-global-modes 'mu4e-compose-mode) ;; yet not working
-  (with-eval-after-load 'flycheck
-  (flycheck-define-checker proselint
-    "A linter for prose."
-    :command ("proselint" source-inplace)
-    :error-patterns
-    ((warning line-start (file-name) ":" line ":" column ": "
-	            (id (one-or-more (not (any " "))))
-	            (message) line-end))
-    :modes (text-mode markdown-mode gfm-mode message-mode mu4e-modes org-mode))
-  (add-to-list 'flycheck-checkers 'proselint)
-  )
+  ;; ;; proselint in org and mu4e modes
+  ;; (add-to-list 'flycheck-global-modes 'markdown-mode)
+  ;; (add-to-list 'flycheck-global-modes 'org-mode)
+  ;; (add-to-list 'flycheck-global-modes 'mu4e-compose-mode) ;; yet not working
+  ;; (with-eval-after-load 'flycheck
+  ;;   (flycheck-define-checker proselint
+  ;;     "A linter for prose."
+  ;;     :command ("proselint" source-inplace)
+  ;;     :error-patterns
+  ;;     ((warning line-start (file-name) ":" line ":" column ": "
+  ;;               (id (one-or-more (not (any " "))))
+  ;;               (message) line-end))
+  ;;     :modes (text-mode markdown-mode gfm-mode message-mode mu4e-compose-mode org-mode))
+  ;;   (add-to-list 'flycheck-checkers 'proselint)
+  ;; )
+  ;; TODO finish this and hunspell
 
   ;; rescale text size
   ;; C-x C-0 restores the default font size
