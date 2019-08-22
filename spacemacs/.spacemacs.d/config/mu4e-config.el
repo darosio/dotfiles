@@ -294,7 +294,7 @@
             ;; (turn-on-orgtbl)   ;; this prevented flyspell correction
             ;; (turn-on-orgstruct)  ;; probably included in ++
             ;; (turn-on-orgstruct++)  ;; =,he= to send bibtex email
-            ;; (flyspell-mode)
+            (flyspell-mode)
             ))
 ;; (add-hook 'message-mode-hook 'turn-on-flyspell 'append)
 ;; (add-hook 'message-mode-hook #'typo-mode)

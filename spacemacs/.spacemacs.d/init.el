@@ -119,14 +119,12 @@ This function should only modify configuration layer settings."
                      spell-checking-enable-by-default nil  ;; =SPC t S=
                      enable-flyspell-auto-completion t)
      ;; "SPC e l"
-     ;; Need:for python: pacaur -S flake8 or python-pylint
-     ;; remember also bandit and pylama
      (syntax-checking :variables
                       syntax-checking-enable-tooltips nil
-                      syntax-checking-enable-by-default nil
+                      syntax-checking-enable-by-default nil  ;; =SPC t s=
                       syntax-checking-use-original-bitmaps t)
-     ;; (git :variables git-gutter-use-fringe t)
      git
+     ;; (git :variables git-gutter-use-fringe t)
      bibtex
      pdf
      ;; (pdf :variables
@@ -662,21 +660,28 @@ before packages are loaded."
   ;; ;; To use always only one frame fullscreen, simply.
   ;; (set-frame-parameter nil 'fullscreen 'fullboth)
 
-  ;; ;; proselint in org and mu4e modes
-  ;; (add-to-list 'flycheck-global-modes 'markdown-mode)
-  ;; (add-to-list 'flycheck-global-modes 'org-mode)
-  ;; (add-to-list 'flycheck-global-modes 'mu4e-compose-mode) ;; yet not working
-  ;; (with-eval-after-load 'flycheck
-  ;;   (flycheck-define-checker proselint
-  ;;     "A linter for prose."
-  ;;     :command ("proselint" source-inplace)
-  ;;     :error-patterns
-  ;;     ((warning line-start (file-name) ":" line ":" column ": "
-  ;;               (id (one-or-more (not (any " "))))
-  ;;               (message) line-end))
-  ;;     :modes (text-mode markdown-mode gfm-mode message-mode mu4e-compose-mode org-mode))
-  ;;   (add-to-list 'flycheck-checkers 'proselint)
-  ;; )
+  (with-eval-after-load 'flycheck
+    (flycheck-define-checker proselint4mu
+      "A linter for mu4e mail message composition."
+      :command ("proselint" source-inplace)
+      :error-patterns
+      ((warning line-start (file-name) ":" line ":" column ": "
+                (id (one-or-more (not (any " "))))
+                (message) line-end))
+      :modes (mu4e-compose-mode))
+    (flycheck-define-checker pylama
+      "A linter for python."
+      :command ("pylama" source-inplace)
+      :error-patterns
+      ((warning line-start (file-name) ":" line ":" column ": "
+                (id (one-or-more (not (any " "))))
+                (message) line-end))
+      :modes (python-mode))
+    (add-to-list 'flycheck-checkers 'proselint4mu)
+    (add-to-list 'flycheck-checkers 'pylama)
+    (flycheck-add-next-checker 'python-pylint 'pylama)
+    ;; (flycheck-add-next-checker 'pylama 'python-pylint)
+    )
   ;; TODO finish this and hunspell
 
   ;; rescale text size
@@ -745,14 +750,16 @@ before packages are loaded."
   (with-eval-after-load 'org-noter
     (define-key org-noter-notes-mode-map (kbd "C-M-k") 'org-noter-create-skeleton)
     (define-key org-noter-doc-mode-map (kbd "C-M-k") 'org-noter-create-skeleton))
-  (add-hook 'text-mode-hook 'evil-insert-state)
+
+  ;; spell-checking enabled in all text and derived (e.g. org latex composemail)
+  ;; text-mode-hook is too wide?
+  ;; (add-hook 'text-mode-hook 'flyspell-mode)
+  ;; (add-hook 'text-mode-hook 'evil-insert-state)
 
   ;; pdf
   ;; (add-hook 'pdf-view-mode-hook 'pdf-view-set-slice-from-bounding-box)
   ;; this was causing the "epdfinfo: no such page 0" problem
 
-  ;; spell-checking enabled in all text and derived (e.g. org latex composemail)
-  (add-hook 'text-mode-hook 'flyspell-mode)
   ;; dictionary switch
   (define-key evil-normal-state-map (kbd "<SPC> S r") 'flyspell-region)
   (define-key evil-normal-state-map (kbd "<SPC> S a") (lambda () (interactive) (ispell-change-dictionary "american")))
