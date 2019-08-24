@@ -1,0 +1,6 @@
+# Contrary to borg rsync excludions work more like tar
+# paths are always relative
+/lost+found/
+/borg/
+/remotes/
+/Sync/

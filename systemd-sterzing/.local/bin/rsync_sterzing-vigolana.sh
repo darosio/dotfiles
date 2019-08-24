@@ -19,7 +19,7 @@ thishost=$(uname -n)
 	      sudo du -ksh $rsnapshots_path/*
 	      echo "-------------------------------------------"
 
-	      # vigolana:/data/borg --> sterzing: rsnapshots
+	      # vigolana:/data/borg --> sterzing: rsnapshots/borg
 	      printf "\n\nSync vigolana:/data/borg --> %s: rsnapshots/borg\n" "$thishost"
 	      # echo
 	      rsync -i -a -H --info=progress0,stats2,del,name,flist --numeric-ids \
@@ -30,12 +30,10 @@ thishost=$(uname -n)
 	      printf "\n\nSync %s: rsnapshots --> vigolana:/data [except: borg, remotes, Sync]\n" "$thishost"
 	      # echo
 	      rsync -i -a -H --info=progress0,stats2,del,name,flist --numeric-ids \
+              --exclude-from "$HOME/.local/bin/rsync_sterzing-vigolana.exclude.txt" \
 	          	--delete $rsnapshots_path/ 10.0.0.1:/data/ \
-	          	--exclude '/lost+found/' \
-	          	--exclude '/borg/' \
-	          	--exclude '/remotes/' \
-	          	--exclude '/Sync/' \
 	          	-e '/usr/bin/ssh -c aes256-ctr -i ~/.ssh/dan@sterzing-2013-06-03 -p 23456'
+	      #     	    --exclude '/Sync/' \
 
 	      echo
 	      echo "After sync: -------------------------------"
@@ -52,4 +50,3 @@ thishost=$(uname -n)
 } >> "$out" 2>&1
 
 cat < "$out" | sudo msmtp $useremail
-# grep -v "+++" < "$out" | grep -v "\.\.\." | sudo msmtp $useremail
