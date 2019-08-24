@@ -1,0 +1,4 @@
+/data/Sync/tmp
+*/Maildir/*/tmp
+*/.stversions
+*.pyc
