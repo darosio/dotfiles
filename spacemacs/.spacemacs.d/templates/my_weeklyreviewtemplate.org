@@ -1,0 +1,136 @@
+* Weekly review
+  :PROPERTIES:
+  :COOKIE_DATA: checkbox recursive
+  :RESET_CHECK_BOXES: t
+  :ORDERED:  t
+  :END:
+
+  The heart of the GTD process is a weekly review of:
+  - all projects
+  - Next Action lists
+  - Waiting for Items. 
+  Each project is checked to ensure that a next action has been defined.
+  
+  Select all and toggle with =C-c C-x C-b=.
+     
+  - tag =, i t= or =|= or =C-c C-q= (in org file =, ,= can be used to set any tag)
+  - effort =, i e= 
+  - schedule/deadline =, i s=
+  - =C-c C-x C-c= fill up table view simply using =e= (for edit within appropriate cell)
+  - NB. to add a note  =z=  on any agenda item
+
+  maybe:
+  - project -> goal associatione (using tag?)
+  - project template to make sure a category property is set =, i p=
+    but also a property "proj" to auto-group in super Agenda
+  - Here C-c a m WORK/PERSONAL might highlight something needing attention
+    and highlight per project “<”. items (tagged?) not TODO are also listed.
+  - Review projects =F12 SPC //= and =V= repeatedly to view each project
+  
+  note: There is still few 2DO, FIXME, or 2MAYBE
+  maybe I can improve mu4e shortcuts / bookmarks e separare mailist (confocal)
+         
+** *Get Clear* [0/0]
+   - Collect Loose Papers and Materials [0/3]
+     - [ ] Empty wallet of receipts and paper
+     - [ ] Empty backpack. Put relevant items into inbox.
+     - [ ] Get lose paper from desk and put it to inbox
+   - Get “IN” to Zero [0/7]
+     - [ ] Purge physical inbox @fbk "teca nera"
+     - [ ] Meeting and various notes scribbled on paper notebook 
+     - [ ] Voice Mail
+     - [ ] Gmail 
+       - [ ] archive =j g= duplicate using =C-v=
+       - [ ] inbox =j j= 
+       - [ ] sent =j o sent/g=
+       - [ ] spam ...
+       - [ ] trash =j o trash/g=  DO NOT =C-v= Deduplicate!  =Del= (or =d=)
+         restano in all mail le mail magically tagged as important.
+         #+BEGIN_SRC emacs-lisp :results none
+           (progn
+             (browse-url "https://mail.google.com/mail/u/0/#all")
+             (browse-url "https://mail.google.com/mail/u/0/#inbox")
+             (browse-url "https://mail.google.com/mail/u/1/#inbox"))
+         #+END_SRC
+     - [ ] Cnr email ==j i== 
+       sent, draft ... should be empty
+     - [ ] Clean up ~/home folders (hunza, sterzing)
+       #+BEGIN_SRC emacs-lisp :results none
+         (dired "~/")
+       #+END_SRC
+     - [ ] Purge Refs folders [0/3]
+       Store or delete unneded items
+       - [ ] cnr/refs mailbox   =j r=
+       - [ ] phone/box   =ranger g t=
+       - [ ] Browser Tabs (hunza, sterzing)
+   - Empty Your Head [0/1]
+     - [ ] New projects, tasks, waiting-fors, someday/maybes, etc., not yet captured
+
+** Get Current [0/11]
+   - [ ] Fetch gcal =SPC o g=
+     #+begin_src emacs-lisp :results none
+       (fetch-calendar)
+     #+end_src
+   - [ ] Review Previous Calendar Data
+     =, a b=  (=L)=
+     #+BEGIN_SRC emacs-lisp
+       (my-org-agenda-longer-open-loops)
+     #+END_SRC
+     Review previous week calendar and see if there is anything I missed, e.g. I
+     want to follow-up to a lunch meeting with a thank you note or a gift,
+     remaining action items, reference data, etc.
+   - [ ] Review Upcoming Calendar and future deadlines
+     =, a f=
+     Review upcoming calendar long and short term. Capture actions triggered.
+   - [ ] Review action list for standalone tasks
+     in place of =, a w= and =, a p= use: =, a l=
+     should they be grouped into a project?
+     - Set finished tasks to a "done" state 
+     - Set reminders if necessary
+     - Define follow up tasks
+   - [ ] Review Waiting For List:
+     #+BEGIN_SRC emacs-lisp :results none
+       (org-agenda "WAITING" "T")
+       (beginend-org-agenda-mode-goto-beginning))
+     #+END_SRC
+     - Record appropriate actions for any needed follow-up. Check off received ones.
+     - This is a list of items I have delegated to others and are important enough
+       to track. If something is overdue, or if I need a progress report, I send an
+       e-mail and nudge the person responsible. I note in the task itself that I
+       sent a reminder.
+   - [ ] Review Project (and Larger Outcome) Lists:
+     =, a j= (anything with "proj" tag)
+     - make sure "Category" property is set; otherwise set it =, i p=
+     - What do I really need to accomplish this week? Like goals, I either
+       identity the next action and assign a due date for the day in the upcoming
+       week I want to work on it or I schedule it on my calendar.
+     - proj by proj “<” “^” Evaluate status of projects, goals and outcomes,
+       ensuring at least one current action item on each.
+     - Browse through project plans, support material, work-in-progress material,
+       etc. to trigger new actions, completions, waiting for, etc.
+   - [ ] Review Unscheduled inactive Tasks list
+     =, a u=
+   - [ ] Review Habits and Recurring Tasks (Maintenance's, etc.)
+     =, a h=
+   - [ ] REFILE tasks(and projects) from inbox.org
+     =, a x=
+   - [ ] Archive completed tasks  =$=  or inactive projects
+
+** Get Creative [0/5]
+ - [ ] Review my idea list
+   =, a i=
+ - [ ] Review my [[file:~/Sync/share/phone/box/org/someday.org::*Someday][Someday]] and HOLD lists
+   - Review for any projects which may now have become active.
+   - Is a Someday/Maybe becoming a task/project?
+   - If a Someday is no longer of interest set it to "Cancelled".
+ - Use RandomNote https://github.com/mwfogleman/org-randomnote
+   #+BEGIN_SRC emacs-lisp
+     (randomnote-osx)
+   #+END_SRC
+ - [ ] Be Creative and Courageous
+   - Any new, wonderful, hare-brained, creative, thought-provoking,
+     risk-taking ideas to add into your system?
+   - Set timer to 5 minutes and start dreaming
+   - Put the results into Actions/Someday/Maybe.
+    Capture Todo items (C-c r t) or Someday (C-c r s)  TODO
+ - [ ] Clock out.

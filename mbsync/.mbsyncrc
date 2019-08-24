@@ -10,12 +10,12 @@ Expunge Both
 CopyArrivalDate yes
 
 #
-# Aruba pec
+# Postecert
 #
 IMAPAccount pec
-Host imaps.pec.aruba.it
-User daniele.arosio@pec.it
-PassCmd "pass arubapec"
+Host mail.postecert.it
+User daniele.arosio@postecert.it
+PassCmd "pass email/postecert"
 # Use SSL
 SSLType IMAPS
 CertificateFile /etc/ssl/certs/ca-certificates.crt
@@ -108,7 +108,8 @@ Slave :gmail-local:spam
 Channel gmail-trash
 Master :gmail-remote:[Gmail]/Trash
 Slave :gmail-local:trash
-Expunge None
+#Expunge None
+Expunge Both
 
 # Labels
 Channel gmail-rest

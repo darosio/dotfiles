@@ -1,0 +1,121 @@
+# i3status configuration file.
+# see "man i3status" for documentation.
+
+# It is important that this file is edited as UTF-8.
+# The following line should contain a sharp s:
+# ß
+# If the above line is not correctly displayed, fix your editor first!
+# python-pydbus
+
+general {
+        output_format = i3bar
+        interval = 5
+        colors = true
+}
+
+order += "group monitors"
+order += "frame networks"
+#order += "xsel"
+#order += "hddtemp"
+#order += "xrandr"
+#order += "xrandr_rotate"
+order += "backlight"
+#order += "external_script"
+order += "volume master"
+#order += "volume_status"
+order += "scratchpad_counter"
+#order += "speedtest"
+# xkblayout-state-git
+order += "xkb_layouts"
+order += "battery 1"
+#order += "battery_level 1"
+order += "tztime local"
+
+
+frame networks {
+    cycle = 0
+    format = "Net {output}"
+    wifi {}
+    #wireless _first_ {
+            #format_up = "%essid-%frequency %quality (%bitrate)" #%ip
+            #format_down = "No WiFi"
+    #}
+    ethernet _first_ {
+            # if you use %speed, i3status requires root privileges
+            format_up = "E: %ip (%speed)"
+            format_down = "E: down"
+    }
+    whatismyip {}
+}
+group monitors {
+    cycle = 5
+    format = "{output}"
+    lm_sensors {
+        format_chip = '[\?if=name=coretemp-isa-0000 CPU ]'
+        format_chip += '[\?if=name=nouveau-pci-0500 GPU ]'
+        format_chip += '[\?if=name=acpitz-acpi-0 mb ]'
+        format_chip += '{format_sensor}'
+        format_sensor = '\?color=auto.input {input}°C'
+        sensors = ['core*', 'temp*']
+    }
+	#loadavg {
+	#}
+	sysdata {
+	}
+    frame disks {
+        format = "HDs: {output}"
+        disk "/" {
+            format = "root %avail"
+        }
+        disk "/home" {
+            format = "/home %avail"
+        }
+    }
+}
+
+hddtemp {
+    format = 'HDD {format_hdd}'
+    format_hdd = '\?color=temperature {temperature}°C'
+    #path = "/dev/sda"
+}
+
+external_script {
+format = "conflict {lines}"
+button_show_notification = true
+script_path = "~/conflict.sh"
+}
+
+battery 1 {
+        format = "%status %percentage %remaining@%consumption" #%emptytime 
+        format_down = "No battery"
+        path = "/sys/class/power_supply/BAT%d/uevent"
+        low_threshold = 5
+        threshold_type = time
+        last_full_capacity = true
+        hide_seconds = true
+        status_chr = "⚇"
+        status_bat = "⚡"
+        status_full = "☻ FULL"
+}
+
+volume master {
+        format = "♪: %volume"
+        format_muted = "♪: muted (%volume)"
+        device = "default"
+        mixer = "Master"
+        mixer_idx = 0
+}
+# show everything
+speedtest {
+    format = "speedtest[\?soft  ][\?color=darkgray "
+    format += "[time [\?color=elapsed_time {elapsed_time} s]][\?soft  ]"
+    format += "[ping [\?color=ping {ping} ms] "
+    format += "download [\?color=download {download}Mbps] "
+    format += "upload [\?color=upload {upload}Mbps]]]"
+}
+
+tztime local {
+        #format = "%Y-%m-%d %H:%M:%S"
+        #format = "%b%d %H:%M"
+        format = "%H:%M"
+}

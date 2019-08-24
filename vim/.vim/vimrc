@@ -48,6 +48,8 @@ Plugin 'vim-scripts/tasklist.vim'
 " minibufferExplorer @L @S
 " makegreen @S before pytest
 "
+Plugin 'jceb/vim-orgmode'
+Plugin 'tpope/vim-speeddating'
 Plugin 'dhruvasagar/vim-table-mode'
 " or see screecast for tabular
 " I had explored also "nvie/vim-rst-tables"

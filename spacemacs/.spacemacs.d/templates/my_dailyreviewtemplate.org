@@ -1,0 +1,30 @@
+* Closing Today
+- [ ] Reschedule tasks to other day
+  =, a r= 
+  - Mark tasks finished, if any
+  - Move tasks from [[file:~/Sync/share/phone/box/org/inbox.org][Inbox]] to their respective project or list and set priority,
+    tags, etc.
+  - Archive *DONE and CANCELLED* tasks
+- [ ] Planning Tomorrow
+  - Find out what are my free hours of work.
+  - Make sure I've not over-scheduled my day.
+  - If over-scheduled: Analyze priorities, set them on each task and try to
+    move tasks to another day.
+  - Make sure I'm aware of all the meetings and events I've to attend.
+- [ ] Clean my physical desktop.
+- [ ] Clock out [C-c C-x C-o] and enjoy the rest of the day.
+
+
+* Opening Today
+- [ ] Clear Physical Desktop / Inbox / Notebook
+- [ ] Check Email Inboxes, create tasks if necessary
+- [ ] Process streams (Slack, [[https://twitter.com/][Twitter]]) as inboxes - record tasks, read it later, file notes
+   - [ ] flow (slack, twitter, google suggestion on phone ?)
+- [ ] Collect Calendar Open Loops (+/- 2  days)
+#+BEGIN_SRC emacs-lisp
+  (my-org-agenda-recent-open-loops)
+#+END_SRC
+- [ ] Capture any remaining open loops as tasks
+- [ ] Schedule today's tasks (immersive -> process, deep -> shallow):
+- [ ] Start the system updater.
+- [ ] Clock out.

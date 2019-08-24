@@ -1,4 +1,13 @@
-export PATH=$PATH:~/workspace/HIV_pipeline_mpba/HIV/library_name/
+export EDITOR='emacsclient -c'
+function ediff () {
+    if [ "X${2}" = "X" ]; then
+        echo "USAGE: ediff <FILE 1> <FILE 2>"
+    else
+        quoted1=${1//\\/\\\\}; quoted1=${quoted1//\"/\\\"}
+        quoted2=${2//\\/\\\\}; quoted2=${quoted2//\"/\\\"}
+        emacsclient -tc -a emacs -e "(ediff \"$quoted1\" \"$quoted2\")"
+    fi
+}
 # for data management in annexes
 copythistree() { 
     find . -type d -exec mkdir -p $1/{} \;
@@ -40,14 +49,25 @@ ga-init() {
     git commit -m 'inizialization'
 }
 alias ga='git-annex'
+#for sha256 keys
 ga-dup() {
-    git annex find --include '*' --format='${file} ${escaped_key}\n' | \
-        sort -k2 | uniq --all-repeated=separate -f1 | sed 's/ [^ ]*$//'
+  git annex find --include '*' --format='${escaped_key} :${file}\n' \
+   | cut -d '-' -f 4- | sort | uniq --all-repeated=separate -w 63
+}
+ga-duprm(){
+  ga-dup | awk -vRS= -vFS='\n' '{for (i = 2; i <= NF; i++) print $i}' \
+   | cut -d ':' -f 2- 
+}
+ga-duprmgit(){
+  ga-duprm | xargs -d '\n' git rm
 }
 
 # http://stackoverflow.com/questions/2720014/upgrading-all-packages-with-pip
 alias pip_updall='pip freeze --local | grep -v '^\-e' | cut -d = -f 1  | xargs pip install -U'
-alias pip_updalluser='pip freeze --user | grep -v '^\-e' | cut -d = -f 1  | xargs pip install -U --user'
+alias pip_updalluser='$HOME/.local/bin/pip freeze --user | grep -v '^\-e' | cut -d = -f 1  | xargs $HOME/.local/bin/pip install -U --user'
+lpip() {
+    $HOME/.local/bin/pip $@ --user
+}
 alias pandoc='pandoc --pdf-engine=xelatex'
 countfiles() {
     find . -type d | while read DIR; do
@@ -84,7 +104,8 @@ export FZF_DEFAULT_OPTS="-e -m --sort 10000"
 #source /etc/profile.d/fzf.sh
 #source /etc/profile.d/fzf.bash
 source /usr/share/fzf/key-bindings.bash
-source /etc/profile.d/fzf-extras.bash
+source /usr/share/fzf/completion.bash
+source /usr/share/fzf/fzf-extras.bash
 #TODO open filemanager after searching for file or dir
 fb() {
  goobook query "" |fzf | goobook dquery `cut -f 1`
@@ -101,11 +122,6 @@ source /usr/bin/virtualenvwrapper.sh
 
 source /usr/share/bash-completion/completions/git
 source /usr/share/bash-completion/completions/hg
-alias ligplus='java -jar ~/.progs/LigPlus/LigPlus.jar'
-alias ape='~/.progs/ape/tclkit ~/.progs/ape/ApE.vfs/main.tcl'
-alias serialcloner='~/.progs/SerialCloner2-6/SerialCloner2.6.1'
-alias fiji='~/.progs/Fiji.app/ImageJ-linux64'
-alias icy='java -jar ~/.progs/icy/updater.jar'
 export TERMINAL=urxvt
 #avoid duplicates in history
 export HISTCONTROL=ignoredups
@@ -119,35 +135,19 @@ eval $(dircolors -b)
 export R_LIBS_USER=~/.Renviron/
 
 alias chromep='chromium --proxy-server="localhost:8118"'
-alias skype='xhost +local: && sudo -u skype -c /usr/bin/skype'
-alias skype='xhost +local: && su skype -c skype'
 alias lb='lsblk'
 alias vi='vim'
 alias viw='vim -c "match DiffDelete /\[-.\{-}-]/" -c "2match DiffAdd /{+.\{-}+}/"'
-alias o='xdg-open $@'
+alias o='mimeopen -a $@'
+alias oo='mimeopen $@'
 alias nb='ipython notebook --pylab inline'
 alias nb='jupyter notebook'
 alias ipythonp='ipython --pylab=inline'
 alias qpy='ipython qtconsole --pylab'
-alias e='emacsclient -c'
-alias ee='emacsclient -t'
 alias sm=".local/bin/msmtp-runqueue.sh"
-#export TODO_ACTIONS_DIR=~/Dropbox/todo/.todo.actions.d/
-#export TODO_DIR=~/Dropbox/todo/
-#if [[ -e /usr/bin/most ]]; then  export PAGER=most; fi
-export UNISONLOCALHOSTNAME=dpa3
+
 #export CDPATH='.:/Data/0dan'
-
-# PATH
-PATH=$PATH:$HOME/.progs/bin
-PATH=$PATH:$HOME/.progs/myrepos.branchable.com
-PATH=$PATH:$HOME/.progs/bftools
-PATH=$PATH:$HOME/.local/bin
-export PATH
-
 export IGNOREEOF=1
-##export VBOX_USB=usbfs
-#export PYTHONPATH=~/lib/python2.7
 
 alias pyp='sudo pacmatic -Syu'
 alias pya='pacaur -Syua'
@@ -175,7 +175,6 @@ alias vga='xrandr --output VGA1 --auto --same-as LVDS1'
 alias vga_onr='xrandr --output VGA1 --auto --right-of LVDS1'
 alias vga_off='xrandr --output VGA1 --off'
 alias impress='impressive -t none --nologo'
-alias fbk0='sudo ~/.progs/bin/pulsesvc -h sslgate.fbk.eu -r Fbk_AD_realm -u darosio -p CEaMW6osqy'
 alias omero='sshpass -p CEaMW2oSQY2 ssh darosio%omero@gate.fbk.eu'
 #alias omero-data='sshfs  darosio%omero@gate.fbk.eu:/data /media/omero/'
 alias omero-data0='sshfs  omero:/hardmnt/data0 /media/omero0/'
@@ -232,8 +231,8 @@ TN() {
 
 TNv() {
  rm valanghe_it.pdf
- wget http://www.meteotrentino.it/bollettini/today/valanghe_it.pdf
- xdg-open valanghe_it.pdf
+ wget https://avalanche.report/albina_files/`date -I`/`date -I`_it.pdf
+ xdg-open `date -I`_it.pdf
  }
 
 grepp() {

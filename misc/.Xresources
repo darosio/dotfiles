@@ -74,6 +74,7 @@ URxvt*colorUL:      #4682B4
 !URxvt*font:     xft:Fira Code:size=12
 !URxvt*font:     xft:Input Mono:size=12
 !URxvt*font:     xft:Iosevka:size=12
+!URxvt*font:     xft:Inconsolata-g:size=12
 URxvt*font:     xft:Hack:size=12
 ! URxvt*boldFont: xft:Monaco:bold:size=11
 ! URxvt*italicFont:                     fontname
@@ -110,10 +111,15 @@ URxvt*letterSpace:      -1
 ! URxvt*perl-lib:                       string
 ! URxvt*perl-eval:                      perl-eval
 URxvt*perl-ext-common:  default,matcher,resize-font
-URxvt.resize-font.smaller: C-minus
-URxvt.resize-font.bigger: C-plus
-URxvt.resize-font.reset: C-equal
-URxvt.resize-font.show: C-question
+URxvt.resize-font.step: 1
+URxvt.keysym.C-minus:     resize-font:smaller
+URxvt.keysym.C-plus:      resize-font:bigger
+URxvt.keysym.C-equal:     resize-font:reset
+URxvt.keysym.C-question:  resize-font:show
+! URxvt.resize-font.smaller: C-minus
+! URxvt.resize-font.bigger: C-plus
+! URxvt.resize-font.reset: C-equal
+! URxvt.resize-font.show: C-question
 ! URxvt*perl-ext:                       string
 URxvt*iso14755:                       false
 URxvt*iso14755_52:                    false
@@ -157,6 +163,7 @@ xterm*faceSize: 12
 ! -- Colours -- !
 #include "/home/dan/.config/colours/solarized0"
 #include "/home/dan/.config/colours/solarized"
+!#include "/home/dan/.config/colours/molokai"
 ! https://web.archive.org/web/20090130061234/http://phraktured.net/terminal-colors/
 !#include "/home/dan/.config/colours/thirteen"
 ! http://www.xcolors.net/

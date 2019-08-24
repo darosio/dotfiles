@@ -89,3 +89,6 @@ class fzf_select(Command):
                 self.fm.cd(fzf_file)
             else:
                 self.fm.select_file(fzf_file)
+
+
+# https://github.com/fiatjaf/dotfiles/blob/master/ranger-commands.py

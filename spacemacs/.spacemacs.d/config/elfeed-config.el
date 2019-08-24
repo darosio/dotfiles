@@ -1,4 +1,4 @@
-(elfeed-goodies/setup)
+;; (elfeed-goodies/setup)
 (setq httpd-port 8181)
 
 (setq elfeed-search-trailing-width 23)
@@ -6,43 +6,45 @@
 (defun elfeed-search-format-date (date)
   (format-time-string "%Y-%m-%d %H:%M" (seconds-to-time date)))
 
+(add-hook 'elfeed-show-mode-hook 'xah-use-variable-width-font)
+(add-hook 'elfeed-show-mode-hook 'visual-fill-column-mode)
 
-(defun elfeed-goodies/entry-line-draw (entry)
-  "Print ENTRY to the buffer."
-  (let* ((title (or (elfeed-meta entry :title) (elfeed-entry-title entry) ""))
-  (date (elfeed-search-format-date (elfeed-entry-date entry)))
-  (title-faces (elfeed-search--faces (elfeed-entry-tags entry)))
-  (feed (elfeed-entry-feed entry))
-  (feed-title
-   (when feed
-     (or (elfeed-meta feed :title) (elfeed-feed-title feed))))
-  (tags (mapcar #'symbol-name (elfeed-entry-tags entry)))
-  (tags-str (concat "[" (mapconcat 'identity tags ",") "]"))
-  (title-width (- (window-width) elfeed-goodies/feed-source-column-width
-    elfeed-goodies/tag-column-width 4))
-  (title-column (elfeed-format-column
-   title (elfeed-clamp
-          elfeed-search-title-min-width
-          title-width
-          title-width)
-   :left))
-  (tag-column (elfeed-format-column
-        tags-str (elfeed-clamp (length tags-str)
-          elfeed-goodies/tag-column-width
-          elfeed-goodies/tag-column-width)
-        :left))
-  (feed-column (elfeed-format-column
-         feed-title (elfeed-clamp elfeed-goodies/feed-source-column-width
-      elfeed-goodies/feed-source-column-width
-      elfeed-goodies/feed-source-column-width)
-         :left)))
-    (if (>= (window-width) (* (frame-width) elfeed-goodies/wide-threshold))
- (progn
-   (insert (propertize date 'face 'elfeed-search-date-face) " ")
-   (insert (propertize feed-column 'face 'elfeed-search-feed-face) " ")
-   (insert (propertize tag-column 'face 'elfeed-search-tag-face) " ")
-   (insert (propertize title 'face title-faces 'kbd-help title)))
-    (insert (propertize title 'face title-faces 'kbd-help title)))))
+;; (defun elfeed-goodies/entry-line-draw (entry)
+;;   "Print ENTRY to the buffer."
+;;   (let* ((title (or (elfeed-meta entry :title) (elfeed-entry-title entry) ""))
+;;   (date (elfeed-search-format-date (elfeed-entry-date entry)))
+;;   (title-faces (elfeed-search--faces (elfeed-entry-tags entry)))
+;;   (feed (elfeed-entry-feed entry))
+;;   (feed-title
+;;    (when feed
+;;      (or (elfeed-meta feed :title) (elfeed-feed-title feed))))
+;;   (tags (mapcar #'symbol-name (elfeed-entry-tags entry)))
+;;   (tags-str (concat "[" (mapconcat 'identity tags ",") "]"))
+;;   (title-width (- (window-width) elfeed-goodies/feed-source-column-width
+;;     elfeed-goodies/tag-column-width 4))
+;;   (title-column (elfeed-format-column
+;;    title (elfeed-clamp
+;;           elfeed-search-title-min-width
+;;           title-width
+;;           title-width)
+;;    :left))
+;;   (tag-column (elfeed-format-column
+;;         tags-str (elfeed-clamp (length tags-str)
+;;           elfeed-goodies/tag-column-width
+;;           elfeed-goodies/tag-column-width)
+;;         :left))
+;;   (feed-column (elfeed-format-column
+;;          feed-title (elfeed-clamp elfeed-goodies/feed-source-column-width
+;;       elfeed-goodies/feed-source-column-width
+;;       elfeed-goodies/feed-source-column-width)
+;;          :left)))
+;;     (if (>= (window-width) (* (frame-width) elfeed-goodies/wide-threshold))
+;;  (progn
+;;    (insert (propertize date 'face 'elfeed-search-date-face) " ")
+;;    (insert (propertize feed-column 'face 'elfeed-search-feed-face) " ")
+;;    (insert (propertize tag-column 'face 'elfeed-search-tag-face) " ")
+;;    (insert (propertize title 'face title-faces 'kbd-help title)))
+;;     (insert (propertize title 'face title-faces 'kbd-help title)))))
 
 
 ;; http://pragmaticemacs.com/emacs/read-your-rss-feeds-in-emacs-with-elfeed/
@@ -71,6 +73,7 @@
 
 ;; as for mu4e
 (define-key elfeed-show-mode-map (kbd "w") 'visual-line-mode)
+(define-key elfeed-show-mode-map (kbd "w") 'visual-fill-column-mode)
 
 
 ;; Hydra macros and elfeed tags
