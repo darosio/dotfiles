@@ -210,8 +210,8 @@ bindsym $mod+Next exec pactl set-sink-volume 0 -5%; exec pactl set-sink-volume 1
 bindsym $mod+Prior  exec pactl set-sink-volume 0 +5%; exec pactl set-sink-volume 1 +5%
 bindsym $mod+End   exec pactl set-sink-mute 0 toggle;  exec pactl set-sink-mute 1 toggle
 #bindsym XF86Launch1 exec /usr/bin/pactl play-sample that_was_easy
-bindsym --release XF86MonBrightnessUp exec --no-startup-id /usr/bin/xbacklight -inc 5
-bindsym --release XF86MonBrightnessDown exec --no-startup-id /usr/bin/xbacklight -dec 5
+bindsym --release XF86MonBrightnessUp exec --no-startup-id /usr/bin/light -A 5
+bindsym --release XF86MonBrightnessDown exec --no-startup-id /usr/bin/light -U 5
 # XF86WLAN
 #bindsym --release XF86WLAN exec --no-startup-id /usr/bin/urxvt -c ls
 
