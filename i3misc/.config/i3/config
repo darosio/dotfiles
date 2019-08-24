@@ -166,7 +166,7 @@ bindsym $mod+r mode "resize"
 bar {
     #output            LVDS1
     #output            HDMI1
-    status_command    py3status
+    status_command    i3status
     position          bottom
     mode              hide
     workspace_buttons yes

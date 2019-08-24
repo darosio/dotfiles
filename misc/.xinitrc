@@ -37,7 +37,7 @@ setxkbmap -layout us,it -option grp:shifts_toggle
 #eval "$(keychain --eval --agents ssh,gpg C08BC79E3A3F1D89AD90C0008B6A39EFA290FB41)" &
 #exec lxsession &
 exec udiskie &
-#eval $(dbus-launch --sh-syntax)
-#exec i3
+eval $(dbus-launch --sh-syntax)
+exec i3
+#exec dbus-launch --sh-syntax --exit-with-session i3  # freeze using (xback)light
 #exec ck-launch-session dbus-launch --sh-syntax --exit-with-session i3
-exec dbus-launch --sh-syntax --exit-with-session i3
