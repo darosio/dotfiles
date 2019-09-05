@@ -1,0 +1,60 @@
+<advancedsettings>
+    <services>
+      <esallinterfaces>true</esallinterfaces>
+      <webserver>true</webserver>
+      <webserverport>8090</webserverport>
+      <zeroconf>true</zeroconf>
+      <upnp>true</upnp>
+      <upnpannounce>true</upnpannounce>
+      <upnpcontroller>true</upnpcontroller>
+      <upnplookforexternalsubtitles>true</upnplookforexternalsubtitles>
+      <upnprenderer>true</upnprenderer>
+      <upnpserver>true</upnpserver>
+      <devicename>tresero</devicename>
+    </services>
+
+
+  <audiocds>
+      <autoaction>2</autoaction>
+      <ejectonrip>true</ejectonrip>
+      <encoder>audioencoder.flac</encoder>
+      <recordingpath>nfs://192.168.1.176/srv/nfs/music/</recordingpath>
+  </audiocds>
+
+  <locale>
+      <speedunit>kmh</speedunit>
+      <temperatureunit>c</temperatureunit>
+      <timezone>Europe/Rome</timezone>
+      <timezonecountry>Italy</timezonecountry>
+  </locale>
+
+    <videodatabase>
+      <type>mysql</type>
+      <host>192.168.1.176</host>
+      <port>3306</port>
+      <user>kodi</user>
+      <pass>kodi</pass>
+    </videodatabase>
+
+    <musicdatabase>
+      <type>mysql</type>
+      <host>192.168.1.176</host>
+      <port>3306</port>
+      <user>kodi</user>
+      <pass>kodi</pass>
+    </musicdatabase>
+
+    <myvideos>
+        <stackvideos>true</stackvideos>
+        <usetags>true</usetags>
+    </myvideos>
+
+    <videolibrary>
+      <importwatchedstate>true</importwatchedstate>
+      <importresumepoint>true</importresumepoint>
+      <updateonstartup>true</updateonstartup>
+      <groupmoviesets>true</groupmoviesets>
+      <groupsingleitemsets>true</groupsingleitemsets>
+    </videolibrary>
+    <!-- <setting id="weather.addon">weather.gismeteo</setting> -->
+</advancedsettings>
