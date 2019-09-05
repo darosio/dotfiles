@@ -63,7 +63,7 @@ or:
 ### Configured packages include:
 - use-package with async
 - which-key
-- evil and keybindings with general
+- modalka
 - ivy counsel swiper; overload `C-h f`, `C-h v`, `C-s` and `M-x`
 - avy (move around) and smex (remember places)
 - imenu with `F9` and `C-F9` overloading
@@ -80,5 +80,11 @@ or:
 - gtklp for printing using cups
 - expand-region `C-=`
 - dired
-- smartparens
+- smartparens `C-backspace` `H-b` `H-f` `H-h` `H-d` `H-k` `H-t`
 - hideshow for folding
+- electric and aggressive indent.
+- visual fill column also for distraction free behavior.
+- slack with a hydra
+- nov
+- Maximize window `H-m` . prot/window-single-toggle.
+- ace-win

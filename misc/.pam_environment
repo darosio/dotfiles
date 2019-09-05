@@ -5,6 +5,8 @@
 PASSWORD_STORE_DIR		DEFAULT=@{HOME}/Sync/.pass
 WORKON_HOME				DEFAULT=@{HOME}/.venvs/
 MU_PLAY_PROGRAM			DEFAULT=rifle
+STARDICT_DATA_DIR		DEFAULT=@{HOME}/.goldendict/
+
 
 # You can reuse XDG_RUNTIME_DIR for runtime files
 #ICEAUTHORITY    DEFAULT=${XDG_RUNTIME_DIR}/ICEauthority

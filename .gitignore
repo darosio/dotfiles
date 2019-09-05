@@ -12,3 +12,5 @@
 __pycache__/
 
 *.spacemacs.env
+# Flycheck
+.flycheck_*.el

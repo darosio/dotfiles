@@ -6,6 +6,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Releases will start from 2022.1.
 
 
+## [dropevil] - 2020-04-19
+### Added
+- Define F14 `MenuKey` in Xmodmap for emacs modalka.
+- goldendict HOME set in ~/.pam_environment.
+- (emacs) Modalka.
+- (emacs) mk-utils mk-text from mrkkrp packages.el.
+- (emacs) hl-todo using a hydra `F14 2`.
+- (emacs) Smart mode line.
+- (emacs) Electric and aggressive indent.
+
+### Changed 
+- CapsLock-Ctrl swapped
+- (emacs) Use emacs keybindings instead of evil.
+- (emacs) Several **which-key-add-key-based-replacements**.
+- (emacs) .init.el flychecked and aggressively indented.
+
+### Removed
+- (emacs) evil, keychord and general.
+
 ## [vanilla] - 2020-03-15
 ### Added
 - This **Changelog.md** file.
