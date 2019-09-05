@@ -30,9 +30,10 @@ Inbox ~/Sync/Maildir/pec/INBOX
 Flatten .
 
 Channel pec
-Master :pec-remote:
-Slave :pec-local:
+Far :pec-remote:
+Near :pec-local:
 Patterns INBOX *
+Sync Push New ReNew Delete Pull All
 
 #
 # Cnr
@@ -47,7 +48,6 @@ CertificateFile /etc/ssl/certs/ca-certificates.crt
 
 IMAPStore cnr-remote
 Account cnr
-#PathDelimiter /
 
 MaildirStore cnr-local
 # The trailing "/" is important
@@ -55,12 +55,43 @@ Path ~/Sync/Maildir/cnr/
 Inbox ~/Sync/Maildir/cnr/INBOX
 Flatten .
 
-Channel cnr
-Master :cnr-remote:
-Slave :cnr-local:
-Patterns INBOX *
-#Patterns INBOX
+Channel cnr-io
+Far :cnr-remote:
+Near :cnr-local:
+Patterns INBOX * !INBOX/Drafts !INBOX/Sent !INBOX/Trash !Drafts !Sent !Trash  !INBOX/Templates !Templates !INBOX/keepup !keepup !INBOX/refs !refs
 
+Channel cnr-drafts
+Far ":cnr-remote:INBOX/Drafts"
+Near :cnr-local:Drafts
+
+Channel cnr-sent
+Far ":cnr-remote:INBOX/Sent"
+Near :cnr-local:Sent
+
+Channel cnr-trash
+Far ":cnr-remote:INBOX/Trash"
+Near :cnr-local:Trash
+
+Channel cnr-templates
+Far ":cnr-remote:INBOX/Templates"
+Near :cnr-local:Templates
+
+Channel cnr-keepup
+Far ":cnr-remote:INBOX/keepup"
+Near :cnr-local:keepup
+
+Channel cnr-refs
+Far ":cnr-remote:INBOX/refs"
+Near :cnr-local:refs
+
+Group cnr
+Channel cnr-io
+Channel cnr-drafts
+Channel cnr-sent
+Channel cnr-trash
+Channel cnr-templates
+Channel cnr-keepup
+Channel cnr-refs
 
 #
 # Gmail for dpa
@@ -68,7 +99,8 @@ Patterns INBOX *
 IMAPAccount gmail
 Host imap.gmail.com
 User danielepietroarosio@gmail.com
-PassCmd "pass email/gmail"
+#PassCmd "pass email/gmail"
+PassCmd "pass email/gmail-isync"
 SSLType IMAPS
 CertificateFile /etc/ssl/certs/ca-certificates.crt
 
@@ -76,45 +108,46 @@ IMAPStore gmail-remote
 Account gmail
 
 MaildirStore gmail-local
+SubFolders Verbatim
 # The trailing "/" is important
 Path ~/Sync/Maildir/gmail/
 Inbox ~/Sync/Maildir/gmail/Inbox
 #Flatten .
 
 Channel gmail-inbox
-Master :gmail-remote:INBOX
-Slave :gmail-local:Inbox
+Far :gmail-remote:INBOX
+Near :gmail-local:Inbox
 
 Channel gmail-archive
-Master ":gmail-remote:[Gmail]/All Mail"
-Slave :gmail-local:archive
+Far ":gmail-remote:[Gmail]/All Mail"
+Near :gmail-local:archive
 Expunge Both
 #Sync Push Flags
 # se archivio (or "D") da Sent resta copia in All Mail che devo ricancellare
 # in local gmail/archive
 
 Channel gmail-draft
-Master ":gmail-remote:[Gmail]/Drafts"
-Slave :gmail-local:draft
+Far ":gmail-remote:[Gmail]/Drafts"
+Near :gmail-local:draft
 
 Channel gmail-sent
-Master ":gmail-remote:[Gmail]/Sent Mail"
-Slave :gmail-local:sent
+Far ":gmail-remote:[Gmail]/Sent Mail"
+Near :gmail-local:sent
 
 Channel gmail-spam
-Master :gmail-remote:[Gmail]/Spam
-Slave :gmail-local:spam
+Far :gmail-remote:[Gmail]/Spam
+Near :gmail-local:spam
 
 Channel gmail-trash
-Master :gmail-remote:[Gmail]/Trash
-Slave :gmail-local:trash
+Far :gmail-remote:[Gmail]/Trash
+Near :gmail-local:trash
 #Expunge None
 Expunge Both
 
 # Labels
 Channel gmail-rest
-Master :gmail-remote:
-Slave :gmail-local:
+Far :gmail-remote:
+Near :gmail-local:
 # Exclude everything under the internal [Gmail] folder, except the interesting folders
 #Patterns * ![Gmail]* "[Gmail]/Sent Mail" "[Gmail]/Starred" "[Gmail]/All Mail"
 Patterns * ![Gmail]* !Inbox !archive !draft !sent !spam !trash

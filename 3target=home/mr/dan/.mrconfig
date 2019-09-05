@@ -1,8 +1,8 @@
 
 [DEFAULT]
-chain = true
-include = cat /usr/share/mr/git-annex
-include = cat /usr/share/mr/vis
+#chain = true
+#include = cat /usr/share/mr/git-annex
+#include = cat /usr/share/mr/vis
 
 # TODO: consider: git pull; git merge; git push for mr up default
 # [workspace/zim/zim-arch]

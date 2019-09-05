@@ -8,7 +8,7 @@
 # anacron
 **/.anacron/spool
 
-*.elc
+#*.elc
 __pycache__/
 
 *.spacemacs.env

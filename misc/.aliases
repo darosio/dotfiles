@@ -33,6 +33,8 @@ paclist-size() {
         awk '{printf "%s %.0f MiB\n", $1, $2/1024/1024}' | column -t 
 }
 alias t='tree'
+alias xr2='xrandr --output HDMI1 --left-of HDMI3 --rotate left'
+alias xrr=' xrandr --output eDP-1 --scale 1.24x1.24 --auto'
 alias stow='stow -t ~/'
 # Auto "cd" when entering just a path
 shopt -s autocd
@@ -97,12 +99,17 @@ function ranger-cd {
 }                                                                                  
 # This binds Ctrl-O to ranger-cd:                                                  
 bind '"\C-o":"ranger-cd\C-m"' 
+bind '"\C-f":"rifle `fzf -e`\C-m"' 
 
 # Bash's binds to <F1>
 bind '"\e[24~": "urxvt &\n"'
-#alias of='o "`fzf -e`"'
+alias of='rifle "`fzf -e`"'
 export FZF_DEFAULT_OPTS="-e -m --sort 10000"
 #export FZF_DEFAULT_COMMAND='ag -l -g ""'
+export FZF_DEFAULT_COMMAND="fd"
+#export FZF_DEFAULT_COMMAND="fd . $HOME"
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_ALT_C_COMMAND="fd -t d"
 #source /etc/profile.d/fzf.sh
 #source /etc/profile.d/fzf.bash
 source /usr/share/fzf/key-bindings.bash
@@ -144,7 +151,6 @@ alias o='mimeopen -a $@'
 alias oo='mimeopen $@'
 alias nb='ipython notebook --pylab inline'
 alias nb='jupyter notebook'
-alias ipythonp='ipython --pylab=inline'
 alias qpy='ipython qtconsole --pylab'
 alias sm=".local/bin/msmtp-runqueue.sh"
 
@@ -289,7 +295,8 @@ pdf_myReduce2() {
 #shopt -s cdspell #nocaseglob
 #stop beeping
 #setterm -blength 0
-alias ww='xfce4-panel --disable-wm-check'
 export MAKEFLAGS='-j4'
 alias emm='systemctl --user start emacs.service'
 alias ems='systemctl --user stop emacs.service'
+alias tj='trans -j'
+alias tji='trans -j :it'

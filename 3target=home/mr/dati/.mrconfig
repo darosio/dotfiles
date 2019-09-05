@@ -1,8 +1,8 @@
 
 [DEFAULT]
-chain = false
-include = cat /usr/share/mr/git-annex
-include = cat /usr/share/mr/vis
+#chain = false
+#include = cat /usr/share/mr/git-annex
+#include = cat /usr/share/mr/vis
 
 [GBM_persson]
 

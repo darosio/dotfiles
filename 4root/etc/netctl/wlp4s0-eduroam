@@ -12,5 +12,6 @@ WPAConfigSection=(
 	'auth_alg=OPEN'
 	'eap=PEAP'
 	'identity="darosio@fbkeduroam.it"'
+hash:iconv -t utf16le | openssl md4
 	'password=TODO'
 )

@@ -4,86 +4,101 @@
   <path recursive="1">/home/dan/.goldendict/dict_/learner</path>
   <path recursive="1">/home/dan/.goldendict/dict_/special</path>
   <path recursive="1">/home/dan/.goldendict/dict_/thesaurus</path>
-  <path recursive="0">/home/dan/.goldendict/dict_/WordNet_3.0</path>
-  <path recursive="0">/home/dan/.goldendict/dict_/stardict-Oxford_Guide_to_British_and_American_Culture-2.4.2</path>
+  <path recursive="1">/home/dan/.goldendict/dict_/WordNet_3.0</path>
+  <path recursive="1">/home/dan/.goldendict/dict_/stardict-Oxford_Guide_to_British_and_American_Culture-2.4.2</path>
  </paths>
  <sounddirs>
-  <sounddir icon="" name="voices">/home/dan/.goldendict/dict_/voices</sounddir>
+  <sounddir name="WyabdcRealPeopleTTS" icon="">/home/dan/.goldendict/dict_/voices/WyabdcRealPeopleTTS</sounddir>
+  <sounddir name="OtdRealPeopleTTS" icon="">/home/dan/.goldendict/dict_/voices/OtdRealPeopleTTS</sounddir>
  </sounddirs>
- <dictionaryOrder id="0" name="">
-  <dictionary name="Oxford Guide to British and American Culture (En-En)">64d97d1cdf6e56004f6bb5c51e0c84c2</dictionary>
-  <dictionary name="Collins Thesaurus (En-En)">f3eca965d21c1b0206173da3928ced69</dictionary>
-  <dictionary name="Moby Thesaurus II">721670b5e97e2c759eaf35d14a965788</dictionary>
-  <dictionary name="Macmillan English Thesaurus (En-En)">7e709d8eb45d650b516201bdc9d78e9f</dictionary>
-  <dictionary name="Merriam-Webster's Collegiate Thesaurus (En-En)">73f611c382905c9040b40ab06e1beacb</dictionary>
-  <dictionary name="Roget's II The New Thesaurus 3th Ed. (En-En)">6485c8c5b9ad050474ec83ac1b6f6b47</dictionary>
-  <dictionary name="Soule's Dictionary of English Synonyms (En-En)">15bbdd32f0823973008d9848b654097d</dictionary>
-  <dictionary name="The Chambers Thesaurus (En-En)">230f25f03fec8e502ab61f1da9feaa44</dictionary>
-  <dictionary name="English Thesaurus">594c238aca7d94fde83fbf67477f91af</dictionary>
-  <dictionary name="WordNet® 3.0 (En-En)">4dc3bda9624c8930aae48b426d2607dc</dictionary>
-  <dictionary name="voices">da94f20b65c2ff0d2fe770f8285eef91</dictionary>
-  <dictionary name="English (US) Morphology">35145206f37ef0ccf744d866d4c2c33f</dictionary>
+ <dictionaryOrder name="" id="0">
+  <dictionary name="Oxford Guide to British and American Culture (En-En)">da1341075c0f8a5459ee654c629c4b71</dictionary>
+  <dictionary name="Collins Thesaurus (En-En)">4b886ca98bb35e37f71f40c7a9a9aa9b</dictionary>
+  <dictionary name="Moby Thesaurus II">638e1380ceff928bf1a276060dbfc2db</dictionary>
+  <dictionary name="Macmillan English Thesaurus (En-En)">70f72e934b223d2045218a8624555725</dictionary>
+  <dictionary name="Merriam-Webster's Collegiate Thesaurus (En-En)">c24dfd1ad134017e4124bd8b057abf78</dictionary>
+  <dictionary name="Roget's II The New Thesaurus 3th Ed. (En-En)">10c15d9a6cbd1c5004c1806f03ef7b71</dictionary>
+  <dictionary name="Soule's Dictionary of English Synonyms (En-En)">5b5594c2e557edbb592b723dce853ef2</dictionary>
+  <dictionary name="The Chambers Thesaurus (En-En)">4d7c9cbf259741fafefa085efd3c8f50</dictionary>
+  <dictionary name="English Thesaurus">7ba84deb60ae9e0bf7073691d9335856</dictionary>
+  <dictionary name="WordNet® 3.0 (En-En)">f07afef24b5b5ff2a7f9f71235874090</dictionary>
   <dictionary name="English Wikipedia">ae6f89aac7151829681b85f035d54e48</dictionary>
-  <dictionary name="English irregular forms">8f0dc61f14f9318a0a833aa8e689d011</dictionary>
-  <dictionary name="English Etymology">2de41a0e10d56f867967512149619f22</dictionary>
-  <dictionary name="Oxford Collocations Dictionary 2nd Ed. (En-En)">381360ca4be326b19bb89650007f516c</dictionary>
-  <dictionary name="Oxford Collocations Dictionary">bb0940af9f3d35eb74d73b6f17f58c0e</dictionary>
-  <dictionary name="The BBI Combinatory Dictionary of English (En-En)">936e611978c3d4cb09cafee91d965e32</dictionary>
-  <dictionary name="The Idiom Connection (En-En)">a40c18d8ac74c579f3f656ed45c48376</dictionary>
-  <dictionary name="Longman Dictionary of Contemporary English 5th Ed. (En-En)">781464fa9732ffaf9b47e21ff88bbf64</dictionary>
-  <dictionary name="Longman Dictionary of Contemporary English Extras 5th Ed. (En-En)">20925799a7321fce201f77538837836a</dictionary>
-  <dictionary name="Macmillan English Dictionary (En-En)">65b66c67d5734d7de91975a2c7a88a61</dictionary>
-  <dictionary name="Merriam-Webster's Advanced Learner's Dictionary (En-En)">fb3b8e3cba8836aac75450d3a90debfb</dictionary>
-  <dictionary name="Oxford Advanced Learner's Dictionary 8th Ed.">57259b5dd91c1fe60e92a66ed1ef519e</dictionary>
-  <dictionary name="American Heritage Dictionary 4th Ed. (En-En)">8f872f0225b59386b5f60e2fb24cc2dc</dictionary>
-  <dictionary name="Merriam-Webster's Collegiate 11th Ed. (En-En)">a1aad899cd2e59060127f5eb5154440c</dictionary>
-  <dictionary name="Oxford English Dictionary 2nd Ed. P1">1b1a3be096d1a942ddf11809615c2eaf</dictionary>
-  <dictionary name="Oxford English Dictionary 2nd Ed. P2">e9de9c309ae7cbf908fa3cfb624c6042</dictionary>
-  <dictionary name="Webster's Third New International Dictionary, Unabridged (En-En)">d5f59c2e01ad501a925f64b76183563b</dictionary>
+  <dictionary name="English irregular forms">c8cd6d395d4cc4e2d6c3078751c3d190</dictionary>
+  <dictionary name="English Etymology">b4188a8e316a0591e1e19ab2024c57a4</dictionary>
+  <dictionary name="Oxford Collocations Dictionary 2nd Ed. (En-En)">3a028996347f0c8865f79fa9c0258d4c</dictionary>
+  <dictionary name="The BBI Combinatory Dictionary of English (En-En)">0dfcac899dbf9420a3f976462449400b</dictionary>
+  <dictionary name="The Idiom Connection (En-En)">89acbc989050f332f7345b999f9b0e33</dictionary>
+  <dictionary name="Longman Dictionary of Contemporary English 5th Ed. (En-En)">8d7f811625d758aecda7fc83d7734347</dictionary>
+  <dictionary name="Longman Dictionary of Contemporary English Extras 5th Ed. (En-En)">cf10b797691315eeef28aad44013ba26</dictionary>
+  <dictionary name="American Heritage Dictionary 4th Ed. (En-En)">9501def14908adaf9d0e8ef03001668b</dictionary>
+  <dictionary name="Merriam-Webster's Collegiate 11th Ed. (En-En)">1058f9df67a55d73cb78c7b8c6ffdc19</dictionary>
+  <dictionary name="Oxford English Dictionary 2nd Ed. P1">36835de25c05a985f2dff832608cb4c9</dictionary>
+  <dictionary name="Oxford English Dictionary 2nd Ed. P2">bb7456f82f375d63568438914d0204aa</dictionary>
+  <dictionary name="Webster's Third New International Dictionary, Unabridged (En-En)">759811d5d6fd238c85696550803d2f87</dictionary>
+  <dictionary name="WyabdcRealPeopleTTS">dd9cbacf57090a6010c53a9ac02d7867</dictionary>
+  <dictionary name="OtdRealPeopleTTS">f73d0d03ef322a0dd566e59fd6cc4437</dictionary>
+  <dictionary name="Macmillan English Dictionary (En-En)">c568fee8ccb4227cf35c495c1c95cea9</dictionary>
+  <dictionary name="Merriam-Webster's Advanced Learner's Dictionary (En-En)">4c4be57790f26b34fe6d665a50afaf88</dictionary>
+  <dictionary name="Oxford Advanced Learner's Dictionary 8th Ed.">9f280a069ca8c89a477c1e52b84d8a5b</dictionary>
   <mutedDictionaries/>
  </dictionaryOrder>
- <inactiveDictionaries id="0" name="">
+ <inactiveDictionaries name="" id="0">
   <mutedDictionaries/>
  </inactiveDictionaries>
- <groups nextId="6">
-  <group shortcut="Ctrl+T" icon="us.png" id="1" name="thes">
-   <dictionary name="WordNet® 3.0 (En-En)">4dc3bda9624c8930aae48b426d2607dc</dictionary>
-   <dictionary name="Collins Thesaurus (En-En)">f3eca965d21c1b0206173da3928ced69</dictionary>
-   <dictionary name="Moby Thesaurus II">721670b5e97e2c759eaf35d14a965788</dictionary>
-   <dictionary name="Macmillan English Thesaurus (En-En)">7e709d8eb45d650b516201bdc9d78e9f</dictionary>
-   <dictionary name="Merriam-Webster's Collegiate Thesaurus (En-En)">73f611c382905c9040b40ab06e1beacb</dictionary>
-   <dictionary name="Roget's II The New Thesaurus 3th Ed. (En-En)">6485c8c5b9ad050474ec83ac1b6f6b47</dictionary>
-   <dictionary name="Soule's Dictionary of English Synonyms (En-En)">15bbdd32f0823973008d9848b654097d</dictionary>
-   <dictionary name="The Chambers Thesaurus (En-En)">230f25f03fec8e502ab61f1da9feaa44</dictionary>
-   <dictionary name="English Thesaurus">594c238aca7d94fde83fbf67477f91af</dictionary>
+ <groups nextId="7">
+  <group shortcut="Ctrl+T" name="thes" id="1" icon="us.png">
+   <dictionary name="WordNet® 3.0 (En-En)">f07afef24b5b5ff2a7f9f71235874090</dictionary>
+   <dictionary name="Collins Thesaurus (En-En)">4b886ca98bb35e37f71f40c7a9a9aa9b</dictionary>
+   <dictionary name="Moby Thesaurus II">638e1380ceff928bf1a276060dbfc2db</dictionary>
+   <dictionary name="Macmillan English Thesaurus (En-En)">70f72e934b223d2045218a8624555725</dictionary>
+   <dictionary name="Merriam-Webster's Collegiate Thesaurus (En-En)">c24dfd1ad134017e4124bd8b057abf78</dictionary>
+   <dictionary name="Roget's II The New Thesaurus 3th Ed. (En-En)">10c15d9a6cbd1c5004c1806f03ef7b71</dictionary>
+   <dictionary name="Soule's Dictionary of English Synonyms (En-En)">5b5594c2e557edbb592b723dce853ef2</dictionary>
+   <dictionary name="The Chambers Thesaurus (En-En)">4d7c9cbf259741fafefa085efd3c8f50</dictionary>
+   <dictionary name="English Thesaurus">7ba84deb60ae9e0bf7073691d9335856</dictionary>
+   <mutedDictionaries>
+    <mutedDictionary>4b886ca98bb35e37f71f40c7a9a9aa9b</mutedDictionary>
+    <mutedDictionary>638e1380ceff928bf1a276060dbfc2db</mutedDictionary>
+   </mutedDictionaries>
+  </group>
+  <group shortcut="Ctrl+B" name="best" id="6" icon="us.png">
+   <dictionary name="WyabdcRealPeopleTTS">dd9cbacf57090a6010c53a9ac02d7867</dictionary>
+   <dictionary name="OtdRealPeopleTTS">f73d0d03ef322a0dd566e59fd6cc4437</dictionary>
+   <dictionary name="WordNet® 3.0 (En-En)">f07afef24b5b5ff2a7f9f71235874090</dictionary>
+   <dictionary name="Longman Dictionary of Contemporary English 5th Ed. (En-En)">8d7f811625d758aecda7fc83d7734347</dictionary>
+   <dictionary name="Oxford Collocations Dictionary 2nd Ed. (En-En)">3a028996347f0c8865f79fa9c0258d4c</dictionary>
+   <dictionary name="The BBI Combinatory Dictionary of English (En-En)">0dfcac899dbf9420a3f976462449400b</dictionary>
+   <dictionary name="The Idiom Connection (En-En)">89acbc989050f332f7345b999f9b0e33</dictionary>
    <mutedDictionaries/>
   </group>
-  <group shortcut="Ctrl+B" icon="us.png" id="5" name="big">
-   <dictionary name="American Heritage Dictionary 4th Ed. (En-En)">8f872f0225b59386b5f60e2fb24cc2dc</dictionary>
-   <dictionary name="Merriam-Webster's Collegiate 11th Ed. (En-En)">a1aad899cd2e59060127f5eb5154440c</dictionary>
-   <dictionary name="Oxford English Dictionary 2nd Ed. P1">1b1a3be096d1a942ddf11809615c2eaf</dictionary>
-   <dictionary name="Oxford English Dictionary 2nd Ed. P2">e9de9c309ae7cbf908fa3cfb624c6042</dictionary>
-   <dictionary name="Webster's Third New International Dictionary, Unabridged (En-En)">d5f59c2e01ad501a925f64b76183563b</dictionary>
+  <group shortcut="Ctrl+H" name="huge" id="5" icon="us.png">
+   <dictionary name="American Heritage Dictionary 4th Ed. (En-En)">9501def14908adaf9d0e8ef03001668b</dictionary>
+   <dictionary name="Merriam-Webster's Collegiate 11th Ed. (En-En)">1058f9df67a55d73cb78c7b8c6ffdc19</dictionary>
+   <dictionary name="Oxford English Dictionary 2nd Ed. P1">36835de25c05a985f2dff832608cb4c9</dictionary>
+   <dictionary name="Oxford English Dictionary 2nd Ed. P2">bb7456f82f375d63568438914d0204aa</dictionary>
+   <dictionary name="Webster's Third New International Dictionary, Unabridged (En-En)">759811d5d6fd238c85696550803d2f87</dictionary>
    <mutedDictionaries/>
   </group>
-  <group shortcut="Ctrl+L" icon="us.png" id="4" name="learn">
+  <group shortcut="Ctrl+L" name="learn" id="4" icon="us.png">
+   <dictionary name="Longman Dictionary of Contemporary English 5th Ed. (En-En)">8d7f811625d758aecda7fc83d7734347</dictionary>
+   <dictionary name="Longman Dictionary of Contemporary English Extras 5th Ed. (En-En)">cf10b797691315eeef28aad44013ba26</dictionary>
+   <dictionary name="Macmillan English Dictionary (En-En)">c568fee8ccb4227cf35c495c1c95cea9</dictionary>
+   <dictionary name="Merriam-Webster's Advanced Learner's Dictionary (En-En)">4c4be57790f26b34fe6d665a50afaf88</dictionary>
+   <dictionary name="Oxford Advanced Learner's Dictionary 8th Ed.">9f280a069ca8c89a477c1e52b84d8a5b</dictionary>
    <mutedDictionaries/>
   </group>
-  <group shortcut="Ctrl+S" icon="us.png" id="3" name="special">
-   <dictionary name="English irregular forms">8f0dc61f14f9318a0a833aa8e689d011</dictionary>
-   <dictionary name="English Etymology">2de41a0e10d56f867967512149619f22</dictionary>
-   <dictionary name="Oxford Collocations Dictionary 2nd Ed. (En-En)">381360ca4be326b19bb89650007f516c</dictionary>
-   <dictionary name="Oxford Collocations Dictionary">bb0940af9f3d35eb74d73b6f17f58c0e</dictionary>
-   <dictionary name="The BBI Combinatory Dictionary of English (En-En)">936e611978c3d4cb09cafee91d965e32</dictionary>
-   <dictionary name="The Idiom Connection (En-En)">a40c18d8ac74c579f3f656ed45c48376</dictionary>
+  <group shortcut="Ctrl+S" name="special" id="3" icon="us.png">
+   <dictionary name="English irregular forms">c8cd6d395d4cc4e2d6c3078751c3d190</dictionary>
+   <dictionary name="English Etymology">b4188a8e316a0591e1e19ab2024c57a4</dictionary>
+   <dictionary name="Oxford Collocations Dictionary 2nd Ed. (En-En)">3a028996347f0c8865f79fa9c0258d4c</dictionary>
+   <dictionary name="The BBI Combinatory Dictionary of English (En-En)">0dfcac899dbf9420a3f976462449400b</dictionary>
+   <dictionary name="The Idiom Connection (En-En)">89acbc989050f332f7345b999f9b0e33</dictionary>
    <mutedDictionaries/>
   </group>
-  <group shortcut="Ctrl+W" icon="us.png" id="2" name="ww">
-   <dictionary name="voices">da94f20b65c2ff0d2fe770f8285eef91</dictionary>
-   <dictionary name="WordNet® 3.0 (En-En)">4dc3bda9624c8930aae48b426d2607dc</dictionary>
-   <dictionary name="English (US) Morphology">35145206f37ef0ccf744d866d4c2c33f</dictionary>
+  <group shortcut="Ctrl+W" name="ww" id="2" icon="us.png">
+   <dictionary name="WordNet® 3.0 (En-En)">f07afef24b5b5ff2a7f9f71235874090</dictionary>
    <dictionary name="English Wikipedia">ae6f89aac7151829681b85f035d54e48</dictionary>
-   <dictionary name="Oxford Guide to British and American Culture (En-En)">64d97d1cdf6e56004f6bb5c51e0c84c2</dictionary>
+   <dictionary name="Oxford Guide to British and American Culture (En-En)">da1341075c0f8a5459ee654c629c4b71</dictionary>
    <mutedDictionaries/>
   </group>
  </groups>
@@ -110,22 +125,23 @@
   <languageCodes></languageCodes>
  </forvo>
  <mediawikis>
-  <mediawiki enabled="1" url="https://en.wikipedia.org/w" icon="" id="ae6f89aac7151829681b85f035d54e48" name="English Wikipedia"/>
-  <mediawiki enabled="0" url="http://en.wiktionary.org/w" icon="" id="affcf9678e7bfe701c9b071f97eccba3" name="English Wiktionary"/>
-  <mediawiki enabled="0" url="http://ru.wikipedia.org/w" icon="" id="8e0c1c2b6821dab8bdba8eb869ca7176" name="Russian Wikipedia"/>
-  <mediawiki enabled="0" url="http://ru.wiktionary.org/w" icon="" id="b09947600ae3902654f8ad4567ae8567" name="Russian Wiktionary"/>
-  <mediawiki enabled="0" url="http://de.wikipedia.org/w" icon="" id="a8a66331a1242ca2aeb0b4aed361c41d" name="German Wikipedia"/>
-  <mediawiki enabled="0" url="http://de.wiktionary.org/w" icon="" id="21c64bca5ec10ba17ff19f3066bc962a" name="German Wiktionary"/>
-  <mediawiki enabled="0" url="http://pt.wikipedia.org/w" icon="" id="96957cb2ad73a20c7a1d561fc83c253a" name="Portuguese Wikipedia"/>
-  <mediawiki enabled="0" url="http://pt.wiktionary.org/w" icon="" id="ed4c3929196afdd93cc08b9a903aad6a" name="Portuguese Wiktionary"/>
+  <mediawiki name="English Wikipedia" id="ae6f89aac7151829681b85f035d54e48" enabled="1" icon="" url="https://en.wikipedia.org/w"/>
+  <mediawiki name="English Wiktionary" id="affcf9678e7bfe701c9b071f97eccba3" enabled="0" icon="" url="http://en.wiktionary.org/w"/>
+  <mediawiki name="Russian Wikipedia" id="8e0c1c2b6821dab8bdba8eb869ca7176" enabled="0" icon="" url="http://ru.wikipedia.org/w"/>
+  <mediawiki name="Russian Wiktionary" id="b09947600ae3902654f8ad4567ae8567" enabled="0" icon="" url="http://ru.wiktionary.org/w"/>
+  <mediawiki name="German Wikipedia" id="a8a66331a1242ca2aeb0b4aed361c41d" enabled="0" icon="" url="http://de.wikipedia.org/w"/>
+  <mediawiki name="German Wiktionary" id="21c64bca5ec10ba17ff19f3066bc962a" enabled="0" icon="" url="http://de.wiktionary.org/w"/>
+  <mediawiki name="Portuguese Wikipedia" id="96957cb2ad73a20c7a1d561fc83c253a" enabled="0" icon="" url="http://pt.wikipedia.org/w"/>
+  <mediawiki name="Portuguese Wiktionary" id="ed4c3929196afdd93cc08b9a903aad6a" enabled="0" icon="" url="http://pt.wiktionary.org/w"/>
  </mediawikis>
  <websites>
-  <website enabled="0" url="http://www.google.com/dictionary?aq=f&amp;langpair=en|en&amp;q=%GDWORD%&amp;hl=en" icon="" id="b88cb2898e634c6638df618528284c2d" name="Google En-En (Oxford)"/>
-  <website enabled="0" url="http://www.urbandictionary.com/define.php?term=%GDWORD%" icon="" id="f376365a0de651fd7505e7e5e683aa45" name="Urban Dictionary"/>
-  <website enabled="0" url="http://multitran.ru/c/m.exe?CL=1&amp;l1=1&amp;s=%GD1251%" icon="" id="324ca0306187df7511b26d3847f4b07c" name="Multitran (En)"/>
-  <website enabled="0" url="http://lingvopro.abbyyonline.com/en/Search/en-ru/%GDWORD%" icon="" id="924db471b105299c82892067c0f10787" name="Lingvo (En-Ru)"/>
-  <website enabled="0" url="http://michaelis.uol.com.br/moderno/ingles/index.php?lingua=portugues-ingles&amp;palavra=%GDISO1%" icon="" id="087a6d65615fb047f4c80eef0a9465db" name="Michaelis (Pt-En)"/>
+  <website name="Google En-En (Oxford)" id="b88cb2898e634c6638df618528284c2d" enabled="0" icon="" url="http://www.google.com/dictionary?aq=f&amp;langpair=en|en&amp;q=%GDWORD%&amp;hl=en"/>
+  <website name="Urban Dictionary" id="f376365a0de651fd7505e7e5e683aa45" enabled="0" icon="" url="http://www.urbandictionary.com/define.php?term=%GDWORD%"/>
+  <website name="Multitran (En)" id="324ca0306187df7511b26d3847f4b07c" enabled="0" icon="" url="http://multitran.ru/c/m.exe?CL=1&amp;l1=1&amp;s=%GD1251%"/>
+  <website name="Lingvo (En-Ru)" id="924db471b105299c82892067c0f10787" enabled="0" icon="" url="http://lingvopro.abbyyonline.com/en/Search/en-ru/%GDWORD%"/>
+  <website name="Michaelis (Pt-En)" id="087a6d65615fb047f4c80eef0a9465db" enabled="0" icon="" url="http://michaelis.uol.com.br/moderno/ingles/index.php?lingua=portugues-ingles&amp;palavra=%GDISO1%"/>
  </websites>
+ <dictservers/>
  <programs/>
  <voiceEngines/>
  <mutedDictionaries>
@@ -134,6 +150,7 @@
  <popupMutedDictionaries/>
  <preferences>
   <interfaceLanguage></interfaceLanguage>
+  <helpLanguage></helpLanguage>
   <displayStyle></displayStyle>
   <newTabsOpenAfterCurrentOne>0</newTabsOpenAfterCurrentOne>
   <newTabsOpenInBackground>1</newTabsOpenInBackground>
@@ -147,7 +164,8 @@
   <doubleClickTranslates>1</doubleClickTranslates>
   <selectWordBySingleClick>0</selectWordBySingleClick>
   <escKeyHidesMainWindow>0</escKeyHidesMainWindow>
-  <zoomFactor>1</zoomFactor>
+  <zoomFactor>1.2</zoomFactor>
+  <helpZoomFactor>1</helpZoomFactor>
   <wordsZoomLevel>0</wordsZoomLevel>
   <enableMainWindowHotkey>1</enableMainWindowHotkey>
   <mainWindowHotkey>Ctrl+F11, Ctrl+F11</mainWindowHotkey>
@@ -165,18 +183,20 @@
   <scanPopupUseGDMessage>1</scanPopupUseGDMessage>
   <pronounceOnLoadMain>0</pronounceOnLoadMain>
   <pronounceOnLoadPopup>0</pronounceOnLoadPopup>
-  <useExternalPlayer>0</useExternalPlayer>
-  <useInternalPlayer>1</useInternalPlayer>
-  <audioPlaybackProgram>mplayer</audioPlaybackProgram>
+  <useExternalPlayer>1</useExternalPlayer>
+  <useInternalPlayer>0</useInternalPlayer>
+  <audioPlaybackProgram>mpv</audioPlaybackProgram>
   <alwaysOnTop>0</alwaysOnTop>
   <searchInDock>0</searchInDock>
   <historyStoreInterval>0</historyStoreInterval>
-  <proxyserver enabled="0">
+  <proxyserver useSystemProxy="0" enabled="0">
    <type>0</type>
    <host></host>
    <port>3128</port>
    <user></user>
    <password></password>
+   <systemProxyUser></systemProxyUser>
+   <systemProxyPassword></systemProxyPassword>
   </proxyserver>
   <checkForNewReleases>1</checkForNewReleases>
   <disallowContentFromOtherSites>0</disallowContentFromOtherSites>
@@ -188,22 +208,44 @@
   <addonStyle></addonStyle>
   <collapseBigArticles>0</collapseBigArticles>
   <articleSizeLimit>2000</articleSizeLimit>
+  <maxDictionaryRefsInContextMenu>20</maxDictionaryRefsInContextMenu>
+  <trackClipboardChanges>0</trackClipboardChanges>
+  <fullTextSearch>
+   <searchMode>0</searchMode>
+   <matchCase>0</matchCase>
+   <maxArticlesPerDictionary>100</maxArticlesPerDictionary>
+   <maxDistanceBetweenWords>2</maxDistanceBetweenWords>
+   <useMaxArticlesPerDictionary>0</useMaxArticlesPerDictionary>
+   <useMaxDistanceBetweenWords>1</useMaxDistanceBetweenWords>
+   <dialogGeometry></dialogGeometry>
+   <disabledTypes></disabledTypes>
+   <enabled>1</enabled>
+   <maxDictionarySize>0</maxDictionarySize>
+  </fullTextSearch>
  </preferences>
- <lastMainGroupId>0</lastMainGroupId>
+ <lastMainGroupId>4294967294</lastMainGroupId>
  <lastPopupGroupId>0</lastPopupGroupId>
- <popupWindowState>AAAA/wAAAAH9AAAAAAAAAAAAAAAAAAAABAAAAAQAAAAIAAAACPwAAAABAAAAAQAAAAEAAAAaAGQAaQBjAHQAaQBvAG4AYQByAHkAQgBhAHIDAAAAAP////8AAAAAAAAAAA==</popupWindowState>
- <popupWindowGeometry>AdnQywABAAAAAAAAAAAAAAAAAiwAAAGSAAAAAAAAAAAAAAIsAAABkgAAAAAAAA==</popupWindowGeometry>
+ <popupWindowState>AAAA/wAAAAH9AAAAAAAAAg8AAAGTAAAABAAAAAQAAAAIAAAACPwAAAABAAAAAQAAAAEAAAAaAGQAaQBjAHQAaQBvAG4AYQByAHkAQgBhAHIDAAAAAP////8AAAAAAAAAAA==</popupWindowState>
+ <popupWindowGeometry>AdnQywADAAAAAARBAAAB2wAABm0AAANtAAAEQQAAAdsAAAZtAAADbQAAAAAAAAAAB4AAAARBAAAB2wAABm0AAANt</popupWindowGeometry>
  <pinPopupWindow>0</pinPopupWindow>
- <mainWindowState></mainWindowState>
- <mainWindowGeometry></mainWindowGeometry>
+ <mainWindowState>AAAA/wAAAAH9AAAAAgAAAAAAAAAAAAAAAPwCAAAAAfsAAAAUAHMAZQBhAHIAYwBoAFAAYQBuAGUAAAAAAP////8AAACDAP///wAAAAEAAADMAAAD6fwCAAAAAvsAAAASAGQAaQBjAHQAcwBQAGEAbgBlAQAAADkAAAHzAAAAXwD////7AAAAFgBoAGkAcwB0AG8AcgB5AFAAYQBuAGUBAAACMgAAAfAAAABfAP///wAABq4AAAPpAAAABAAAAAQAAAAIAAAACPwAAAABAAAAAgAAAAIAAAAUAG4AYQB2AFQAbwBvAGwAYgBhAHIBAAAAAP////8AAAAAAAAAAAAAABoAZABpAGMAdABpAG8AbgBhAHIAeQBCAGEAcgEAAAJL/////wAAAAAAAAAA</mainWindowState>
+ <mainWindowGeometry>AdnQywADAAAAAAAAAAAAFgAAB38AAAQ3AAAAAAAAABYAAAd/AAAENwAAAAAAAAAAB4AAAAAAAAAAFgAAB38AAAQ3</mainWindowGeometry>
+ <helpWindowGeometry></helpWindowGeometry>
+ <helpSplitterState></helpSplitterState>
  <dictInfoGeometry></dictInfoGeometry>
  <inspectorGeometry></inspectorGeometry>
  <timeForNewReleaseCheck>2016-02-01T16:08:08</timeForNewReleaseCheck>
  <skippedRelease></skippedRelease>
  <showingDictBarNames>0</showingDictBarNames>
  <usingSmallIconsInToolbars>0</usingSmallIconsInToolbars>
- <maxDictionaryRefsInContextMenu>20</maxDictionaryRefsInContextMenu>
  <editDictionaryCommandLine></editDictionaryCommandLine>
  <maxPictureWidth>0</maxPictureWidth>
  <maxHeadwordSize>256</maxHeadwordSize>
+ <headwordsDialog>
+  <searchMode>0</searchMode>
+  <matchCase>0</matchCase>
+  <autoApply>0</autoApply>
+  <headwordsExportPath></headwordsExportPath>
+  <headwordsDialogGeometry></headwordsDialogGeometry>
+ </headwordsDialog>
 </config>

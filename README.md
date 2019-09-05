@@ -58,6 +58,7 @@ or:
     Delete the now untracked submodule files
     rm -rf path_to_submodule
 
+
 ## emacs
 
 ### Configured packages include:
@@ -80,11 +81,47 @@ or:
 - gtklp for printing using cups
 - expand-region `C-=`
 - dired
-- smartparens `C-backspace` `H-b` `H-f` `H-h` `H-d` `H-k` `H-t`
-- hideshow for folding
+- smartparens `C-backspace` `H-b` `H-f` `H-h` `H-d` `H-k` `H-t` `H-()` `H-{}`.
+- hideshow for folding.
 - electric and aggressive indent.
 - visual fill column also for distraction free behavior.
-- slack with a hydra
-- nov
+- slack with a hydra.
+- nov.
 - Maximize window `H-m` . prot/window-single-toggle.
-- ace-win
+- ace-win.
+- calendars with calfw-org
+- org
+  - org-lint
+  - org-bullet org-attach org-download org-cliplink org-pdftools org-autolist org-indent
+  - ox-rst -pandoc -twbs -beamer -md -koma-letter
+  - org-compat for mpv links
+  - org-agenda views with daily and weekly review using org-super-agenda and org-ql.
+   - shopping and weight captures
+   - plantuml graphviz ditaa Jupyter
+- org-mime for mu4e compose.
+- auctex cdlatex
+- proj todos can go with either org-projectile or magit-todos.
+- python
+  - py-isort manually
+  - numydoc
+  - poetry
+  - pyenv (pyvenv)?
+- ORB with org-noter with precise insertion
+- csv-mode `C-c C-a`.
+- `C-c o a` mu4e-compose-attach-captured-message.
+
+
+
+## Vanilla emacs
+Using emacs as editor serving also the following purposes:
+- PIM
+  - GTD (org, superagenda, …)
+  - email (mu4e)
+  - notes (deft)
+- bibliography manager
+  - importing and searching (org-ref, doi, web XXX)
+  - managing .bib db (bibtex, ivy-bibtex, org-ref)
+  - notes (org-noter, ORB)
+- writing (latex, pandoc, org-ref)
+- git (magit)
+

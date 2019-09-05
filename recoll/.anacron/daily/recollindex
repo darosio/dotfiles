@@ -1,9 +1,0 @@
-#!/bin/sh
-
-echo "### recollindex DAILY ###"
-
-#sudo -u dan -H sh -c "recollindex" > /tmp/recoll.out 2>&1 || cat /tmp/recoll.out 
-recollindex > /tmp/recoll.out 2>&1 || cat /tmp/recoll.out 
-#recollindex -c ~/.recoll.Mail > /tmp/recoll.out 2>&1 || cat /tmp/recoll.out
-
-echo
