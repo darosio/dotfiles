@@ -57,3 +57,28 @@ or:
     Commit git commit -m "Removed submodule <name>"
     Delete the now untracked submodule files
     rm -rf path_to_submodule
+
+## emacs
+
+### Configured packages include:
+- use-package with async
+- which-key
+- evil and keybindings with general
+- ivy counsel swiper; overload `C-h f`, `C-h v`, `C-s` and `M-x`
+- avy (move around) and smex (remember places)
+- imenu with `F9` and `C-F9` overloading
+- mu4e and calendar https://jherrlin.github.io/posts/emacs-mu4e/
+- deft with native insert mode; can create new ./proj/file
+- open file in emacs with external application: `SPC f f` `M-o x`
+- completion with company and (ivy-)yasnippet `SPC i s` also for longer org
+  easy template; dropped: auto-yasnippet and yatemplate
+- projectile, magit, auto-completion, counsel recoll
+- org babel, graphviz, plantuml, markdown, criticmarkup
+- zeal-at-point
+- text scale increase/decrease `C-x C-0`
+- typo mode `F14 t T`
+- gtklp for printing using cups
+- expand-region `C-=`
+- dired
+- smartparens
+- hideshow for folding

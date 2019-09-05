@@ -1,5 +1,0 @@
-#!/bin/sh
-
-echo "### Clean Syncronizations (unison and syncthing) ###"
-find ~/Sync/ -name \*sync-conflict\*
-echo
