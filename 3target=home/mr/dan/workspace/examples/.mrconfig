@@ -1,0 +1,86 @@
+
+[aicsimageio]
+checkout = git clone 'https://github.com/AllenCellModeling/aicsimageio.git' 'aicsimageio'
+
+[Allen_Tildesleyexamples]
+checkout = git clone 'https://github.com/Allen-Tildesley/examples.git' 'Allen_Tildesleyexamples'
+
+[Beat]
+checkout = git clone 'https://github.com/HanLab-OSU/Beat.git' 'Beat'
+
+[Blog]
+checkout = git clone 'https://github.com/petrkeil/Blog' 'Blog'
+
+[CalciumSignalExtract]
+checkout = git clone 'https://github.com/ninehundred1/CalciumSignalExtract.git' 'CalciumSignalExtract'
+
+[cecog]
+checkout = git clone 'https://github.com/CellCognition/cecog.git' 'cecog'
+
+[cellom2tif]
+checkout = git clone 'https://github.com/jni/cellom2tif' 'cellom2tif'
+
+[clonet]
+checkout = git clone 'git@bitbucket.org:deid00/clonet.git' 'clonet'
+
+[dask]
+checkout = git clone 'https://github.com/dask/dask.git' 'dask'
+
+[dotemacs]
+checkout = git clone 'https://github.com/rougier/dotemacs.git' 'dotemacs'
+
+[impy]
+checkout = git clone 'https://github.com/hanjinliu/impy.git' 'impy'
+
+[Managing_Your_Biological_Data_with_Python_3]
+checkout = git clone 'https://github.com/raymonwu/Managing_Your_Biological_Data_with_Python_3.git' 'Managing_Your_Biological_Data_with_Python_3'
+
+[Markdown-for-Manuscripts]
+checkout = git clone 'https://github.com/djhocking/Markdown-for-Manuscripts' 'Markdown-for-Manuscripts'
+
+[model-of-neuronal-chloride-homeostasis]
+checkout = git clone 'https://github.com/kiradust/model-of-neuronal-chloride-homeostasis.git' 'model-of-neuronal-chloride-homeostasis'
+
+[pandoc-letter]
+checkout = git clone 'https://github.com/aaronwolen/pandoc-letter.git' 'pandoc-letter'
+
+[pyfret_release]
+checkout = git clone 'git@bitbucket.org:rebecca_roisin/pyfret_release.git' 'pyfret_release'
+
+[PythonicPerambulations]
+checkout = git clone 'https://github.com/jakevdp/PythonicPerambulations.git' 'PythonicPerambulations'
+
+[sima]
+checkout = git clone 'https://github.com/losonczylab/sima' 'sima'
+
+[SpekCheck]
+checkout = git clone 'https://github.com/MicronOxford/SpekCheck.git' 'SpekCheck'
+
+
+[4thesis/pandoc-thesis]
+checkout = git clone 'https://github.com/carnby/pandoc-thesis' 'pandoc-thesis'
+
+[4thesis/rktik-thesis]
+checkout = git clone 'https://github.com/ciex/rktik-thesis' 'rktik-thesis'
+
+[4thesis/thesis-markdown-pandoc]
+checkout = git clone 'https://github.com/chiakaivalya/thesis-markdown-pandoc' 'thesis-markdown-pandoc'
+
+
+[1_dotfiles/centurion]
+checkout = hg clone 'https://hg.sr.ht/~jasonwryan/centurion' 'centurion'
+
+[1_dotfiles/dotfile-example]
+checkout = git clone 'https://github.com/lkraav/dotfiles' 'dotfile-example'
+
+[1_dotfiles/jeffknupp-dotfiles]
+checkout = git clone 'https://github.com/jeffknupp/dotfiles' 'jeffknupp-dotfiles'
+
+[1_dotfiles/pbrisbin]
+checkout = git clone 'https://github.com/pbrisbin/dotfiles/' 'pbrisbin'
+
+[1_dotfiles/shiv]
+checkout = hg clone 'https://hg.sr.ht/~jasonwryan/shiv' 'shiv'
+
+[1_dotfiles/xero]
+checkout = git clone 'https://github.com/xero/dotfiles' 'xero'

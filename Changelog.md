@@ -5,15 +5,69 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 Releases will start from 2022.1.
 
+## [vertico] - 2022-10-24
+### Added
+- recoll.stow bash to make sure folders either exist or get created.
+- direnv.
+- `lg` alias to git annex list --allrepos
+- fig for `htop`.
+#### emacs
+- early-init.el.
+- Completion with vertico, marginalia, embark (configured with which-key), consult, orderless and corfu.
+- Fuzzy search with affe.
+- citar.
+- wgrep.
+- rg with '--hidden' args.
+- additional (prog) modes.
+- consult-completion-in-region and corfu(-doc) manually triggered.
+- lsp-mode (hook lsp activation after poetry if pyproject.toml exists).
+  Remeber to install (using poetry) python-lsp-server and lsp-mypy.
+- treemacs
+- devdocs.
+- experimenting xeft notdeft and consult-notes.
+- org-roam-ui.
+- vterm.
+- pocket-reader.
+
+### Removed
+- user-requirements* files as pip-tools is superseded by poetry and pipx. 
+- Config of pam_environment.
+#### emacs
+- Completions with ivy, swiper counsel.
+- fzf.
+- ivy-bibtex.
+- flyspell-lazy.
+- company and companion.
+- company-jedi.
+- org-ref (using citar).
+- package.el conflicting with straight.
+
+### Changed
+- updated submodule revealjs.
+- fix rclone.
+- add g100 (cineca) in ssh.
+- add box to rclone.
+- add alias `lg` for git-annex –all-repos.
+- mbsync moved outside of ~/Sync and link to archive(s) HUGE improve avoiding many sync conflicts.
+- Update `mr` config.
+- Data organization in vigolana sync to sterzing exclude MM/.
+#### emacs
+- all the icons.
+- fix emoji.
+- fix spacemacs theme.
+- fix org store link.
+- add poetry tracking mode `f14 t P`.
+- (root) emacs is emacs-vanilla.
+
 ## [straight] - 2022-01-30
 ### Added
-- Staight for much improved bootstrap. (Does package order now matter?)
 - New file ~/.function for function command in bash like `rga-fzf` for rip-grep-all.
 - smartd.conf in 4root.
 - systemd/network/*.network files.
 - wpa_supplicant for wired eduroam.
-- gmail-isync
+- gmail-isync.
 #### emacs
+- Staight for much improved bootstrap. (Does package order now matter?)
 - tzc package (timezone conversions).
 - org-latex classes "apa6".
 - flycheck-vale.

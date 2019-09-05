@@ -1,32 +1,43 @@
-[grants]
-checkout = git clone 'git@bitbucket.org:darosio/grants.git' 'grants'
-
-[ms-jose]
-checkout = git clone 'git@bitbucket.org:darosio/ms-jose.git' 'ms-jose'
-
-[talks/tk-wip2015]
-checkout = git clone 'git@bitbucket.org:darosio/tk-wip2015.git' 'tk-wip2015'
-
-[Web/molecularimaging]
-checkout = hg clone 'https://darosio@bitbucket.org/darosio/molecularimaging' 'molecularimaging'
-
-[pandoc_resume]
-checkout = git clone 'ssh://git@bitbucket.org/darosio/cv.git' 'pandoc_resume'
-
-[Web/metamodels]
-checkout = git clone 'ssh://git@bitbucket.org/darosio/metamodels.git' 'metamodels'
-
-[ms-quercioli]
-checkout = git clone 'ssh://git@bitbucket.org/darosio/ms-quercioli.git' 'ms-quercioli'
-
-[ms-]
-checkout = git clone 'ssh://git@bitbucket.org/darosio/ms.git' 'ms-'
 
 [Web/datan]
-checkout = git clone 'git@github.com:darosio/datan.git' 'datan'
+checkout = git clone 'https://github.com/darosio/datan.git' 'datan'
 
 [Web/foodprotocols]
 checkout = git clone 'https://github.com/darosio/foodprotocols.git' 'foodprotocols'
 
+[Web/metamodels]
+checkout = git clone 'ssh://git@bitbucket.org/darosio/metamodels.git' 'metamodels'
+
+[Web/molecularimaging]
+checkout = git clone 'https://github.com/darosio/molecularimaging.git' 'molecularimaging'
+
+[Web/notebooks]
+checkout = git clone 'ssh://git@bitbucket.org/darosio/notebooks.git' 'notebooks'
+
 [Web/pelican-plugins]
 checkout = git clone --recursive 'https://github.com/getpelican/pelican-plugins' 'pelican-plugins'
+
+
+[grants]
+checkout = git clone 'git@bitbucket.org:darosio/grants.git' 'grants'
+
+[ms-]
+checkout = git clone 'ssh://git@bitbucket.org/darosio/ms.git' 'ms-'
+
+[ms-jose]
+checkout = git clone 'git@bitbucket.org:darosio/ms-jose.git' 'ms-jose'
+
+[ms-quercioli]
+checkout = git clone 'ssh://git@bitbucket.org/darosio/ms-quercioli.git' 'ms-quercioli'
+
+[pandoc_resume]
+checkout = git clone 'ssh://git@bitbucket.org/darosio/cv.git' 'pandoc_resume'
+
+[thesis]
+checkout = git clone 'git@bitbucket.org:darosio/thesis.git' 'thesis'
+
+[tk-wip2015]
+checkout = git clone 'git@bitbucket.org:darosio/tk-wip2015.git' 'tk-wip2015'
+
+[emcp]
+checkout = git clone 'https://github.com/darosio/emcp.git' 'emcp'

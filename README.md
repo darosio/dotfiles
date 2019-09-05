@@ -25,6 +25,8 @@ I location of .dotfiles is moved please first:
 stow -t ~/ misc
 stoe -t ~/ bash
 
+Remember to create folders and linkers where needed.
+
 ## submodule problem
 I had once and solved the detached head problem following:
 https://stackoverflow.com/questions/18770545/why-is-my-git-submodule-head-detached-from-master
@@ -60,6 +62,17 @@ or:
 
 
 ## emacs
+
+straight external requirement:
+- watchexec
+
+straight-remove-unused-repos
+straight-prune-build
+straight-pull-all
+straight-check-all
+straight-freeze-versions
+
+Keybinding reserved to users are: C-c <letter> and F5 to F9.
 
 ### Configured packages include:
 - use-package with async

@@ -25,8 +25,8 @@ Account pec
 
 MaildirStore pec-local
 # The trailing "/" is important
-Path ~/Sync/Maildir/pec/
-Inbox ~/Sync/Maildir/pec/INBOX
+Path ~/Maildir/pec/
+Inbox ~/Maildir/pec/INBOX
 Flatten .
 
 Channel pec
@@ -51,8 +51,8 @@ Account cnr
 
 MaildirStore cnr-local
 # The trailing "/" is important
-Path ~/Sync/Maildir/cnr/
-Inbox ~/Sync/Maildir/cnr/INBOX
+Path ~/Maildir/cnr/
+Inbox ~/Maildir/cnr/INBOX
 Flatten .
 
 Channel cnr-io
@@ -110,8 +110,8 @@ Account gmail
 MaildirStore gmail-local
 SubFolders Verbatim
 # The trailing "/" is important
-Path ~/Sync/Maildir/gmail/
-Inbox ~/Sync/Maildir/gmail/Inbox
+Path ~/Maildir/gmail/
+Inbox ~/Maildir/gmail/Inbox
 #Flatten .
 
 Channel gmail-inbox

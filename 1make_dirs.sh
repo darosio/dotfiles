@@ -1,0 +1,2 @@
+
+mkdir $HOME/.config/psd

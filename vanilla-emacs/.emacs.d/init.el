@@ -8,14 +8,16 @@
 ;; Binding keys reserved to user: "C-c <letter>" and <F5> to <F9>.
 ;; https://github.com/lccambiaghi/vanilla-emacs
 ;; 
-;; Defer garbage collection further back in the startup process
-(setq gc-cons-threshold most-positive-fixnum
-      gc-cons-percentage 0.6)
-;; We use Straight, we must prevent Emacs from doing early package initialization.
-(setq package-enable-at-startup nil)
-;; Do not allow loading from the package cache (same reason).
-(setq package-quickstart nil)
-;; Prevent the glimpse of un-styled Emacs by disabling these UI elements early.
+;; ;; Defer garbage collection further back in the startup process
+;; (setq gc-cons-threshold most-positive-fixnum
+;;       gc-cons-percentage 0.6)
+;; ;; We use Straight, we must prevent Emacs from doing early package initialization.
+;; (setq package-enable-at-startup nil)
+;; ;; Do not allow loading from the package cache (same reason).
+;; (setq package-quickstart nil)
+;; Prevent the glimpse of un-styled Emacs by disabling these UI elements
+;; early.
+
 (push '(menu-bar-lines . 0) default-frame-alist)
 (push '(tool-bar-lines . 0) default-frame-alist)
 (push '(vertical-scroll-bars) default-frame-alist)
@@ -51,10 +53,11 @@
       (add-to-list 'doom--initial-file-name-handler-alist handler))
     (setq file-name-handler-alist doom--initial-file-name-handler-alist))
   (add-hook 'emacs-startup-hook #'doom-reset-file-handler-alist-h)
-  (add-hook 'after-init-hook '(lambda ()
-                                ;; restore after startup
-                                (setq gc-cons-threshold 16777216
-                                      gc-cons-percentage 0.1))))
+  ;; (add-hook 'after-init-hook '(lambda ()
+  ;;                               ;; restore after startup
+  ;;                               (setq gc-cons-threshold 16777216
+  ;;                                     gc-cons-percentage 0.1)))
+  )
 ;; Ensure Doom is running out of this file's directory
 (setq user-emacs-directory (file-truename (file-name-directory load-file-name)))
 
@@ -65,7 +68,6 @@
 
 (progn                                  ; Base UI
   ;; (setq ad-redefinition-action 'accept) ; to silent a defadvice warning in
-  ;; XXX:                                   ; pcre2el (required by magit-todos)
   (setq image-use-external-converter t) ;27.1 viewer don't display many png
   (setq-default cursor-in-non-selected-windows nil
                 cursor-type '(bar . 3)
@@ -102,7 +104,6 @@
   (blink-cursor-mode 1)                 ; Don't blink the cursor
   (fset 'yes-or-no-p 'y-or-n-p)
   (global-hl-line-mode)
-  ;; XXX: custom tramp gdb
   (put 'narrow-to-region 'disabled nil)	; narrow to region =C-x n n=
   )
 
@@ -139,7 +140,7 @@
 	;; doing :straight (:no-native-compile t)
 	;; (setq comp-deferred-compilation-black-list nil) ; He need it only for jupyter
 	(setq-local straight-use-package-by-default t)
-	;; (setq straight-cache-autoloads t)		; XXX:
+	(setq straight-cache-autoloads t)		; XXX: Issue prune-build periodically.
 	(setq straight-check-for-modifications '(watch-files find-when-checking))
 	)
   (if (daemonp)
@@ -147,12 +148,12 @@
 			 (setenv "EDITOR" "emacsclient"))
 	(csetq use-package-always-defer t))
 
-  (require 'package)
-  (setq package-archives
-		'(("melpa-stable" . "https://stable.melpa.org/packages/")
-		  ("melpa" . "https://melpa.org/packages/")
-		  ("gnu"   . "http://elpa.gnu.org/packages/")
-		  ("nongnu"   . "http://elpa.nongnu.org/nongnu/")))
+  ;; (require 'package)
+  ;; (setq package-archives
+  ;; 		'(("melpa-stable" . "https://stable.melpa.org/packages/")
+  ;; 		  ("melpa" . "https://melpa.org/packages/")
+  ;; 		  ("gnu"   . "http://elpa.gnu.org/packages/")
+  ;; 		  ("nongnu"   . "http://elpa.nongnu.org/nongnu/")))
 
   (use-package use-package
 	:straight use-package
@@ -162,7 +163,6 @@
 	(setq use-package-hook-name-suffix nil)
 	(setq use-package-enable-imenu-support t))
   (use-package use-package-ensure-system-package)
-  (use-package diminish)
   (use-package async)
   (use-package paradox
 	:config
@@ -170,20 +170,31 @@
           paradox-automatically-star t
           paradox-execute-asynchronously t))
   )
+(use-package all-the-icons
+  :if (display-graphic-p)
+  :commands (all-the-icons-material
+			 all-the-icons-faicon
+			 all-the-icons-octicon))
 (progn                                  ; UI more setting
   (use-package bookmark                 ; persistent bookmarks
-    :straight nil
+    :straight (:type built-in)
 	:init (setq bookmark-save-flag 2
 				;; to avoid sync conflicts in ~/Sync/.emacs
 				bookmark-default-file "~/.emacs.d/bookmarks"))
   (use-package ediff                    ; Fix diff behavior
-    :config
-    (use-package ediff-wind
-      :straight ediff
-      :functions (ediff-setup-windows-plain)
-      :init (setq ediff-window-setup-function #'ediff-setup-windows-plain
-                  ediff-split-window-function #'split-window-right
-                  ediff-diff-options "-w")))
+	:custom
+	(ediff-window-setup-function 'ediff-setup-windows-plain)
+	(ediff-split-window-function (if (> (frame-width) 150)
+									 'split-window-horizontally
+                                   'split-window-vertically))
+	(ediff-diff-options "-w"))
+  ;; :config ;XXX:
+  ;; (use-package ediff-wind
+  ;;   :straight ediff
+  ;;   :functions (ediff-setup-windows-plain)
+  ;;   :init (setq ediff-window-setup-function #'ediff-setup-windows-plain
+  ;;               ediff-split-window-function #'split-window-right
+  ;;               ediff-diff-options "-w")))
   (progn                                ; printing
     (setq lpr-command "gtklp")
     ;; (setq ps-lpr-command "gtklp")
@@ -265,6 +276,7 @@ HEIGHT, if supplied, specifies height of letters to use."
       "Enable ‘auto-fill-mode’ limiting it to comments."
       (setq-local comment-auto-fill-only-comments t)
       (auto-fill-mode 1))
+	;; (define-key global-map (kbd "C-z") (make-sparse-keymap)) ; Permit "C-z X"
     :config
     (column-number-mode 1)
     :bind
@@ -315,16 +327,14 @@ HEIGHT, if supplied, specifies height of letters to use."
     ((emacs-lisp-mode-hook . aggressive-indent-mode)
      (html-mode-hook . aggressive-indent-mode)))
   (use-package which-key                ; needed here by which-key replacements
-	:commands (which-key-mode
-			   which-key-add-key-based-replacements)
-    :diminish
+	:commands (which-key-mode)
     :init (which-key-mode 1)
     :config (setq which-key-idle-delay 0.05))
   (use-package visual-fill-column
 	:commands (visual-fill-column-split-window-sensibly
 			   visual-fill-column-adjust) ;; although are functions
     :bind
-    ("<f14> v" . visual-fill-column-mode)
+    ("C-c v" . visual-fill-column-mode)
     ("<f12>" . no-distraction-enable)
     ("<C-f12>" . no-distraction-disable)
     :preface
@@ -343,7 +353,6 @@ HEIGHT, if supplied, specifies height of letters to use."
       ;; (wc-mode -1)
       )
     :init
-    (which-key-add-key-based-replacements "<f14> v" "Visual-fill-column")
     (setq visual-fill-column-center-text t
           visual-fill-column-width 98
           visual-fill-column-fringes-outside-margins nil
@@ -399,12 +408,12 @@ HEIGHT, if supplied, specifies height of letters to use."
              (side . bottom)
              (slot . -1)
              (window-parameters . ((no-other-window . t))))
-            (".*\\*\\(Completions\\|Embark Live Occur\\).*"
-             (display-buffer-in-side-window)
-             (window-height . 0.16)
-             (side . bottom)
-             (slot . 0)
-             (window-parameters . ((no-other-window . t))))
+            ;; (".*\\*\\(Completions\\|Embark Live Occur\\).*"
+            ;;  (display-buffer-in-side-window)
+            ;;  (window-height . 0.16)
+            ;;  (side . bottom)
+            ;;  (slot . 0)
+            ;;  (window-parameters . ((no-other-window . t))))
             ("^\\(\\*e?shell\\|vterm\\).*"
              (display-buffer-in-side-window)
              (window-height . 0.16)
@@ -433,8 +442,9 @@ HEIGHT, if supplied, specifies height of letters to use."
             ;; bottom buffer (NOT side window)
             ("\\*\\vc-\\(incoming\\|outgoing\\).*"
              (display-buffer-at-bottom))
-            ("\\*Embark Occur.*"
-             (display-buffer-at-bottom))))
+			;; ("\\*Embark Occur.*"
+			;;  (display-buffer-at-bottom))
+			))
     (setq window-combination-resize t)
     (setq even-window-sizes 'height-only)
     (setq window-sides-vertical nil)
@@ -476,12 +486,14 @@ HEIGHT, if supplied, specifies height of letters to use."
 (progn                                  ; single packages
   (use-package crux
 	:bind
-	("H-o" . crux-smart-open-line)
-	("H-O" . crux-smart-open-line-above)
-	("C-c M-d" . crux-duplicate-and-comment-current-line-or-region))
+	("C-a" . crux-move-beginning-of-line)
+	("H-O" . crux-smart-open-line)
+	("C-O" . crux-smart-open-line-above)
+	("H-C-S-o" . crux-duplicate-and-comment-current-line-or-region))
   (use-package recentf 					; enable recent files mode.
-	:config
+	:init
 	(recentf-mode t)
+	:config
 	(setq recentf-exclude
 		  `(,(expand-file-name "straight/build/" user-emacs-directory)
 			,(expand-file-name "eln-cache/" user-emacs-directory)
@@ -511,7 +523,7 @@ HEIGHT, if supplied, specifies height of letters to use."
 	(setq aw-dispatch-always nil))
   (use-package transpose-frame
 	:bind
-	("H-e" . transpose-frame))
+	("H-E" . transpose-frame))
   (use-package imenu-list               ; F9
     :bind
     ("<f9>" . imenu-list)
@@ -529,44 +541,41 @@ HEIGHT, if supplied, specifies height of letters to use."
           deft-default-extension "org"
           deft-use-filter-string-for-filename t))
   (use-package flycheck                 ; Syntax checking
-    :diminish t
-    :bind (
-           ("<f14> e l" . flycheck-list-errors)
-           ("<f14> e e" . flycheck-mode)
-           ("<f14> e b" . flycheck-buffer)
-           ("<f14> e d" . flycheck-clear)
-           ("<f14> e c" . counsel-flycheck)
-           ("<f14> e h" . flycheck-describe-checker)
-           ("<f14> e n" . flycheck-next-error)
-           ("<f14> e p" . flycheck-previous-error)
-           ("<f14> e s" . flycheck-select-checker)
-           ("<f14> e S" . flycheck-set-checker-executable)
-           ("<f14> e v" . flycheck-verify-setup)
-           ("<f14> e y" . flycheck-copy-errors-as-kill)
-           ("<f14> e x" . flycheck-explain-error-at-point))
+	:bind (
+		   ("<f14> e l" . flycheck-list-errors)
+		   ("<f14> e e" . flycheck-mode)
+		   ("<f14> e b" . flycheck-buffer)
+		   ("<f14> e d" . flycheck-clear)
+		   ("<f14> e c" . consult-flycheck)
+		   ("<f14> e h" . flycheck-describe-checker)
+		   ("<f14> e n" . flycheck-next-error)
+		   ("<f14> e p" . flycheck-previous-error)
+		   ("<f14> e s" . flycheck-select-checker)
+		   ("<f14> e S" . flycheck-set-checker-executable)
+		   ("<f14> e v" . flycheck-verify-setup)
+		   ("<f14> e y" . flycheck-copy-errors-as-kill)
+		   ("<f14> e x" . flycheck-explain-error-at-point))
+	:functions which-key-add-key-based-replacements
     :init
     (which-key-add-key-based-replacements "<f14> e" "Errors check")
     :config
     ;; https://www.flycheck.org/en/latest/languages.html
 	(setq-default flycheck-disabled-checkers '(proselint)) ;will use vale
-    (setq flycheck-python-flake8-executable "flake8") ;yay -S flake8
+    ;; (setq flycheck-python-flake8-executable "flake8") ;yay -S flake8
+    ;; (setq flycheck-python-mypy-executable "mypy")
     (setq-default
-     flycheck-emacs-lisp-initialize-packages t
+     ;; flycheck-emacs-lisp-initialize-packages t; auto will be enough?
      flycheck-emacs-lisp-load-path 'inherit
      flycheck-temp-prefix ".flycheck")
-    :hook (
+	:hook (
            (gitignore-mode-hook . flycheck-mode)
            (markdown-mode-hook . flycheck-mode)
            (prog-mode-hook . flycheck-mode)
-           (yaml-mode-hook . flycheck-mode))
-    ;; :custom-face
-    ;; (flycheck-fringe-error ((t (:background "#6C3333" :weight bold))))
-    )
-  ;; (use-package flycheck-pycheckers
-  ;;   :config
-  ;;   (setq flycheck-pycheckers-venv-root "~/.pyenv/versions")
-  ;;   :hook
-  ;;   (flycheck-mode-hook . flycheck-pycheckers-setup))
+           ;; (python-mode-hook . (lambda () (flycheck-add-next-checker  'python-mypy)))
+		   (yaml-mode-hook . flycheck-mode))
+	;; :custom-face
+	;; (flycheck-fringe-error ((t (:background "#6C3333" :weight bold))))
+	)
   (use-package doom-modeline
 	:demand t
 	:commands (doom-modeline-mode)
@@ -647,16 +656,13 @@ HEIGHT, if supplied, specifies height of letters to use."
   (use-package expand-region
     :bind
     ("C-=" . er/expand-region))
-
-  ;; (global-set-key (kbd "<tab>") #'hs-toggle-hiding)
   (use-package hideshow
-    :diminish (hs-minor-mode . " ⒣")
     :bind
     ("<f14> t f" . hs-minor-mode)
     (:map prog-mode-map
-          ("<tab>" . hs-toggle-hiding)
-          ("H-z" . hs-hide-all)         ;FIXME: <backtab> did not work here.
-          ("C-<tab>" . hs-show-all))
+		  ("<backtab>" . hs-toggle-hiding)
+          ("H-z" . hs-hide-all)
+          ("H-Z" . hs-show-all))
     :hook
     (prog-mode-hook . hs-minor-mode))
   (use-package calc
@@ -677,9 +683,10 @@ HEIGHT, if supplied, specifies height of letters to use."
   ;; (load-theme 'leuven t)
   ;; base16-tomorrow 'base16-woodland 'base16-material
   (use-package fantom-theme)
-  (use-package spacemacs-theme)
-  ;; :defer t :init (load-theme 'spacemacs-dark t))
-  (if (daemonp) (load-theme 'spacemacs-dark t) (load-theme 'spacemacs-light t))
+  (use-package spacemacs-theme
+	:defer t
+	;; :init (if (daemonp) (load-theme 'spacemacs-dark t) (load-theme 'spacemacs-light t)))
+	:init (if (daemonp) (load-theme 'spacemacs-dark t)))
   (use-package espresso-theme)
   (use-package plan9-theme)
   (use-package anti-zenburn-theme)
@@ -687,7 +694,8 @@ HEIGHT, if supplied, specifies height of letters to use."
   (use-package modus-themes)
   (use-package poet-theme)
   ;; :defer t
-  (use-package solarized-theme)
+  (use-package solarized-theme
+	:init (if (not (daemonp)) (load-theme 'solarized-dark t)))
   (use-package doom-themes)
   ;; (setq-default mode-line-format
   ;;               '("%e" ; print error message about full memory.
@@ -754,10 +762,25 @@ HEIGHT, if supplied, specifies height of letters to use."
 	("M-r" . mk-duplicate-line)
 	)
   (global-unset-key (kbd "<menu>"))
+  (defun xah-toggle-line-spacing ()
+	"Toggle line spacing between no extra space to extra half line height.
+URL `http://xahlee.info/emacs/emacs/emacs_toggle_line_spacing.html'
+Version 2017-06-02"
+	(interactive)
+	(if line-spacing
+		(setq line-spacing nil)
+      (setq line-spacing 0.5))
+	(redraw-frame (selected-frame)))
+  ;; (use-package whole-line-or-region ;https://github.com/Qkessler/dot_files/blob/master/emacs/.emacs.d/config.org
+  ;; 	:commands (whole-line-or-region-global-mode)
+  ;; 	:init (whole-line-or-region-global-mode))
   (use-package modalka
 	:commands (modalka-define-kbd)
+	:functions which-key-add-key-based-replacements
 	:init
-	(which-key-add-key-based-replacements "<f14> t" "Toggle")
+	(which-key-add-key-based-replacements "C-c t" "Toggle")
+	(which-key-add-key-based-replacements "C-c t m" "Toggle mode")
+	(which-key-add-key-based-replacements "C-c t o" "Toggle org")
 	(which-key-add-key-based-replacements "<f14> <tab>" "prev-buffer")
 	(which-key-add-key-based-replacements "<f14> C-<tab>" "next-buffer")
 	(setq-default modalka-cursor-type '(hbar . 3))
@@ -775,17 +798,18 @@ HEIGHT, if supplied, specifies height of letters to use."
 	 ("H-<right>" . windmove-right)
 	 ("H-<backspace>" . kill-whole-line)
 	 ("H-\\" . indent-region)
-	 ("<f14> t a" . abbrev-mode)
-	 ("<f14> t A" . auto-revert-mode)
-	 ("<f14> t e" . org-toggle-pretty-entities)
-	 ("<f14> t d" . toggle-debug-on-error)
-	 ("<f14> t l" . display-line-numbers-mode)
-	 ("<f14> t n" . org-num-mode)
-	 ("<f14> t c" . conf-mode)
-	 ("<f14> t o o" . org-mode)
-	 ("<f14> t t" . text-mode)
-	 ("<f14> t v" . variable-pitch-mode)
-	 ("<f14> t w" . whitespace-mode)
+	 ("C-c t 5" . xah-toggle-line-spacing)
+	 ("C-c t a" . abbrev-mode)
+	 ("C-c t A" . auto-revert-mode)
+	 ("C-c t o e" . org-toggle-pretty-entities)
+	 ("C-c t d" . toggle-debug-on-error)
+	 ("C-c t l" . display-line-numbers-mode)
+	 ("C-c t o n" . org-num-mode)
+	 ("C-c t m c" . conf-mode)
+	 ("C-c t m o" . org-mode)
+	 ("C-c t m t" . text-mode)
+	 ("C-c t v" . variable-pitch-mode)
+	 ("C-c t w" . whitespace-mode)
 	 ("<f14> a d" . dired)
 	 ("<f14> a k" . paradox-list-packages)
 	 ("<f14> <tab>" . switch-to-prev-buffer)
@@ -794,6 +818,7 @@ HEIGHT, if supplied, specifies height of letters to use."
 	 ("C-c Q" . save-buffers-kill-emacs)
 	 ("<f15> Q" . quit-window)
 	 :map modalka-mode-map
+	 ("i" . modalka-mode)
 	 ("G" . end-of-buffer)
 	 ("s" . swiper)
 	 ("S" . swiper-isearch-thing-at-point)
@@ -905,7 +930,7 @@ HEIGHT, if supplied, specifies height of letters to use."
 	(modalka-define-kbd "x r r" "C-x r r") ;rectangles to register
 	(modalka-define-kbd "x r x" "C-x r x") ;register
 	(modalka-define-kbd "x r g" "C-x r g")
-	(modalka-define-kbd "x b" "C-x b")	;ivy-switch-buffer
+	(modalka-define-kbd "x b" "C-x b")	;switch-buffer
 	(modalka-define-kbd "x m" "C-x m")	;mu4e-compose-new
 	(modalka-define-kbd "y" "C-y")
 	(modalka-define-kbd "z" "C-z")
@@ -917,183 +942,312 @@ HEIGHT, if supplied, specifies height of letters to use."
   ;;   ("H-a" . evil-numbers/inc-at-pt)
   ;;   ("H-x" . evil-numbers/dec-at-pt))
   )
-(progn                                  ; Ivy Counsel and Swiper
-  (use-package smex                     ; Remember past actions
-    :bind ("<f14> <f14>" . smex-major-mode-commands))
-  (use-package counsel
-    :bind (
-           ("M-x" . counsel-M-x)
-           ("<f14> o t" . counsel-load-theme)
-           ("<f14> ," . counsel-switch-buffer)
-           ("<f14> R" . counsel-bookmark)
-           ("<f14> y" . counsel-yank-pop)
-           ("<f14> f f" . counsel-find-file)
-           ("<f14> f z" . (lambda () (interactive "") (cd "~/")(counsel-fzf)))
-           ("<f14> f Z" . counsel-fzf)
-           ("<f14> f l" . counsel-locate)
-           ("<f14> f r" . counsel-recentf)
-           ("<f14> / r" . counsel-rg)
-           ("<f14> / s" . counsel-ag)
-           ("<f14> / w" . counsel-search)
-           ("<f14> / l" . counsel-recoll)
-           ("<f1> a" . counsel-apropos)
-           ("<f1> k" . counsel-descbinds)
-           ("<f1> f" . counsel-describe-function)
-           ("<f1> v" . counsel-describe-variable)
-           ("<f14> c <f9>" . counsel-semantic-or-imenu)
-           ("<f14> c u" . counsel-unicode-char)
-           ("<f14> c h" . counsel-command-history)
-           ("<f14> c i" . counsel-info-lookup-symbol)
-           ("<f14> c l" . counsel-find-library)
-           ("<f14> c L" . counsel-load-library)
-           ("<f14> c m" . counsel-tmm)
-           ("<f14> c M" . counsel-minor)
-           ("<f14> c w" . counsel-wmctrl)
-           ("<f14> g c c" . counsel-git-checkout)
-           ("<f14> g c g" . counsel-git-grep)  ; find string in git project
-           ("<f14> g c l" . counsel-git-log)
-           ("<f14> g c s" . counsel-git-stash)
-           ("<f14> c c" . counsel-colors-web)
-           ("<f14> c C" . counsel-colors-emacs)
-           ("<f14> c r" . counsel-mark-ring)
-           ("<f14> c e" . counsel-org-entity)  ; orgmode
-           ("<f14> c o a" . counsel-org-agenda-headlines)
-           ("<f14> c o A" . counsel-org-goto-all))
-    :init
-    (which-key-add-key-based-replacements "<f14> f" "Files")
-    (which-key-add-key-based-replacements "<f14> g" "Git")
-    (which-key-add-key-based-replacements "<f14> f z" "fzf $HOME")
-    (which-key-add-key-based-replacements "<f14> /" "Search")
-    (which-key-add-key-based-replacements "<f14> a" "Apps")
-    (which-key-add-key-based-replacements "<f14> c" "Counsels")
-    :config
-    (setq ivy-initial-inputs-alist nil ; ivy always guesses wrong "^"
-          counsel-ag-base-command
-          "ag --vimgrep --hidden -S %s"
-          counsel-rg-base-command
-          "rg --color never --no-heading --hidden -S %s"))
-  (use-package ivy
-    :demand t
-    :diminish (ivy-mode . "Iv")
-	:commands (ivy-mode)
-	:functions (ivy-add-actions
-                ivy-format-function-line)
-    :bind
-	(("<f14> r" . ivy-resume)
-	 ("C-;" . ivy-resume)
-	 )
-    :init
-    (ivy-mode 1)                        ; enable ivy globally at startup
-    :config
-    (setq ivy-use-virtual-buffers nil ; include 'bookmarks 'recentf or both t
-          enable-recursive-minibuffers t ; enable this if you want `swiper' to use it
-          ivy-height 20                  ; set height of the ivy window
-          ivy-count-format "(%d/%d) "    ; count format, from the ivy help page
-          ivy-re-builders-alist '((swiper . ivy--regex-plus)
-                                  (t      . ivy--regex-ignore-order)))
-    ;; for ivy-rich
-    (setcdr (assq t ivy-format-functions-alist) #'ivy-format-function-line))
-  (use-package ivy-rich
-    :after ivy
-	:commands (ivy-rich-mode)
-    :init (ivy-rich-mode 1))
-  (use-package ivy-hydra
-    :after ivy)
-  (use-package fzf
-    :bind ("C-x x" . fzf))
-  (use-package swiper
-    :bind
-    ("C-s" . swiper)
-    ("C-S-s" . swiper-isearch-thing-at-point))
-  )
-(progn                                  ; Company completion
-  (use-package company
-    :diminish (company-mode . " ⓐ")
-    :defines (company-ispell-dictionary
-			  ;; company-show-quick-access
-			  )
-    :commands (company-complete-common-or-cycle
-			   global-company-mode)
-	:init
-    (which-key-add-key-based-replacements "<f14> t N" "Ngram")
-    (global-company-mode)
-    :bind
-	(;("<f14> t S" . toggle-company-ispell) ;; to complete words
-     :map company-active-map
-     ("C-n" . company-select-next-or-abort)
-     ("C-p" . company-select-previous-or-abort)
-     ("<tab>" . company-select-next-if-tooltip-visible-or-complete-selection)
-     ("<backtab>" . (lambda () (interactive "") (company-complete-common-or-cycle -1)))
-     ("C-/" . company-search-candidates)
-     ("C-f" . company-filter-candidates)
-     ("C-h" . company-show-doc-buffer)
-     ("C-s" . counsel-company))
-	:preface
-	(defun toggle-company-ispell ()
-      (interactive)
-      (cond
-       ((memq 'company-ispell company-backends)
-        (setq company-backends (delete 'company-ispell company-backends))
-        (message "company-ispell disabled"))
-       (t
-        (add-to-list 'company-backends 'company-ispell)
-        (message "company-ispell enabled!"))))
-    :config
-    (setq company-tooltip-align-annotations t
-          company-idle-delay 0.2
-          company-minimum-prefix-length 2
-          company-show-quick-access t
-          ;; company-require-match nil;company-require-match 'never
-          )
-    (setq company-backends              ;;XXX: to be tested
-          '((company-files          ; files & directory
-             company-keywords       ; keywords
-             company-capf)  ; completion-at-point-functions
-            (company-abbrev company-dabbrev)
-            ))
-    )
-  (use-package company-box
-	:hook (company-mode-hook . company-box-mode))
-  (use-package company-quickhelp
-    ;; :disabled
-    :after (company)
-    :init (company-quickhelp-mode)
-    :bind
-    ("<M-f1>" . company-quickhelp-mode))
-  (use-package company-ngram
-    :after company
-	:commands (company-ngram-init)
+(progn                                  ; Completion: vertico.
+  (use-package vertico
+	:straight (vertico :includes vertico-repeat :files (:defaults "extensions/vertico-repeat.el"))
 	:bind
-	("<f14> t N" . (lambda () (interactive) (company-ngram-init)))
-    :config
-    (setq company-ngram-data-dir "~/Sync/ngram")
-    ;; company-ngram supports python 3 or newer
-    (setq company-ngram-python "python3")
-    ;; or use `M-x turn-on-company-ngram' and `M-x turn-off-company-ngram' on individual buffers
-    (cons 'company-ngram-backend company-backends)
-    (declare-function company-ngram-command "company-ngram")
-    (run-with-idle-timer 7200 t (lambda () ; save the cache of candidates
-                                  (company-ngram-command "save_cache"))))
-  (use-package company-statistics
-    :after (company)
-	:commands (company-statistics-mode)
-    :config (company-statistics-mode))
+	(("C-;" . vertico-repeat)
+	 ("C-:" . vertico-repeat-select)
+	 :map vertico-map
+	 ("<next>" . vertico-scroll-up) ; minibuf history M-n M-p
+	 ("<prior>" . vertico-scroll-down)
+	 ;; ("?" . minibuffer-completion-help)
+	 ("<M-RET>" . minibuffer-force-complete-and-exit)
+	 ("M-<tab>" . minibuffer-complete)
+	 )
+	:hook
+	(minibuffer-setup-hook . vertico-repeat-save)
+	:init
+	(vertico-mode t)
+	:config
+	(setq vertico-scroll-margin 0)	;; Different scroll margin
+	(setq vertico-count 20)			;; Show more candidates
+	(setq vertico-resize t)	;; Grow and shrink the Vertico minibuffer
+	(setq vertico-cycle t) ;; Cycling for `vertico-next' and `vertico-previous'
+	)
+  (use-package vertico-repeat)
+  (use-package orderless
+	:init
+	;; Configure a custom style dispatcher (see the Consult wiki)
+	;; (setq orderless-style-dispatchers '(+orderless-dispatch)
+	;;       orderless-component-separator #'orderless-escapable-split-on-space)
+	(setq completion-styles '(orderless basic)
+          completion-category-defaults nil
+		  ;; ;; for tramp
+		  ;; (completion-category-overrides '((file (styles basic partial-completion))))
+          completion-category-overrides '((file (styles partial-completion)))))
+  (use-package savehist
+	:after (vertico)
+	:init
+	(savehist-mode)
+	:config
+	(add-to-list 'savehist-additional-variables 'vertico-repeat-history)
+	)
+  ;; A few more useful configurations...
+  (use-package emacs
+	:bind
+	("<f14> c l f" . find-library)
+	("<f14> c l a" . apropos-library)
+	("<f14> c l l" . load-library)
+	;;          ("<f14> c m" . counsel-tmm) ; `M-\`'
+	;;          ("<f14> c w" . counsel-wmctrl)
+	;;          ("<f14> c c" . counsel-colors-web)
+	;;          ("<f14> c C" . counsel-colors-emacs)
+    ("<f14> c h" . command-history)
+	;;         Mind mark, bookmark and register
+	;;          ("<f14> g c c" . counsel-git-checkout)
+	;;          ("<f14> g c l" . counsel-git-log)
+	;;          ("<f14> g c s" . counsel-git-stash)
+	:functions which-key-add-key-based-replacements
+	:preface
+	;; Add prompt indicator to `completing-read-multiple'.
+	(defun crm-indicator (args)
+      (cons (concat "[CRM] " (car args)) (cdr args)))
+	:init
+	(which-key-add-key-based-replacements "<f14> g" "Git")
+	(which-key-add-key-based-replacements "<f14> /" "Search")
+	(which-key-add-key-based-replacements "<f14> a" "Apps")
+	(which-key-add-key-based-replacements "<f14> 2" "TODO/hydra")
+	(which-key-add-key-based-replacements "<f14> f" "Files")
+	(which-key-add-key-based-replacements "C-c f" "Files")
+	(which-key-add-key-based-replacements "<f14> c" "Counselslike")
+	(advice-add #'completing-read-multiple :filter-args #'crm-indicator)
+	;; Do not allow the cursor in the minibuffer prompt
+	(setq minibuffer-prompt-properties
+          '(read-only t cursor-intangible t face minibuffer-prompt))
+	(add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
+	;; Emacs 28: Hide commands in M-x which do not work in the current mode.
+	;; Vertico commands are hidden in normal buffers.
+	(setq read-extended-command-predicate
+	      #'command-completion-default-include-p)
+	;; Enable recursive minibuffers
+	(setq enable-recursive-minibuffers t))
+  (use-package marginalia
+	:commands (marginalia-mode)
+	:bind (:map minibuffer-local-map
+				("M-A" . marginalia-cycle))
+	:init (marginalia-mode))
+  (use-package embark
+	:commands (embark--truncate-target
+			   embark-completing-read-prompter)
+	:functions (which-key--hide-popup-ignore-command
+				which-key--show-keymap)
+	:bind (("C-." . embark-act)
+		   ("C->" . embark-act-noquit)
+		   ("M-." . embark-dwim)	   ; orig. xref-find-definition
+		   ("C-h B" . embark-bindings) ;; alternative for `describe-bindings'
+		   ;; counsellike
+		   ("<f14> c u" . embark-save-unicode-character)
+		   :map minibuffer-local-completion-map
+		   ("H-e" . embark-export)
+		   ("H-b" . embark-become)
+		   :map minibuffer-local-map
+		   ("H-e" . embark-export)
+		   ("H-b" . embark-become))
+	:preface
+	(defun embark-which-key-indicator ()
+	  "An embark indicator that displays keymaps using which-key.
+The which-key help message will show the type and value of the
+current target followed by an ellipsis if there are further
+targets."
+	  (lambda (&optional keymap targets prefix)
+		(if (null keymap)
+			(which-key--hide-popup-ignore-command)
+		  (which-key--show-keymap
+		   (if (eq (plist-get (car targets) :type) 'embark-become)
+			   "Become"
+			 (format "Act on %s '%s'%s"
+					 (plist-get (car targets) :type)
+					 (embark--truncate-target (plist-get (car targets) :target))
+					 (if (cdr targets) "…" "")))
+		   (if prefix
+			   (pcase (lookup-key keymap prefix 'accept-default)
+				 ((and (pred keymapp) km) km)
+				 (_ (key-binding prefix 'accept-default)))
+			 keymap)
+		   nil nil t (lambda (binding)
+					   (not (string-suffix-p "-argument" (cdr binding))))))))
+
+	(defun embark-hide-which-key-indicator (fn &rest args)
+	  "Hide the which-key indicator immediately when using the
+completing-read prompter."
+	  (which-key--hide-popup-ignore-command)
+	  (let ((embark-indicators
+			 (remq #'embark-which-key-indicator embark-indicators)))
+		(apply fn args)))
+
+	(defun embark-act-noquit ()
+	  "Run action but don't quit the minibuffer afterwards."
+	  (interactive)
+	  (let ((embark-quit-after-action nil))
+		(embark-act)))
+	
+	:config (setq embark-indicators
+				  '(embark-which-key-indicator
+					embark-highlight-indicator
+					embark-isearch-highlight-indicator))
+	(advice-add #'embark-completing-read-prompter
+				:around #'embark-hide-which-key-indicator))
+  (use-package consult
+	:commands consult--customize-set
+	;; completion-in-region-function
+	:defines vertico-mode
+	:bind (("C-/" . consult-line)
+		   ("<f14> ," . consult-buffer)
+		   ("<f14> f f" . consult-find)
+		   ("<f14> f F" . consult-locate)
+		   ("<f14> f z" . (lambda () (interactive)(cd "~/")(consult-find)))
+		   ("<f14> f r" . consult-recent-file)
+		   ("<f14> f e" . consult-file-externally)
+		   ("C-c f f" . consult-find)
+		   ("C-c f F" . consult-locate)
+		   ("C-c f z" . (lambda () (interactive)(cd "~/")(consult-find)))
+		   ("C-c f r" . consult-recent-file)
+		   ("C-c f e" . consult-file-externally)
+		   ("<f14> o t" . consult-theme)
+		   ("<f14> / s" . consult-ripgrep)
+		   ("<f14> c m" . consult-minor-mode-menu)
+		   ;;          ("<f14> / w" . counsel-search)
+		   ("<f14> / ;" . consult-recoll)
+  		   ;; C-c bindings (mode-specific-map)
+           ;; ("C-c h" . consult-history)
+           ("C-c m" . consult-mode-command)
+           ("C-c k" . consult-kmacro)
+           ;; C-x bindings (ctl-x-map)
+           ("C-x :" . consult-complex-command)       ;; C-x M-: repeat-complex-command
+           ("C-x b" . consult-buffer)                ;; orig. switch-to-buffer
+           ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
+           ("C-x 5 b" . consult-buffer-other-frame)  ;; orig. switch-to-buffer-other-frame
+           ("C-x r b" . consult-bookmark)            ;; orig. bookmark-jump
+           ;; Custom M-# bindings for fast register access
+           ("M-#" . consult-register-load)
+           ("M-\"" . consult-register-store)          ;; M-' orig. abbrev-prefix-mark (unrelated)
+           ("H-M-'" . consult-register)
+           ;; Other custom bindings
+           ("M-y" . consult-yank-pop)                ;; orig. yank-pop
+           ("<help> a" . consult-apropos)            ;; orig. apropos-command
+           ;; M-g bindings (goto-map)
+           ("M-g e" . consult-compile-error)
+           ("M-g f" . consult-flycheck)               ;; Alternative: consult-flymake
+           ("M-g M-g" . consult-goto-line)           ;; orig. goto-line
+           ("M-g o" . consult-outline)
+           ("M-g M-o" . consult-org-heading)
+           ("M-g a" . consult-org-agenda)
+           ("M-g m" . consult-mark)
+           ("M-g C-m" . consult-global-mark)
+           ("M-g i" . consult-imenu)
+           ("M-g C-i" . consult-imenu-multi)
+           ;; M-s bindings (search-map)
+           ("M-s f" . consult-find)
+           ("M-s F" . consult-locate)
+           ("M-s g" . consult-grep)
+           ("M-s G" . consult-git-grep)
+           ("M-s r" . consult-ripgrep)
+           ("M-s l" . consult-line)
+           ("M-s L" . consult-line-multi)
+           ("M-s m" . consult-multi-occur)
+           ("M-s k" . consult-keep-lines)
+           ("M-s u" . consult-focus-lines)
+           ;; Isearch integration
+           ("M-s e" . consult-isearch-history)
+           :map isearch-mode-map
+           ("M-e" . consult-isearch-history)         ;; orig. isearch-edit-string
+           ("M-s e" . consult-isearch-history)       ;; orig. isearch-edit-string
+           ("M-s l" . consult-line)                  ;; needed by consult-line to detect isearch
+		   ("M-s L" . consult-line-multi)           ;; needed by consult-line to detect isearch
+		   )
+	;; Enable automatic preview at point in the *Completions* buffer. This is
+	;; relevant when you use the default completion UI. You may want to also
+	;; enable `consult-preview-at-point-mode` in Embark Collect buffers.
+	:hook (completion-list-mode-hook . consult-preview-at-point-mode)
+	;; :init (setq xref-show-xrefs-function #'consult-xref
+	;; 			xref-show-definitions-function #'consult-xref)
+	:config
+	;; Use `consult-completion-in-region' if Vertico is enabled.
+	;; Otherwise use the default `completion--in-region' function.
+	(setq completion-in-region-function
+		  (lambda (&rest args)
+			(apply (if vertico-mode
+					   #'consult-completion-in-region
+					 #'completion--in-region)
+				   args)))
+	;; :preview-key on a per-command basis using the `consult-customize' macro.
+	(consult-customize
+	 consult-theme
+	 :preview-key '(:debounce 0.2 any)
+	 consult-ripgrep consult-git-grep ;consult-grep
+	 consult-bookmark consult-recent-file consult-xref
+	 consult--source-recent-file consult--source-project-recent-file consult--source-bookmark
+	 :preview-key (list (kbd "<M-down>") (kbd "<M-up>")))
+	(setq consult-ripgrep-args
+		  "rg --hidden --null --line-buffered --color=never --max-columns=1000 --path-separator /  --smart-case --no-heading --line-number .")
+	;; Optionally configure the narrowing key.
+	;; Both < and C-+ work reasonably well.
+	(setq consult-narrow-key "<") ;; (kbd "C-+")
+	)
+  (use-package affe
+	:after (orderless)
+	:bind (("C-x x" . affe-find)
+		   ("C-x X" . affe-grep))
+	;; :custom ((affe-regexp-function #'orderless-pattern-compiler)
+	;; 		 (affe-highlight-function #'orderless-highlight-matches))
+	)
+  (use-package embark-consult
+	:after (embark consult)
+	:demand t ; only necessary if you have the hook below
+	;; if you want to have consult previews as you move around an
+	;; auto-updating embark collect buffer
+	:hook
+	(embark-collect-mode-hook . consult-preview-at-point-mode))
+  (use-package wgrep
+	:demand t)
+  (use-package consult-recoll)
+  (use-package consult-flycheck)
+  ;; Use Dabbrev with Corfu!
+  (use-package dabbrev
+	;; Swap M-/ and C-M-/
+	:bind (("M-/" . dabbrev-completion)
+           ("C-M-/" . dabbrev-expand))
+	;; Other useful Dabbrev configurations.
+	:custom
+	(dabbrev-ignored-buffer-regexps '("\\.\\(?:pdf\\|jpe?g\\|png\\)\\'")))
+  (use-package corfu
+	:hook (;;(prog-mode-hook . corfu-mode)
+           (org-mode-hook . corfu-mode))
+	:bind
+	(:map corfu-map
+          ("C-n" . corfu-next)
+          ("C-p" . corfu-previous))
+	:custom
+	(corfu-cycle t)
+	;; (corfu-auto t)
+	;; (corfu-separator ?\s)
+	(corfu-quit-no-match t)
+	(corfu-commit-predicate nil)
+	:config
+	(setq corfu-preselect-first t)
+	(setq read-extended-command-predicate #'command-completion-default-include-p)
+	)
+  (use-package corfu-doc
+	:bind (:map corfu-map
+				("C-h" . corfu-doc-toggle)
+				("C-n" . corfu-doc-scroll-down)
+				("C-p" . corfu-doc-scroll-up))
+	;; :config
+	;; (setq corfu-doc-delay 0.2
+	;; 		corfu-doc-max-width 80
+	;; 		corfu-doc-max-height 40)
+	;; :init
+	;; (corfu-doc-mode +1)
+	)
   )
 (progn                                  ; Yasnippet
   (use-package yasnippet
-    :preface
-    (defun company-mode/backend-with-yas (backend)
-      "Add yasnippet support for all company backends."
-      (if (and (listp backend) (member 'company-yasnippet backend))
-    	  backend
-    	(append (if (consp backend) backend (list backend))
-                '(:with company-yasnippet))))
     :bind
     ("<f14> Y a" . yas-reload-all)
     ("<f14> Y n" . yas-new-snippet)
     ("<f14> Y v" . yas-visit-snippet-file)
     ("<f14> t y" . yas-minor-mode)
-    ("<f14> i y" . yas-insert-snippet)
     ;; ;; disable yas minor mode map ;; use hippie-expand instead [sp]
     ;; (setq yas-minor-mode-map (make-sparse-keymap))
     :init
@@ -1110,13 +1264,8 @@ HEIGHT, if supplied, specifies height of letters to use."
     (setq yas-triggers-in-field t
           yas-wrap-around-region t)     ;or [a-z] register
     (use-package yasnippet-snippets)
-    (use-package ivy-yasnippet
-      :bind
-      ("<f14> i s" . ivy-yasnippet))
-    ;; https://github.com/syl20bnr/spacemacs/pull/179
-    ;; https://emacs.stackexchange.com/questions/10431/get-company-to-show-suggestions-for-yasnippet-names/10520
-    (setq company-backends
-          (mapcar #'company-mode/backend-with-yas company-backends))
+	(use-package consult-yasnippet
+	  :bind ("<f14> i s" . consult-yasnippet))
     )
   ;; auto-yasnippet
   ;; yatemplate
@@ -1131,45 +1280,34 @@ HEIGHT, if supplied, specifies height of letters to use."
                  '(;("^#+BEGIN_SRC" . "^#+END_SRC")
                    ("^From:" . "line--$"))))
   (use-package flyspell
-	:bind
-    (("<f14> t s" . flyspell-mode)
-     ("<f14> t S" . flyspell-correct-auto-mode)
-     :map flyspell-mode-map
-     ("C-." . flyspell-correct-wrapper)
-     ("C-<" . flyspell-auto-correct-previous-word))
-	:hook
-	(flyspell-mode-hook . (lambda ()
-							(unbind-key "C-;" flyspell-mode-map)))
-	(text-mode-hook . flyspell-mode)
-	(prog-mode-hook . flyspell-prog-mode)
-	(change-log-mode-hook . (lambda () (flyspell-mode -1)))
-	(log-edit-mode-hook . (lambda () (flyspell-mode -1))))
-  (use-package flyspell-lazy
-    :after (flyspell)
-	:commands (flyspell-lazy-mode)
-    :init
-    (setq-default flyspell-lazy-disallow-buffers nil)
-	(setq-default flyspell-lazy-idle-seconds 1)
-    :config
-    (flyspell-lazy-mode 1))
-  (use-package flyspell-correct-ivy	; play better with darkroom and the like
-    :after flyspell
-	:commands flyspell-correct-ivy
-    :init
-    (setq flyspell-issue-message-flag nil)
-    (setq flyspell-correct-interface #'flyspell-correct-ivy))
+	:bind (("<f14> t s" . flyspell-mode)
+		   ("<f14> t S" . flyspell-correct-auto-mode)
+		   :map flyspell-mode-map
+		   ("H-," . flyspell-auto-correct-previous-word)
+		   ("H-C-," . flyspell-goto-next-error)
+		   ("C-;" . nil)
+		   ("C-." . nil)
+		   ("C-," . nil))
+	:hook ((text-mode-hook . flyspell-mode)
+		   (prog-mode-hook . flyspell-prog-mode)
+		   (change-log-mode-hook . (lambda () (flyspell-mode -1)))
+		   (log-edit-mode-hook . (lambda () (flyspell-mode -1)))))
+  (use-package flyspell-correct
+	:after (flyspell)
+	:bind (:map flyspell-mode-map
+				("H-<" . flyspell-correct-wrapper)))
   (use-package guess-language
-    ;; Its advantage is multi language in the same doc.
-    ;; :diminish (guess-language-mode . "G")
+    ;; For multi language within same doc.
     :bind
     ("<f14> t g" . guess-language-mode)
     ("<f14> s e" . (lambda () (interactive)
                      (ispell-change-dictionary "en_US-large")
-                     (setq company-ispell-dictionary "/usr/share/dict/usa")
+                     ;; (setq company-ispell-dictionary "/usr/share/dict/usa")
                      (flyspell-buffer)))
     ("<f14> s i" . (lambda () (interactive)
                      (ispell-change-dictionary "it_IT")
-                     (setq company-ispell-dictionary "/usr/share/dict/italian")
+					 ;; TODO: consult-flyspell and cape (ispell|dict)
+                     ;; (setq company-ispell-dictionary "/usr/share/dict/italian")
                      (flyspell-buffer)))
     ;; :hook
     ;; (flyspell-mode . guess-language-mode)
@@ -1194,9 +1332,10 @@ HEIGHT, if supplied, specifies height of letters to use."
       ;; 	(pcase lang
       ;; 	  ('en (festival-voice-english-female))
       ;; 	  ('it (festival-voice-italian-female))))
-      (pcase lang
-        ('en (setq company-ispell-dictionary "/usr/share/dict/usa"))
-        ('it (setq company-ispell-dictionary "/usr/share/dict/italian"))))
+      ;; (pcase lang
+      ;;   ('en (setq company-ispell-dictionary "/usr/share/dict/usa"))
+      ;;   ('it (setq company-ispell-dictionary "/usr/share/dict/italian")))
+	  )
     (add-hook 'guess-language-after-detection-functions #'guess-language-switch-function))
   )
 (progn                                  ; mu4e
@@ -1267,16 +1406,14 @@ HEIGHT, if supplied, specifies height of letters to use."
 	;; (mu4e-header-marks-face ((t (:height 180 ))))
 	;; (mu4e-header-value-face ((t (:height 150))))
 	;; (mu4e-view-body-face ((t (:height 140))))
-	:init
-	(set-default mail-user-agent 'mu4e-user-agent)
-	;; (defun my-mu4e () ; trying to have themes bound to major modes
-	;;   (interactive)
-	;;   (let ((color-theme-is-global nil))
-	;;     (select-frame (make-frame))
-	;;     (color-theme-tango)
-	;;     (mu4e)))
+	;; :init
+	;; ;; use mu4e as Default
+	;; (setq mail-user-agent 'mu4e-user-agent)
+	;; (set-variable 'read-mail-command 'mu4e)
 	:config
 	;; (when (fboundp 'imagemagick-register-types) (imagemagick-register-types))
+	;; ;;location of my maildir
+	;; (setq mu4e-maildir (expand-file-name "~/Maildir"))
 	(setq mu4e-attachment-dir "~/")
 	(setq mu4e-change-filenames-when-moving t) ; rename files when moving (Needed for mbsync)
 	(setq mu4e-completing-read-function 'completing-read) ; use convenient completion for navigation =j o=
@@ -1343,52 +1480,52 @@ HEIGHT, if supplied, specifies height of letters to use."
 				 ;; we match based on the maildir folder
 				 ;; http://cachestocaches.com/2017/3/complete-guide-email-emacs-using-mu-and-/
 				 :match-func (lambda (msg)
-                               (when msg
+							   (when msg
 								 (string-prefix-p "/cnr" (mu4e-message-field msg :maildir))))
 				 :vars '( ( user-mail-address      . "daniele.arosio@cnr.it"  )
-                          ( user-full-name         . "Daniele Arosio" )
-                          ( mu4e-sent-folder   . "/cnr/Sent" )
-                          ( mu4e-drafts-folder . "/cnr/Drafts" )
-                          ( mu4e-trash-folder  . "/cnr/Trash" )
-                          ( mu4e-refile-folder . "/archive" )
-                          ( mu4e-compose-signature .
-                                                   (concat
-													"Daniele Arosio\n"
-													"Consiglio Nazionale delle Ricerche (CNR)\n"
-													"Istituto di Biofisica\n"
-													"Via Sommarive 18\n"
-													"38123 Trento, Italy\n"
-													"tel +39 0461 314607\n"))))
-               ,(make-mu4e-context
+						  ( user-full-name         . "Daniele Arosio" )
+						  ( mu4e-sent-folder   . "/cnr/Sent" )
+						  ( mu4e-drafts-folder . "/cnr/Drafts" )
+						  ( mu4e-trash-folder  . "/cnr/Trash" )
+						  ( mu4e-refile-folder . "/archive" )
+						  ( mu4e-compose-signature .
+							(concat
+							 "Daniele Arosio\n"
+							 "Consiglio Nazionale delle Ricerche (CNR)\n"
+							 "Istituto di Biofisica\n"
+							 "Via Sommarive 18\n"
+							 "38123 Trento, Italy\n"
+							 "tel +39 0461 314607\n"))))
+			   ,(make-mu4e-context
 				 :name "gmail"
 				 :enter-func (lambda () (mu4e-message "Switch to the gmail context"))
 				 ;; no leave-func
 				 :match-func (lambda (msg)
-                               (when msg
+							   (when msg
 								 (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
 				 :vars '( ( user-mail-address       . "danielepietroarosio@gmail.com" )
-                          ( user-full-name          . "daniele arosio" )
-                          (mu4e-drafts-folder . "/gmail/draft")
-                          (mu4e-trash-folder . "/gmail/trash")
-                          ( mu4e-compose-signature  .
-													(concat
-													 "daniele arosio\n"
-													 "38123 Trento\n"))))
-               ,(make-mu4e-context
+						  ( user-full-name          . "daniele arosio" )
+						  (mu4e-drafts-folder . "/gmail/draft")
+						  (mu4e-trash-folder . "/gmail/trash")
+						  ( mu4e-compose-signature  .
+							(concat
+							 "daniele arosio\n"
+							 "38123 Trento\n"))))
+			   ,(make-mu4e-context
 				 :name "pec"
 				 :match-func (lambda (msg)
-                               (when msg
+							   (when msg
 								 (string-prefix-p "/pec" (mu4e-message-field msg :maildir))))
 				 :vars '( (user-mail-address  . "daniele.arosio@postecert.it" )
-                          (user-full-name     . "Daniele Arosio" )
-                          (mu4e-drafts-folder . "/pec/Drafts")
-                          (mu4e-trash-folder  . "/pec/trash")
-                          (mu4e-sent-folder   . "/pec/Sent Items")
-                          (mu4e-compose-signature .
-                                                  (concat
-                                                   "daniele arosio\n"
-                                                   "38123 Trento\n"))))
-               ))
+						  (user-full-name     . "Daniele Arosio" )
+						  (mu4e-drafts-folder . "/pec/Drafts")
+						  (mu4e-trash-folder  . "/pec/trash")
+						  (mu4e-sent-folder   . "/pec/Sent Items")
+						  (mu4e-compose-signature .
+												  (concat
+												   "daniele arosio\n"
+												   "38123 Trento\n"))))
+			   ))
 	  )
 	(use-package mu4e-compose :straight mu4e
 	  :config
@@ -1407,8 +1544,8 @@ HEIGHT, if supplied, specifies height of letters to use."
 	  (setq mu4e-compose-in-new-frame t) ; every new email composition gets its own frame
 	  )
 	(use-package mu4e-headers :straight mu4e
-      :functions (mu4e-headers-mark-and-next
-                  mu4e~headers-goto-docid)
+	  :functions (mu4e-headers-mark-and-next
+				  mu4e~headers-goto-docid)
 	  :config
 	  (setq mu4e-headers-date-format "%y/%m/%d")
 	  (setq mu4e-headers-fields	'((:human-date     .  12)
@@ -1424,8 +1561,6 @@ HEIGHT, if supplied, specifies height of letters to use."
       :functions (message-sendmail-envelope-from
                   message-add-header
                   message-remove-header)
-	  :hook
-	  (message-send-hook . org-mime-confirm-when-no-multipart)
 	  :config
 	  (setq message-kill-buffer-on-exit t) ; don't keep message buffers around
 	  ;; (setq message-send-mail-function 'smtpmail-send-it)
@@ -1442,26 +1577,54 @@ HEIGHT, if supplied, specifies height of letters to use."
 	  (setq mail-envelope-from 'header)
 	  (setq mail-interactive t)
       )
+	(use-package org-msg
+	  ;; :demand t
+	  :after (mu4e)
+	  :bind (
+			 :map mu4e-main-mode-map
+			 ("C-c O" . org-msg-mode)
+			 :map mu4e-view-mode-map
+			 ("C-c O" . org-msg-mode)
+			 ;; :map  mu4e-headers-mode-map
+			 ;; ("C-c o" . org-msg-mode)
+			 ;; :map mu4e-compose-mode-map
+			 ;; ("C-c o" . org-msg-mode)
+			 )
+	  :config
+	  (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil tex:dvipng") ; \\n:t
+	  (setq org-msg-startup "hidestars indent inlineimages")
+	  (setq org-msg-greeting-fmt "\nHi%s,\n\n")
+	  (setq org-msg-greeting-name-limit 3)
+	  (setq org-msg-default-alternatives '((new		. (utf-8))
+										   (reply-to-html	. (utf-8 html))
+										   (reply-to-text	. (utf-8))))
+	  (setq org-msg-convert-citation t)
+	  (setq org-msg-signature "
+#+begin_signature
+  --  daniele \\\\
+#+end_signature")
+	  ;; (org-msg-mode)
+	  )
 	(use-package org-mu4e :straight mu4e
 	  :bind (:map mu4e-compose-mode-map
 				  ("C-c o O" . org~mu4e-mime-switch-headers-or-body))
-      :config
-      ;;store link to message/query if in header view (t/nil)
-      (setq mu4e-org-link-query-in-headers-mode t)
+	  :config
+	  (setq mu4e-org-link-query-in-headers-mode t) ; `C-c l` store query
 	  (setq org-mu4e-convert-to-html t)
 	  )
 	(use-package org-mime
-	  ;; :commands (org-mime-edit-mail-in-org-mode ;XXX
-	  ;; 			 org-mime-change-element-style)
 	  :bind (
 			 :map mu4e-compose-mode-map
-			 ("C-c o o" . org-mime-edit-mail-in-org-mode)
-			 ("C-c o h" . org-mime-htmlize)
+			 ("C-c M-O" . org-mime-edit-mail-in-org-mode)
+			 ("C-c M-o" . org-mime-htmlize)
 			 :map org-mode-map
-			 ("C-c m" . org-mime-org-subtree-htmlize)
-			 ("C-c M" . org-mime-org-buffer-htmlize))
+			 ("C-c M-o" . org-mime-org-subtree-htmlize)
+			 ("C-c M-O" . org-mime-org-buffer-htmlize))
 	  :config
+	  (setq org-mime-library 'semi)
+	  (setq org-mime-export-ascii 'utf-8)
 	  (setq org-mime-export-options '(
+									  :with-latex dvipng
 									  :section-numbers nil
 									  :with-author nil
 									  :with-toc nil))
@@ -1469,46 +1632,56 @@ HEIGHT, if supplied, specifies height of letters to use."
 	  (org-mime-html-hook . (lambda ()
 							  (org-mime-change-element-style
 							   "pre" (format "color: %s; background-color: %s; padding: 0.5em;"
-											 "darkred" "burlywood"))))
+											 "#E6E1DC" "#232323"
+											 ;; "darkred" "burlywood"
+											 ))))
+	  ;; the following can be used to nicely offset block quotes in email bodies
+	  (org-mime-html-hook . (lambda ()
+							  (org-mime-change-element-style
+							   "blockquote" "border-left: 2px solid gray; padding-left: 4px;")))
+	  ;; (message-send-hook . org-mime-confirm-when-no-multipart)
 	  (mu4e-compose-mode-hook . (lambda ()(require 'org-mime))) ; work w/out server
 	  )
-	(use-package mu4e-view-common :straight mu4e
-	  :preface
-	  (defun mu4e-action-save-to-pdf (msg)
-		(let* ((date (mu4e-message-field msg :date))
-			   (infile (mu4e~write-body-to-html msg))
-			   (outfile (format-time-string "%Y-%m-%d%H%M%S.pdf" date)))
-		  (with-temp-buffer
-			(shell-command
-			 (format "wkhtmltopdf %s ~/%s" infile outfile) t))))
-	  (defun jcs-view-in-eww (msg)
-		(eww-browse-url (concat "file://" (mu4e~write-body-to-html msg))))
-	  ;; view-attachment-actions  https://vxlabs.com/tag/mu4e/
-	  (defun my-remove-attachment (msg num)
-        "Remove attachment."
-        (let* ((attach (mu4e~view-get-attach msg num))
-			   (path (mu4e-msg-field msg :path))
-			   (filename (and attach (plist-get attach :name)))
-			   (cmd (format "touch /tmp/%s-removed; altermime --input=%s --replace='%s' --with='/tmp/%s-removed'"
-							filename path filename filename)))
-		  (when (and filename
-                     (yes-or-no-p
-					  (format "Are you sure you want to remove '%s'?" filename)))
-            (shell-command cmd)
-            (message cmd))))
-	  :config
-	  (setq mu4e-view-actions
-			'(("capture message" . mu4e-action-capture-message)
-              ("show this thread" . mu4e-action-show-thread)))
-	  (add-to-list 'mu4e-view-actions
-				   '("view in browser" . mu4e-action-view-in-browser) t)
-	  (add-to-list 'mu4e-view-actions
-				   '("print to pdf" . mu4e-action-save-to-pdf) t)
-	  (add-to-list 'mu4e-view-actions
-				   '("eww view" . jcs-view-in-eww) t)
-	  (add-to-list 'mu4e-view-attachment-actions
-				   '("remove-attachment" . my-remove-attachment))
-	  )
+	;; FIXME: just try to not load
+	;; (use-package mu4e-view-common :straight mu4e
+	;;   :preface
+	;;   (defun mu4e-action-save-to-pdf (msg)
+	;; 	(let* ((date (mu4e-message-field msg :date)) ;;XXX This
+	;; 									;function does not exist anymore.
+	;; 		   (infile (mu4e~write-body-to-html msg))
+	;; 		   (outfile (format-time-string "%Y-%m-%d%H%M%S.pdf" date)))
+	;; 	  (with-temp-buffer
+	;; 		(shell-command
+	;; 		 (format "wkhtmltopdf %s ~/%s" infile outfile) t))))
+	;;   (defun jcs-view-in-eww (msg)
+	;; 	(eww-browse-url (concat "file://" (mu4e~write-body-to-html msg))))
+	;;   ;; view-attachment-actions  https://vxlabs.com/tag/mu4e/
+	;;   (defun my-remove-attachment (msg num)
+	;; 	"Remove attachment."
+	;; 	(let* ((attach (mu4e~view-get-attach msg num)) ;;XXX This
+	;; 									;function does not exist anymore.
+	;; 		   (path (mu4e-msg-field msg :path))
+	;; 		   (filename (and attach (plist-get attach :name)))
+	;; 		   (cmd (format "touch /tmp/%s-removed; altermime --input=%s --replace='%s' --with='/tmp/%s-removed'"
+	;; 						filename path filename filename)))
+	;; 	  (when (and filename
+	;; 				 (yes-or-no-p
+	;; 				  (format "Are you sure you want to remove '%s'?" filename)))
+	;; 		(shell-command cmd)
+	;; 		(message cmd))))
+	;;   :config
+	;;   (setq mu4e-view-actions
+	;; 		'(("capture message" . mu4e-action-capture-message)
+	;; 		  ("show this thread" . mu4e-action-show-thread)))
+	;;   (add-to-list 'mu4e-view-actions
+	;; 			   '("view in browser" . mu4e-action-view-in-browser) t)
+	;;   (add-to-list 'mu4e-view-actions
+	;; 			   '("print to pdf" . mu4e-action-save-to-pdf) t)
+	;;   (add-to-list 'mu4e-view-actions
+	;; 			   '("eww view" . jcs-view-in-eww) t)
+	;;   (add-to-list 'mu4e-view-attachment-actions
+	;; 			   '("remove-attachment" . my-remove-attachment))
+	;;   )
 	(use-package mu4e-mark :straight mu4e ; Tags and personal archive
 	  :bind (:map
 			 mu4e-headers-mode-map
@@ -1522,21 +1695,21 @@ HEIGHT, if supplied, specifies height of letters to use."
 	  (add-to-list 'mu4e-marks
 				   ;; https://gist.github.com/lgatto/7091552
 				   '(tag
-                     :char       "z"
-                     :prompt     "gtag"
-                     :ask-target (lambda () (read-string "What tag do you want to add?"))
-                     :action      (lambda (docid msg target)
-                                    (mu4e-action-retag-message msg (concat "+" target)))))
+					 :char       "z"
+					 :prompt     "gtag"
+					 :ask-target (lambda () (read-string "What tag do you want to add?"))
+					 :action      (lambda (docid msg target)
+									(mu4e-action-retag-message msg (concat "+" target)))))
 	  (add-to-list 'mu4e-marks
 				   '(personal
-                     :char       "P"
-                     :prompt     "personal"
-                     :show-target (lambda (target) "personal")
-                     :action      (lambda (docid msg target)
-                                    ;; must come before proc-move since retag runs
-                                    ;; 'sed' on the file
-                                    (mu4e-action-retag-message msg "-\\Inbox")
-                                    (mu4e~proc-move docid "/archives/personal" "+S-u-N"))))
+					 :char       "P"
+					 :prompt     "personal"
+					 :show-target (lambda (target) "personal")
+					 :action      (lambda (docid msg target)
+									;; must come before proc-move since retag runs
+									;; 'sed' on the file
+									(mu4e-action-retag-message msg "-\\Inbox")
+									(mu4e--server-move docid "/archives/personal" "+S-u-N"))))
 	  (mu4e~headers-defun-mark-for tag)
 	  (mu4e~headers-defun-mark-for personal)
 	  (mu4e~view-defun-mark-for tag)
@@ -1545,7 +1718,7 @@ HEIGHT, if supplied, specifies height of letters to use."
 	;; FIXME
 	(setq 								; smtp queue
 	 smtpmail-queue-mail  t
-	 smtpmail-queue-dir  (expand-file-name "~/Sync/Maildir/queue/cur") ; Remember to "mu mkdir" and "touch .noindex"
+	 smtpmail-queue-dir  (expand-file-name "~/Maildir/queue/cur") ; Remember to "mu mkdir" and "touch .noindex"
 	 ;; (set-language-environment "UTF-8")	; required by mu4e-send-delay for sending correctly formatted email
 	 ;; (progn                    ; send delay
 	 ;;   (add-to-list 'load-path "~/.spacemacs.d/mu4e-send-delay")
@@ -1562,62 +1735,66 @@ HEIGHT, if supplied, specifies height of letters to use."
   (use-package mu4e-jump-to-list
     :after mu4e)
   (progn                ; multiple attachments
-    ;;  and dired: turn-on-gnus-dired-mode C-c RET C-a
-    ;;  https://emacs.stackexchange.com/questions/14652/attach-multiple-files-from-the-same-directory-to-an-email-message
-    (ivy-add-actions
-     'counsel-locate
-     '(("a" (lambda (x)
-			  (unless (memq major-mode '(mu4e-compose-mode message-mode))
-                (compose-mail))
-			  (mml-attach-file x)) "Attach to email")))
-    (ivy-add-actions
-     'counsel-fzf
-     '(("a" (lambda (x)
-			  (unless (memq major-mode '(mu4e-compose-mode message-mode))
-                (compose-mail))
-			  (mail-add-attachment x)) "Attach to email")))
+    ;; ;;  and dired: turn-on-gnus-dired-mode C-c RET C-a ; XXX IVY
+    ;; ;;  https://emacs.stackexchange.com/questions/14652/attach-multiple-files-from-the-same-directory-to-an-email-message
+    ;; (ivy-add-actions
+    ;;  'counsel-locate
+    ;;  '(("a" (lambda (x)
+	;; 		  (unless (memq major-mode '(mu4e-compose-mode message-mode))
+    ;;             (compose-mail))
+	;; 		  (mml-attach-file x)) "Attach to email")))
+    ;; (ivy-add-actions
+    ;;  'counsel-fzf
+    ;;  '(("a" (lambda (x)
+	;; 		  (unless (memq major-mode '(mu4e-compose-mode message-mode))
+    ;;             (compose-mail))
+	;; 		  (mail-add-attachment x)) "Attach to email")))
     )
   )
 (progn                                  ; org
+  ;; to simplify gtd
+  ;; https://emacs.cafe/emacs/orgmode/gtd/2017/06/30/orgmode-gtd.html
+  ;; for notdeft xeft
+  ;; https://www.reddit.com/r/emacs/comments/uigz8r/how_do_people_search_their_org_roam_notes/
   (use-package org-capture :straight org
-    :preface
-    (defun nemacs-org-capture-review-daily ()
-      (interactive)
-      (progn
-        (org-capture nil "rd")
-        (org-capture-finalize t)
-        (org-speed-move-safe 'outline-up-heading)
-        (org-narrow-to-subtree)
-        (fetch-calendar)
-        (org-clock-in)))
-    (defun my-new-weekly-review ()
-      (interactive)
-      (progn
-        (org-capture nil "rw")
-        (org-capture-finalize t)
-        (org-speed-move-safe 'outline-up-heading)
-        (org-narrow-to-subtree)
-        (fetch-calendar)
-        (org-clock-in)))
-    ;; (defun nemacs-org-capture-add-basic-properties ()
-    ;;   (interactive)
-    ;;   (org-id-get-create))
-    ;; :hook (org-capture-before-finalize . nemacs-org-capture-add-basic-properties)
-    :hook
-    ((org-capture-mode-hook . (lambda () (modalka-mode 0)))
-     (org-after-refile-insert-hook . save-buffer))
-    :config
+	:preface
+	(defun nemacs-org-capture-review-daily ()
+	  (interactive)
+	  (progn
+		(org-capture nil "rd")
+		(org-capture-finalize t)
+		(org-speed-move-safe 'outline-up-heading)
+		(org-narrow-to-subtree)
+		(fetch-calendar)
+		(org-clock-in)))
+	(defun my-new-weekly-review ()
+	  (interactive)
+	  (progn
+		(org-capture nil "rw")
+		(org-capture-finalize t)
+		(org-speed-move-safe 'outline-up-heading)
+		(org-narrow-to-subtree)
+		(fetch-calendar)
+		(org-clock-in)))
+	;; (defun nemacs-org-capture-add-basic-properties ()
+	;;   (interactive)
+	;;   (org-id-get-create))
+	;; :hook (org-capture-before-finalize . nemacs-org-capture-add-basic-properties)
+	:hook
+	((org-capture-mode-hook . (lambda () (modalka-mode 0)))
+	 (org-after-refile-insert-hook . save-buffer))
+	:config
 	(setq org-default-notes-file "~/Sync/box/org/inbox.org"
-          org-capture-templates
-          '(
-            ("t" "Todo simple entry" entry (file org-default-notes-file)
-             "* TODO %?\n%[~/Sync/.emacs/templates/da-property-string]\n")
-            ("f" "Fast capture and exit" entry (file org-default-notes-file)
-             "* TODO %^{Title}\n%[~/Sync/.emacs/templates/da-property-string]\n" :immediate-finish t)
-            ("T" "Tasks in gtd" entry (file+headline da-gtd "Tasks")
-             "* %^{State|TODO|NEXT|WAIT|PASS|MAYB} %? \t%^{Tag|:WORK:|:PERSONAL:}\n%[~/Sync/.emacs/templates/da-property-string]\n" :empty-lines 1)
-            ("e" "File email" entry (file org-default-notes-file)
-             "* \"%:subject\"\n%[~/Sync/.emacs/templates/da-property-string-email]%i%?\n")
+		  org-capture-templates
+		  '(
+			("t" "Todo simple entry" entry (file org-default-notes-file)
+			 "* TODO %?\n%[~/Sync/.emacs/templates/da-property-string]\n")
+			("f" "Fast capture and exit" entry (file org-default-notes-file)
+			 "* TODO %^{Title}\n%[~/Sync/.emacs/templates/da-property-string]\n" :immediate-finish t)
+			("T" "Tasks in gtd" entry (file+headline da-gtd "Tasks")
+			 "* %^{State|TODO|NEXT|WAIT|PASS|MAYB} %? \t%^{Tag|:WORK:|:PERSONAL:}\n%[~/Sync/.emacs/templates/da-property-string]\n" :empty-lines 1)
+			("e" "File email" entry (file org-default-notes-file)
+			 "* \"%:subject\"\n%[~/Sync/.emacs/templates/da-property-string-email]%i%?\n")
 			("P" "new Project" entry (file "~/Sync/box/org/projects.org")
 			 "* %? \t%^{Tag|:WORK:proj:|:PERSONAL:proj:}\n%[~/Sync/.emacs/templates/da-property-string]\n%^{CATEGORY}p" :empty-lines 1 :prepend t)
 			("n" "Next urgent task" entry (file+headline da-gtd "Tasks")
@@ -1668,373 +1845,375 @@ HEIGHT, if supplied, specifies height of letters to use."
 	;;                ,(format "%s\n%s\n%s" "* WAIT for reply %:subject" da-property-string "%i%?")))
 	:bind
 	(("C-c c" . org-capture)
-	 ("C-c t" . (lambda () (interactive "") (org-capture nil "t")))
+	 ;; ("C-c t" . (lambda () (interactive "") (org-capture nil "t")))
 	 ("C-c T" . (lambda () (interactive "") (org-capture nil "T")))
 	 ("C-c R d" . nemacs-org-capture-review-daily)
 	 ("C-c R w" . my-new-weekly-review))
 	)
   (use-package org-super-agenda)        ;groups query demanded to org-agenda org-ql
   (use-package org-agenda :straight org
-    :bind
+	:bind
 	(("<f14> a a" . (lambda () (interactive "") (org-agenda nil "a")))
-     :map
+	 :map
 	 org-agenda-mode-map
-     ("Z" . counsel-org-tag-agenda)
-     ;; ("P" . "< \t")
-     ("C-a" . org-agenda))
-    :hook
-    (org-agenda-mode-hook . (lambda () (hl-line-mode) (setq line-spacing 0.0)))
-    :config
-    (setq org-agenda-confirm-kill 1)
-    (setq org-agenda-show-all-dates t)
-    (setq org-agenda-show-outline-path nil)
-    ;; All the "skip" need to be reviewed
-    (setq org-agenda-skip-additional-timestamps-same-entry t)
-    ;; (setq org-agenda-skip-deadline-prewarning-if-scheduled t)
-    (setq org-agenda-skip-deadline-prewarning-if-scheduled nil)
-    (setq org-agenda-skip-scheduled-delay-if-deadline t)
-    (setq org-agenda-skip-scheduled-if-deadline-is-shown t)
-    (setq org-agenda-skip-scheduled-if-done t)
-    (setq org-agenda-skip-timestamp-if-deadline-is-shown t)
-    (setq org-agenda-skip-timestamp-if-done t)
-    (setq org-habit-show-habits-only-for-today nil)
-    (setq org-agenda-search-headline-for-time nil)
-    (setq org-agenda-start-on-weekday 1)  ; Monday
-    (setq org-agenda-start-with-follow-mode nil)
-    (setq org-agenda-timegrid-use-ampm nil)
-    (setq org-agenda-time-grid
-          '((daily today require-timed)
-            (0800 1000 1200 1400 1600 1800 2000)
-            "      " "················"))
-    (setq org-agenda-use-time-grid t)
-    (setq org-agenda-window-setup 'current-window)
-    (setq org-agenda-restore-windows-after-quit t)
-    (setq org-agenda-todo-list-sublevels t)
-    (setq                               ; Agenda display
-     org-agenda-dim-blocked-tasks t     ; Dim blocked tasks
-     org-agenda-show-future-repeats nil ; 'next to view this and the next.
-     org-agenda-search-view-always-boolean t ; Lazy boolean search =C-c a s=
-     org-agenda-sticky t)
-    ;; XXX: custom agenda view http://orgmode.org/worg/org-tutorials/org-custom-agenda-commands.html
-    ;; https://github.com/mwfogleman/.emacs.d/blob/master/michael.org
-    ;; https://gist.github.com/mwfogleman/267b6bc7e512826a2c36cb57f0e3d854
-    (progn                                          ; == Agenda ==
-      ;; For tag searches ignore tasks with scheduled and deadline dates FIXME better control this in each agenda custom view
-      (setq org-agenda-tags-todo-honor-ignore-options t) ; needed to
-      ;; avoid seeing missed tasks in my unscheduled view; next tasks in
-      ;; daily review view; in w but W is ok; 
-      ;; all properties are inherited
-      ;; (setq org-use-property-inheritance t) ;; XXX:  to be used with STYLE, e.g. habit not scheduled
-      ;; (defun nemacs-org-agenda-startup ()
-      ;;   (interactive)
-      ;;   (org-agenda :keys "gtd"))
-      ;;        (:map org-agenda-mode-map
-      ;;              ("g" . org-gcal-fetch)))
-      ;; (org-agenda-skip-deadline-if-done nil)
-      ;; (org-agenda-skip-scheduled-if-done nil)
-      (defvar in-7days (org-read-date nil nil "+7d"))
-      (defvar in-14days (org-read-date nil nil "+14d"))
-      ;; (setq org-agenda-follow-indirect t)
-      ;; FIXME: could help following projects individually
-      (advice-add 'org-agenda-goto :after
-                  (lambda (&rest args)
-                    (org-narrow-to-subtree)))
-      (defvar da-super-agenda-groups
-        '((:name "Overdue (WORK)"
-                 :and (:tag "WORK" :deadline past)
-                 :and (:tag "WORK" :scheduled past)
-                 :order 1)
-          (:name "Overdue (PERSONAL)"
-                 :and (:tag "PERSONAL" :deadline past)
-                 :and (:tag "PERSONAL" :scheduled past)
-                 :order 21)
-          (:name "Overdue (Unassigned)"
-                 :deadline past
-                 :scheduled past
-                 :order 11)
-          (:name "Scheduled tasks and future deadlines (WORK)"
-                 :and (:tag "WORK" :deadline today)
-                 :and (:tag "WORK" :deadline future)
-                 :and (:tag "WORK" :scheduled today)
-                 :and (:tag "WORK" :scheduled future)
-                 :order 3)
-          (:name "Scheduled tasks and future deadlines (PERSONAL)"
-                 :and (:tag "PERSONAL" :deadline today)
-                 :and (:tag "PERSONAL" :deadline future)
-                 :and (:tag "PERSONAL" :scheduled today)
-                 :and (:tag "PERSONAL" :scheduled future)
-                 :order 23)
-          (:name "Scheduled tasks and future deadlines (Unassigned)"
-                 :deadline today
-                 :deadline future
-                 :scheduled today
-                 :scheduled future
-                 :order 13)
-          (:name "Unscheduled (WORK)"
-                 :tag "WORK"
-                 :order 2)
-          (:name "Unscheduled (PERSONAL)"
-                 :tag "PERSONAL"
-                 :order 22)
-          (:name "Unscheduled (Unassigned)"
-                 :anything t
-                 :order 12)
-          ))
-      (setq org-agenda-custom-commands
-            '(
-              ("a" "Actions list [today]"
-               ((org-super-agenda-mode)
-                (agenda "" ((org-super-agenda-groups
-                             '((:name "Overdue"
-                                      :scheduled past
-                                      :deadline past)
-                               (:name "Today schedule"
-                                      :time-grid t
-                                      :deadline today
-                                      :scheduled today
-                                      :order 1)
-                               (:name "Due Tomorrow"
-                                      :deadline future
-                                      :order 2)))))
-                (alltodo "Important and Further picks"
-                         ((org-agenda-overriding-header "")
-                          (org-agenda-todo-ignore-scheduled t) ;like 'all
-                          (org-agenda-todo-ignore-deadlines 'near)
-                          (org-super-agenda-groups
-                           '((:name "Important" :priority>="A")
-                             (:discard (:scheduled t :deadline t))
-                             (:name "Quick Picks" :and
-                                    (:todo ("TODO" "NEXT") :effort< "0:15"))
-                             (:discard (:anything t)))))))
-               ((org-agenda-span 'day)
-                (org-agenda-sorting-strategy '(todo-state-down priority-down category-keep habit-down))
-                (org-agenda-skip-deadline-if-done nil) ;;XXX: those need to
-                ;;be reviewed globally
-                (org-agenda-skip-scheduled-if-done nil)
-                (org-deadline-warning-days 1)
-                (org-agenda-compact-blocks t)))
-              ("d" "Daily review"
-               ((org-super-agenda-mode)
-                (agenda "Today" ((org-agenda-span 1)
-                                 (org-deadline-warning-days 14)
-                                 (org-super-agenda-groups
-                                  `((:log t)
-                                    (:discard (:todo ("DONE" "CANC")))
-                                    (:name "Overdue deadlines" :deadline past)
-                                    (:name "Overdue schedule" :scheduled past)
-                                    (:name "Agenda" :time-grid t
-                                           :deadline today
-                                           :scheduled today :order 2)
-                                    ;; works in agenda using \` instead of \'
-                                    (:discard (:deadline (before ,in-7days)))
-                                    (:name "Due soon" :deadline future)
-                                    ))))
-                (agenda "" ((org-agenda-start-day "+1d")
-                            (org-agenda-span 6)
-                            (org-agenda-time-grid
-                             '((weekly) (0800 1300 1800)
-                               "      " "················"))
-                            (org-super-agenda-groups
-                             '((:discard (:todo ("DONE" "CANC")))
-                               (:name none :time-grid t
-                                      :scheduled future
-                                      :deadline future
-                                      )))))
-                (tags "-WAITING-PASSED-HOLDING-MAYBE" ;do not use -todo for refile archive
-                      ((org-agenda-overriding-header "")
-                       (org-agenda-todo-ignore-scheduled t)
-                       (org-tags-match-list-sublevels 'indented)
-                       (org-agenda-sorting-strategy '(todo-state-down priority-down category-keep habit-down))
-                       (org-super-agenda-groups
-                        `(
-                          (:name "Tasks to refile" :tag "REFILE")
-                          (:name "Tasks to archive"
-                                 :and (:not (:tag ("NOTE")) :todo ("DONE" "CANC")))
-                          (:discard (:and (:tag ("NOTE") :todo ("DONE" "CANC"))))
-                          (:discard (:not (:todo t))) ;;XXX: not needed
-                          (:discard (:deadline t :scheduled t))
-                          ;; (:name "Future deadlines" :deadline (after ,in-14days) :order 1)
-                          ;; (:name "Next-week deadlines" :deadline (after ,in-7days))
-                          ;; (:name "Due within next 7 days" :deadline future)
-                          (:discard (:not (:priority "A" :todo ("PASS" "WAIT" "NEXT"))))
-                          (:name "Standalone tasks" :category "gtd" :order 0)
-                          (:auto-outline-path t)
-                          ;; (:auto-parent t)
-                          (:auto-category t))))))
-               ((org-agenda-include-diary nil)
-                (org-agenda-sorting-strategy '(time-up habit-up tag-down category-keep priority-down))
-                (org-agenda-compact-blocks t)))
-              
-              ("L" "Journal"
-               tags "*"
-               ((org-agenda-files '("~/Sync/box/org/journal.org")))
-               ) ; XXX: finish this and review to
-              ("b" "Backwards calendar loops"
-               agenda ""
-               ((org-agenda-overriding-header "Backwards calendar loops")
-                ;; (org-agenda-overriding-columns-format "%20ITEM %DEADLINE")
-                ;; (org-agenda-view-columns-initially t)
-                (org-agenda-span 10)
-                (org-agenda-start-day "-10d")
-                (org-agenda-start-with-log-mode t)
-                (org-agenda-include-diary nil)
-                (org-agenda-use-time-grid t)))
-              ("f" "Forwards loops, habits and recurring tasks"
-               (
-                (org-super-agenda-mode)
-                (agenda "" ((org-agenda-files da-agenda-and-refile-files)
-                            (org-super-agenda-groups
-                             `((:discard (:habit t))
-                               (:discard (:tag "recurring"))
-                               (:name "Deadlines" :deadline future :order 0)
-                               (:discard (:anything t))))
-                            (org-agenda-overriding-header "")
-                            (org-habit-show-habits-only-for-today nil)
-                            (org-agenda-span 1)
-                            (org-agenda-show-all-dates nil)
-                            (org-agenda-show-future-repeats 'next)
-                            (org-agenda-include-diary nil)
-                            (org-agenda-todo-ignore-scheduled nil)
-                            (org-agenda-tags-todo-honor-ignore-options nil)
-                            (org-deadline-warning-days 730)
-                            ))
-                (tags "*" ((org-agenda-files da-agenda-and-refile-files)
-                           (org-agenda-overriding-header "")
-                           (org-super-agenda-groups
-                            `((:discard (:tag "recurring"))
-                              (:discard (:and (:habit t :scheduled (after ,in-14days))))
-                              (:discard (:scheduled past))
-                              (:discard (:date nil)) ; (:discard (:not (:scheduled t)))
-                              (:auto-planning t)
-                              ))))
-                (agenda "" ((org-agenda-files da-agenda-and-refile-files)
-                            (org-super-agenda-groups
-                             `((:discard (:habit t))
-                               (:name none :tag "recurring")
-                               (:discard (:anything t))))
-                            (org-agenda-overriding-header "Recurring deadlines")
-                            (org-agenda-span 0)
-                            (org-agenda-include-diary nil)
-                            (org-deadline-warning-days 730)))
-                (org-ql-block '(and (habit) (scheduled :from +15))
-                              ((org-ql-block-header "Habits (+2w)")))
-                )
-               (
-                (org-agenda-todo-ignore-scheduled nil)
-                (org-agenda-todo-ignore-deadlines nil)
-                ;; (org-agenda-window-setup 'other-frame);XXX: i3
-                (org-agenda-todo-ignore-scheduled 'past)
-                (org-agenda-sorting-strategy '(scheduled-up deadline-up ts-up))))
-              ("0" "Tasks to refile or archive"
-               ((tags "REFILE" ((org-agenda-overriding-header "Tasks to Refile")))
-                (tags "-NOTE-REFILE/DONE|CANC"
-                      ((org-agenda-overriding-header "Tasks to Archive")))
-                )
-               (        (org-agenda-todo-ignore-scheduled nil)
-                        (org-agenda-todo-ignore-deadlines nil)
-                        ))
-              ("l" "Standalone action list"
-               ((org-super-agenda-mode)
-                (tags "-proj-recurring-STYLE=\"habit\"/TODO|NEXT")) ; -STYLE=\"habit\" is not inherited
-               ((org-super-agenda-groups da-super-agenda-groups)
-                (org-agenda-sorting-strategy '(priority-down todo-state-down category-keep habit-down))
-                (org-tags-match-list-sublevels 'indented)))
-              ("w" "Follow-up list"
-               ((org-super-agenda-mode)
-                (tags "-proj/!WAIT|PASS"
-                      ((org-agenda-overriding-header "Follow-up tasks list")))
-                (tags "+proj/!WAIT|PASS"
-                      ((org-agenda-overriding-header "Follow-up projects list")
-                       (org-tags-exclude-from-inheritance '("proj"))))
-                )
-               ((org-super-agenda-groups da-super-agenda-groups)
-                (org-tags-match-list-sublevels 'indented)))
-              ("j" "Projects list"
-               ((org-super-agenda-mode)
-                ;; (tags "+proj/-HOLD-MAYB-PASS-WAIT-CANC-DONE"; -Proj=\"ignore\"
-                (tags "+proj"
-                      ((org-agenda-overriding-header "Active projects")
-                       (org-tags-exclude-from-inheritance '("proj")) ; (org-use-tag-inheritance nil)
-                       (org-super-agenda-groups da-super-agenda-groups)
-                       ;; (:name "Stuck work projects" :and (:tag "WORK" :not (:children "NEXT")))
-                       (org-agenda-skip-function '(org-agenda-skip-subtree-if 'nottodo '("NEXT")))))
-                (tags "+proj"
-                      ((org-agenda-overriding-header "Stuck projects")
-                       (org-tags-exclude-from-inheritance '("proj")) ; (org-use-tag-inheritance nil)
-                       ;; (org-agenda-skip-function '(org-agenda-skip-subtree-if 'todo '("NEXT")))
-                       (org-super-agenda-groups (append '((:discard (:children "NEXT")))
-                                                        da-super-agenda-groups))))
-                (tags "+proj"
-                      ((org-agenda-overriding-header "")
-                       (org-super-agenda-groups
-                        '((:discard (:regexp ":proj:"))
-                          (:name "DONE" :todo "DONE")
-                          (:name "NEXT" :todo "NEXT")
-                          (:name "To follow-up" :todo ("PASS" "WAIT"))
-                          (:name "TODO" :todo "TODO")
-                          (:name "To reconsider" :todo ("HOLD" "MAYB"))
-                          (:name "CANC" :todo "CANC")
-                          (:discard (:anything t)))))))
-               ((org-tags-match-list-sublevels 'indented)
-                (org-agenda-sorting-strategy '(priority-down))
-                ;; (org-use-property-inheritance t)
-                (org-agenda-tag-filter-preset '("-WAITING" "-PASSED" "-HOLDING" "-MAYBE" "-ENDED"))
-                ))
-              ("h" "Tasks and projects on hold"
-               ((org-super-agenda-mode)
-                (tags "-proj/+HOLD"
-                      ((org-agenda-overriding-header "Tasks on hold")))
-                (tags "+proj/+HOLD"
-                      ((org-agenda-overriding-header "Projects on hold")
-                       (org-tags-exclude-from-inheritance '("proj"))))
-                )
-               ((org-super-agenda-groups da-super-agenda-groups)
-                (org-tags-match-list-sublevels 'indented)))
-              ("i" "Idea and hold, maybe, someday tasks and-or projects"
-               ((org-super-agenda-mode)
-                (tags "-proj/+MAYB"
-                      ((org-agenda-overriding-header "Tasks for someday")
-                       (org-super-agenda-groups da-super-agenda-groups)))
-                (tags "+proj/+MAYB"
-                      ((org-agenda-overriding-header "Projects for someday")
-                       (org-tags-exclude-from-inheritance '("proj"))
-                       (org-super-agenda-groups da-super-agenda-groups)))
-                (tags "+idea"
-                      ((org-agenda-overriding-header "Ideas")
-                       (org-tags-match-list-sublevels 'indented)
-                       (org-agenda-sorting-strategy '(todo-state-up priority-down category-keep tag-down))))
-                ))
-              ("c" . "Contexts")
-              ("ce" "@errand" tags-todo "@errand")
-              ("cf" "@fbk" tags-todo "@fbk")
-              ("ch" "@home" tags-todo "@home")
-              ("cd" "@dati" tags-todo "@dati")
-              ("ct" "@telephone" tags-todo "@telephone")
-              ("E" "Export agenda"
-               ((agenda "" ((org-agenda-ndays 7)                      ;; overview of appointments
-                            (org-agenda-start-on-weekday nil)         ;; calendar begins today
-                            (org-agenda-repeating-timestamp-show-all t)
-                            (org-agenda-entry-types '(:timestamp :sexp))))
-                (agenda "" ((org-agenda-ndays 1)                      ;; daily agenda
-                            (org-deadline-warning-days 700)             ;; 7 day advanced warning for deadlines
-                            (org-agenda-todo-keyword-format "[ ]")
-                            (org-agenda-scheduled-leaders '("" ""))
-                            (org-agenda-prefix-format "%t%s")))
-                (todo "TODO"                                          ;; todos sorted by context
-                      ((org-agenda-prefix-format "[ ] %T: ")
-                       (org-agenda-sorting-strategy '(tag-up priority-down))
-                       (org-agenda-todo-keyword-format "")
-                       (org-agenda-overriding-header "\nTasks by Context\n------------------\n"))))
-               ((org-agenda-with-colors nil)
-                (org-agenda-remove-tags t)
-                (htmlize-output-type 'css)
-                (ps-number-of-columns 2)
-                (ps-landscape-mode t))
-               ("~/agenda.pdf" "~/agenda.html"))
-              ;; other commands go here
-              )))
-    )
+	 ("Z" . counsel-org-tag-agenda)
+	 ;; ("P" . "< \t")
+	 ("C-a" . org-agenda))
+	:hook
+	(org-agenda-mode-hook . (lambda () (hl-line-mode) (setq line-spacing 0.0)))
+	:config
+	(setq org-agenda-confirm-kill 1)
+	(setq org-agenda-show-all-dates t)
+	(setq org-agenda-show-outline-path nil)
+	;; All the "skip" need to be reviewed
+	(setq org-agenda-skip-additional-timestamps-same-entry t)
+	;; (setq org-agenda-skip-deadline-prewarning-if-scheduled t)
+	(setq org-agenda-skip-deadline-prewarning-if-scheduled nil)
+	(setq org-agenda-skip-scheduled-delay-if-deadline t)
+	(setq org-agenda-skip-scheduled-if-deadline-is-shown t)
+	(setq org-agenda-skip-scheduled-if-done t)
+	(setq org-agenda-skip-timestamp-if-deadline-is-shown t)
+	(setq org-agenda-skip-timestamp-if-done t)
+	(setq org-habit-show-habits-only-for-today nil)
+	(setq org-agenda-search-headline-for-time nil)
+	(setq org-agenda-start-on-weekday 1)  ; Monday
+	(setq org-agenda-start-with-follow-mode nil)
+	(setq org-agenda-timegrid-use-ampm nil)
+	(setq org-agenda-time-grid
+		  '((daily today require-timed)
+			(0800 1000 1200 1400 1600 1800 2000)
+			"      " "················"))
+	(setq org-agenda-use-time-grid t)
+	(setq org-agenda-window-setup 'current-window)
+	(setq org-agenda-restore-windows-after-quit t)
+	(setq org-agenda-todo-list-sublevels t)
+	(setq                               ; Agenda display
+	 org-agenda-dim-blocked-tasks t     ; Dim blocked tasks
+	 org-agenda-show-future-repeats nil ; 'next to view this and the next.
+	 org-agenda-search-view-always-boolean t ; Lazy boolean search =C-c a s=
+	 org-agenda-sticky t)
+	;; XXX: custom agenda view http://orgmode.org/worg/org-tutorials/org-custom-agenda-commands.html
+	;; https://github.com/mwfogleman/.emacs.d/blob/master/michael.org
+	;; https://gist.github.com/mwfogleman/267b6bc7e512826a2c36cb57f0e3d854
+	(progn                                          ; == Agenda ==
+	  ;; For tag searches ignore tasks with scheduled and deadline dates FIXME better control this in each agenda custom view
+	  (setq org-agenda-tags-todo-honor-ignore-options t) ; needed to
+	  ;; avoid seeing missed tasks in my unscheduled view; next tasks in
+	  ;; daily review view; in w but W is ok; 
+	  ;; all properties are inherited
+	  ;; (setq org-use-property-inheritance t) ;; XXX:  to be used with STYLE, e.g. habit not scheduled
+	  ;; (defun nemacs-org-agenda-startup ()
+	  ;;   (interactive)
+	  ;;   (org-agenda :keys "gtd"))
+	  ;;        (:map org-agenda-mode-map
+	  ;;              ("g" . org-gcal-fetch)))
+	  ;; (org-agenda-skip-deadline-if-done nil)
+	  ;; (org-agenda-skip-scheduled-if-done nil)
+	  (defvar in-7days (org-read-date nil nil "+7d"))
+	  (defvar in-14days (org-read-date nil nil "+14d"))
+	  ;; (setq org-agenda-follow-indirect t)
+	  ;; FIXME: could help following projects individually
+	  (advice-add 'org-agenda-goto :after
+				  (lambda (&rest args)
+					(org-narrow-to-subtree)))
+	  (defvar da-super-agenda-groups
+		'((:name "Overdue (WORK)"
+				 :and (:tag "WORK" :deadline past)
+				 :and (:tag "WORK" :scheduled past)
+				 :order 1)
+		  (:name "Overdue (PERSONAL)"
+				 :and (:tag "PERSONAL" :deadline past)
+				 :and (:tag "PERSONAL" :scheduled past)
+				 :order 21)
+		  (:name "Overdue (Unassigned)"
+				 :deadline past
+				 :scheduled past
+				 :order 11)
+		  (:name "Scheduled tasks and future deadlines (WORK)"
+				 :and (:tag "WORK" :deadline today)
+				 :and (:tag "WORK" :deadline future)
+				 :and (:tag "WORK" :scheduled today)
+				 :and (:tag "WORK" :scheduled future)
+				 :order 3)
+		  (:name "Scheduled tasks and future deadlines (PERSONAL)"
+				 :and (:tag "PERSONAL" :deadline today)
+				 :and (:tag "PERSONAL" :deadline future)
+				 :and (:tag "PERSONAL" :scheduled today)
+				 :and (:tag "PERSONAL" :scheduled future)
+				 :order 23)
+		  (:name "Scheduled tasks and future deadlines (Unassigned)"
+				 :deadline today
+				 :deadline future
+				 :scheduled today
+				 :scheduled future
+				 :order 13)
+		  (:name "Unscheduled (WORK)"
+				 :tag "WORK"
+				 :order 2)
+		  (:name "Unscheduled (PERSONAL)"
+				 :tag "PERSONAL"
+				 :order 22)
+		  (:name "Unscheduled (Unassigned)"
+				 :anything t
+				 :order 12)
+		  ))
+	  (setq org-agenda-custom-commands
+			'(
+			  ("a" "Actions list [today]"
+			   ((org-super-agenda-mode)
+				(agenda "" ((org-super-agenda-groups
+							 '((:name "Overdue"
+									  :scheduled past
+									  :deadline past)
+							   (:name "Today schedule"
+									  :time-grid t
+									  :deadline today
+									  :scheduled today
+									  :order 1)
+							   (:name "Due Tomorrow"
+									  :deadline future
+									  :order 2)))))
+				(alltodo "Important and Further picks"
+						 ((org-agenda-overriding-header "")
+						  (org-agenda-todo-ignore-scheduled t) ;like 'all
+						  (org-agenda-todo-ignore-deadlines 'near)
+						  (org-super-agenda-groups
+						   '((:name "Important" :priority>="A")
+							 (:discard (:scheduled t :deadline t))
+							 (:name "Quick Picks" :and
+									(:todo ("TODO" "NEXT") :effort< "0:15"))
+							 (:discard (:anything t)))))))
+			   ((org-agenda-span 'day)
+				(org-agenda-sorting-strategy '(todo-state-down priority-down category-keep habit-down))
+				(org-agenda-skip-deadline-if-done nil) ;;XXX: those need to
+				;;be reviewed globally
+				(org-agenda-skip-scheduled-if-done nil)
+				(org-deadline-warning-days 1)
+				(org-agenda-compact-blocks t)))
+			  ("d" "Daily review"
+			   ((org-super-agenda-mode)
+				(agenda "Today" ((org-agenda-span 1)
+								 (org-deadline-warning-days 14)
+								 (org-super-agenda-groups
+								  `((:log t)
+									(:discard (:todo ("DONE" "CANC")))
+									(:name "Overdue deadlines" :deadline past)
+									(:name "Overdue schedule" :scheduled past)
+									(:name "Agenda" :time-grid t
+										   :deadline today
+										   :scheduled today :order 2)
+									;; works in agenda using \` instead of \'
+									(:discard (:deadline (before ,in-7days)))
+									(:name "Due soon" :deadline future)
+									))))
+				(agenda "" ((org-agenda-start-day "+1d")
+							(org-agenda-span 6)
+							(org-agenda-time-grid
+							 '((weekly) (0800 1300 1800)
+							   "      " "················"))
+							(org-super-agenda-groups
+							 '((:discard (:todo ("DONE" "CANC")))
+							   (:name none :time-grid t
+									  :scheduled future
+									  :deadline future
+									  )))))
+				(tags "-WAITING-PASSED-HOLDING-MAYBE" ;do not use -todo for refile archive
+					  ((org-agenda-overriding-header "")
+					   (org-agenda-todo-ignore-scheduled t)
+					   (org-tags-match-list-sublevels 'indented)
+					   (org-agenda-sorting-strategy '(todo-state-down priority-down category-keep habit-down))
+					   (org-super-agenda-groups
+						`(
+						  (:name "Tasks to refile" :tag "REFILE")
+						  (:name "Tasks to archive"
+								 :and (:not (:tag ("NOTE")) :todo ("DONE" "CANC")))
+						  (:discard (:and (:tag ("NOTE") :todo ("DONE" "CANC"))))
+						  (:discard (:not (:todo t))) ;;XXX: not needed
+						  (:discard (:deadline t :scheduled t))
+						  ;; (:name "Future deadlines" :deadline (after ,in-14days) :order 1)
+						  ;; (:name "Next-week deadlines" :deadline (after ,in-7days))
+						  ;; (:name "Due within next 7 days" :deadline future)
+						  (:discard (:not (:priority "A" :todo ("PASS" "WAIT" "NEXT"))))
+						  (:name "Standalone tasks" :category "gtd" :order 0)
+						  (:auto-outline-path t)
+						  ;; (:auto-parent t)
+						  (:auto-category t))))))
+			   ((org-agenda-include-diary nil)
+				(org-agenda-sorting-strategy '(time-up habit-up tag-down category-keep priority-down))
+				(org-agenda-compact-blocks t)))
+			  
+			  ("L" "Journal"
+			   tags "*"
+			   ((org-agenda-files '("~/Sync/box/org/journal.org")))
+			   ) ; XXX: finish this and review to
+			  ("b" "Backwards calendar loops"
+			   agenda ""
+			   ((org-agenda-overriding-header "Backwards calendar loops")
+				;; (org-agenda-overriding-columns-format "%20ITEM %DEADLINE")
+				;; (org-agenda-view-columns-initially t)
+				(org-agenda-span 10)
+				(org-agenda-start-day "-10d")
+				(org-agenda-start-with-log-mode t)
+				(org-agenda-include-diary nil)
+				(org-agenda-use-time-grid t)))
+			  ("f" "Forwards loops, habits and recurring tasks"
+			   (
+				(org-super-agenda-mode)
+				(agenda "" ((org-agenda-files da-agenda-and-refile-files)
+							(org-super-agenda-groups
+							 `((:discard (:habit t))
+							   (:discard (:tag "recurring"))
+							   (:name "Deadlines" :deadline future :order 0)
+							   (:discard (:anything t))))
+							(org-agenda-overriding-header "")
+							(org-habit-show-habits-only-for-today nil)
+							(org-agenda-span 1)
+							(org-agenda-show-all-dates nil)
+							(org-agenda-show-future-repeats 'next)
+							(org-agenda-include-diary nil)
+							(org-agenda-todo-ignore-scheduled nil)
+							(org-agenda-tags-todo-honor-ignore-options nil)
+							(org-deadline-warning-days 730)
+							))
+				(tags "*" ((org-agenda-files da-agenda-and-refile-files)
+						   (org-agenda-overriding-header "")
+						   (org-super-agenda-groups
+							`((:discard (:tag "recurring"))
+							  (:discard (:and (:habit t :scheduled (after ,in-14days))))
+							  (:discard (:scheduled past))
+							  (:discard (:date nil)) ; (:discard (:not (:scheduled t)))
+							  (:auto-planning t)
+							  ))))
+				(agenda "" ((org-agenda-files da-agenda-and-refile-files)
+							(org-super-agenda-groups
+							 `((:discard (:habit t))
+							   (:name none :tag "recurring")
+							   (:discard (:anything t))))
+							(org-agenda-overriding-header "Recurring deadlines")
+							(org-agenda-span 0)
+							(org-agenda-include-diary nil)
+							(org-deadline-warning-days 730)))
+				(org-ql-block '(and (habit) (scheduled :from +15))
+							  ((org-ql-block-header "Habits (+2w)")))
+				)
+			   (
+				(org-agenda-todo-ignore-scheduled nil)
+				(org-agenda-todo-ignore-deadlines nil)
+				;; (org-agenda-window-setup 'other-frame);XXX: i3
+				(org-agenda-todo-ignore-scheduled 'past)
+				(org-agenda-sorting-strategy '(scheduled-up deadline-up ts-up))))
+			  ("0" "Tasks to refile or archive"
+			   ((tags "REFILE" ((org-agenda-overriding-header "Tasks to Refile")))
+				(tags "-NOTE-REFILE/DONE|CANC"
+					  ((org-agenda-overriding-header "Tasks to Archive")))
+				)
+			   (        (org-agenda-todo-ignore-scheduled nil)
+						(org-agenda-todo-ignore-deadlines nil)
+						))
+			  ("l" "Standalone action list"
+			   ((org-super-agenda-mode)
+				(tags "-proj-recurring-STYLE=\"habit\"/TODO|NEXT")) ; -STYLE=\"habit\" is not inherited
+			   ((org-super-agenda-groups da-super-agenda-groups)
+				(org-agenda-sorting-strategy '(priority-down todo-state-down category-keep habit-down))
+				(org-tags-match-list-sublevels 'indented)))
+			  ("w" "Follow-up list"
+			   ((org-super-agenda-mode)
+				(tags "-proj/!WAIT|PASS"
+					  ((org-agenda-overriding-header "Follow-up tasks list")))
+				(tags "+proj/!WAIT|PASS"
+					  ((org-agenda-overriding-header "Follow-up projects list")
+					   (org-tags-exclude-from-inheritance '("proj"))))
+				)
+			   ((org-super-agenda-groups da-super-agenda-groups)
+				(org-tags-match-list-sublevels 'indented)))
+			  ("j" "Projects list"
+			   ((org-super-agenda-mode)
+				;; (tags "+proj/-HOLD-MAYB-PASS-WAIT-CANC-DONE"; -Proj=\"ignore\"
+				(tags "+proj"
+					  ((org-agenda-overriding-header "Active projects")
+					   (org-tags-exclude-from-inheritance '("proj")) ; (org-use-tag-inheritance nil)
+					   (org-super-agenda-groups da-super-agenda-groups)
+					   ;; (:name "Stuck work projects" :and (:tag "WORK" :not (:children "NEXT")))
+					   (org-agenda-skip-function '(org-agenda-skip-subtree-if 'nottodo '("NEXT")))))
+				(tags "+proj"
+					  ((org-agenda-overriding-header "Stuck projects")
+					   (org-tags-exclude-from-inheritance '("proj")) ; (org-use-tag-inheritance nil)
+					   ;; (org-agenda-skip-function '(org-agenda-skip-subtree-if 'todo '("NEXT")))
+					   (org-super-agenda-groups (append '((:discard (:children "NEXT")))
+														da-super-agenda-groups))))
+				(tags "+proj"
+					  ((org-agenda-overriding-header "")
+					   (org-super-agenda-groups
+						'((:discard (:regexp ":proj:"))
+						  (:name "DONE" :todo "DONE")
+						  (:name "NEXT" :todo "NEXT")
+						  (:name "To follow-up" :todo ("PASS" "WAIT"))
+						  (:name "TODO" :todo "TODO")
+						  (:name "To reconsider" :todo ("HOLD" "MAYB"))
+						  (:name "CANC" :todo "CANC")
+						  (:discard (:anything t)))))))
+			   ((org-tags-match-list-sublevels 'indented)
+				(org-agenda-sorting-strategy '(priority-down))
+				;; (org-use-property-inheritance t)
+				(org-agenda-tag-filter-preset '("-WAITING" "-PASSED" "-HOLDING" "-MAYBE" "-ENDED"))
+				))
+			  ("h" "Tasks and projects on hold"
+			   ((org-super-agenda-mode)
+				(tags "-proj/+HOLD"
+					  ((org-agenda-overriding-header "Tasks on hold")))
+				(tags "+proj/+HOLD"
+					  ((org-agenda-overriding-header "Projects on hold")
+					   (org-tags-exclude-from-inheritance '("proj"))))
+				)
+			   ((org-super-agenda-groups da-super-agenda-groups)
+				(org-tags-match-list-sublevels 'indented)))
+			  ("i" "Idea and hold, maybe, someday tasks and-or projects"
+			   ((org-super-agenda-mode)
+				(tags "-proj/+MAYB"
+					  ((org-agenda-overriding-header "Tasks for someday")
+					   (org-super-agenda-groups da-super-agenda-groups)))
+				(tags "+proj/+MAYB"
+					  ((org-agenda-overriding-header "Projects for someday")
+					   (org-tags-exclude-from-inheritance '("proj"))
+					   (org-super-agenda-groups da-super-agenda-groups)))
+				(tags "+idea"
+					  ((org-agenda-overriding-header "Ideas")
+					   (org-tags-match-list-sublevels 'indented)
+					   (org-agenda-sorting-strategy '(todo-state-up priority-down category-keep tag-down))))
+				))
+			  ("c" . "Contexts")
+			  ("ce" "@errand" tags-todo "@errand")
+			  ("cf" "@fbk" tags-todo "@fbk")
+			  ("ch" "@home" tags-todo "@home")
+			  ("cd" "@dati" tags-todo "@dati")
+			  ("ct" "@telephone" tags-todo "@telephone")
+			  ("E" "Export agenda"
+			   ((agenda "" ((org-agenda-ndays 7)                      ;; overview of appointments
+							(org-agenda-start-on-weekday nil)         ;; calendar begins today
+							(org-agenda-repeating-timestamp-show-all t)
+							(org-agenda-entry-types '(:timestamp :sexp))))
+				(agenda "" ((org-agenda-ndays 1)                      ;; daily agenda
+							(org-deadline-warning-days 700)             ;; 7 day advanced warning for deadlines
+							(org-agenda-todo-keyword-format "[ ]")
+							(org-agenda-scheduled-leaders '("" ""))
+							(org-agenda-prefix-format "%t%s")))
+				(todo "TODO"                                          ;; todos sorted by context
+					  ((org-agenda-prefix-format "[ ] %T: ")
+					   (org-agenda-sorting-strategy '(tag-up priority-down))
+					   (org-agenda-todo-keyword-format "")
+					   (org-agenda-overriding-header "\nTasks by Context\n------------------\n"))))
+			   ((org-agenda-with-colors nil)
+				(org-agenda-remove-tags t)
+				(htmlize-output-type 'css)
+				(ps-number-of-columns 2)
+				(ps-landscape-mode t))
+			   ("~/agenda.pdf" "~/agenda.html"))
+			  ;; other commands go here
+			  )))
+	)
+										;TODO: https://github.com/astoff/code-cells.el
   (use-package jupyter
+	:straight (:no-native-compile t :no-byte-compile t) ;XXX trying 2022feb10
     :after (org)
 	:init (eval-after-load 'org-babel (require 'jupyter))
     :defines org-babel-default-header-args:jupyter-python
@@ -2104,19 +2283,16 @@ HEIGHT, if supplied, specifies height of letters to use."
      (org-mode-hook . my-babelsrc-org-mode-hook)
      (org-mode-hook . prettify-symbols-mode)
      (org-after-todo-state-change-hook . dpa-proj-state-change-hook))
-    :bind
-    (("C-c a" . org-agenda)
-     ("M-h" . mark-word)
-     ("M-S-h" . org-mark-element)
-     :map
-	 org-mode-map
-	 ("H-<return>" . org-next-link)
-	 ("H-S-<return>" . org-previous-link)
-	 ("<f14> t o i" . org-indent-mode)
-     ("<f14> c o o" . counsel-outline)
-     ("<f14> c o f" . counsel-org-file)
-     ("<f14> c o l" . counsel-org-link)
-     ("<f14> c o t" . counsel-org-tag))
+    :bind (("C-c a" . org-agenda)
+		   ("M-h" . mark-word)
+		   ("M-S-h" . org-mark-element)
+		   :map
+		   org-mode-map
+		   ("H-<return>" . org-next-link)
+		   ("H-S-<return>" . org-previous-link)
+		   ("M-g ; ;" . org-capture-goto-last-stored) ; `C-x r b` for bookmarks
+		   ("M-g ; :" . org-refile-goto-last-stored)
+		   ("<f14> t o i" . org-indent-mode))
     :config
     (set-face-attribute 'org-table nil :inherit 'fixed-pitch);; :background "burlywood")
 	(set-face-attribute 'org-block nil :inherit '(fixed-pitch shadow))
@@ -2148,10 +2324,10 @@ HEIGHT, if supplied, specifies height of letters to use."
 			 org-mode-map
 			 ("<f14> e o" . org-lint))
 	  )
-    (use-package org-compat :straight org
-	  :config
-	  (org-add-link-type "mpv" (lambda (path) (browse-url-xdg-open path)))
-	  )
+    ;; (use-package org-compat :straight org
+	;;   :config
+	;;   (org-add-link-type "mpv" (lambda (path) (browse-url-xdg-open path)))
+	;;   )
 	(use-package org-attach :straight org
 	  :config
 	  (setq org-attach-use-inheritance t)
@@ -2162,15 +2338,17 @@ HEIGHT, if supplied, specifies height of letters to use."
 	  (:map
 	   org-mode-map
        ("C-c l" . org-store-link)
-       ("C-c S-l" . org-toggle-link-display)
-       ("C-c C-S-l" . org-insert-last-stored-link))
+       ("C-c L" . org-toggle-link-display)
+       ("C-c C-L" . org-insert-link)
+       ("C-c C-l" . org-insert-last-stored-link))
 	  :config
       (setq org-link-keep-stored-after-insertion t)
+	  (org-link-set-parameters "mpv" :follow (lambda (path) (browse-url-xdg-open path)))
       )
 	(use-package org-indent :straight org
-      :config
-      (setq org-indent-indentation-per-level 1)
-      )
+	  :config
+	  (setq org-indent-indentation-per-level 1)
+	  )
 	(setq-default org-image-actual-width 620) ;; nil ; so you can specify :width
 	;; org-image-actual-width (/ (display-pixel-width) 4)
 	(setq                               ; org buffers with babel
@@ -2210,13 +2388,13 @@ HEIGHT, if supplied, specifies height of letters to use."
                                    ))
 	(add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
 	(use-package ob-jupyter :straight jupyter
-      :config
-      ;; Overrides python and must be after org-babel-do-load-languages
-      (org-babel-jupyter-override-src-block "python")
+	  :config
+	  ;; Overrides python and must be after org-babel-do-load-languages
+	  (org-babel-jupyter-override-src-block "python")
 	  )
 	(use-package ob-ditaa :straight org
-      :config
-      (setq org-ditaa-jar-path "/usr/share/java/ditaa/ditaa-0.11.jar")
+	  :config
+	  (setq org-ditaa-jar-path "/usr/share/java/ditaa/ditaa-0.11.jar")
 	  )
 	(use-package ox-latex :straight org
 	  ;; XXX: https://orgmode.org/worg/org-contrib/babel/languages/ob-doc-LaTeX.html
@@ -2304,9 +2482,15 @@ HEIGHT, if supplied, specifies height of letters to use."
 	(use-package ox-koma-letter :straight org
 	  :init (eval-after-load 'ox '(require 'ox-koma-letter))
 	  )
-	(use-package ox-reveal				; FIXME
+	;; https://www.yanboyang.com/revealslides/
+	;; https://opensource.com/article/18/2/org-mode-slides
+	(use-package ox-reveal
 	  :config
-	  (setq org-reveal-root "/home/dan/.pandoc/reveal.js")
+	  ;; (setq org-reveal-root "file:///home/dan/.pandoc/reveal.js")
+	  ;; npm install --save reveal.js-menu
+	  ;; npm install --save reveal.js
+	  (setq org-reveal-root "file:///home/dan/node_modules/reveal.js")
+	  :init
 	  (eval-after-load 'ox '(require 'ox-reveal))
 	  )
 	(use-package ox-rst
@@ -2318,17 +2502,21 @@ HEIGHT, if supplied, specifies height of letters to use."
 	(use-package ox-twbs
 	  :init (eval-after-load 'ox '(require 'ox-twbs))
 	  )
-	(use-package auctex :defer t)
-	(use-package tex :straight auctex
+	(use-package auctex
+	  :defer t
 	  :config
-	  (setq TeX-auto-save t)
-	  (setq TeX-parse-self t)
-	  ;; (setq TeX-PDF-mode t))
-	  (setq-default TeX-master nil)
+	  (use-package tex
+		:straight auctex
+		:config
+		(setq TeX-auto-save t)
+		(setq TeX-parse-self t)
+		;; (setq TeX-PDF-mode t))
+		(setq-default TeX-master nil))
+	  (use-package tex-buf
+		:straight auctex
+		:config
+		(setq TeX-save-query nil))
 	  )
-	(use-package tex-buf :straight auctex
-	  :config
-	  (setq TeX-save-query nil))
 	(use-package cdlatex)
 	;; (use-package ob-exp
 	;; 	:straight nil
@@ -2349,7 +2537,7 @@ HEIGHT, if supplied, specifies height of letters to use."
 	;; general                                                             ;;
 	(setq org-special-ctrl-a/e t)                                          ;;
 	(setq org-special-ctrl-k t)                                            ;;
-	(setq org-catch-invisible-edits 'show)                                 ;;
+	;; (setq org-fold-catch-invisible-edits 'show)                            ;; 'smart default
 	(setq org-loop-over-headlines-in-active-region nil)                    ;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; init of my-gtd.conf
@@ -2439,7 +2627,7 @@ HEIGHT, if supplied, specifies height of letters to use."
 								)
 	 org-tag-faces '(("WORK" :foreground "green")
 					 ("PERSONAL" :foreground "orange")
-				   	 ("proj" :weight bold)
+					 ("proj" :weight bold)
 					 ("@fbk" :weight italic))
 	 org-fast-tag-selection-single-key t ; 'expert does't show
 	 org-fast-tag-selection-include-todo nil
@@ -2460,7 +2648,7 @@ HEIGHT, if supplied, specifies height of letters to use."
 	)
   (use-package sphinx-mode)
   (use-package ob-async
-    :after ob
+    :after (ob)
     :config
     (setq ob-async-no-async-languages-alist
 		  '("jupyter-python" "jupyter-julia" "jupyter-R"))
@@ -2499,11 +2687,10 @@ HEIGHT, if supplied, specifies height of letters to use."
   (use-package graphviz-dot-mode
     :config
 	(setq graphviz-dot-indent-width 4)
-    (add-to-list 'company-backends 'company-graphviz-dot-backend)
 	)
   (use-package gnuplot)
   (use-package org-download
-    :after org
+    :after (org)
     :bind (:map org-mode-map
                 ("<f14> d c" . org-download-clipboard)
                 ("<f14> d i" . org-download-image)
@@ -2530,7 +2717,7 @@ HEIGHT, if supplied, specifies height of letters to use."
     (calendar-today-visible-hook . calendar-mark-today)
 	)
   (use-package solar                    ; (2) sunrise and sunset
-    :straight nil
+    :straight (:type built-in)
     ;; :load-path "/usr/share/emacs/"
     :config
     (setq calendar-latitude 46.067270 ; Borino
@@ -2587,6 +2774,7 @@ HEIGHT, if supplied, specifies height of letters to use."
      ("W" . cfw:open-org-calendar)))
   )
 (progn                                  ; Writing
+  ;; https://www.reddit.com/r/emacs/comments/ni2lmx/is_it_possible_to_use_gnuemacs_as_an_alternative/
   ;; XXX: abbrev mode C-x a +/g
   ;; XXX: translate-shell =M-|= shell-command-on region
   (use-package wc-mode
@@ -2649,9 +2837,9 @@ HEIGHT, if supplied, specifies height of letters to use."
   (use-package sdcv
 	:bind
 	("<f14> x s" . sdcv-search-pointer)
-	:bind (:map sdcv-mode-map
-				("n" . sdcv-next-dictionary)
-				("p" . sdcv-previous-dictionary)))
+	(:map sdcv-mode-map
+		  ("n" . sdcv-next-dictionary)
+		  ("p" . sdcv-previous-dictionary)))
   (use-package dictionary
 	:bind
 	("<f14> x d" . dictionary-search))
@@ -2730,313 +2918,192 @@ HEIGHT, if supplied, specifies height of letters to use."
 	:hook
 	(text-mode-hook . typo-mode))
   )
-(progn                                  ; Bibliography
-  ;; (use-package org-bibtex
-  ;;   :ensure org-plus-contrib
-  ;;   :hook
-  ;;   (org-mode-hook . (lambda () (require 'ox-bibtex)))
-  ;;   (org-mode-hook . (lambda () (require 'ol-bibtex)))
-  ;;   :defines org-bibtex-file
-  ;;   :config
-  ;;   (setq org-bibtex-file "~/Sync/biblio/papers.org"))
-  (use-package bibtex
-    :bind (:map bibtex-mode-map
-                ("<tab>" . hs-toggle-hiding)
-                ("<backtab>" . hs-hide-all)
-                ("C-<tab>" . hs-show-all))
-    :hook
-    (bibtex-mode-hook . hs-minor-mode)
-    :config
-	;; Change fields and format
-	(setq bibtex-user-optional-fields '(("keywords" "Keywords to describe the entry" "")
-										("file" "Link to document file." ":")))
-    ;; (setq bibtex-align-at-equal-sign t)
-	;; (setq bibtex-text-indentation 28)
-    (setq                               ; Bibtex key format
-     bibtex-autokey-name-case-convert-function 'capitalize
-     bibtex-autokey-name-year-separator ""
-     bibtex-autokey-titleword-separator ""
-     bibtex-autokey-year-title-separator "_"
-     bibtex-autokey-titlewords 3
-     bibtex-autokey-titlewords-stretch 0
-     bibtex-autokey-titleword-case-convert-function 'capitalize
-     bibtex-autokey-titleword-length 9)
-	(setq bibtex-dialect 'biblatex))
-  (use-package ivy-bibtex
-    :bind
-    ("<f14> a b" . ivy-bibtex)
-    :hook
-    (org-mode-hook . (lambda () (require 'ivy-bibtex)))
-    (bibtex-mode-hook . (lambda () (require 'ivy-bibtex)))
-    ;; :preface
-    ;; (defun bibtex-completion-open-pdf-external (keys &optional fallback-action)
-    ;;   (let ((bibtex-completion-pdf-open-function
-    ;;          (lambda (fpath) (start-process "evince" "*helm-bibtex-evince*" "/usr/bin/evince" fpath))))
-    ;;     (bibtex-completion-open-pdf keys fallback-action)))
-    :config
-    ;; ;; what is the default citation style?
-    ;; (setq bibtex-completion-cite-default-command "cite")
-    ;; (setq bibtex-completion-cite-default-as-initial-input t)
-    ;; ;; open PDFs with our favourite PDF reader
-    ;; (setq bibtex-completion-pdf-open-function
-    ;;       (lambda (fpath)
-    ;;         (call-process do.minimal/pdf-reader nil 0 nil fpath)))
-    ;; (add-to-list 'ivy-re-builders-alist '(ivy-bibtex . ivy--regex-ignore-order))
-    ;; (ivy-bibtex-ivify-action bibtex-completion-open-pdf-external ivy-bibtex-open-pdf-external)
-    ;; (ivy-add-actions
-    ;;  'ivy-bibtex
-    ;;  '(("P" ivy-bibtex-open-pdf-external "Open PDF file in external viewer (if present)")))
-    )
-  (use-package org-roam-bibtex
-    :after org-roam
-	:commands (org-roam-bibtex-mode)
-    :bind (:map org-mode-map
-                ("<f14> n m" . orb-note-actions)
-                ("<f14> n b" . orb-insert-link))
-	:init (org-roam-bibtex-mode)
-	:config
-	;; (require 'org-ref)
-	(setq orb-insert-interface 'ivy-bibtex)
-	(setq orb-insert-link-description "citation")
-	(setq orb-preformat-keywords
-          '("citekey" "title" "url" "author-or-editor" "keywords" "file" "year" "date" "doi")
-		  ;; orb-file-field-extensions '("pdf") ;XXX: can add mp4 dju
-	      orb-process-file-keyword t)
-	(add-to-list 'org-roam-capture-templates
-				 '("b" "bibliography reference" plain
-				   "\n
-  - tags ::
-  - keywords :: %^{keywords}
-
-%?
-
-* main
-:PROPERTIES:
-:Custom_ID: %^{citekey}
-:DOI: %^{doi}
-:URL: %^{url}
-:AUTHOR: %^{author-or-editor}
-:Year: %^{year} %^{date}
-:NOTER_DOCUMENT: %^{file}
-:NOTER_PAGE:
-:END:"
-				   :target (file+head "biblio/${citekey}.org"
-									  "#+title: ${title}\n")
-				   ;; :immediate-finish t
-				   :unnarrowed t)))
-  (use-package bibtex-completion
-	;; :init (eval-after-load 'bibtex-completion (require 'org-roam-bibtex))
-	:config
-	(require 'org-roam-bibtex)	;; without roam notes now has only title
-    (setq bibtex-completion-bibliography '("~/Sync/biblio/MY.bib"
-                                           "~/Sync/biblio/mine.bib"
-                                           "~/Sync/biblio/former.bib"
-                                           "~/Sync/biblio/books.bib"
-                                           "~/Sync/biblio/main.bib")
-		  ;; bibtex-completion-notes-path "~/Sync/biblio/biblio.org"
-		  bibtex-completion-notes-path "~/Sync/notes/org-roam/biblio"
-		  bibtex-completion-library-path '("~/Sync/biblio/main/"
-										   "~/Sync/biblio/MY/"
-										   "~/Sync/biblio/mine/"
-										   "~/Sync/biblio/former/"
-										   "~/Sync/biblio/books/")
-		  ;; ;; helm-bibtex-notes-template-one-file
-		  ;; bibtex-completion-notes-template-one-file
-		  ;; "** ${=key=}; ${title}\n \ :PROPERTIES:\n \  :Custom_ID: ${=key=}\n \  :INTERLEAVE_PDF: \
-		  ;;    ./pdfs/${=key=}.pdf\n \ :END:\ncite:${=key=}\n"
-		  bibtex-completion-display-formats
-		  '((article       . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} ${=type=:3} ${journal:32}")
-			(inbook        . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} ${=type=:3} Chapter ${chapter:32}")
-			(incollection  . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} ${=type=:3} ${booktitle:32}")
-			(inproceedings . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} ${=type=:3} ${booktitle:32}")
-			(t             . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} ${=type=:3} ${keywords:32}"))
-		  bibtex-completion-find-additional-pdfs t ; find also additional pdfs
-		  bibtex-completion-pdf-extension '(".pdf" ".avi" ".mp4" ".ppt" ".odp" ".odt" ".doc" ".docx" ".txt" ".rtf" ".djvu" ".mov" ".epub" ".zip" ".tif" ".jpg" ".xls" ".xlsx"))
-	;; (setq bibtex-completion-format-citation-functions
-	;;       '((org-mode      . bibtex-completion-format-citation-org-title-link-to-PDF)
-	;;         (latex-mode    . bibtex-completion-format-citation-cite)
-	;;         (markdown-mode . bibtex-completion-format-citation-pandoc-citeproc)
-	;;         (default       . bibtex-completion-format-citation-default)))
-	(setq bibtex-completion-additional-search-fields '(tags keywords journal booktitle) ; search also in tags and keywords fields
-          bibtex-completion-pdf-field "file" ; Zotero
-          ))
-  (use-package engine-mode
-    :commands (engine/set-keymap-prefix
-               engine/get-query
-               engine/execute-search
-			   engine-mode)
-    :init
-    (engine-mode t)
-    (engine/set-keymap-prefix (kbd "<f14> / /"))
-    :config
-    (defengine amazon
-      "http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=%s"
-      :keybinding "z"
-      )
-    (defengine libgen
-      "https://libgen.gs/search.php?req=%s"
-      :keybinding "L")
-    (defengine libgen-scimag
-      "https://libgen.gs/scimag/?s=%s"
-      :keybinding "l")
-    (defengine duckduckgo
-      "https://duckduckgo.com/?q=%s"
-      :browser 'eww-browse-url
-      :keybinding "d")
-    (defengine github
-      "https://github.com/search?ref=simplesearch&q=%s"
-      :keybinding "h")
-    (defengine google
-      "http://www.google.com/search?ie=utf-8&oe=utf-8&q=%s"
-      :keybinding "g")
-    (defengine google-images
-      "http://www.google.com/images?hl=en&source=hp&biw=1440&bih=795&gbv=2&aq=f&aqi=&aql=&oq=&q=%s"
-      :keybinding "i")
-    (defengine google-maps
-      "http://maps.google.com/maps?q=%s"
-      :keybinding "m"
-      :docstring "Mappin' it up.")
-    (defengine project-gutenberg
-      "http://www.gutenberg.org/ebooks/search/?query=%s"
-      :keybinding "u")
-    (defengine qwant
-      "https://www.qwant.com/?q=%s"
-      :keybinding "q")
-    (defengine rfcs
-      "http://pretty-rfc.herokuapp.com/search?q=%s"
-      :keybinding "r")
-    (defengine stack-overflow
-      "https://stackoverflow.com/search?q=%s"
-      :keybinding "o")
-    (defengine twitter
-      "https://twitter.com/search?q=%s"
-      :keybinding "t")
-    (defengine wikipedia
-      "http://www.wikipedia.org/search-redirect.php?language=en&go=Go&search=%s"
-      :keybinding "w"
-      :docstring "Searchin' the wikis.")
-    (defengine wiktionary
-      "https://www.wikipedia.org/search-redirect.php?family=wiktionary&language=en&go=Go&search=%s"
-      :keybinding "k")
-    (defengine wolfram-alpha
-      "http://www.wolframalpha.com/input/?i=%s"
-      :keybinding "a")
-    (defengine Cambridge-dict-pronunciation
-      "https://dictionary.cambridge.org/us/pronunciation/english/%s"
-      :keybinding "p")
-    (defengine youtube
-      "http://www.youtube.com/results?aq=f&oq=&search_query=%s"
-      :keybinding "y"))
-  (use-package citeproc)
-  (use-package org-ref
-	;; XXX: 2 open supplementary like arhel works from =a b= and not from cite:
-	:bind (("<f14> <menu> la" . arxiv-add-bibtex-entry) ; lookup utilities
-           ("<f14> <menu> lA" . arxiv-get-pdf-add-bibtex-entry)
-           ("<f14> <menu> ld" . doi-utils-add-bibtex-entry-from-doi)
-           ("<f14> <menu> li" . isbn-to-bibtex)
-           ("<f14> <menu> lp" . pubmed-insert-bibtex-from-pmid)
-           ("<f14> <menu> c" . org-ref-insert-link)
-           :map bibtex-mode-map               ; modalka-mode-map
-           ("<f14> <menu> h" . org-ref-bibtex-hydra/body)
-           ("<f14> <menu> b" . org-ref-open-in-browser)
-           ("<f14> <menu> n" . org-ref-open-bibtex-notes)
-           ("<f14> <menu> p" . org-ref-open-bibtex-pdf)
-           ("<f14> <menu> h" . org-ref-bibtex-hydra/body) ; misc
-           ("<f14> <menu> i" . org-ref-bibtex-hydra/org-ref-bibtex-new-entry/body-and-exit)
-           ("<f14> <menu> S" . org-ref-sort-bibtex-entry)
-           ("C-c l" . org-ref-store-bibtex-entry-link)
-		   ("<f14> b" . org-ref-bibtex-hydra/body)
-           ;; :map latex-mode-map
-		   ;; ("<f14> i i" . org-ref-insert-link)
+(progn									; org-roam
+  (use-package org-roam
+	:straight (:host github :repo "org-roam/org-roam"
+					 :files (:defaults "extensions/*"))
+	:after org
+	:defines org-roam-v2-ack
+	:commands (org-roam-db-autosync-mode)
+	:init
+	(setq org-roam-v2-ack t)
+	;; https://github.com/org-roam/org-roam/wiki/Hitchhiker's-Rough-Guide-to-Org-roam-V2#backlink-buffer
+	;; Help keep the `org-roam-buffer', toggled via `org-roam-buffer-toggle', sticky.
+	(add-to-list 'display-buffer-alist
+				 '("\\*org-roam\\*"
+                   (display-buffer-in-side-window)
+                   (side . right)
+                   (slot . 0)
+                   (window-width . 0.33)
+                   (window-parameters . ((no-other-window . t)
+										 (no-delete-other-windows . t)))))
+	:custom
+	(org-roam-directory "~/Sync/notes/org-roam/")
+	:bind (("M-s s" . org-roam-node-find)
+		   ("M-s M-s" . org-roam-ref-find)
+		   ("C-c n r" . org-roam-node-random)
+		   ("C-c n j" . org-roam-dailies-goto-today)
+		   ("C-c n J" . org-roam-dailies-goto-date)
+		   ("C-c n s" . org-roam-db-sync)
+		   :map org-roam-mode-map
+		   ("C-c n c" . org-roam-capture)
 		   :map org-mode-map
-		   ;; ("<f14> i i" . org-ref-insert-link)
-		   ("C-c ]" . org-ref-insert-link)
-		   ("H-]" . org-ref-insert-link-hydra/body)
-		   ;; :map markdown-mode-map
-		   ;; ("<f14> i i" . org-ref-insert-link)
-		   )
-	:hook
-	(org-mode-hook . (lambda () (require 'org-ref)))
-	(bibtex-mode-hook . (lambda () (require 'org-ref)))
-	(tex-mode-hook . (lambda () (require 'org-ref)))
-	(markdown-mode-hook . (lambda () (require 'org-ref)))
+		   ("<f11>" . org-roam-buffer-toggle)
+		   ("C-c n l" . org-roam-buffer-toggle)
+           ("C-c n g" . org-roam-graph)
+		   ("C-c n a" . org-roam-alias-add)
+		   ("C-c n t" . org-roam-tag-add)
+		   ("C-c n o" . org-id-get-create)
+		   ("C-c n i" . org-roam-node-insert))
 	:config
-	(require 'org-ref-ivy)
-	;; v3.0 (setq org-ref-completion-library 'org-ref-ivy-cite
-    ;;       org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex ;to open using file= attribute
-    ;; v3.0 org-ref-default-bibliography '(;;"~/Sync/biblio/biblio.bib"
-	;; 								 "~/Sync/biblio/main.bib"
-	;; 								 "~/Sync/biblio/books.bib"
-	;; 								 "~/Sync/biblio/mine.bib"
-	;; 								 "~/Sync/biblio/former.bib"
-	;; 								 "~/Sync/biblio/MY.bib")
-    ;; trailing / affects ,hA associate Pdf to entry
-    ;; org-ref-pdf-directory "~/Sync/biblio/pdfs/"
-    ;; org-ref-bibliography-notes "~/Sync/biblio/biblio.org"
-    ;; v3.0 reftex-default-bibliography '("~/Sync/biblio/biblio.bib")
-    ;; Notes template, compatible with interleave
-    ;; org-ref-notes-directory "~/Sync/biblio/Notes/"
-    ;; org-ref-notes-function 'orb-edit-notes
-    ;; org-ref-note-title-format
-    ;; "** %y - %t\n :PROPERTIES:\n  :Custom_ID: %k\n  :NOTER_DOCUMENT: %F\n :ROAM_KEY: cite:%k\n  :AUTHOR: %9a\n  :JOURNAL: %j\n  :YEAR: %y\n  :VOLUME: %v\n  :PAGES: %p\n  :DOI: %D\n  :URL: %U\n :END:\n\n"
-    ;; "** %k; %t\n \ :PROPERTIES:\n \  :Custom_ID: %k\n \  :INTERLEAVE_PDF: \
-    ;;    ./pdfs/%k.pdf\n \ :END:\n"
-    ;; )
-	;; v3.0 (org-ref-ivy-cite-completion)
+	(setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
+	(setq org-roam-completion-everywhere t)
+	(org-roam-db-autosync-mode)
 	)
-  ;; https://github.com/jkitchin/org-ref/blob/master/org-ref.org
-  (use-package org-ref-ivy
-	:straight nil
-	:after org-ref
-	:init (setq org-ref-insert-link-function 'org-ref-insert-link-hydra/body
-				org-ref-insert-cite-function 'org-ref-cite-insert-ivy
-				org-ref-insert-label-function 'org-ref-insert-label-link
-				org-ref-insert-ref-function 'org-ref-insert-ref-link
-				org-ref-cite-onclick-function (lambda (_) (org-ref-citation-hydra/body))))
-  
-  (use-package org-noter
-	:commands  (org-noter-insert-note
-				org-noter--valid-session
-				org-noter--parse-root
-				org-noter--get-precise-info
-				org-noter--doc-approx-location
-				org-noter--pretty-print-location)
-	:bind (("<f14> n n" . org-noter)
-           :map org-noter-notes-mode-map
-           ("H-k" . org-noter-create-skeleton)
-           ("H-n" . org-noter-sync-next-note)
-           ("H-p" . org-noter-sync-prev-note)
-           :map org-noter-doc-mode-map
-           ("H-k" . org-noter-create-skeleton)
-           ("H-n" . org-noter-sync-next-note)
-           ("H-p" . org-noter-sync-prev-note)
-           )
+  (use-package org-roam-protocol
+	;;# xdg-mime default org-protocol.desktop x-scheme-handler/org-protocol
+	:straight org-roam
 	:config
-	(setq ;; org-noter-default-notes-file-names '("noter-othernotes.org" "biblio.org")
-	 org-noter-hide-other nil
-     org-noter-separate-notes-from-heading t
-     ;; org-noter-notes-search-path '("~/Sync/biblio" "~/Sync/notes/org-roam/biblio")
-     org-noter-notes-search-path '("~/Sync/notes/org-roam/biblio")
-     org-noter-always-create-frame nil  ;; do not create a new frame
-     org-noter-doc-split-fraction '(0.67 . 0.75)
-     org-noter-notes-window-location 'other-frame)
-	;; (require 'org-noter-pdftools) ; XXX: XX
+	(setq org-roam-capture-ref-templates
+		  '(("r" "ref" plain "%?"
+			 :target (file+head "websites/${slug}.org" "#+title: ${title}")
+			 :unnarrowed t))))
+  (use-package org-roam-ui
+	:straight
+    (:host github :repo "org-roam/org-roam-ui" :branch "main" :files ("*.el" "out"))
+    :after (org-roam)
+	;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
+	;;         a hookable mode anymore, you're advised to pick something yourself
+	;;         if you don't care about startup time, use
+	;;  :hook (after-init . org-roam-ui-mode)
+    :config
+    (setq org-roam-ui-sync-theme t
+          org-roam-ui-follow t
+          org-roam-ui-update-on-save t
+          org-roam-ui-open-on-start t))
+  )
+(progn                                  ; Bibliography
+  (use-package bibtex
+	:bind (:map bibtex-mode-map
+				("<backtab>" . hs-toggle-hiding)
+				("H-z" . hs-hide-all)
+				("H-<tab>" . hs-minor-mode)
+				("H-Z" . hs-show-all))
+	:config
+	(setq bibtex-dialect 'biblatex)
+	(setq ;; Fields from Zotero
+	 bibtex-user-optional-fields '(("keywords" "Keywords to describe the entry" "")
+								   ("note" "Zotero notes" "")
+								   ("annotation" "Zotero annotation" "")
+								   ("file" "Link to document file." ":")))
+	(setq bibtex-autokey-name-case-convert-function 'capitalize
+		  bibtex-autokey-name-year-separator ""
+		  bibtex-autokey-titleword-separator ""
+		  bibtex-autokey-year-title-separator "_"
+		  bibtex-autokey-titlewords 3
+		  bibtex-autokey-titlewords-stretch 0
+		  bibtex-autokey-titleword-case-convert-function 'capitalize
+		  bibtex-autokey-titleword-length 9) ;; Bibtex key format
 	)
+  (defvar completion-bibliography
+	'("~/Sync/biblio/main.bib"
+	  "~/Sync/biblio/MY.bib"
+	  "~/Sync/biblio/former.bib"
+	  "~/Sync/biblio/books.bib") "List of bib files.")
+  (defvar completion-library-path
+	'("~/Sync/biblio/main/"
+	  "~/Sync/biblio/MY/"
+	  "~/Sync/biblio/former/"
+	  "~/Sync/biblio/books/") "List of folders containing pdf and other documents.")
+  (defvar completion-notes-path
+	"~/Sync/notes/org-roam/biblio" "Folder (or file) for notes.")
+  (use-package citar
+	:bind (("<f14> a b" . citar-open)
+		   ("C-c b" . citar-insert-citation)
+           :map minibuffer-local-map
+           ("M-b" . citar-insert-preset))
+	;; ;; https://github.com/bdarcus/citar/wiki/Notes-configuration
+	:custom
+	(citar-bibliography completion-bibliography)
+	(citar-library-paths completion-library-path)
+	(citar-notes-paths '("~/Sync/notes/org-roam/biblio"))
+	(org-cite-insert-processor 'citar)
+	(org-cite-follow-processor 'citar)
+	(org-cite-activate-processor 'citar)
+	:defines citar-open-note-functions
+	:init
+	(setq citar-templates
+	      `((main . "${author editor:30}     ${date year issued:4}     ${title:48}")
+			(suffix . "          ${=key= id:15}    ${=type=:12}    ${tags keywords annotation:*}")
+			(preview . "${author editor} (${year issued date}) ${title}, \
+	${journal journaltitle publisher container-title collection-title}.\n")
+			(note . ,(concat "${title}\n\n"
+							 "- tags ::\n" ;XXX
+							 "- keywords :: ${keywords}\n"
+							 "- extra :: ${annotation}\n"
+							 "- note :: ${note}\n\n"
+							 "* TODO main\n"
+							 ":PROPERTIES:\n"
+							 ":Custom_ID: ${=key=}\n"
+							 ":NOTER_DOCUMENT: ${file}\n"
+							 ":NOTER_PAGE:\n"
+							 ":AUTHOR: ${author}\n"
+							 ":JOURNAL: ${journaltitle}\n"
+							 ":YEAR: ${year} ${date}\n"
+							 ":DOI: ${doi}\n"
+							 ":URL: ${url}\n"
+							 ":END:\n\n"
+							 "* suppl\n"
+							 ":PROPERTIES:\n"
+							 ":NOTER_DOCUMENT: ${file}\n"
+							 ":END:"))))
+	:config
+	;; https://github.com/bdarcus/citar/wiki/Notes-configuration
+	(use-package citar-org-roam
+	  :straight '(citar-org-roam :host github
+								 :repo "emacs-citar/citar-org-roam"
+								 :branch "main")
+	  :init
+	  (citar-org-roam-mode))
+	;; ((citar-file :name "Notes" :category file :items citar-file--get-notes :hasitems citar-file--has-notes :open find-file :create citar-file--create-note :transform file-name-nondirectory))
+	(setq citar-notes-source 'citar-file)
+	(setq citar-symbols
+		  `((file ,(all-the-icons-faicon "file-o" :face 'all-the-icons-green :v-adjust -0.1) . " ") ;"file-pdf"
+			(note ,(all-the-icons-material "speaker_notes" :face 'all-the-icons-blue :v-adjust -0.3) . " ") ;"file-text"
+			(link ,(all-the-icons-octicon "link" :face 'all-the-icons-orange :v-adjust 0.01) . " "))) ;"link-external"
+	(setq citar-symbol-separator "  ")
+	)
+  (use-package citar-embark
+	:after citar embark
+	:commands citar-embark-mode
+	:init (citar-embark-mode))
+  (use-package oc
+	:straight org
+	:after (org)
+	:config
+	(setq org-cite-global-bibliography completion-bibliography)
+	(setq org-cite-export-processors
+          '(;(beamer csl)
+			(latex biblatex)
+			(t csl)))
+	)
+  (use-package oc-biblatex :straight org :after oc)
+  (use-package oc-csl :straight org	:after (oc)
+	:init (setq org-cite-csl-styles-dir "~/Zotero/styles"))
+  (use-package oc-natbib :straight org :after oc)
+  ;; (use-package citeproc
+  ;; 	:after (oc oc-csl))
   (use-package pdf-tools
 	:functions pdf-loader-install
-    :bind (:map pdf-view-mode-map
-                ("t" . org-ref-pdf-to-bibtex)
-                ("C-s" . isearch-forward)
-                ("/" . pdf-occur)
-                ("C-?" . pdf-isearch-occur))
-    :hook
-    (pdf-view-mode-hook . (lambda () (require 'org-ref)))
-    ;; (pdf-view-mode-hook . pdf-view-set-slice-from-bounding-box)
-    :init
+	:bind (:map pdf-view-mode-map
+				;; ("t" . org-ref-pdf-to-bibtex)
+				("C-s" . isearch-forward)
+				("/" . pdf-occur)
+				("C-?" . pdf-isearch-occur))
+	:init
 	(pdf-loader-install)
-	;; (pdf-tools-install)
-    :config
-    (setq pdf-view-resize-factor 1.1    ; more fine-grained zooming
+	:config
+	(setq pdf-view-resize-factor 1.1    ; more fine-grained zooming
           ;; pdf-misc-print-program "/usr/bin/gtklp"
 		  )
 	(use-package pdf-misc
@@ -3050,19 +3117,49 @@ HEIGHT, if supplied, specifies height of letters to use."
       :config
       ;; automatically annotate highlights
       (setq pdf-annot-activate-created-annotations nil)))
+  (use-package org-noter
+	:commands  (org-noter-insert-note
+				org-noter--valid-session
+				org-noter--parse-root
+				org-noter--get-precise-info
+				org-noter--doc-approx-location
+				org-noter--pretty-print-location)
+	:bind (("C-c n n" . org-noter)
+           :map org-noter-notes-mode-map
+           ("H-k" . org-noter-create-skeleton)
+           ("H-n" . org-noter-sync-next-note)
+           ("H-p" . org-noter-sync-prev-note)
+           :map org-noter-doc-mode-map
+           ("H-k" . org-noter-create-skeleton)
+           ("H-n" . org-noter-sync-next-note)
+           ("H-p" . org-noter-sync-prev-note)
+           )
+	:config
+	(setq ;; org-noter-default-notes-file-names '("noter-othernotes.org" "biblio.org")
+	 org-noter-hide-other nil
+	 org-noter-separate-notes-from-heading t
+	 ;; org-noter-notes-search-path '("~/Sync/biblio" "~/Sync/notes/org-roam/biblio")
+	 org-noter-notes-search-path '("~/Sync/notes/org-roam/biblio")
+	 org-noter-always-create-frame nil  ;; do not create a new frame
+	 org-noter-doc-split-fraction '(0.67 . 0.75)
+	 ;; org-noter-notes-window-location 'other-frame
+	 )
+	;; (require 'org-noter-pdftools) ; org-pdftools suggestion
+	)
+  ;; https://github.com/fuxialexander/org-pdftools
   (use-package org-pdftools
-    :hook (org-mode-hook . org-pdftools-setup-link))
+	:hook (org-mode-hook . org-pdftools-setup-link))
   (use-package org-noter-pdftools
-    :after org-noter
-    :commands (org-noter-pdftools-jump-to-note)
-    :hook
-    (org-noter-doc-mode-hook . (lambda () (require 'org-noter-pdftools)))
-    (org-noter-notes-mode-hook . (lambda () (require 'org-noter-pdftools)))
-    :bind (:map org-noter-notes-mode-map
-                ("C-H-k" . org-noter-pdftools-create-skeleton)
-                :map org-noter-doc-mode-map
-                ("C-H-k" . org-noter-pdftools-create-skeleton))
-    :config
+	:after (org-noter)
+	:commands (org-noter-pdftools-jump-to-note)
+	:hook
+	(org-noter-doc-mode-hook . (lambda () (require 'org-noter-pdftools)))
+	(org-noter-notes-mode-hook . (lambda () (require 'org-noter-pdftools)))
+	:bind (:map org-noter-notes-mode-map
+				("C-H-k" . org-noter-pdftools-create-skeleton)
+				:map org-noter-doc-mode-map
+				("C-H-k" . org-noter-pdftools-create-skeleton))
+	:config
 	;; Add a function to ensure precise note is inserted
 	(defun org-noter-pdftools-insert-precise-note (&optional toggle-no-questions)
       (interactive "P")
@@ -3089,117 +3186,83 @@ With a prefix ARG, remove start location."
 				(org-entry-delete nil org-noter-property-note-location)
               (org-entry-put nil org-noter-property-note-location
 							 (org-noter--pretty-print-location location))))))))
-    (with-eval-after-load 'pdf-annot
+	(with-eval-after-load 'pdf-annot
       (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note)))
-  (use-package gscholar-bibtex
-    :config
-    (setq gscholar-bibtex-default-source "Google Scholar")
-    (setq gscholar-bibtex-database-file "/home/dan/Sync/biblio/biblio.bib")
-    )
-  ;; https://ianjones.us/own-your-second-brain#org59f47bf2 XXX:
-  ;; (use-package org-journal
-  ;;   :bind
-  ;;   ("C-c n j" . org-journal-new-entry)
-  ;;   :custom
-  ;;   (org-journal-dir "~/Desktop/03-resources/org-roam/")
-  ;;   (org-journal-date-prefix "#+TITLE: ")
-  ;;   (org-journal-file-format "%Y-%m-%d.org")
-  ;;   (org-journal-date-format "%A, %d %B %Y"))
-  ;; (setq org-journal-enable-agenda-integration t)
-  (use-package org-protocol
-	;; remember  xdg-mime default org-protocol.desktop
-	;; x-scheme-handler/org-protocol
-	:straight nil
-	)
-  (use-package org-roam
-	:after org
-	:defines org-roam-v2-ack
-	;; :hook
-	;; maybe restore into config to speed up stand alone emacs
-	;; (after-init-hook . org-roam-db-autosync-enable)
-	:commands (org-roam-db-autosync-enable)
+										;TODO: will remove in favor of embark actions
+  (use-package engine-mode
+	:commands (engine/set-keymap-prefix
+               engine/get-query
+               engine/execute-search
+			   engine-mode)
 	:init
-	(setq org-roam-v2-ack t)
-	:custom
-	(org-roam-directory "~/Sync/notes/org-roam/")
-	:bind (("<f14> n l" . org-roam-buffer-toggle)
-		   ("<f14> n f" . org-roam-node-find)
-		   ("<f14> n r" . org-roam-node-random)
-		   ;; "SPC n r" 'org-roam-ref-add
-		   ("<f14> n j" . org-roam-dailies-goto-today)
-		   ("<f14> n J" . org-roam-dailies-goto-date)
-		   :map org-roam-mode-map
-		   ("<f14> n c" . org-roam-capture)
-		   :map org-mode-map
-		   ("<f14> n a" . org-roam-alias-add)
-		   ("<f14> n g" . org-roam-graph)
-		   ("<f14> n t" . org-roam-tag-add)
-		   ("<f14> n o" . org-id-get-create)
-		   ("<f14> n i" . org-roam-node-insert))
-	;; :init
-	;; (eval-after-load 'org-roam '(require 'org-roam-protocol)) ; XXX: XX
+	(engine-mode t)
+	(engine/set-keymap-prefix (kbd "<f14> / /"))
 	:config
-	;; (org-roam-setup) is now alias for
-	(org-roam-db-autosync-enable)
-	(add-to-list 'display-buffer-alist
-				 '(("*org-roam*"
-					(display-buffer-in-direction)
-					(direction . right)
-					(window-width . 0.33)
-					(window-height . fit-window-to-buffer))))
-	(use-package org-roam-graph
-	  :straight org-roam
-	  :config
-	  (setq org-roam-graph-extra-config '(("concentrate" . "true")
-										  ("overlap" . "prism100")
-										  ("overlap_scaling" . "-8")
-										  ;; ("pack" . "true")
-										  ("sep" . "20.0")
-										  ("esep" . "0.0")
-										  ("splines" . "polyline")
-										  ))
-	  (setq org-roam-graph-node-extra-config
-			'(("id"
-			   ("shape" . "rectangle")
-			   ("style" . "bold,rounded,filled")
-			   ("fillcolor" . "#EEEEEE")
-			   ("color" . "#C9C9C9")
-			   ("fontcolor" . "#111111"))
-			  ("http"
-			   ("style" . "rounded,filled")
-			   ("fillcolor" . "#EEEEEE")
-			   ("color" . "#C9C9C9")
-			   ("fontcolor" . "#0A97A6"))
-			  ("https"
-			   ("shape" . "rounded,filled")
-			   ("fillcolor" . "#EEEEEE")
-			   ("color" . "#C9C9C9")
-			   ("fontcolor" . "#0A97A6"))))
-	  (setq org-roam-graph-edge-extra-config nil))
-	;; (setq org-roam-dailies-capture-templates
-	;; 	  '(("l" "lab" entry
-	;; 		 #'org-roam-capture--get-point
-	;; 		 "* %?"
-	;; 		 :file-name "~/Sync/box/org/daily/%<%Y-%m-%d>"
-	;; 		 :head "#+title: %<%Y-%m-%d>\n"
-	;; 		 :olp ("Lab notes"))
-	;; 		("j" "journal" entry
-	;; 		 #'org-roam-capture--get-point
-	;; 		 "* %?"
-	;; 		 :file-name "~/Sync/box/org/daily/%<%Y-%m-%d>"
-	;; 		 :head "#+title: %<%Y-%m-%d>\n"
-	;; 		 :olp ("Journal"))))
-	(use-package org-roam-protocol
-	  :straight org-roam
-	  :demand t
-	  :config
-	  (setq org-roam-capture-ref-templates
-			'(("r" "ref" plain "%?"
-			   :target (file+head "websites/${slug}.org" "#+title: ${title}")
-			   :unnarrowed t))))
-	(setq org-roam-completion-everywhere t))
-
+	(defengine amazon
+      "http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=%s"
+      :keybinding "z"
+      )
+	(defengine libgen
+      "https://libgen.gs/search.php?req=%s"
+      :keybinding "L")
+	(defengine libgen-scimag
+      "https://libgen.gs/scimag/?s=%s"
+      :keybinding "l")
+	(defengine duckduckgo
+      "https://duckduckgo.com/?q=%s"
+      ;; :browser 'eww-browse-url
+      :keybinding "d")
+	(defengine github
+      "https://github.com/search?ref=simplesearch&q=%s"
+      :keybinding "h")
+	(defengine google
+      "http://www.google.com/search?ie=utf-8&oe=utf-8&q=%s"
+      :keybinding "g")
+	(defengine google-images
+      "http://www.google.com/images?hl=en&source=hp&biw=1440&bih=795&gbv=2&aq=f&aqi=&aql=&oq=&q=%s"
+      :keybinding "i")
+	(defengine google-maps
+      "http://maps.google.com/maps?q=%s"
+      :keybinding "m"
+      :docstring "Mappin' it up.")
+	(defengine project-gutenberg
+      "http://www.gutenberg.org/ebooks/search/?query=%s"
+      :keybinding "u")
+	(defengine qwant
+      "https://www.qwant.com/?q=%s"
+      :keybinding "q")
+	(defengine rfcs
+      "http://pretty-rfc.herokuapp.com/search?q=%s"
+      :keybinding "r")
+	(defengine stack-overflow
+      "https://stackoverflow.com/search?q=%s"
+      :keybinding "o")
+	(defengine twitter
+      "https://twitter.com/search?q=%s"
+      :keybinding "t")
+	(defengine wikipedia
+      "http://www.wikipedia.org/search-redirect.php?language=en&go=Go&search=%s"
+      :keybinding "w"
+      :docstring "Searchin' the wikis.")
+	(defengine wiktionary
+      "https://www.wikipedia.org/search-redirect.php?family=wiktionary&language=en&go=Go&search=%s"
+      :keybinding "k")
+	(defengine wolfram-alpha
+      "http://www.wolframalpha.com/input/?i=%s"
+      :keybinding "a")
+	(defengine Cambridge-dict-pronunciation
+      "https://dictionary.cambridge.org/us/pronunciation/english/%s"
+      :keybinding "p")
+	(defengine youtube
+      "http://www.youtube.com/results?aq=f&oq=&search_query=%s"
+      :keybinding "y"))
+  (use-package gscholar-bibtex
+	:config
+	(setq gscholar-bibtex-default-source "Google Scholar")
+	(setq gscholar-bibtex-database-file "/home/dan/Sync/biblio/biblio.bib")
+	)
   )
+
 (progn                                  ; Magit
   (use-package magit
     :bind
@@ -3220,16 +3283,13 @@ With a prefix ARG, remove start location."
     :config
     (setq magit-display-buffer-function 'magit-display-buffer-fullframe-status-v1))
   (use-package magit-todos
-    :after magit
+    :after (magit)
     :bind ("<f14> g 2" . magit-todos-list))
   (use-package magit-annex)
-  ;; (use-package gitignore-mode)
-  ;; (use-package gitconfig-mode)
-  ;; (use-package gitattributes-mode)
   (use-package git-modes)
   (use-package gitignore-templates)
   (use-package browse-at-remote
-    :bind ("<f14> g g" . bar-browse))
+    :bind ("<f14> g b" . bar-browse))
   (use-package git-messenger
     :bind ("<f14> g m" . git-messenger:popup-message))
   (use-package git-timemachine
@@ -3244,7 +3304,7 @@ With a prefix ARG, remove start location."
 	:hook
 	((magit-pre-refresh-hook . diff-hl-magit-pre-refresh)
 	 (magit-post-refresh-hook . diff-hl-magit-post-refresh))
-	:init
+	;; :init
 	;; (setq diff-hl-draw-borders nil)
 	;; (setq diff-hl-global-modes '(not org-mode))
 	;; (setq diff-hl-fringe-bmp-function 'diff-hl-fringe-bmp-from-type)
@@ -3254,7 +3314,6 @@ With a prefix ARG, remove start location."
   )
 (progn                                  ; Projectile
   (use-package projectile
-    :diminish
     :commands (projectile-mode)
 	:init
     (which-key-add-key-based-replacements "<f14> p" "Projectile")
@@ -3265,15 +3324,13 @@ With a prefix ARG, remove start location."
     :config
     (setq projectile-project-search-path '("~/workspace"
 										   "/home/dati"
+										   ;; "/home/examples"
                                            ;; "~/workspace/platereaders/"
                                            ;; "~/workspace/arte";; slowed down 0.5s
-                                           "~/Sync"))
-    ;; "/home/examples"))
-    (setq projectile-completion-system 'ivy))
-  (use-package counsel-projectile
-    :after (projectile)
-	:commands (counsel-projectile-mode)
-    :init (counsel-projectile-mode))
+                                           "~/Sync")))
+  (use-package rg)
+  (use-package consult-projectile
+	:bind ("C-c p" . consult-projectile))
   (use-package org-projectile
     :after (projectile)
     :bind
@@ -3290,88 +3347,195 @@ With a prefix ARG, remove start location."
                   :capture-character "p"
                   :capture-heading "Projectile TODO"))
     (setq org-link-elisp-confirm-function nil)))
-;; ;; XXX: possible updates
-;; ;; consult to rm swiper, fzf; beawre counsel-recoll
-;; ;; inspire at https://github.com/lccambiaghi/vanilla-emacs
-;; (use-package crux)
-;; (use-package ivy-prescient)
-;; (use-package selectrum)
-;; (use-package selectrum-prescient)
-;; vertico
-;; https://www.omarpolo.com/dots/emacs.html
-;; (use-package orderless)
-;; (use-package embark)
-;; (use-package marginalia)
-(use-package consult)
-(use-package consult-recoll)
-;; (use-package citar
-;;   :bind (("C-c b" . citar-insert-citation)
-;;          :map minibuffer-local-map
-;;          ("M-b" . citar-insert-preset))
-;;   :custom
-;;   (citar-bibliography '("~/Sync/biblio/main.bib")))
+(progn									; Additional modes
+  (use-package json-mode)
+  (use-package ssh-config-mode)
+  (use-package pkgbuild-mode)
+  (use-package web-mode
+	;; Unfortunately `web-mode' does not come with `auto-mode-alist'
+	;; autoloads. We have to establish them manually. This list comes
+	;; from the official website at <http://web-mode.org/> as of
+	;; 2018-07-09.
+	:mode (("\\.phtml\\'" . web-mode)
+		   ("\\.tpl\\.php\\'" . web-mode)
+		   ("\\.[agj]sp\\'" . web-mode)
+		   ("\\.as[cp]x\\'" . web-mode)
+		   ("\\.erb\\'" . web-mode)
+		   ("\\.mustache\\'" . web-mode)
+		   ("\\.djhtml\\'" . web-mode)
+		   ("\\.html?\\'" . web-mode)
+		   ;; My additions.
+		   ("\\.ejs\\'" . web-mode)
+		   ("\\.[cm]?jsx?\\'" . web-mode)
+		   ("\\.tsx?\\'" . web-mode)
+		   ("\\.css\\'" . web-mode)
+		   ("\\.hbs\\'" . web-mode))
+	;; Use `web-mode' rather than `js-mode' for scripts.
+	:interpreter (("js" . web-mode)
+				  ("node" . web-mode))
+	:config
+	;; Indent by two spaces by default. Compatibility with Prettier.
+	(setq web-mode-markup-indent-offset 2)
+	(setq web-mode-code-indent-offset 2)
+	(setq web-mode-css-indent-offset 2)
+	;; Not sure why anyone would want 1 space indent for inline scripts
+	;; and CSS. Set it to 2 for consistency.
+	(setq web-mode-script-padding 2)
+	(setq web-mode-style-padding 2)
+	;; Autocomplete </ instantly.
+	(setq web-mode-enable-auto-closing t)
+	;; Insert matching tags automatically. Why this is "mode 2", I have
+	;; not the slightest idea.
+	(setq web-mode-auto-close-style 2)
+	;; Don't insert quotes automatically. It messes with JSX.
+	(setq web-mode-enable-auto-quoting nil)
+	;; Disable `web-mode' automatically reindenting a bunch of
+	;; surrounding code when you paste anything. It's real annoying if
+	;; it happens to not know how to indent your code correctly.
+	(setq web-mode-enable-auto-indentation nil)
+	)
+  (use-package vimrc-mode
+	:hook (vimrc-mode-hook . (lambda ()
+							   (setq-local tab-width 2)
+							   (setq-local indent-line-function 'insert-tab)))
+	)
+  (use-package yaml-mode				; yay -S yamllint
+	:mode "\\.yml\\'"
+	:hook ((yaml-mode . turn-off-flyspell))
+	)
+  (use-package toml-mode
+	:mode "\\.toml\\'")
+  (use-package csv-mode
+	:mode (("\\.csv\\'" . csv-mode)))
+  )
 
+;; (use-package kind-icon
+;;   :after (corfu)
+;;   :custom
+;;   (kind-icon-default-face 'corfu-default) ; to compute blended backgrounds correctly
+;;   :config
+;;   (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
+;; ;; (use-package cape
+;;   :bind (("C-c . p" . completion-at-point) ;; capf
+;;          ("C-c . t" . complete-tag)        ;; etags
+;;          ("C-c . d" . cape-dabbrev)        ;; or dabbrev-completion
+;;          ("C-c . h" . cape-history)
+;;          ("C-c . f" . cape-file)
+;;          ("C-c . k" . cape-keyword)
+;;          ("C-c . s" . cape-symbol)
+;;          ("C-c . a" . cape-abbrev)
+;;          ("C-c . i" . cape-ispell)
+;;          ("C-c . l" . cape-line)
+;;          ("C-c . w" . cape-dict)
+;;          ("C-c . \\" . cape-tex)
+;;          ("C-c . _" . cape-tex)
+;;          ("C-c . ^" . cape-tex)
+;;          ("C-c . &" . cape-sgml)
+;;          ("C-c . r" . cape-rfc1345))
+;;   :init
+;;   ;; Add `completion-at-point-functions', used by `completion-at-point'.
+;;   (add-to-list 'completion-at-point-functions #'cape-symbol)
+;;   (add-to-list 'completion-at-point-functions #'cape-file)
+;;   (add-to-list 'completion-at-point-functions #'cape-dabbrev))
+;; (use-package emacs
+;;   :custom
+;;   (completion-cycle-threshold 3)
+;;   (tab-always-indent 'complete))
 
 ;; XXX: mrkkrp ...  wdired
 ;; https://github.com/mrkkrp/dot-emacs
-
 (use-package dired
-  :straight nil
-  ;; :load-path "/usr/share/emacs/"
+  :straight (:type built-in)
   :functions (dired-get-filename)
-  :init
-  (setq
-   delete-by-moving-to-trash t
-   dired-auto-revert-buffer t
-   dired-dwim-target t
-   dired-keep-marker-copy nil
-   dired-listing-switches "-GAlh --group-directories-first"
-   dired-recursive-copies 'always
-   dired-recursive-deletes 'always)
-  :config
-  (defun mk-dired-open-external (file)
-    "Open specified FILE with application determined by the OS."
-    (interactive (list (dired-get-filename)))
-    (call-process "xdg-open" nil 0 nil file))
-  :bind
-  (:map
-   dired-mode-map
-   ("b" . dired-up-directory)
-   ("e" . mk-dired-open-external)
-   ("w" . wdired-change-to-wdired-mode))
+  :init (setq delete-by-moving-to-trash t
+			  dired-auto-revert-buffer t
+			  dired-dwim-target t
+			  dired-keep-marker-copy nil
+			  dired-listing-switches "-GAlh --group-directories-first"
+			  dired-recursive-copies 'always
+			  dired-recursive-deletes 'always)
+  :preface (defun mk-dired-open-external (file)
+			 "Open specified FILE with application determined by the OS."
+			 (interactive (list (dired-get-filename)))
+			 (call-process "xdg-open" nil 0 nil file))
+  :bind (:map
+		 dired-mode-map
+		 ("b" . dired-up-directory)
+		 ("e" . mk-dired-open-external)
+		 ("w" . wdired-change-to-wdired-mode))
   :hook
   (dired-mode-hook . toggle-truncate-lines)
-  (dired-mode-hook . turn-on-gnus-dired-mode))
+  (dired-mode-hook . turn-on-gnus-dired-mode)
+  )
 (use-package dired-x
-  :straight nil
-  ;; :load-path "/usr/share/emacs/"
-  :init
-  (setq
-   dired-clean-up-buffers-too t))
+  :straight (:type built-in)
+  :init (setq dired-clean-up-buffers-too t)
+  )
 (use-package wdired
   :after (dired)
   :init
   (setq wdired-allow-to-change-permissions t))
 
+(use-package xeft
+  :straight (
+			 :type git :host github :repo "casouri/xeft"
+			 :pre-build ("make")
+			 :files (:defaults "Makefile" "*.h" "*.cc" "*.so")
+			 )
+  :config (setq
+		   xeft-directory "~/Sync/notes"
+		   xeft-recursive t
+		   xeft-database "~/.emacs.d/xeft-db"
+		   xeft-default-extension "org"
+		   ;; xeft-filename-fn
+		   ;; deft-extensions '("org" "md" "markdown")  ;;"txt"
+		   )
+  )
+(use-package notdeft
+  :straight (
+			 :type git :host github :repo "hasu/notdeft"
+			 :pre-build ("make")
+			 :files ("*.el" "xapian")
+			 )
+  :config
+  (setq notdeft-directories '("~/Sync/notes"))
+  (setq notdeft-extension "org")
+  (setq notdeft-secondary-extensions '("md" "markdown" ))
+  ;; notdeft-notename-function
+  )
+(use-package vterm)
+(use-package consult-notes
+  :straight (:type git :host github :repo "mclear-tools/consult-notes")
+  :commands (consult-notes consult-notes-search-all)
+  ;; :preface (defun consult-notes-search-all ()
+  ;; 			 "Search all notes using grep."
+  ;; 			 (interactive)
+  ;; 			 (consult-ripgrep "~/Sync/notes"))		;consult-notes-all-notes
+  :bind ("M-s n" . consult-notes-search-all)
+  :config
+  (defvar consult-notes-sources-data nil "Sources for file search.")
+  (defvar consult-notes-all-notes nil "Dir for search of all notes."))
+
 (use-package exec-path-from-shell       ;demanded when daemonp
   :commands (exec-path-from-shell-initialize)
   :config (exec-path-from-shell-initialize))
+										;TODO: devdocs (or consult-dash)
+(use-package devdocs
+  :demand t
+  :bind ("C-c D" . devdocs-lookup))
 (progn                                  ; python
   (defhydra hydra-for-py (:color blue :hint nil :exit nil)
     "
-   ^Send^         ^Tests^       ^Navigate^         ^Virtualenv^       ^Pyenv^            ^Format^
-  ^^^^^^^^----------------------------------------------------------------------------------------------
-  ^ ^             _t_: tests    _d_: definition    _v_: activate      _e_: activate      _b_: black
-  ^ ^             ^ ^           _D_: go back       _V_: deactivate    _E_: deactivate    _c_: create-doc
-  ^ ^             _q_: quit     _k_: doc           _w_: workon        _p_: poetry        _n_: numpydoc
+   ^Send^         ^Tests^       ^Virtualenv^       ^Pyenv^            ^Format^
+  ^^^^^^^^---------------------------------------------------------------------------
+  ^ ^             _t_: tests    _v_: activate      _e_: activate      _b_: black
+  ^ ^             ^ ^           _V_: deactivate    _E_: deactivate    _c_: create-doc
+  ^ ^             _q_: quit     _w_: workon        _p_: poetry        _n_: numpydoc
   "
     ;; ("s" run-python :color red)
     ;; ("r" python-shell-send-region :color red)
     ;; ("f" python-shell-send-defun :color red)
     ("t" python-pytest-dispatch)
-    ("d" jedi:goto-definition :color red)
-    ("D" jedi:goto-definition-pop-marker :color red)
-    ("k" jedi:show-doc :color red)
     ("v" pyvenv-activate)
     ("V" pyvenv-deactivate)
     ("w" pyvenv-workon)
@@ -3383,15 +3547,12 @@ With a prefix ARG, remove start location."
     ("n" numpydoc-generate)
     ("q" nil :color blue))
   (use-package python
-    :load-path "/usr/share/emacs/"
-    :bind
-    ("<f14> t p" . python-mode)
-    :bind (:map python-mode-map
-                ("C-c C-S-p" . jupyter-run-repl)
-				("<backtab>" . hs-hide-all)         ;FIXME: <backtab> did not work here.
-				)
-    (:map python-mode-map
-          ("H-<tab>" . hydra-for-py/body))
+    :straight (:type built-in)
+    :bind	(("<f14> t p" . python-mode)
+			 (:map python-mode-map
+				   ("<backtab>" . hs-toggle-hiding) ; orig. python-indent-dedent-line
+				   ("C-c C-P" . jupyter-run-repl)
+				   ("H-<tab>" . hydra-for-py/body)))
     :config
     (setq-default python-fill-docstring-style 'pep-257-nn
                   python-indent 4)
@@ -3399,96 +3560,128 @@ With a prefix ARG, remove start location."
           python-shell-interpreter-args "console --simple-prompt"
           python-shell-prompt-detect-failure-warning nil)
     (add-to-list 'python-shell-completion-native-disabled-interpreters "jupyter"))
-  (use-package company-jedi
-    :commands (jedi:goto-definition-pop-marker)
-    :bind (:map python-mode-map
-                ("C-c H-d" . jedi:goto-definition)
-                ("C-c H-k" . jedi:show-doc))
-    :hook (python-mode-hook . (lambda () (add-to-list 'company-backends 'company-jedi))))
+  (use-package lsp-mode
+	:custom
+	(lsp-completion-provider :none) ;; we use Corfu!
+	:init
+	(setq lsp-keymap-prefix "C-S-l")
+	(setq read-process-output-max (* 1024 1024)) ;; 1mb
+	:hook
+	;; (python-mode-hook . lsp-deferred)
+	(lsp-mode-hook . lsp-enable-which-key-integration)
+	:defines
+	(lsp-pylsp-plugins-flake8-enabled
+	 lsp-pylsp-plugins-autopep8-enabled
+	 lsp-pylsp-plugins-mccabe-enabled
+	 lsp-pylsp-plugins-pycodestyle-enabled
+	 lsp-pylsp-plugins-pydocstyle-enabled
+	 lsp-pylsp-plugins-pylint-enabled
+	 lsp-pylsp-plugins-pyflakes-enabled
+	 lsp-pylsp-plugins-yapf-enabled
+	 lsp-pylsp-plugins-flake8-config)
+	:config
+	(setq lsp-pylsp-plugins-flake8-enabled t) ;; (setq pylsp.plugins.flake8.enabled t)
+	(setq lsp-pylsp-plugins-autopep8-enabled nil)
+	(setq lsp-pylsp-plugins-mccabe-enabled nil)
+	(setq lsp-pylsp-plugins-pycodestyle-enabled nil)
+	(setq lsp-pylsp-plugins-pydocstyle-enabled nil)
+	(setq lsp-pylsp-plugins-pylint-enabled nil)
+	(setq lsp-pylsp-plugins-pyflakes-enabled nil)
+	(setq lsp-pylsp-plugins-yapf-enabled nil)
+	(setq lsp-pylsp-plugins-flake8-config ".flake8")
+	)
+  (use-package lsp-ui
+	:requires
+	(lsp-mode flycheck)
+	:hook
+	(lsp-mode-hook . lsp-ui-mode)
+	:config
+	(setq lsp-ui-doc-enable t)
+	(setq lsp-ui-doc-include-signature t)
+	(setq lsp-ui-sideline-enable nil)
+	(setq lsp-ui-flycheck-list-position 'right)
+	)
+  (use-package lsp-treemacs
+	:custom (lsp-treemacs-sync-mode 1))
   (use-package python-pytest
-    :after python
-    :bind (:map python-mode-map
-                ("C-c H-t" . python-pytest-dispatch)))
+	:after (python)
+	:bind (:map python-mode-map
+				("C-c H-t" . python-pytest-dispatch)))
   (use-package numpydoc
-    :after python
 	:commands (numpydoc-generate)
-    :config
-    (setq numpydoc-insertion-style 'yas)) ;'prompt|nil
+	:config
+	(setq numpydoc-insertion-style 'yas)) ;'prompt|nil
   (use-package python-docstring
-    :config (setq python-docstring-sentence-end-double-space nil)
-    :hook (python-mode-hook . python-docstring-mode))
+	:hook (python-mode-hook . python-docstring-mode)
+	:config
+	(setq python-docstring-sentence-end-double-space nil))
   (use-package sphinx-doc
-    :commands (sphinx-doc)
-    :hook (python-mode-hook . sphinx-doc-mode))
+	:commands (sphinx-doc)
+	:hook (python-mode-hook . sphinx-doc-mode))
   (use-package blacken
-    :bind (:map python-mode-map
-                ("C-c =" . blacken-buffer))
-    :hook (python-mode-hook . blacken-mode))
+	:after (python)
+	:bind (:map python-mode-map
+				("C-c =" . blacken-buffer))
+	:hook (python-mode-hook . blacken-mode))
   (use-package eval-in-repl
-    :hook (python-mode-hook . (lambda () (require 'eval-in-repl-python) ))
-    ;; :config
-    ;; (setq eir-jump-after-eval nil)
-    :bind (:map python-mode-map
-                ("<C-return>" . eir-eval-in-python)))
+	:after (python)
+	:hook (python-mode-hook . (lambda () (require 'eval-in-repl-python) ))
+	:config
+	(setq eir-jump-after-eval nil)		; default t
+	:bind (:map python-mode-map
+				("<C-return>" . eir-eval-in-python))
+	)
   (use-package pip-requirements)
-  (use-package bind-key
-    :functions bind-key--remove)
   (use-package pyenv-mode
-    :after python
+	:after (python)
 	:commands (pyenv-mode
 			   pyenv-mode-set
 			   pyenv-mode-unset)
-    :init
-    (add-to-list 'exec-path "~/.pyenv/shims")
-    (setenv "WORKON_HOME" "~/.pyenv/versions/")
-    :config
-    (unbind-key "C-c C-s" pyenv-mode-map)
-    (unbind-key "C-c C-u" pyenv-mode-map)
-    (pyenv-mode)
-    ;; :hook
-    ;; (python-mode-hook . pyenv-mode)
-    )
-  (use-package yaml-mode				; yay -S yamllint
-	:mode "\\.yml\\'"
-	:hook ((yaml-mode . turn-off-flyspell))
-	)
-  (use-package toml-mode
-	:mode "\\.toml\\'")
+	:bind(:map pyenv-mode-map
+			   ("C-c C-s" . nil)
+			   ("C-c C-u" . nil))
+	:init
+	(add-to-list 'exec-path "~/.pyenv/shims")
+	(setenv "WORKON_HOME" "~/.pyenv/versions/")
+	:config (pyenv-mode))
   (use-package pyvenv
+	:after (python)
 	:commands (pyvenv-activate
-               pyvenv-workon)
+			   pyvenv-workon)
 	:bind (:map python-mode-map
 				("C-c H-a" . pyvenv-activate)
 				("C-c H-A" . pyvenv-deactivate)
 				("C-c H-w" . pyvenv-workon)))
   (use-package poetry
-	:after python
-	:commands (poetry))
+	:after (python)
+	:commands (poetry
+			   poetry-venv-workon)
+	;; Generates issue with pre-commit.
+	:preface
+	(defun spacemacs//poetry-activate ()
+	  "Attempt to activate Poetry only if its configuration file is found."
+	  (let ((root-path (locate-dominating-file default-directory "pyproject.toml")))
+		(when root-path
+		  (message "Poetry configuration file found. Activating virtual environment.")
+		  (poetry-venv-workon))))
+	:hook
+	;; (python-mode-hook . poetry-tracking-mode)
+	(python-mode-hook . (lambda () (spacemacs//poetry-activate) (lsp-deferred)))
+	:config
+	(setq poetry-tracking-strategy 'switch-buffer)
+	:bind (:map python-mode-map
+				("<f14> t P" . poetry-tracking-mode)))
   (use-package py-isort                 ;yay -S python-isort
-	:after python
+	:after (python)
 	;; :hook (before-save-hook . py-isort-before-save)
 	:bind (:map python-mode-map
 				("C-c s" . py-isort-buffer)
 				("C-c S" . py-isort-region)))
   )
-(use-package csv-mode
-  :mode (("\\.csv\\'" . csv-mode)))
-(use-package zeal-at-point
-  ;; :defer t
-  :bind
-  ("<f14> z z" . zeal-at-point)
-  ("<f14> z Z" . zeal-at-point-set-docset)
-  :init
-  (which-key-add-key-based-replacements "<f14> z" "Zeal")
-  :config
-  (add-to-list 'zeal-at-point-mode-alist
-               '(python-mode . ("python3"
-                                "pandas"
-                                "numpy"
-                                "matplotlib"
-                                "scipy"))))
 (use-package ess)
-(use-package emojify)
+(use-package emojify
+  :hook (after-init-hook . global-emojify-mode)
+  :custom (emojify-emoji-set "emojione-v2.2.6-22"))
 (use-package slack
   :defer t                              ; avoid halting daemon startup
                                         ; asking for passwords
@@ -3586,7 +3779,8 @@ With a prefix ARG, remove start location."
   :config
   (keyfreq-mode 1)
   (keyfreq-autosave-mode 1))
-(use-package pocket-reader)
+(use-package pocket-reader
+  :bind ("<f14> a r" . pocket-reader))
 (use-package calibredb
   :commands calibredb
   ;; ripgrep-all (rga)
@@ -3599,7 +3793,7 @@ With a prefix ARG, remove start location."
   (setq calibredb-comment-width 0)
   ;; (setq calibredb-ref-default-bibliography (concat (file-name-as-directory calibredb-root-dir) "catalog.bib"))
   (setq calibredb-ref-default-bibliography "~/Sync/media/ebooks.bib")
-  (add-to-list 'bibtex-completion-bibliography calibredb-ref-default-bibliography)
+  ;; (add-to-list 'bibtex-completion-bibliography calibredb-ref-default-bibliography)
   )
 ;; (custom-set-faces
 ;;  ;; custom-set-faces was added by Custom.
@@ -3629,13 +3823,14 @@ With a prefix ARG, remove start location."
 ;;  '(org-tag ((t (:inherit (shadow fixed-pitch) :weight bold :height 0.95))))
 ;;  '(org-verbatim ((t (:inherit (shadow fixed-pitch)))))
 ;;  '(slack-all-thread-buffer-thread-header-face ((t (:weight bold :height 1.8)))))
+
 ;; Telega
+
 (use-package pass
-  ;; :custom ((pass-show-keybindings nil))
-  :bind (("C-x P" . pass))
-  )
+  :bind ("C-x P" . pass))
 (use-package tzc
   :demand t
+  :defines tzc-favourite-time-zones
   :config
   (setq tzc-favourite-time-zones '("Europe/Rome")))
 
@@ -3649,21 +3844,6 @@ With a prefix ARG, remove start location."
 ;;       gc-cons-percentage 0.1
 ;;       garbage-collection-messages nil)
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(git-modes ox-rst org-compat org-roam-graph company-box dream-theme numpydoc yaml-mode pdf-annot org-autolist ox-twbs ox-twtb org-archive counsel-web mu4e-actions mu4e-view mu4e-headers mu4e-utils transpose-frame exwm-config ob-jupyter auctex cdlatex ox sdcv zeal-at-point yasnippet-snippets yapfify writegood-mode wordnut which-key wc-mode visual-fill-column use-package-ensure-system-package synosaurus smex smartparens slack ranger pyvenv python-docstring pytest powerthesaurus plantuml-mode pip-requirements paradox ox-reveal org-super-agenda org-ref org-projectile org-plus-contrib org-noter org-gcal org-bullets olivetti ob-async mu4e-maildirs-extension mu4e-jump-to-list moe-theme markdown-mode magit-todos magit-annex langtool jupyter ivy-yasnippet ivy-rich ivy-bibtex imenu-list highlight-indent-guides guess-language gscholar-bibtex graphviz-dot-mode google-translate goldendict gnuplot gitignore-templates gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-gutter general flyspell-correct-ivy flycheck fantom-theme expand-region evil-numbers evil-nerd-commenter evil ess doom-themes diminish dictionary dictcc deft counsel-projectile company-statistics company-quickhelp company-ngram company-jedi cm-mode calfw-org calfw browse-at-remote base16-theme avy artbollocks-mode academic-phrases))
- '(safe-local-variable-values
-   '((org-ref-pdf-directory . "~/Sync/biblio/books/")
-	 (org-ref-pdf-directory . "~/Sync/biblio/MY/")
-	 (bibtex-completion-notes-path . "~/Sync/biblio/MY/MY.org")
-	 (org-ref-bibliography-notes . "~/Sync/biblio/MY/MY.org")
-	 (org-download-image-dir . "./WORK/")))
- '(send-mail-function 'sendmail-send-it))
-
 (provide 'init)
 ;;; init.el ends here
 (custom-set-faces
@@ -3672,3 +3852,11 @@ With a prefix ARG, remove start location."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(org-agenda-files
+   '("/home/dan/Sync/box/org/gtd.org" "/home/dan/Sync/box/org/ideas.org" "/home/dan/Sync/box/org/inbox.org" "/home/dan/Sync/box/org/journal.org" "/home/dan/Sync/box/org/projects.org" "/home/dan/Sync/proj/Grants.org" "/home/dan/Sync/proj/lab.org" "/home/dan/Sync/proj/proj_&_references.org" "/home/dan/Sync/notes/home/acquisti.org" "/home/dan/Sync/notes/home/borino.org" "/home/dan/Sync/notes/home/casa.org" "/home/dan/Sync/notes/home/energia.org" "/home/dan/Sync/notes/home/escursioni_camper.org" "/home/dan/Sync/notes/home/finanze.org" "/home/dan/Sync/notes/home/home.org" "/home/dan/Sync/notes/home/mutuo.org" "/home/dan/Sync/notes/home/ricette.org" "/home/dan/Sync/notes/arch/My_PCs.org" "/home/dan/Sync/notes/arch/archlinux.org" "/home/dan/Sync/notes/arch/emacs.org"))
+ '(safe-local-variable-values '((org-download-image-dir . "./WORK/"))))

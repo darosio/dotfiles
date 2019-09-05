@@ -1,3 +1,4 @@
+alias lg='git annex list --allrepos'
 alias du.='du -ksh .[!.]* * | sort -h'
 export EDITOR='emacsclient -c -a=""'
 function ediff () {
@@ -123,11 +124,6 @@ sf() {
  recoll -t -b -a $* | fzf -m 
 }
 
-# for virtualenvwrapper
-export WORKON_HOME=~/.venvs/
-source /usr/bin/virtualenvwrapper.sh 
-#alias tecan='. ~/.v/prtecan/bin/activate'
-
 
 source /usr/share/bash-completion/completions/git
 source /usr/share/bash-completion/completions/hg
@@ -181,7 +177,9 @@ alias a='a.py'
 alias vga_ont='xrandr --output VGA1 --auto --above LVDS1'
 alias vga='xrandr --output VGA1 --auto --same-as LVDS1'
 alias vga_onr='xrandr --output VGA1 --auto --right-of LVDS1'
+alias 1left='xrandr --output DP-1 --auto --left-of eDP-1'
 alias vga_off='xrandr --output VGA1 --off'
+alias 1off='xrandr --output DP-1 --off'
 alias impress='impressive -t none --nologo'
 alias omero='sshpass -p CEaMW2oSQY2 ssh darosio%omero@gate.fbk.eu'
 #alias omero-data='sshfs  darosio%omero@gate.fbk.eu:/data /media/omero/'

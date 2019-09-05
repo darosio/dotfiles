@@ -4,3 +4,4 @@
 /borg/
 /remotes/
 /Sync/
+/MM/

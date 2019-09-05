@@ -1,29 +1,30 @@
+
+[ClopHfit]
+checkout = git clone 'https://github.com/darosio/ClopHfit.git' 'ClopHfit'
+
+[dotfiles]
+checkout = git clone 'git@bitbucket.org:darosio/dotfiles.git' 'dotfiles'
+
 [HIV_pipeline_mpba]
-checkout = git clone 'https://github.com/MPBA/generic.git' 'HIV_pipeline_mpba'
-
-[lfin]
-checkout = git clone 'git@bitbucket.org:darosio/lfin.git' 'lfin'
-
-[ph-cl-maps]
-checkout = hg clone 'https://darosio@bitbucket.org/darosio/ph-cl-maps' 'ph-cl-maps'
-
-[progs]
-checkout = git clone 'git@bitbucket.org:darosio/progs' 'progs'
-
-[platereaders/prtecan]
-checkout = git clone 'git@bitbucket.org:darosio/prtecan.git' 'prtecan'
-
-[platereaders/datan]
-checkout = hg clone 'ssh://hg@bitbucket.org/darosio/datan' 'datan'
-
-[nimg]
-checkout = git clone 'git@bitbucket.org:darosio/nimg.git' 'nimg'
-
-[platereaders/prenspire]
-checkout = git clone 'git@bitbucket.org:darosio/prenspire.git' 'prenspire'
+checkout = git clone 'https://github.com/darosio/HIV_pipeline_mpba.git' 'HIV_pipeline_mpba'
 
 [imgread]
 checkout = git clone 'git@bitbucket.org:darosio/imgread.git' 'imgread'
 
-[other/model-of-neuronal-chloride-homeostasis]
-checkout = git clone 'https://github.com/kiradust/model-of-neuronal-chloride-homeostasis.git' 'model-of-neuronal-chloride-homeostasis'
+[lfin]
+checkout = git clone 'git@bitbucket.org:darosio/lfin.git' 'lfin'
+
+[nima]
+checkout = git clone 'https://github.com/darosio/nima.git' 'nima'
+
+[ph-cl-maps]
+checkout = git clone 'https://github.com/darosio/pH-Cl-maps.git' 'ph-cl-maps'
+
+[prenspire]
+checkout = git clone 'git@bitbucket.org:darosio/prenspire.git' 'prenspire'
+
+[progs]
+checkout = git clone 'git@bitbucket.org:darosio/progs.git' 'progs'
+
+[crispr]
+checkout = git clone 'https://github.com/ncasiraghi/crispr.git' 'crispr'
