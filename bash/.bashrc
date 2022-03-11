@@ -76,6 +76,8 @@ fi
 #POWERLINE_BASH_SELECT=1
 #. /usr/lib/python3.5/site-packages/powerline/bindings/bash/powerline.sh
 
+# direnv
+eval "$(direnv hook bash)"
 
 export GPG_TTY=$(tty)
 gpg-connect-agent updatestartuptty /bye > /dev/null
