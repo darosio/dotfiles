@@ -14,6 +14,8 @@ source "$HOME/.functions"
 source "$HOME/.aliases"
 source "$HOME/.progs/bash_aliases"
 
+[[ -r ~/.hatch-complete.bash ]] && source "$HOME/.hatch-complete.bash"
+
 # host specific bash_profile
 [[ -r .bashrc.$HOSTNAME ]] && . ".bashrc.$HOSTNAME"
 

@@ -1,0 +1,41 @@
+mode = "local"
+project = ""
+shell = ""
+
+[dirs]
+project = []
+python = "isolated"
+data = "/home/dan/.local/share/hatch"
+cache = "/home/dan/.cache/hatch"
+
+[dirs.env]
+virtual=".hatch"
+
+[projects]
+
+[publish.index]
+repo = "main"
+
+[template]
+name = "daniele arosio"
+email = "daniele.arosio@cnr.it"
+
+[template.licenses]
+headers = true
+default = [
+    "BSD-3-Clause",
+]
+
+[template.plugins.default]
+tests = true
+ci = true
+src-layout = true
+
+[terminal.styles]
+info = "bold"
+success = "bold cyan"
+error = "bold red"
+warning = "bold yellow"
+waiting = "bold magenta"
+debug = "bold"
+spinner = "simpleDotsScrolling"

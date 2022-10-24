@@ -1,15 +1,8 @@
+alias e='emacsclient -c "$@"'
+alias wifiscan='sudo iw dev wlan0 scan | grep SSID'
 alias lg='git annex list --allrepos'
 alias du.='du -ksh .[!.]* * | sort -h'
 export EDITOR='emacsclient -c -a=""'
-function ediff () {
-    if [ "X${2}" = "X" ]; then
-        echo "USAGE: ediff <FILE 1> <FILE 2>"
-    else
-        quoted1=${1//\\/\\\\}; quoted1=${quoted1//\"/\\\"}
-        quoted2=${2//\\/\\\\}; quoted2=${quoted2//\"/\\\"}
-        emacsclient -tc -a emacs -e "(ediff \"$quoted1\" \"$quoted2\")"
-    fi
-}
 # for data management in annexes
 copythistree() { 
     find . -type d -exec mkdir -p $1/{} \;
@@ -23,26 +16,6 @@ lndate() {
     mkdir $dir
     ln -s $dir $2
     }
-
-alias tags="ag --nobreak --noheading --nofilename X-Key ~/Sync/Maildir/ | sed -e 's/X-Keywords: //; s/, /\n/g' | sort | uniq"
-
-# pacman helper
-alias paclist-time='expac --timefmt="%Y-%m-%d %T" "%l\t%n" | sort'
-alias paclist-size_d='expac -HM "%011m\t%-20n\t%10d" $( comm -23 <(pacman -Qqen|sort) <(pacman -Qqg base base-devel|sort)  ) | sort -n'
-paclist-size() {
-    expac -s "%-30n %m" | sort -hk 2 | \
-        awk '{printf "%s %.0f MiB\n", $1, $2/1024/1024}' | column -t 
-}
-alias t='tree'
-alias xr2='xrandr --output HDMI1 --left-of HDMI3 --rotate left'
-alias xrr=' xrandr --output eDP-1 --scale 1.24x1.24 --auto'
-alias stow='stow -t ~/'
-# Auto "cd" when entering just a path
-shopt -s autocd
-# Line wrap on window resize
-shopt -s checkwinsize
-alias diction='diction -s'
-alias git-ever-existed='git log --pretty=format: --name-status | cut -f2- | sort -u'
 # git annex
 alias mrp='mr --config $HOME/.mrconfig-progs'
 ga-init() {
@@ -58,27 +31,40 @@ ga-dup() {
   git annex find --include '*' --format='${escaped_key} :${file}\n' \
    | cut -d '-' -f 4- | sort | uniq --all-repeated=separate -w 63
 }
-ga-duprm(){
+ga-duprm() {
   ga-dup | awk -vRS= -vFS='\n' '{for (i = 2; i <= NF; i++) print $i}' \
    | cut -d ':' -f 2- 
 }
-ga-duprmgit(){
+ga-duprmgit() {
   ga-duprm | xargs -d '\n' git rm
 }
 
+alias tags="ag --nobreak --noheading --nofilename X-Key ~/Sync/Maildir/ | sed -e 's/X-Keywords: //; s/, /\n/g' | sort | uniq"
+
+# pacman helper
+alias paclist-time='expac --timefmt="%Y-%m-%d %T" "%l\t%n" | sort'
+alias paclist-size_d='expac -HM "%011m\t%-20n\t%10d" $( comm -23 <(pacman -Qqen|sort) <(pacman -Qqg base base-devel|sort)  ) | sort -n'
+paclist-size() {
+    expac -s "%-30n %m" | sort -hk 2 | \
+        awk '{printf "%s %.0f MiB\n", $1, $2/1024/1024}' | column -t 
+}
+
+alias t='tree'
+alias xr2='xrandr --output HDMI1 --left-of HDMI3 --rotate left'
+alias xrr=' xrandr --output eDP-1 --scale 1.24x1.24 --auto'
+alias stow='stow -t ~/'
+
+shopt -s autocd					# Auto "cd" when entering just a path
+shopt -s checkwinsize			# Line wrap on window resize
+alias diction='diction -s'
+alias git-ever-existed='git log --pretty=format: --name-status | cut -f2- | sort -u'
+
 # http://stackoverflow.com/questions/2720014/upgrading-all-packages-with-pip
 alias pip_updall='pip freeze --local | grep -v '^\-e' | cut -d = -f 1  | xargs pip install -U'
-#alias pip_updalluser='$HOME/.local/bin/pip freeze --user | grep -v '^\-e' | cut -d = -f 1  | xargs $HOME/.local/bin/pip install -U --user'
 alias pip_updalluser='pip freeze --user | grep -v '^\-e' | cut -d = -f 1  | xargs pip install -U --user'
-lpip() {
-    $HOME/.local/bin/pip $@ --user
-}
 alias pandoc='pandoc --pdf-engine=xelatex'
-countfiles() {
-    find . -type d | while read DIR; do
-    ls -A $DIR | echo $DIR $(wc -w);done
-}
 alias g='git st; git in; git out'
+
 #ranger shellcd
 rr() {
     export LESSOPEN='|/usr/bin/lesspipe.sh %s'
@@ -104,51 +90,28 @@ bind '"\C-f":"rifle `fzf -e`\C-m"'
 
 # Bash's binds to <F1>
 bind '"\e[24~": "urxvt &\n"'
-alias of='rifle "`fzf -e`"'
 export FZF_DEFAULT_OPTS="-e -m --sort 10000"
-#export FZF_DEFAULT_COMMAND='ag -l -g ""'
 export FZF_DEFAULT_COMMAND="fd"
-#export FZF_DEFAULT_COMMAND="fd . $HOME"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_COMMAND="fd -t d"
-#source /etc/profile.d/fzf.sh
-#source /etc/profile.d/fzf.bash
 source /usr/share/fzf/key-bindings.bash
 source /usr/share/fzf/completion.bash
-source /usr/share/fzf/fzf-extras.bash
-#TODO open filemanager after searching for file or dir
-fb() {
- goobook query "" |fzf | goobook dquery `cut -f 1`
-}
-sf() {
- recoll -t -b -a $* | fzf -m 
-}
-
+# fkill
+bind '"\ek":"fkill\C-m"'
 
 source /usr/share/bash-completion/completions/git
 source /usr/share/bash-completion/completions/hg
 export TERMINAL=urxvt
-#avoid duplicates in history
 export HISTCONTROL=ignoredups
 #export WINEPREFIX=/home/dan/.bin/.win32
 export WINEARCH=win32
-
-export PYTHONDOCS=/usr/share/doc/python/html/
-#PS1="\[\033[1;30m\]dom\[\033[0;37m\]\$ "
 eval $(dircolors -b)
-
 export R_LIBS_USER=~/.Renviron/
-
 alias chromep='chromium --proxy-server="localhost:8118"'
 alias lb='lsblk'
 alias vi='vim'
 alias viw='vim -c "match DiffDelete /\[-.\{-}-]/" -c "2match DiffAdd /{+.\{-}+}/"'
-alias o='mimeopen -a $@'
-alias oo='mimeopen $@'
-alias nb='ipython notebook --pylab inline'
-alias nb='jupyter notebook'
-alias qpy='ipython qtconsole --pylab'
-alias sm=".local/bin/msmtp-runqueue.sh"
+alias o='rifle $@'
 
 #export CDPATH='.:/Data/0dan'
 export IGNOREEOF=1
@@ -156,24 +119,7 @@ export IGNOREEOF=1
 alias pyp='sudo pacmatic -Syu'
 alias pya='pacaur -Syua'
 alias pyu='sudo pacmatic -Syu; pya'
-sl(){
- fname=`echo $1 | cut -d. -f1`
- landslide $1 -d $fname.html
- chromium $fname.html
- }
-rst2pdf_myslide() {
-  sed s/^----// $1 > $1-tmp
-  rst2pdf -b 1 --raw-html -s ~/Dropbox/slideshows/rst2pdf/slides.style $1-tmp
-}
-alias rst2pdf_myslide2='rst2pdf -b 1 --raw-html -s ~/Dropbox/slideshows/rst2pdf/slides.style' 
-rst2my_beamer() {
-  fname=`echo $1 | cut -d. -f1`
-  rst2beamer $1 > $fname.tex
-  pdflatex $fname.tex
-  pdflatex $fname.tex
-}
-alias fdup='fdupes -r -s -S'	# recursive, follow links, print size
-alias a='a.py'
+
 alias vga_ont='xrandr --output VGA1 --auto --above LVDS1'
 alias vga='xrandr --output VGA1 --auto --same-as LVDS1'
 alias vga_onr='xrandr --output VGA1 --auto --right-of LVDS1'
@@ -186,7 +132,6 @@ alias omero='sshpass -p CEaMW2oSQY2 ssh darosio%omero@gate.fbk.eu'
 alias omero-data0='sshfs  omero:/hardmnt/data0 /media/omero0/'
 alias omero-data1='sshfs  omero:/hardmnt/data1 /media/omero1/'
 alias swan-data='sshfs  swan:/hardmnt/swan1/data /media/swan/'
-alias pp='impressive --nologo'
 alias xev_arch="xev | grep -A2 --line-buffered '^KeyRelease' | sed -n '/keycode /s/^.*keycode \([0-9]*\).* (.*, \(.*\)).*$/\1 \2/p'"
 alias bigcp='rsync -Phrltz --info=progress2'   #pg z -XH
 # -a is for archive, which preserves ownership, permissions etc.
@@ -198,7 +143,6 @@ alias bigcp='rsync -Phrltz --info=progress2'   #pg z -XH
 ## alias rm='trash-put'
 alias svigolana='urxvt -bg "#111020" -e ssh -i ~/.ssh/dan@sterzing-2013-06-03 -p 23456 vigolana &'
 alias vigolana-data='sshfs -p 23456 vigolana:/data /media/vigolana/ -o IdentityFile=$HOME/.ssh/dan@sterzing-2013-06-03'
-
 alias mmarzola='sshfs -p 23456 mmedia@marzola:/home/MM /media/marzola-mm'
 alias smarzola='urxvt -bg "#111020" -e ssh -i .ssh/dan@hunza-2013-06-03 -p 23456 -l mmedia 192.168.1.10 &'
 alias smarzola='urxvt -bg "#111020" -e ssh -i ~/.ssh/dan@hunza-2013-06-03 -p 23456 -l mmedia marzola &'
@@ -217,47 +161,7 @@ alias priv='iwconfig wlan0 essid ff key 1122334455 mode ad-hoc; ifconfig wlan0 1
 alias hour='sudo htpdate -s -D -u nobody:nobody www.google.com yahoo.com www.kernel.org'
 alias yy='pacaur -Ss'
 alias grep='grep --color'
-alias sHs='python2 -m SimpleHTTPServer'
-
-cp2marzola-mm() {
- rsync -avzP -e 'ssh -p 23456' "$*" mmedia@marzola:/home/MM/
- }
-
-cp2kongur-mm() {
- rsync -avzP -e 'ssh -p 23456' "$*" mmedia@kongur:/home/MM/
- }
-
-TN() {
- pushd /tmp
- #rm generale_it.pdf
- wget http://www.meteotrentino.it/bollettini/today/generale_it.pdf
- xdg-open generale_it.pdf
- popd
- }
-
-povo() {
-  if [[ -e forecast.pdf ]]; then rm forecast.pdf; fi
-  wget https://www.yr.no/place/Italy/Trentino_and_South-Tirol/Povo/forecast.pdf
-  xdg-open forecast.pdf
-}
-
-TNv() {
- rm valanghe_it.pdf
- wget https://avalanche.report/albina_files/`date -I`/`date -I`_it.pdf
- xdg-open `date -I`_it.pdf
- }
-
-grepp() {
- if test -z "$1" || test -z "$2" ; then
-   echo "USAGE: grepp searchterm
-     filetosearch";
- else
-   perl -00ne "print if /$1/i" < $2
- fi }
-
-fss() {
- firefox "http://google.com/search?q=`xsel -p -o`&ie=UTF-8&oe=UTF-8"
- }
+alias sHs='python -m SimpleHTTPServer'
 
 bind -x '"\C-l":ls -lh'
 #echo -e "$RED Attenzione \e[0m"
@@ -265,36 +169,16 @@ export RED="\e[01;31m"
 
 alias qfn='firefox -qfn'
 
-2up() {
- mv $1 tmp
- mv tmp `Upper $1`
-}
-
-fm() {
- fmt -w 79 $@ > ttt.rnd
- mv ttt.rnd $@
-}
-
 pdf_myReduce() {
  gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dNOPAUSE -dQUIET -dBATCH -dPDFSETTINGS=/ebook -sOutputFile=$2 $1
 }
-
+# -dDownsampleColorImages=true -dColorImageResolution=150 
 pdf_myReduce2() {
- gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.5 -dNOPAUSE -dQUIET -dBATCH -dPDFSETTINGS=/screen -sOutputFile=$2 $1
+ gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.5 -dFILTERIMAGE -dNOPAUSE -dQUIET -dBATCH -dPDFSETTINGS=/screen -sOutputFile=$2 $1
 }
 
-##SSH_AUTH_SOCK=`ss -xl | grep -o '/run/user/1000/keyring-.*/ssh'`
-##[ -z "$SSH_AUTH_SOCK" ] || export SSH_AUTH_SOCK
-
-##eval $(keychain --eval --agents ssh -Q --quiet dan)
-
-#alias ssh='eval $(/usr/bin/keychain --eval --agents ssh -Q --quiet dan) && ssh'
-#automatic correction
-#shopt -s cdspell #nocaseglob
-#stop beeping
-#setterm -blength 0
+#shopt -s cdspell #nocaseglob#automatic correction
+#setterm -blength 0#stop beeping
 export MAKEFLAGS='-j4'
-alias emm='systemctl --user start emacs.service'
-alias ems='systemctl --user stop emacs.service'
 alias tj='trans -j'
 alias tji='trans -j :it'

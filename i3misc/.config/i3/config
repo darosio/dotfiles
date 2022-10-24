@@ -42,9 +42,9 @@ bindsym $mod+Shift+o exec xrandr --output VGA1 --off &
 # Multi-screen screenshots with scrot
 # bindsym --release Print exec scrot 'screenshot_%Y%m%d_%H%M%S.png' -e 'mkdir -p ~/Pictures/screenshots && mv $f ~/Pictures/screenshots && xclip -selection clipboard -t image/png -i ~/Pictures/screenshots/`ls -1 -t ~/Pictures/screenshots | head -1`' # All screens
 # a screen  portion
-bindsym --release Shift+Print exec "f=$(date +%Y-%m-%d:%T).png && maim -o -u -s $f && xclip -selection clipboard -t image/png -i $f"
+bindsym --release Shift+Print exec "f=$(date +%Y-%m-%d:%T).png && maim -o -u -s ~/Sync/tmp/PrtSc/$f && xclip -selection clipboard -t image/png -i $f"
 # all screens
-bindsym --release Print exec "f=$(date +%Y-%m-%d:%T).png && maim -o $f && xclip -selection clipboard -t image/png -i $f"
+bindsym --release Print exec "f=$(date +%Y-%m-%d:%T).png && maim -o ~/Sync/tmp/PrtSc/$f && xclip -selection clipboard -t image/png -i $f"
 
 # bindsym Print exec "maim -u -s -n -l -c 0.157,0.333,0.466,0.4 ~/Pictures/Screenshot-$(date -Iseconds | cut -d'+' -f1).png"
 # bindsym Shift+Print exec ~/.files/i3/record-screen.sh byzanz

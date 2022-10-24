@@ -1,341 +1,132 @@
-set modelines=1	" modeline must be within first or last 1 line
-
-" TODO jedi =? supertab completion.python3 and K<pydoc
-" https://github.com/msprev/unite-bibtex
-" TODO check this: http://vimawesome.com/
-
-
-" Set to auto read when a file is changed from the outside
-set autoread
-"set noautoread              " Don't automatically re-read changed files.
-"set autowrite               " Stop complaining about unsaved buffers
-"set autowriteall            "
-" Jeff
+" Main config {{{
+set modelines=1		" modeline must be within first or last 1 line
+set autoread			" Set to auto read when a file is changed from the outside
 hi DiffText gui=underline guibg=red guifg=black
-" Select the item in the list with enter
-inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-" tab switch
-"nnoremap <Tab> <ESC>:tabn<CR>
-" :tabn :bdelete
-"
-" diff
-" diffchar.vim
-" vim-diff-enhanced  vim-unified-diff
-" Bundle {{{
-set nocompatible
-filetype off                   " required!
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
-" let Vundle manage Vundle, required
-Plugin 'VundleVim/Vundle.vim'
-" git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
-"call vundle#rc()
-
-" Next:
-" NrrwRgn
-Plugin 'chrisbra/NrrwRgn'
-"Plugin 'prophittcorey/vim-t'
-Plugin 'vim-scripts/tasklist.vim'
-" TaskList
-" VimPDB "@L
-"
-" tabular @sf
-"
-" gundo @S
-"
-" Old:
-" command-T @A @S alternativeto fzf CtrlP
-" minibufferExplorer @L @S
-" makegreen @S before pytest
-"
-Plugin 'jceb/vim-orgmode'
-Plugin 'tpope/vim-speeddating'
-Plugin 'dhruvasagar/vim-table-mode'
-" or see screecast for tabular
-" I had explored also "nvie/vim-rst-tables"
-" To get ReST-compatible tables use:
-let g:table_mode_corner_corner="+"
-let g:table_mode_header_fillchar="="
-"Plugin 'ivanov/vim-ipython' "need python2
-"Plugin 'sophAi/vim-ipython_py3' "need python2
-" ""Plugin 'julienr/vim-cellmode'
-" slimux (vim_slime) alternative to vim-r vim-ipython ...
-" org-mode
-"Plugin 'jceb/vim-orgmode'
-Plugin 'epeli/slimux'
-" tmux?...
-"Plugin 'christoomey/vim-tmux-navigator'
-" R:
-Plugin 'ervandew/screen' "useful also for ipython
-Plugin 'jcfaria/Vim-R-plugin'
-" ref: http://manuals.bioinformatics.ucr.edu/home/programming-in-r/vim-r
-"
-" install.packages("setwidth")
-"download.file("http://www.lepem.ufc.br/jaa/vimr/vimcom_1.2-6.tar.gz",
-"              destfile = "vimcom_1.2-6.tar.gz")
-"install.packages("vimcom_1.2-6.tar.gz", type = "source", repos = NULL)
-"download.file("http://www.lepem.ufc.br/jaa/vimr/colorout_1.1-1.tar.gz",
-"              destfile = "colorout_1.1-1.tar.gz")
-"install.packages("colorout_1.1-1.tar.gz", type = "source", repos = NULL)
-"~/.Rprofile if(interactive())library(...)
-" vim --servername VIM
-" press ,R
-
-"Plug 'lervag/vim-latex'
-"Plug 'wannesm/wmgraphviz.vim'
-"also consider:
-"hexmode
-"html5
-"nodejs-complete
-"php
-"web-indent
-"xmledit
-"
-""" hardmode ^_^
-""nnoremap <leader>h <ESC>:call ToggleHardMode()<CR>
-""" snipmate
-"""<c-r>tab lists snippets
-""" tComment
-""nnoremap <leader>c <c-_><c-_>
-""vnoremap <leader>c <c-_><c-_>
-
-"
-" Highlight a column in csv text.
-" :Csv 1    " highlight first column
-" :Csv 12   " highlight twelfth column
-" :Csv 0    " switch off highlight
-""function! CSVH(colnr)
-""  if a:colnr > 1
-""    let n = a:colnr - 1
-""    execute 'match Keyword /^\([^,]*,\)\{'.n.'}\zs[^,]*/'
-""    execute 'normal! 0'.n.'f,'
-""  elseif a:colnr == 1
-""    match Keyword /^[^,]*/
-""    normal! 0
-""  else
-""    match
-""  endif
-""endfunction
-""command! -nargs=1 Csv :call CSVH(<args>)
-""
-"""
-" Colors:
-Plugin 'altercation/vim-colors-solarized'
-Plugin 'tomasr/molokai'
-Plugin 'sjl/badwolf'
-Plugin 'vim-scripts/wombat256.vim'
-
-
-" General:
-"Plugin 'scrooloose/nerdtree' " @j @S
-"map <F2> :NERDTreeToggle<CR>
-Plugin 'junegunn/goyo.vim'
-nnoremap <silent> <F11> :Goyo<cr>
-Plugin 'vim-airline/vim-airline' "better than powerline
-Plugin 'vim-airline/vim-airline-themes'
-"Bundle 'powerline/powerline', {'rtp': 'powerline/bindings/vim/'} # never
-"ever again
-"Plugin 'Lokaltog/vim-easymotion'
-"""\\w move to word forwards
-"""\\b move to word backwards
-Plugin 'majutsushi/tagbar' " ctags @sf and better than TagList (@S @L)
-" the silver searcher alternative to ctags and tagbar and ack.vim
-Plugin 'rking/ag.vim' "@S
-nmap <C-F> :Ag
-" args `Ag -l FOOBAR .`
-" argdo %s/FOO/BAR/g | w
-" alternativesto CtrlP @j @S
-Plugin 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install' }
-Plugin 'junegunn/fzf.vim'
-
-" Diff:
-Plugin 'vim-scripts/DirDiff.vim'
-" Plugin 'gkirilov/vim-wdiff'
-"Plugin 'vim-scripts/ShowMarks'  "Not working properly
-Plugin 'jacquesbh/vim-showmarks'
-nmap ,m :ShowMarksOnce<CR>
-nmap ,M :DoShowMarks<CR>
-
-" Writing_Prose:
-Plugin 'vimoutliner/vimoutliner'
-" Plugin 'reedes/vim-pencil'
-" Plugin 'reedes/vim-wheel'
-Plugin 'vim-pandoc/vim-pandoc'
-Plugin 'vim-pandoc/vim-pandoc-syntax'
-Plugin 'vim-pandoc/vim-pandoc-after'
-" Rmd and Rpres are pandoc
-"au BufRead,BufNewFile *.Rmd,*.Rpres setfiletype pandoc
-au BufRead,BufNewFile *.Rmd setfiletype markdown
-"Plugin 'vim-pandoc/vim-rmarkdown'
-"Plugin 'vim-scripts/LanguageTool'
-Plugin 'rhysd/vim-grammarous'
-"Plugin 'goldfeld/criticmarkup-vim'
-"Plugin 'junegunn/vim-easy-align'
-" Passive voice and such
-Plugin 'reedes/vim-wordy'
-Plugin 'jamestomasino/vim-writingsyntax'
-nnoremap <F3> :setf writing<CR>"
-Plugin 'davidbeckingsale/writegood.vim'
-nmap <F4> :WritegoodToggle<CR>
-Plugin 'victormours/better-writing.vim'
-" set syntax=better-writing
-
-"Plugin 'reedes/vim-lexical'
-Plugin 'beloglazov/vim-online-thesaurus'
-nnoremap ,k :OnlineThesaurusCurrentWord<CR>
-Plugin 'vim-scripts/Wordnet.vim'
-"good enough using C-t C-c-c for artha, goldendict
-nmap ,wnn bve <C-t>
-nmap ,ww :exe ":!wn ".expand("<cword>") " -synsn -synsv -synsa -synsr -antsn -antsv -antsa -antsr"<CR>
-map ,wn <leader>wnd
-
-" Special_files:
-Plugin 'aklt/plantuml-syntax'
-" let g:plantuml_executable_script='java -jar c:\utils\plantuml\plantuml.jar'
-Plugin 'chrisbra/csv.vim'
-
-" Git:
-Plugin 'mhinz/vim-signify' " works also for hg 'airblade/vim-gitgutter'
-Plugin 'tpope/vim-fugitive'
-Plugin 'tpope/vim-unimpaired'
-Plugin 'gregsexton/gitv'
-Plugin 'tommcdo/vim-fubitive'   " Gbrowse for bitbucket
-
-" IDE:
-Plugin 'scrooloose/nerdcommenter' " ,cc
-"snipmate
-"Plugin 'MarcWeber/vim-addon-mw-utils'
-"Plugin 'tomtom/tlib_vim'
-"Plugin 'garbas/vim-snipmate' "@S
-"UltiSnips @j
-" @j: Eclim, IndentLine, Delimitmate, vim-rooter
-Plugin 'SirVer/ultisnips'
-" Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
-let g:UltiSnipsExpandTrigger="<s-tab>"
-let g:UltiSnipsJumpForwardTrigger="<c-b>"
-let g:UltiSnipsJumpBackwardTrigger="<c-z>"
-
-" If you want :UltiSnipsEdit to split your window.
-let g:UltiSnipsEditSplit="vertical"
-Plugin 'ervandew/supertab.git' "@j @S
-" Ctrl-v Tab : when a real Tab is meant
-" useful to know: ":verbose imap <tab>"
-" currently use ultisnip completion
-let g:SuperTabDefaultCompletionType = "context"
-"XXBundle 'Shougo/neocomplete'  "still better then YouCompleteMe, which need
-"compilation"
-" Optional
-Plugin 'honza/vim-snippets'
-
-""" Python
-" pydoc.vim @S @P
-" unite @P, but I use fzf
-Plugin 'davidhalter/jedi-vim' " @P
-"Plugin 'scrooloose/syntastic' "june @P @H @A
-" syntasytic to directly use flake8
-Plugin 'nvie/vim-flake8'    "Need: flake8 pep8 python-mccabe python-pyflakes @P
-" @S: pep8, pyflake, rope
-" Plugin 'nvie/vim-pyunit'
-Plugin 'alfredodeza/pytest.vim' "@S
-Plugin 'alfredodeza/coveragepy.vim'
-" Virtualenv
-Plugin 'jmcantrell/vim-virtualenv'
-
-" Others:
-Plugin 'tpope/vim-surround' " braces @S @sf``
-" @H SimplePairs
-Plugin 'jiangmiao/auto-pairs' " braces
-"Plugin 'raimondi/delimitmate' " braces
-call vundle#end()            " required
-filetype plugin indent on    " required
-" }}}
-
-" vim-wordy {{{
-let g:wordy#ring = [
-	\ 'weak',
-	\ 'weasel',
-	\ 'puffery',
-	\ 'redundant',
-	\ 'problematic',
-	\ ['being', 'passive-voice', ],
-	\ ['business-jargon', 'art-jargon',],
-	\ ['colloquial', 'idiomatic', ],
-	\ 'similies',
-	\ 'said-synonyms',
-	\ 'contractions',
-	\ 'opinion',
-	\ 'vague-time',
-	\ ]
-" to cycle among defined rings
-nmap <silent><F3><F4> :NextWordy<cr>
-" }}}
-let mapleader=','
-let g:mapleader=','
-" vim help
-nmap <Leader>h :exe ":h ".expand("<cword>")<CR>
-
-" omni completion FIXME
-"autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+inoremap <expr> <CR> pumvisible() ? '<C-Y>' : '<CR>' " Select the item in lists with enter
 autocmd FileType html setlocal omnifunc=htmlcomplete#CompleteTags
 autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
 autocmd FileType c set omnifunc=ccomplete#Complete
 autocmd FileType css set omnifunc=csscomplete#CompleteCSS
 autocmd FileType php set omnifunc=phpcomplete#CompletePHP
 autocmd FileType xml set omnifunc=xmlcomplete#CompleteTags
-
 set nocompatible    "disable vi"
-" this order fix a problem with csv
-filetype plugin indent on " load filetype-specific plugin/indent file
 syntax enable
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-set ttyfast		" faster redraw (with multiple windows)
-" Don't redraw while executing macros (good performance config)
-set lazyredraw
-" redraw screen
-nnoremap <leader>r <ESC>:redraw!<CR>
-
-" Always show the status line
-set laststatus=2
-" partly inspired by sensible and partly from my old config
-set backspace=eol,start,indent "or =2 although not needed in Arch
-set whichwrap+=<,>,h,l  "to continue on next/previous line"
-nnoremap <C-e> 3<C-e>
-nnoremap <C-y> 3<C-y>
+set lazyredraw " Don't redraw while executing macros (good performance config)
+set laststatus=2								" Always show the status line
+set ttyfast											" faster redraw (with multiple windows)
+set backspace=eol,start,indent	" or =2 although not needed in Arch
+set whichwrap+=<,>,h,l					" to continue on next/previous line"
 set shortmess=atI
 set autochdir
-" file handling
 set fileencoding=utf-8
 set encoding=utf-8
+runtime macros/matchit.vim			" more matches using %, like def/end in Ruby
+set viminfo^=%									" Remember info about open buffers on close
+" Keybindings
+let mapleader=','
+let g:mapleader=','
+nmap <Leader>h :exe ':h '.expand('<cword>')<CR>
+nnoremap <leader>r <ESC>:redraw!<CR> " redraw screen
+nnoremap <C-e> 3<C-e>
+nnoremap <C-y> 3<C-y>
+map <silent> <leader>sv :source ~/.vim/vimrc<CR>:filetype detect<CR> " Reload .vimrc
+map <silent> <leader>ev :vsp ~/.vim/vimrc<CR>												 " Open .vimrc
+command! Sudow :w !sudo tee % >/dev/null " for when we forget to use sudo
+nnoremap ;w :w<CR>
+nnoremap ;q :q<CR>
+nnoremap <leader>qq :q!<CR>
+nmap <leader>wq :wq<CR>
+nmap ; :
+" whitespaces
+set listchars=tab:>.,trail:·,eol:$,extends:#,nbsp:.
+nmap <silent> <leader>ll :set nolist!<CR> " Show
+nnoremap <leader>llr :%s/\s\+$//<cr>:let @/=''<CR> " Remove
+" copy and paste
+vnoremap <leader>y "+y
+vmap <C-c> "+y
+nmap <C-c> "+yiw
+map <leader>pp "+gP
+map <leader>p "+p
 
+set history=700
+set number											" line numbers
+nmap <C-N> :set invnumber<CR>
+set cursorline							" highlight current line
+set wildmenu								" visual autocomplete for command menu
+set showmatch								" highlight matvching [{()}]
+set textwidth=79						" line wrapped after 80 columns
+set wrap										" wrap text line longer then 80 chars
+set linebreak								" do not break a word in two lines when wrapping
+" move vertically accross fake wrapped lines
+nnoremap j gj
+nnoremap k gk
+nnoremap gV `[v`]			" highlight inserted text during last INSERT mode
+set nostartofline			" Avoid moving cursor to BOL when jumping around
+set virtualedit=block	" Let cursor move past the last char in <C-v> mode
+set scrolloff=3				" Keep 3 context lines above and below the cursor
+set title							" show title in console title bar
+set colorcolumn=80		" show color at column 80
+highlight ColorColumn ctermbg=green guibg=darkred
+set noerrorbells							" don't beep
+set visualbell t_vb=					" Disable all bells.  I hate ringing/flashing.
+set nobackup									" Use SVN, hg, git, rsnapshot, unison ...
+set noswapfile
+" Spaces & Tabs & moving around
+set autoindent			" always autoindent on
+set tabstop=4				" number of visual spaces per TAB
+set softtabstop=4		" number of spaces per TAB when editing
+set shiftwidth=4		" number of spaces per indent
+set shiftround			" round indent to multiple of 'shiftwidth'
+set smarttab				" backspace over tabs
+set copyindent			" copy indent structure, spaces and tabs from upper line
+" Smart way to move between windows
+map <C-j> <C-W>j
+map <C-k> <C-W>k
+map <C-h> <C-W>h
+map <C-l> <C-W>l
+" ( <C-O> makes next cmd happen as if in command mode )
+imap <C-W> <C-O><C-W>
+nmap <Leader>q :bd<CR>					"Close current buffer
+" Useful mappings for managing tabs FIXME @check tab?
+map <leader>tn :tabnew<cr>
+map <leader>to :tabonly<cr>
+map <leader>tc :tabclose<cr>
+map <leader>tm :tabmove<cr>
+" Opens a new tab with the current buffer's path
+" Super useful when editing files in the same directory
+map <leader>te :tabedit <c-r>=expand("%:p:h")<cr>/
+" Return to last edit position when opening files (You want this!)
+autocmd BufReadPost *
+	\ if line("'\"") > 0 && line("'\"") <= line("$") |
+	\   exe "normal! g`\"" |
+	\ endif
+" folding
+set foldenable		" enable folding
+set foldlevelstart=7 " open most folds by default
+set foldnestmax=10	" creates 10 fold levels at maximum
+nnoremap <tab> za
+" spelling
 for d in glob('~/.vim/spell/*.add', 1, 1)
 	if filereadable(d) && (!filereadable(d . '.spl') || getftime(d) > getftime(d . '.spl'))
 		silent exec 'mkspell! ' . fnameescape(d)
 	endif
 endfor
-" I 'd like to understand this
-runtime macros/matchit.vim
-
 " Ignore these files when completing
 set wildignore+=*.o,*.obj,.git,*.pyc
 set wildignore+=eggs/**
 set wildignore+=*.egg-info/**
-
 " make <F5> (Makefile)
 nnoremap <F5> :w<CR> :silent make<CR> :redraw!<CR>
 inoremap <F5> <Esc>:w<CR>:silent make<CR> :redraw!<CR>
 vnoremap <F5> :<C-U>:w<CR>:silent make<CR> :redraw!<CR>
-
-" Colors {{{
-" for solarized colors
-"set t_Co=16
-set t_Co=256
-syntax on
-set background=dark	" often used with dark bg
-colorscheme solarized
-call togglebg#map("<F12>")
-" }}}
-" gvim {{{
-set guifont=Monaco\ 11	" font for gvim
+" Searching	
+set ignorecase		" ignore case
+set smartcase		" try to be smart
+set incsearch		" search as characters are entered
+set hlsearch		" highlight search results
+nnoremap <leader><space> :nohlsearch<cr> " turn off highlight matches
+" gvim
+set guifont=IBM\ Plex\ Mono\ Text\ 11	" for gvim only
 set guioptions=aegim	" a visual mode copy/paste, m menu, g gray menu ...
 set guioptions-=T   	" do not show Toolbars in gvim
 set diffopt+=iwhite	" ignore white spaces in gvimdiff
@@ -346,132 +137,89 @@ if has('gui_running')
 		autocmd GuiEnter * set columns=165 lines=50
 		set guifont=Monaco\ 10
 	end
-	" winpos 576 329
 end
 " }}}
-" Shortcuts {{{
-" Reload Vimrc
-map <silent> <leader>sv :source ~/.vim/vimrc<CR>:filetype detect<CR>
-map <silent> <leader>ev :vsp ~/.vim/vimrc<CR>
-" for when we forget to use sudo to open/edit a file
-command! Sudow :w !sudo tee % >/dev/null
-nnoremap ;w :w<CR>
-nnoremap ;q :q<CR>
-nnoremap <leader>qq :q!<CR>
-nmap <leader>wq :wq<CR>
-nmap ; :
-" Show trailing whitespace: <leader>ll
-set listchars=tab:>.,trail:·,eol:$,extends:#,nbsp:.
-nmap <silent> <leader>ll :set nolist!<CR>
-" Remove trailing whitespace: <leader>llr
-nnoremap <leader>llr :%s/\s\+$//<cr>:let @/=''<CR>
-" }}}
-" copy and paste {{{
-vnoremap <leader>y "+y
-vmap <C-c> "+y
-nmap <C-c> "+yiw
-map <leader>pp "+gP
-map <leader>p "+p
-" toggle paste mode
-set pastetoggle=<F2>
-" }}}
-" Spaces & Tabs & moving around {{{
-set autoindent		" always autoindent on
-"set smartindent		" if no indent file available
-set tabstop=4		" number of visual spaces per TAB
-set softtabstop=4	" number of spaces per TAB when editing
-set shiftwidth=4	" number of spaces per indent
-set shiftround		" round indent to multiple of 'shiftwidth'
-set smarttab		" backspace over tabs
-set copyindent		" copy indent structure, spaces and tabs from upper line
 
-" Smart way to move between windows
-map <C-j> <C-W>j
-map <C-k> <C-W>k
-map <C-h> <C-W>h
-map <C-l> <C-W>l
-" lets make these all work in insert mode too
-" ( <C-O> makes next cmd happen as if in command mode ) FIXME
-imap <C-W> <C-O><C-W>
-" Close all the buffers
-map <leader>ba :1,1000 bd!<cr>
-" Close current buffer
-nmap <Leader>q :bd<CR>
-" Useful mappings for managing tabs FIXME @check tab?
-map <leader>tn :tabnew<cr>
-map <leader>to :tabonly<cr>
-map <leader>tc :tabclose<cr>
-map <leader>tm :tabmove<cr>
-" Opens a new tab with the current buffer's path
-" Super useful when editing files in the same directory
-map <leader>te :tabedit <c-r>=expand("%:p:h")<cr>/
-" Switch CWD to the directory of the open buffer
-map <leader>cd :cd %:p:h<cr>:pwd<cr>
-" Specify the behavior when switching between buffers But it shows tab always
-"try
-"  set switchbuf=useopen,usetab,newtab
-"  set stal=2
-"catch
-"endtry
-" Return to last edit position when opening files (You want this!)
-autocmd BufReadPost *
-	\ if line("'\"") > 0 && line("'\"") <= line("$") |
-	\   exe "normal! g`\"" |
-	\ endif
-" Remember info about open buffers on close
-set viminfo^=%
+" Bundle {{{
+set nocompatible
+filetype off										"required!
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+"git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+Plugin 'VundleVim/Vundle.vim'		"let Vundle manage Vundle, required
+Plugin 'vim-scripts/tasklist.vim'
+Plugin 'tpope/vim-speeddating'
+Plugin 'dhruvasagar/vim-table-mode'
+let g:table_mode_corner_corner='+' "ReST-compatible tables use
+let g:table_mode_header_fillchar='='
+" Writing_Prose:
+Plugin 'vimoutliner/vimoutliner'
+Plugin 'vim-pandoc/vim-pandoc'
+Plugin 'vim-pandoc/vim-pandoc-syntax'
+Plugin 'vim-pandoc/vim-pandoc-after'
+" Rmd and Rpres are pandoc
+"au BufRead,BufNewFile *.Rmd,*.Rpres setfiletype pandoc
+au BufRead,BufNewFile *.Rmd setfiletype markdown
+Plugin 'dpelle/vim-LanguageTool'
+let g:languagetool_cmd='/usr/bin/languagetool'
+"Plugin 'reedes/vim-lexical'
+" Special_files
+Plugin 'bioSyntax/bioSyntax-vim'
+Plugin 'aklt/plantuml-syntax'
+" let g:plantuml_executable_script='java -jar c:\utils\plantuml\plantuml.jar'
+Plugin 'chrisbra/csv.vim'
+" Git:
+Plugin 'mhinz/vim-signify' " works also for hg 'airblade/vim-gitgutter'
+Plugin 'tpope/vim-fugitive'
+Plugin 'tpope/vim-unimpaired'
+Plugin 'gregsexton/gitv'
+Plugin 'tommcdo/vim-fubitive'   " Gbrowse for bitbucket
+" IDE:
+Plugin 'scrooloose/nerdcommenter' " ,cc
+" @jeff: Eclim, IndentLine, Delimitmate, vim-rooter
+Plugin 'SirVer/ultisnips'
+" Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
+let g:UltiSnipsExpandTrigger="<s-tab>"
+let g:UltiSnipsJumpForwardTrigger="<c-b>"
+let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+" If you want :UltiSnipsEdit to split your window.
+let g:UltiSnipsEditSplit="vertical"
+Plugin 'ervandew/supertab.git' "@j @S
+" Ctrl-v Tab : when a real Tab is meant
+" useful to know: ":verbose imap <tab>"
+" currently use ultisnip completion
+let g:SuperTabDefaultCompletionType = "context"
+Plugin 'honza/vim-snippets'
+" Others:
+Plugin 'tpope/vim-surround'			" braces @S @sf``
+Plugin 'jiangmiao/auto-pairs'		" braces
+call vundle#end()								" required
+filetype plugin indent on				" required
+filetype plugin on				" required
 " }}}
-" UI Config {{{
-set history=700
-" line numbers
-set number
-nmap <C-N> :set invnumber<CR>
-"set showcmd  maybe faster?
-set cursorline		" highlight current line
-set wildmenu		" visual autocomplete for command menu
-set showmatch		" highlight matvching [{()}]
-set textwidth=79	" line wrapped after 80 columns
-set wrap			" wrap text line longer then 80 chars
-set linebreak		" do not break a word in two lines when wrapping
-" move vertically accross fake wrapped lines
-nnoremap j gj
-nnoremap k gk
-" highlight inserted text during last INSERT mode
-nnoremap gV `[v`]
-" Jeff
-set nostartofline	" Avoid moving cursor to BOL when jumping around
-set virtualedit=block " Let cursor move past the last char in <C-v> mode
-set scrolloff=3		" Keep 3 context lines above and below the cursor
-set title			" show title in console title bar
-set colorcolumn=80	" show color at column 80
-highlight ColorColumn ctermbg=green guibg=darkred
-set noerrorbells	" don't beep
-set visualbell t_vb= " Disable all bells.  I hate ringing/flashing.
-" Use SVN, hg, git, rsnapshot, unison ...
-set nobackup
-set noswapfile
+" vim-wordy {{{
+" Passive voice and such
+Plugin 'reedes/vim-wordy'
+let g:wordy#ring = [
+  \ 'weak',
+  \ ['being', 'passive-voice', ],
+  \ 'business-jargon',
+  \ 'weasel',
+  \ 'puffery',
+  \ ['problematic', 'redundant', ],
+  \ ['colloquial', 'idiomatic', 'similies', ],
+  \ 'art-jargon',
+  \ ['contractions', 'opinion', 'vague-time', 'said-synonyms', ],
+  \ 'adjectives',
+  \ 'adverbs',
+  \ ]
+noremap <silent> <F8> :<C-u>NextWordy<cr>
+xnoremap <silent> <F8> :<C-u>NextWordy<cr>
+inoremap <silent> <F8> <C-o>:NextWordy<cr>
 " }}}
-" Searching {{{
-set ignorecase		" ignore case
-set smartcase		" try to be smart
-set incsearch		" search as characters are entered
-set hlsearch		" highlight search results
-" turn off highlight matches
-nnoremap <leader><space> :nohlsearch<cr>
-" }}}
-" Folding {{{
-"myold set foldignore=
-"myold set formatoptions=cqrt
-" set formatoptions=tcroql    " Setting text and comment formatting to auto
-set foldenable		" enable folding
-set foldlevelstart=7 " open most folds by default
-set foldnestmax=10	" creates 10 fold levels at maximum
-" space open/closes folds
-nnoremap <tab> za
-" }}}
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-""" Plugins:
 " FZF {{{
+Plugin 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install' }
+Plugin 'junegunn/fzf.vim'
 noremap <nowait><Leader>b :Buffers<CR>
 nnoremap <nowait><Leader>f :Files<CR>
 "set rtp+=~/.fzf
@@ -479,25 +227,15 @@ nnoremap <nowait><Leader>f :Files<CR>
 nmap <leader><tab> <plug>(fzf-maps-n)
 xmap <leader><tab> <plug>(fzf-maps-x)
 omap <leader><tab> <plug>(fzf-maps-o)
-
 " Insert mode completion
 imap <c-x><c-k> <plug>(fzf-complete-word)
 imap <c-x><c-f> <plug>(fzf-complete-path)
 imap <c-x><c-j> <plug>(fzf-complete-file-ag)
 imap <c-x><c-l> <plug>(fzf-complete-line)
-
-" Advanced customization using autoload functions
-"inoremap <expr> <c-x><c-k> fzf#vim#complete#word({'left': '15%'})
-function! s:make_sentence(lines)
-	return substitute(join(a:lines), '^.', '\=toupper(submatch(0))', '').'.'
-endfunction
-inoremap <expr> <c-x><c-s> fzf#complete({
-	\ 'source':  'cat /usr/share/dict/words',
-	\ 'reducer': function('<sid>make_sentence'),
-	\ 'options': '--multi --reverse --margin 15%,0',
-	\ 'left':    20})
 "}}}
 " airline {{{
+Plugin 'vim-airline/vim-airline'
+Plugin 'vim-airline/vim-airline-themes'
 " Enable the list of buffers
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#whitespace#enabled = 1
@@ -509,6 +247,7 @@ let g:airline_powerline_fonts = 1
 "let g:airline#extensions#tabline#left_alt_sep = '|'
 " }}}
 " ctags{{{
+Plugin 'preservim/tagbar'
 nmap <F9> :TagbarToggle<CR>
 " tagbar markdown (markdown2ctags)
 let g:tagbar_type_markdown = {
@@ -535,23 +274,9 @@ let g:tagbar_type_r = {
 	\ ]
 \ }
 " }}}
-" neocomplete{{{
-" Disable AutoComplPop.
-"XXlet g:acp_enableAtStartup = 1
-" Use neocomplete.
-"XXlet g:neocomplete#enable_at_startup = 1
-" Use smartcase.
-"XXlet g:neocomplete#enable_smart_case = 1
-" Set minimum syntax keyword length.
-"XXlet g:neocomplete#sources#syntax#min_keyword_length = 3
-"XXlet g:neocomplete#lock_buffer_name_pattern = '\*ku\*'
-" }}}
 " ranger{{{
 function! RangeChooser()
 	let temp = tempname()
-	" The option "--choosefiles" was added in ranger 1.5.1. Use the next line
-	" with ranger 1.4.2 through 1.5.0 instead.
-	"exec 'silent !ranger --choosefile=' . shellescape(temp)
 	if has("gui_running")
 		exec 'silent !xterm -e ranger --choosefiles=' . shellescape(temp)
 	else
@@ -578,8 +303,18 @@ function! RangeChooser()
 endfunction
 command! -bar RangerChooser call RangeChooser()
 "nnoremap <leader>r :<C-U>RangerChooser<CR>
-"map <F2> :NERDTreeToggle<CR>
 map <F2> :<C-U>RangerChooser<CR>
 " }}}
-"
+" no distraction F11 {{{
+Plugin 'junegunn/goyo.vim'
+nnoremap <silent> <F11> :Goyo<cr>
+" }}}
+" solarized F12 {{{
+Plugin 'altercation/vim-colors-solarized'
+set t_Co=256
+" syntax on
+set background=dark	" often used with dark bg
+colorscheme solarized
+call togglebg#map("<F12>")
+" }}}
 " vim:foldmethod=marker:foldlevel=0
