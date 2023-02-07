@@ -4,8 +4,58 @@ All notable changes to my dotfiles repo will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 Releases will start from 2022.1.
+## [cleaning] 3.1.0 - 2023-02-07
+### Added
+- BioSyntax into cleaned vimrc.
+- (venv) hatch.
+#### emacs
+- links in ~/.emacs.d from ~/Sync/.emacs
+- emacs.stow.sh
+- consult-org-roam and consul-notes (I keep deft `M-s C-n`).
+- tzc binding with `C-x T `.
+- insert-emoji with `C-c E`.
+- dna-mode and pdb-mode `C-c t m `.
+- abbrev-mode `C-c t a`.
+- ox-hugo.
+- comint dynamic-complete-filename with `C-c <tab>`.
+- languagetool and lsp-ltex to test.
+- envrc (also tried direnv and bufferenv).
 
-## [vertico] - 2022-10-24
+### Removed
+- shorewall
+- xfce
+- vanilla-emacs
+#### emacs
+- synosaurus and goldendict (I picked sdvc).
+- xeft and notdeft.
+- themes like doom, zenburn, plan9, and espresso.
+- visual-regexp.
+- key-chord.
+- kind-icon.
+- paradox.
+- rainbow-delimiters.
+- typit.
+- exec-path-from-shell.
+- lsp-treemacs.
+- pip-requirements.
+- pyenv-mode.
+- pyvenv.
+- poetry.
+
+### Changed
+- recollindex do not skim ~/Sync/notes anymore.
+- fix: pass and mu4e PASSWORDSTORE .config/environment.d (was pam_environment).
+- fix: goldendict .config/environment.d.
+- (git) defaultBranch = main.
+- remove images from pdf with pdf_myreduce2.
+- organization between .functions and .aliases adding `wifiscan`.
+- snapshots into tmp PrtSc.
+- (direnv) support for poetry, pdm (convenient `pdm search`) and hatch.
+#### emacs
+- less `<f14>` binding in favor of `M-s` and `C-x`.
+- emacs-jupyter uses python3 in current venv.
+
+## [vertico] 3.0.0 - 2022-10-24
 ### Added
 - recoll.stow bash to make sure folders either exist or get created.
 - direnv.
@@ -59,7 +109,7 @@ Releases will start from 2022.1.
 - add poetry tracking mode `f14 t P`.
 - (root) emacs is emacs-vanilla.
 
-## [straight] - 2022-01-30
+## [straight] 2.1.0- 2022-01-30
 ### Added
 - New file ~/.function for function command in bash like `rga-fzf` for rip-grep-all.
 - smartd.conf in 4root.
@@ -123,7 +173,7 @@ Releases will start from 2022.1.
 - To work with emacs 27.1 (27.2).
 - Slow response in e.g. .bib (wc-mode -1).
 
-## [dropevil] - 2020-04-19
+## [dropevil] 2.0.0 - 2020-04-19
 ### Added
 - Define F14 `MenuKey` in Xmodmap for emacs modalka.
 - goldendict HOME set in ~/.pam_environment.
@@ -142,7 +192,7 @@ Releases will start from 2022.1.
 ### Removed
 - (emacs) evil, keychord and general.
 
-## [vanilla] - 2020-03-15
+## [vanilla] 1.0.0 - 2020-03-15
 ### Added
 - This **Changelog.md** file.
 - `povo()` YR forecast and `TNv()` in ~/.aliases.

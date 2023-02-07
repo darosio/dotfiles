@@ -1,5 +1,7 @@
 # Repository for $HOME/.dotfiles
 
+Version: "3.1.0"
+
 ## Requirements
 
 1. GNU stow 

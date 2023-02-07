@@ -1161,7 +1161,7 @@ completing-read prompter."
   (markdown-mode-hook . yas-minor-mode)
   :config
   (add-to-list 'hippie-expand-try-functions-list 'yas-hippie-try-expand)
-  (add-to-list 'yas-snippet-dirs "~/.emacs.d/yasnippets")
+  (setq yas-snippet-dirs '("~/.emacs.d/yasnippets"))
   (setq yas-triggers-in-field t
         yas-wrap-around-region t)     ;or [a-z] register
   (use-package yasnippet-snippets)

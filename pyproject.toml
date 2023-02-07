@@ -1,0 +1,103 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "dotfiles"
+description = 'My dotfiles including emacs, vim, etc.'
+readme = "README.md"
+requires-python = ">=3.7"
+license = "BSD-3-Clause"
+keywords = []
+authors = [
+  { name = "daniele arosio", email = "daniele.arosio@cnr.it" },
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.7",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+]
+dependencies = []
+version = "3.1.0"
+
+[project.urls]
+Documentation = "https://github.com/unknown/dotfiles#readme"
+Issues = "https://github.com/unknown/dotfiles/issues"
+Source = "https://github.com/unknown/dotfiles"
+
+[tool.hatch.envs.default]
+dependencies = ["commitizen < 2.40.1",
+             "pre-commit",
+             ]
+python = "3.10"
+
+
+[tool.hatch.envs.default.scripts]
+ch = "cz ch --incremental --unreleased-version HEAD"
+init =  ["pre-commit install",
+        "pre-commit install --hook-type commit-msg --hook-type pre-push"]
+bump = "cz bump --major-version-zero -ch {args}"  # e.g. "--increment PATCH", "--files-only", "--no-verify" to bypass pre-commit and commit-msg hooks
+
+[tool.commitizen]
+name = "cz_customize"
+version = "3.1.0"
+tag_format = "$version"
+version_files = [
+  "pyproject.toml:version",
+  "README.md:Version",
+  ]
+
+[tool.commitizen.customize]
+message_template = "{{change_type}}:{% if show_message %} {{message}}{% endif %}"
+example = """fix(parser): correct minor typos in code\n
+see the issue for details on the typos fixed\n
+closes issue #12
+"""
+schema = """
+<type>(<scope>): <subject>
+<BLANK LINE>
+<body>
+<BLANK LINE>
+(BREAKING CHANGE: )<footer>
+"""
+schema_pattern = "^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert|bump)(?:\\(([^()\r\n]*)\\)|\\()?(!)?:\\s(.*)?"
+bump_pattern = "^(BREAKING CHANGE|feat|fix|perf|refactor)"
+bump_map = {"^.+!:" = "MAJOR", "BREAKING CHANGE" = "MAJOR", "feat" = "MINOR", "fix" = "PATCH", "perf" = "PATCH", "refactor" = "PATCH"}
+change_type_order = ["BREAKING CHANGE", "Feat", "Fix", "Docs", "Style", "Perf", "Test", "Build", "CI/CD"]
+info_path = "cz_customize_info.txt"
+commit_parser = "^(?P<change_type>feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(?:\\((?P<scope>[^()\r\n]*)\\)|\\()?(?P<breaking>!)?:\\s(?P<message>.*)?"
+changelog_pattern = "^(feat|fix|docs|style|refactor|perf|test|build|ci)?(\\(.*\\))?(!)?"
+change_type_map = {"feat" = "Feat", "fix" = "Fix", "docs" = "Docs", "build" = "Build", "style" = "Style", "refactor" = "Refactor", "perf" = "Perf", "test" = "Test", "ci" = "CI/CD"}
+
+[[tool.commitizen.customize.questions]]
+type = "list"
+name = "change_type"
+choices = [
+{value = "feat", name = "feat: A new feature. Correlates with MINOR in SemVer"},
+{value = "fix", name = "fix: A bug fix. Correlates with PATCH in SemVer"},
+{value = "perf", name = "perf: A code change that improves performance. Correlates with PATCH in SemVer"},
+{value = "docs", name = "docs: Documentation only changes"},
+{value = "style", name = "style: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)"},
+{value = "refactor", name = "refactor: A code change that neither fixes a bug nor adds a feature"},
+{value = "test", name = "test: Adding missing or correcting existing tests"},
+{value = "build", name = "build: Changes that update the build system, development tools or external dependencies"},
+{value = "ci", name = "ci: Changes to our CI configuration files and scripts (example scopes: GitLabCI)"},
+{value = "revert", name = "revert: Reverting to previous commit(s)."}
+]
+message = "Select the type of change you are committing"
+
+[[tool.commitizen.customize.questions]]
+type = "input"
+name = "message"
+message = "Body."
+
+[[tool.commitizen.customize.questions]]
+type = "confirm"
+name = "show_message"
+message = "Do you want to add body message in commit?"
