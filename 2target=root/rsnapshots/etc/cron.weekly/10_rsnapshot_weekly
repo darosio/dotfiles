@@ -1,8 +1,8 @@
-#!/bin/sh
-
+#!/usr/bin/env sh
+#
 echo "### RSNAPSHOT WEEKLY ###"
 sudo mount /media/rsnapshots
-rsnapshot -v weekly > /tmp/rsnapshot.out 2>&1 || cat /tmp/rsnapshot.out 
-cat /tmp/rsnapshot.out 
+rsnapshot -v weekly > /tmp/rsnapshot.out 2>&1 || cat /tmp/rsnapshot.out
+cat /tmp/rsnapshot.out
 sudo umount /media/rsnapshots
 echo

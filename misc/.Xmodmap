@@ -13,7 +13,7 @@
 !add Mod5 = Mode_switch ISO_Level3_Shift
 
 !add Lock = Caps_Lock
-clear      lock 
+clear      lock
 clear   control
 clear      mod1
 clear      mod2

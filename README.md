@@ -4,15 +4,15 @@ Version: "3.2.0"
 
 ## Requirements
 
-1. GNU stow 
+1. GNU stow
 
 ## Usage
 
 to create symlink into $HOME folder:
 
 	cd ~/.dotfile
-	stow package-version 
-	
+	stow package-version
+
 for some packages a folder must be created first, e.g.:
 
     mkdir ~/.vim
@@ -29,6 +29,18 @@ stoe -t ~/ bash
 
 Remember to create folders and linkers where needed.
 
+Better use:
+
+*.stow.sh
+
+Requires:
+
+pipx install hatch
+
+Run:
+
+hatch run init
+
 ## submodule problem
 I had once and solved the detached head problem following:
 https://stackoverflow.com/questions/18770545/why-is-my-git-submodule-head-detached-from-master
@@ -42,7 +54,7 @@ or:
  $ cd <submodule-path>
     $ git checkout <branch>
     $ cd <parent-repo-path>
-    # <submodule-path> is here path releative to parent repo root
+    # <submodule-path> is here path relative to parent repo root
     # without starting path separator
     $ git config -f .gitmodules submodule.<submodule-path>.branch <branch>
 
@@ -139,4 +151,3 @@ Using emacs as editor serving also the following purposes:
   - notes (org-noter, ORB)
 - writing (latex, pandoc, org-ref)
 - git (magit)
-

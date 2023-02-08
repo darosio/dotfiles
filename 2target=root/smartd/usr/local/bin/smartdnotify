@@ -1,5 +1,5 @@
-#! /bin/sh
-
+#! /usr/bin/env sh
+#
 if ! ping -c1 www.google.com > /dev/null 2>&1; then
 	sleep 30
 fi
@@ -9,7 +9,7 @@ fi
 #$HOSTNAME smartd has detected $SMARTD_FAILTYPE error on $SMARTD_DEVICE
 sendmail -t << EOF
 To: danielepietroarosio@gmail.com
-Subject: SMART error ($SMARTD_FAILTYPE) detected on host: $HOSTNAME
+Subject: SMART error ($SMARTD_FAILTYPE) detected on host: $(hostname)
 
 $SMARTD_MESSAGE
 

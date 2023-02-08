@@ -3,13 +3,13 @@ project = ""
 shell = ""
 
 [dirs]
+cache = "/home/dan/.cache/hatch"
+data = "/home/dan/.local/share/hatch"
 project = []
 python = "isolated"
-data = "/home/dan/.local/share/hatch"
-cache = "/home/dan/.cache/hatch"
 
 [dirs.env]
-virtual=".hatch"
+virtual = ".hatch"
 
 [projects]
 
@@ -17,25 +17,25 @@ virtual=".hatch"
 repo = "main"
 
 [template]
-name = "daniele arosio"
 email = "daniele.arosio@cnr.it"
+name = "daniele arosio"
 
 [template.licenses]
-headers = true
 default = [
-    "BSD-3-Clause",
+  "BSD-3-Clause"
 ]
+headers = true
 
 [template.plugins.default]
-tests = true
 ci = true
 src-layout = true
+tests = true
 
 [terminal.styles]
-info = "bold"
-success = "bold cyan"
-error = "bold red"
-warning = "bold yellow"
-waiting = "bold magenta"
 debug = "bold"
+error = "bold red"
+info = "bold"
 spinner = "simpleDotsScrolling"
+success = "bold cyan"
+waiting = "bold magenta"
+warning = "bold yellow"

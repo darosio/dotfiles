@@ -1,5 +1,5 @@
-#!/bin/sh
-
+#!/usr/bin/env sh
+#
 (pass email/fbk | sudo openconnect --juniper sslgate.fbk.eu -u darosio --passwd-on-stdin) &
 pid=$!
 #while ping -c1 vigolana > /dev/null 2>&1;

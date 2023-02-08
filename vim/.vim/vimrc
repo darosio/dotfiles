@@ -57,7 +57,7 @@ set showmatch								" highlight matvching [{()}]
 set textwidth=79						" line wrapped after 80 columns
 set wrap										" wrap text line longer then 80 chars
 set linebreak								" do not break a word in two lines when wrapping
-" move vertically accross fake wrapped lines
+" move vertically across fake wrapped lines
 nnoremap j gj
 nnoremap k gk
 nnoremap gV `[v`]			" highlight inserted text during last INSERT mode
@@ -93,7 +93,7 @@ map <leader>to :tabonly<cr>
 map <leader>tc :tabclose<cr>
 map <leader>tm :tabmove<cr>
 " Opens a new tab with the current buffer's path
-" Super useful when editing files in the same directory
+" Super useful when editing files in the same directory"
 map <leader>te :tabedit <c-r>=expand("%:p:h")<cr>/
 " Return to last edit position when opening files (You want this!)
 autocmd BufReadPost *
@@ -119,7 +119,7 @@ set wildignore+=*.egg-info/**
 nnoremap <F5> :w<CR> :silent make<CR> :redraw!<CR>
 inoremap <F5> <Esc>:w<CR>:silent make<CR> :redraw!<CR>
 vnoremap <F5> :<C-U>:w<CR>:silent make<CR> :redraw!<CR>
-" Searching	
+" Searching
 set ignorecase		" ignore case
 set smartcase		" try to be smart
 set incsearch		" search as characters are entered
@@ -295,7 +295,7 @@ function! RangeChooser()
 	endif
 	" Edit the first item.
 	exec 'edit ' . fnameescape(names[0])
-	" Add any remaning items to the arg list/buffer list.
+	" Add any renaming items to the arg list/buffer list.
 	for name in names[1:]
 		exec 'argadd ' . fnameescape(name)
 	endfor

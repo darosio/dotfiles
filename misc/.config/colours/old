@@ -1,15 +1,15 @@
 ! -------------------------------------------------
-! file:     .colours/old                           
-! author:   jason ryan - http://jasonwryan.com/    
+! file:     .colours/old
+! author:   jason ryan - http://jasonwryan.com/
 ! vim:enc=utf-8:nu:ai:si:et:ts=4:sw=4:ft=xdefaults:
 ! -------------------------------------------------
 
 !! jwr old
- 
+
 !black
 *color0: #262729
 *color8: #554444
- 
+
 !red
 *color1: #FF6666
 *color9: #FF8080

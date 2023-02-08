@@ -25,7 +25,7 @@
 
 %%% PREAMBLE
 
-\documentclass[12pt,a4paper]{letter} 
+\documentclass[12pt,a4paper]{letter}
 \pagestyle{empty}
 \usepackage{ifthen}
 \usepackage{graphicx}
@@ -34,11 +34,11 @@
 
 %%% MARGINS ETC.
 
-\setlength{\textwidth}{160mm}		% A4 with 35mm margin	
+\setlength{\textwidth}{160mm}		% A4 with 35mm margin
 \setlength{\textheight}{235mm}		% A4
-\setlength{\hoffset}{-1in}          % To compensate default margins		
-\setlength{\voffset}{-1in}          % To compensate default margins			
-\setlength{\topmargin}{-1.8in}      % To compensate topmargin of letter pagestyle 		
+\setlength{\hoffset}{-1in}          % To compensate default margins
+\setlength{\voffset}{-1in}          % To compensate default margins
+\setlength{\topmargin}{-1.8in}      % To compensate topmargin of letter pagestyle
 \setlength{\oddsidemargin}{35mm}
 \setlength{\evensidemargin}{35mm}
 
@@ -46,9 +46,9 @@
 
 %%% DECLARATIONS
 
-\newcommand{\norletterhead}[1] {  
+\newcommand{\norletterhead}[1] {
   \ifthenelse{\equal{#1}{pdf}}
-    {\parbox{185mm}{\hspace{-20mm} 
+    {\parbox{185mm}{\hspace{-20mm}
      \includegraphics{nordita_letterhead.pdf} \vspace*{15mm}}}{}
   \ifthenelse{\equal{#1}{eps}}
     {\parbox{185mm}{\hspace{-20mm}

@@ -18,7 +18,7 @@ papersize: a4paper
 
 closing: thank you so much
 
-header-includes: \usepackage{wallpaper} 
+header-includes: \usepackage{wallpaper}
 				 \ULCornerWallPaper{1.0}{$HOME/.pandoc/carta/IBF-1.pdf}
 				 \date{\flushleft\today}
 

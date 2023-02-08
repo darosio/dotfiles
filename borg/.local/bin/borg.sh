@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 #
 out=/tmp/$(basename "$0")-$(date +%d%H%M%S)
 REPOSITORY=/data/borg

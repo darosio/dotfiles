@@ -59,5 +59,3 @@ hi DiffChange guifg=#7fbdff guibg=#425c78
 hi DiffText guifg=#8ae234 guibg=#4e9a06
 
 hi SpellBad gui=undercurl guisp=#f02020
-
-

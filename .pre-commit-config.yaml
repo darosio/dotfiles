@@ -1,33 +1,39 @@
-exclude: ^src/clophfit/old/.
-ci:
-  autoupdate_commit_msg: "chore: update pre-commit hooks"
-  autofix_commit_msg: "style: pre-commit fixes"
-
 repos:
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
-    hooks:
-      - id: check-added-large-files # hyper
-      - id: check-case-conflict
-      - id: check-merge-conflict
-      - id: check-symlinks
-      - id: destroyed-symlinks
-      - id: check-yaml # hyper
-      - id: check-toml # hyper
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.4.0
+  hooks:
+  - id: check-added-large-files
+  - id: check-case-conflict
+  - id: check-docstring-first
+  - id: check-executables-have-shebangs
+  - id: check-shebang-scripts-are-executable
+  - id: check-merge-conflict
+  - id: check-symlinks
+  - id: destroyed-symlinks
+  - id: check-yaml
+  - id: check-toml
       # - id: debug-statements
-      # - id: end-of-file-fixer # hyper
-      - id: mixed-line-ending
-      - id: detect-private-key
-      # - id: trailing-whitespace # hyper
+  - id: end-of-file-fixer
+  - id: mixed-line-ending
+  - id: detect-private-key
+  - id: trailing-whitespace
 
-  - repo: https://github.com/Yelp/detect-secrets
-    rev: v1.4.0
-    hooks:
-    - id: detect-secrets
-      args: ['--baseline', '.secrets.baseline', '--exclude-files', 'emacs/.emacs.d/straight/versions/default.el','--exclude-files', 'goldendict/.goldendict/config']
-      exclude: .hatch
-      
+- repo: https://github.com/Yelp/detect-secrets
+  rev: v1.4.0
+  hooks:
+  - id: detect-secrets
+    args: [--baseline, .secrets.baseline, --exclude-files, emacs/.emacs.d/straight/versions/default.el, --exclude-files, goldendict/.goldendict/config]
+    exclude: .hatch
 
+- repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
+  rev: v2.6.0
+  hooks:
+  - id: pretty-format-ini
+    args: [--autofix]
+  - id: pretty-format-yaml
+    args: [--autofix, --indent, '2']
+  - id: pretty-format-toml
+    args: [--autofix]
   # - repo: https://github.com/charliermarsh/ruff-pre-commit
   #   rev: "v0.0.241"
   #   hooks:
@@ -67,19 +73,20 @@ repos:
   #       additional_dependencies: [flake8-bandit, flake8-rst-docstrings]
   #       require_serial: true
 
-  # - repo: https://github.com/codespell-project/codespell
-  #   rev: v2.2.2
-  #   hooks:
-  #     - id: codespell
+- repo: https://github.com/codespell-project/codespell
+  rev: v2.2.2
+  hooks:
+  - id: codespell
+    exclude: vim/.vim/plugin|ranger/.config/ranger|vim/.vim/vimrc|goldendict/.goldendict/config
 
-  # - repo: https://github.com/shellcheck-py/shellcheck-py
-  #   rev: v0.9.0.2
-  #   hooks:
-  #     - id: shellcheck
+# - repo: https://github.com/shellcheck-py/shellcheck-py
+#   rev: v0.9.0.2
+#   hooks:
+#   - id: shellcheck
 
-  - repo: https://github.com/commitizen-tools/commitizen
-    rev: v2.40.0
-    hooks:
-      - id: commitizen
-      - id: commitizen-branch
-        stages: [push]
+- repo: https://github.com/commitizen-tools/commitizen
+  rev: v2.40.0
+  hooks:
+  - id: commitizen
+  - id: commitizen-branch
+    stages: [push]

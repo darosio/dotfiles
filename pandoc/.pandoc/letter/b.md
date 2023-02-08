@@ -32,19 +32,19 @@ include-after: Sincerely,
     \vspace{24pt}
     \newline
     \includegraphics[scale=0.6]{$HOME/.pandoc/firma/firma.pdf}
-    \newline \hspace*{12mm} Daniele Arosio 
+    \newline \hspace*{12mm} Daniele Arosio
 
-geometry: 
+geometry:
     a4paper,
     mag=1000,truedimen,
     left=25truemm,top=40truemm,right=20truemm,bottom=20truemm
 
-header-includes: 
-    \usepackage{wallpaper} 
+header-includes:
+    \usepackage{wallpaper}
     \ULCornerWallPaper{0.6}{/home/dan/docs/arte/Cover/cnr/ll.png}
     \usepackage{marginnote}
-    \usepackage{background} 
-    \setlength{\parindent}{0pt} 
+    \usepackage{background}
+    \setlength{\parindent}{0pt}
     \SetBgScale{1}
     \SetBgColor{black}
     \SetBgAngle{0}
@@ -82,10 +82,10 @@ Written, informed consent was taken from the patient/parents/legal guardians/nex
 The manuscript is original work of all authors.
 All authors made a significant contribution to this study.
 This manuscript has not been submitted for publication; it has not been accepted for publication and has not been published in any other journal.
-All authors have read and approved the final version of the manuscript. 
+All authors have read and approved the final version of the manuscript.
 
 
-The manuscript was presented at: (if required) 
+The manuscript was presented at: (if required)
 [If the manuscript was presented at a meeting or conference, specify the complete name of the meeting (spell out association names), the city where it was held, and the exact date on which the paper was presented.]
 
 [Full conference name, City, Country, date]

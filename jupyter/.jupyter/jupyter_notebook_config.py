@@ -44,13 +44,13 @@ c = get_config()
 # c.NotebookApp.keyfile = ''
 
 # Use a regular expression for the Access-Control-Allow-Origin header
-# 
+#
 # Requests from an origin matching the expression will get replies with:
-# 
+#
 #     Access-Control-Allow-Origin: origin
-# 
+#
 # where `origin` is the origin of the request.
-# 
+#
 # Ignored if allow_origin is set.
 # c.NotebookApp.allow_origin_pat = ''
 
@@ -61,7 +61,7 @@ c = get_config()
 # IPYTHONDIR/nbextensions
 # c.NotebookApp.nbextensions_path = []
 
-# 
+#
 # c.NotebookApp.file_to_run = ''
 
 # Whether to open in a browser after starting. The specific browser used is
@@ -79,31 +79,31 @@ c = get_config()
 # The random bytes used to secure cookies. By default this is a new random
 # number every time you start the Notebook. Set it to a value in a config file
 # to enable logins to persist across server sessions.
-# 
+#
 # Note: Cookie secrets should be kept private, do not share config files with
 # cookie_secret stored in plaintext (you can read the value from a file).
 # c.NotebookApp.cookie_secret = b''
 
 # Whether to enable MathJax for typesetting math/TeX
-# 
+#
 # MathJax is the javascript library IPython uses to render math/LaTeX. It is
 # very large, so you may want to disable it if you have a slow internet
 # connection, or for offline use of the notebook.
-# 
+#
 # When disabled, equations etc. will appear as their untransformed TeX source.
 # c.NotebookApp.enable_mathjax = True
 
 # Hashed password to use for web authentication.
-# 
+#
 # To generate, type in a python/IPython shell:
-# 
+#
 #   from IPython.lib import passwd; passwd()
-# 
+#
 # The string should be of the form type:salt:hashed-password.
 # c.NotebookApp.password = ''
 
 # Extra paths to search for serving static files.
-# 
+#
 # This allows adding javascript/css to be available from the notebook server
 # machine, or overriding individual files in the IPython
 # c.NotebookApp.extra_static_paths = []
@@ -118,7 +118,7 @@ c = get_config()
 # c.NotebookApp.profile = 'default'
 
 # The base URL for the notebook server.
-# 
+#
 # Leading and trailing slashes can be omitted, and will automatically be added.
 # c.NotebookApp.base_url = '/'
 
@@ -149,14 +149,14 @@ c.NotebookApp.browser = u'/usr/bin/chromium %s'
 # c.NotebookApp.verbose_crash = False
 
 # Set the Access-Control-Allow-Origin header
-# 
+#
 # Use '*' to allow any origin to access your server.
-# 
+#
 # Takes precedence over allow_origin_pat.
 # c.NotebookApp.allow_origin = ''
 
 # Path to an extra config file to load.
-# 
+#
 # If specified, load this config file in addition to any other IPython config.
 # c.NotebookApp.extra_config_file = ''
 
@@ -239,7 +239,7 @@ c.NotebookApp.browser = u'/usr/bin/chromium %s'
 
 # If true, IPython will populate the user namespace with numpy, pylab, etc. and
 # an ``import *`` is done from numpy and pylab, when using pylab mode.
-# 
+#
 # When False, pylab mode should not import any names into the user namespace.
 # c.IPKernelApp.pylab_import_all = True
 
@@ -247,7 +247,7 @@ c.NotebookApp.browser = u'/usr/bin/chromium %s'
 # c.IPKernelApp.displayhook_class = 'IPython.kernel.zmq.displayhook.ZMQDisplayHook'
 
 # The Kernel subclass to be used.
-# 
+#
 # This should allow easy re-use of the IPKernelApp entry point to configure and
 # launch kernels other than IPython's own.
 # c.IPKernelApp.kernel_class = 'IPython.kernel.zmq.ipkernel.Kernel'
@@ -262,7 +262,7 @@ c.NotebookApp.browser = u'/usr/bin/chromium %s'
 # matplotlib backend and loop integration.
 # c.IPKernelApp.pylab = None
 
-# 
+#
 # c.IPKernelApp.transport = 'tcp'
 
 # The date format used by logging formatters for %(asctime)s
@@ -275,7 +275,7 @@ c.NotebookApp.browser = u'/usr/bin/chromium %s'
 # c.IPKernelApp.shell_port = 0
 
 # JSON file in which to store connection info [default: kernel-<pid>.json]
-# 
+#
 # This file will contain the IP, ports, and authentication key needed to connect
 # clients to this kernel. By default, this file will be created in the security
 # dir of the current profile, but can be specified by absolute path.
@@ -294,7 +294,7 @@ c.NotebookApp.browser = u'/usr/bin/chromium %s'
 # Whether to overwrite existing config files when copying
 # c.IPKernelApp.overwrite = False
 
-# 
+#
 # c.IPKernelApp.parent_appname = ''
 
 # Create a massive crash report when IPython encounters what may be an internal
@@ -308,7 +308,7 @@ c.NotebookApp.browser = u'/usr/bin/chromium %s'
 # c.IPKernelApp.interrupt = 0
 
 # Path to an extra config file to load.
-# 
+#
 # If specified, load this config file in addition to any other IPython config.
 # c.IPKernelApp.extra_config_file = ''
 
@@ -332,7 +332,7 @@ c.NotebookApp.browser = u'/usr/bin/chromium %s'
 # Start logging to the given file in append mode.
 # c.ZMQInteractiveShell.logappend = ''
 
-# 
+#
 # c.ZMQInteractiveShell.ipython_dir = ''
 
 # 'all', 'last', 'last_expr' or 'none', specifying which nodes should be run
@@ -342,13 +342,13 @@ c.NotebookApp.browser = u'/usr/bin/chromium %s'
 # Show rewritten input, e.g. for autocall.
 # c.ZMQInteractiveShell.show_rewritten_input = True
 
-# 
+#
 # c.ZMQInteractiveShell.wildcards_case_sensitive = True
 
-# 
+#
 # c.ZMQInteractiveShell.separate_in = '\n'
 
-# 
+#
 # c.ZMQInteractiveShell.object_info_string_level = 0
 
 # A list of ast.NodeTransformer subclass instances, which will be applied to
@@ -358,10 +358,10 @@ c.NotebookApp.browser = u'/usr/bin/chromium %s'
 # Deprecated, use PromptManager.in_template
 # c.ZMQInteractiveShell.prompt_in1 = 'In [\\#]: '
 
-# 
+#
 # c.ZMQInteractiveShell.separate_out = ''
 
-# 
+#
 # c.ZMQInteractiveShell.history_length = 10000
 
 # Enable magic commands to be called without the leading %.
@@ -392,7 +392,7 @@ c.NotebookApp.browser = u'/usr/bin/chromium %s'
 # Deprecated, use PromptManager.out_template
 # c.ZMQInteractiveShell.prompt_out = 'Out[\\#]: '
 
-# 
+#
 # c.ZMQInteractiveShell.debug = False
 
 # Set the size of the output cache.  The default is 1000, you can change it
@@ -403,7 +403,7 @@ c.NotebookApp.browser = u'/usr/bin/chromium %s'
 # than working
 # c.ZMQInteractiveShell.cache_size = 1000
 
-# 
+#
 # c.ZMQInteractiveShell.readline_remove_delims = '-/~'
 
 # Save multi-line entries as one entry in readline history
@@ -412,13 +412,13 @@ c.NotebookApp.browser = u'/usr/bin/chromium %s'
 # Don't call post-execute functions that have failed in the past.
 # c.ZMQInteractiveShell.disable_failing_post_execute = False
 
-# 
+#
 # c.ZMQInteractiveShell.quiet = False
 
-# 
+#
 # c.ZMQInteractiveShell.xmode = 'Context'
 
-# 
+#
 # c.ZMQInteractiveShell.separate_out2 = ''
 
 # Make IPython automatically call any callable object even if you didn't type
@@ -429,7 +429,7 @@ c.NotebookApp.browser = u'/usr/bin/chromium %s'
 # no arguments are present).
 # c.ZMQInteractiveShell.autocall = 0
 
-# 
+#
 # c.ZMQInteractiveShell.readline_parse_and_bind = ['tab: complete', '"\\C-l": clear-screen', 'set show-all-if-ambiguous on', '"\\C-o": tab-insert', '"\\C-r": reverse-search-history', '"\\C-s": forward-search-history', '"\\C-p": history-search-backward', '"\\C-n": history-search-forward', '"\\e[A": history-search-backward', '"\\e[B": history-search-forward', '"\\C-k": kill-line', '"\\C-u": unix-line-discard']
 
 # Start logging to the default log file.
@@ -440,7 +440,7 @@ c.NotebookApp.browser = u'/usr/bin/chromium %s'
 #------------------------------------------------------------------------------
 
 # Manages a single kernel in a subprocess on this host.
-# 
+#
 # This version starts kernels with Popen.
 
 # KernelManager will inherit config from: ConnectionFileMixin
@@ -453,7 +453,7 @@ c.NotebookApp.browser = u'/usr/bin/chromium %s'
 # Should we autorestart the kernel if it dies.
 # c.KernelManager.autorestart = False
 
-# 
+#
 # c.KernelManager.transport = 'tcp'
 
 # The Popen Command to launch the kernel. Override this if you have a custom
@@ -469,10 +469,10 @@ c.NotebookApp.browser = u'/usr/bin/chromium %s'
 #------------------------------------------------------------------------------
 
 # An object to manage the profile directory and its resources.
-# 
+#
 # The profile directory is used by all IPython applications, to manage
 # configuration, logging and security.
-# 
+#
 # This object knows how to find, create and manage these directories. This
 # should be used by any code that wants to handle profiles.
 
@@ -485,27 +485,27 @@ c.NotebookApp.browser = u'/usr/bin/chromium %s'
 #------------------------------------------------------------------------------
 
 # Object for handling serialization and sending of messages.
-# 
+#
 # The Session object handles building messages and sending them with ZMQ sockets
 # or ZMQStream objects.  Objects can communicate with each other over the
 # network via Session objects, and only need to work with the dict-based IPython
 # message spec. The Session will handle serialization/deserialization, security,
 # and metadata.
-# 
+#
 # Sessions support configurable serialization via packer/unpacker traits, and
 # signing with HMAC digests via the key/keyfile traits.
-# 
+#
 # Parameters ----------
-# 
+#
 # debug : bool
 #     whether to trigger extra debugging statements
 # packer/unpacker : str : 'json', 'pickle' or import_string
 #     importstrings for methods to serialize message parts.  If just
 #     'json' or 'pickle', predefined JSON and pickle packers will be used.
 #     Otherwise, the entire importstring must be used.
-# 
+#
 #     The functions must accept at least valid JSON input, and output *bytes*.
-# 
+#
 #     For example, to use msgpack:
 #     packer = 'msgpack.packb', unpacker='msgpack.unpackb'
 # pack/unpack : callables
@@ -535,7 +535,7 @@ c.NotebookApp.browser = u'/usr/bin/chromium %s'
 # c.Session.copy_threshold = 65536
 
 # The maximum number of digests to remember.
-# 
+#
 # The digest history will be culled when it exceeds this value.
 # c.Session.digest_history_size = 65536
 
@@ -575,12 +575,12 @@ c.NotebookApp.browser = u'/usr/bin/chromium %s'
 # An object to store configuration of the inline backend.
 
 # Close all figures at the end of each cell.
-# 
+#
 # When True, ensures that each cell starts with no active figures, but it also
 # means that one must keep track of references in order to edit or redraw
 # figures in subsequent cells. This mode is ideal for the notebook, where
 # residual plots from other cells might be surprising.
-# 
+#
 # When False, one must call figure() to create new figures. This means that
 # gcf() and getfigs() can reference figures created in other cells, and the
 # active figure can continue to be edited with pylab/pyplot methods that
@@ -596,7 +596,7 @@ c.NotebookApp.browser = u'/usr/bin/chromium %s'
 # c.InlineBackend.figure_formats = {'png'}
 
 # Extra kwargs to be passed to fig.canvas.print_figure.
-# 
+#
 # Logical examples include: bbox_inches, quality (for jpeg figures), etc.
 # c.InlineBackend.print_figure_kwargs = {'bbox_inches': 'tight'}
 
@@ -611,7 +611,7 @@ c.NotebookApp.browser = u'/usr/bin/chromium %s'
 
 # MappingKernelManager will inherit config from: MultiKernelManager
 
-# 
+#
 # c.MappingKernelManager.root_dir = '/home/dan'
 
 # The kernel manager class.  This is configurable to allow subclassing of the
@@ -632,19 +632,19 @@ c.NotebookApp.browser = u'/usr/bin/chromium %s'
 # FileNotebookManager will inherit config from: NotebookManager
 
 # Automatically create a Python script when saving the notebook.
-# 
+#
 # For easier use of import, %run and %load across notebooks, a <notebook-
 # name>.py script will be created next to any <notebook-name>.ipynb on each
 # save.  This can also be set with the short `--script` flag.
 # c.FileNotebookManager.save_script = False
 
-# 
+#
 # c.FileNotebookManager.notebook_dir = '/home/dan'
 
 # The directory name in which to keep notebook checkpoints
-# 
+#
 # This is a path relative to the notebook's own directory.
-# 
+#
 # By default, it is .ipynb_checkpoints
 # c.FileNotebookManager.checkpoint_dir = '.ipynb_checkpoints'
 

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 #
 mount="/mnt/rsnapshots"
 #if grep -qs "$mount" /proc/mounts; then

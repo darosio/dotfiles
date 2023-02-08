@@ -58,7 +58,7 @@
 		(goto-char (point-max))
 		(eval-print-last-sexp)))
 	(load bootstrap-file nil 'nomessage))
-  
+
   (declare-function straight-use-package "straight")
   (straight-use-package 'use-package)
   (eval-when-compile
@@ -1072,7 +1072,7 @@ completing-read prompter."
 	  (interactive)
 	  (let ((embark-quit-after-action nil))
 		(embark-act)))
-	
+
 	:config (setq embark-indicators
 				  '(embark-which-key-indicator
 					embark-highlight-indicator
@@ -1316,7 +1316,7 @@ completing-read prompter."
 	(setq mu4e-change-filenames-when-moving t) ; rename files when moving (Needed for mbsync)
 	(setq mu4e-completing-read-function 'completing-read) ; use convenient completion for navigation =j o=
 	(setq mu4e-compose-keep-self-cc nil) ;default
-	(setq mu4e-context-policy 'pick-first) ; start with the first (default) context; 
+	(setq mu4e-context-policy 'pick-first) ; start with the first (default) context;
 	(setq mu4e-get-mail-command "mbsync -a")
 	(setq mu4e-headers-include-related nil) ; =W= to view threads
 	(setq mu4e-headers-skip-duplicates nil) ; =V= to skip duplicates
@@ -1705,7 +1705,7 @@ completing-read prompter."
 			 "|%t|%?|")
 
 			("a" "Experimental appointments" entry (file+headline da-gtd "Appointments") "* %? %:subject\n SCHEDULED:%^T--%^T\n %a\n")
-			
+
 			("h" "new Habit" entry (file+headline da-gtd "Habits")
 			 "* TODO %? \nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:REPEAT_TO_STATE: TODO\n:END:\n%a")
 			("i" "Idea" entry (file "~/Sync/box/org/ideas.org") "* %^{Idea} \n%u\n%a\n%?" :empty-lines 1)
@@ -1796,7 +1796,7 @@ completing-read prompter."
 	  ;; For tag searches ignore tasks with scheduled and deadline dates FIXME better control this in each agenda custom view
 	  (setq org-agenda-tags-todo-honor-ignore-options t) ; needed to
 	  ;; avoid seeing missed tasks in my unscheduled view; next tasks in
-	  ;; daily review view; in w but W is ok; 
+	  ;; daily review view; in w but W is ok;
 	  ;; all properties are inherited
 	  ;; (setq org-use-property-inheritance t) ;; XXX:  to be used with STYLE, e.g. habit not scheduled
 	  ;; (defun nemacs-org-agenda-startup ()
@@ -1938,7 +1938,7 @@ completing-read prompter."
 			   ((org-agenda-include-diary nil)
 				(org-agenda-sorting-strategy '(time-up habit-up tag-down category-keep priority-down))
 				(org-agenda-compact-blocks t)))
-			  
+
 			  ("L" "Journal"
 			   tags "*"
 			   ((org-agenda-files '("~/Sync/box/org/journal.org")))
@@ -2526,7 +2526,7 @@ completing-read prompter."
 					 ("PERSONAL" :foreground "orange")
 					 ("proj" :weight bold)
 					 ("@fbk" :weight italic))
-	 org-fast-tag-selection-single-key t ; 'expert does't show
+	 org-fast-tag-selection-single-key t ; 'expert doesn't show
 	 org-fast-tag-selection-include-todo nil
 	 org-tags-column -82
 	 org-support-shift-select t)
@@ -2723,7 +2723,7 @@ completing-read prompter."
 	:bind
 	("<f14> x w" . wordnut-lookup-current-word)
 	("<f14> x W" . wordnut-search))
-  (use-package sdcv						;because offline and rich (overwelming)
+  (use-package sdcv						;because offline and rich (overwhelming)
 	:bind
 	("<f14> x s" . sdcv-search-pointer)
 	(:map sdcv-mode-map
@@ -3454,7 +3454,7 @@ Marked 2 is a mac app that renders markdown."
 	:after python
 	:init
 	(envrc-global-mode))
-  
+
   (use-package python-pytest			;install projectile
 	:after (python)
 	:bind (:map python-mode-map

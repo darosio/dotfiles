@@ -17,13 +17,13 @@ zap =
     git commit -m "updated `date -I`"
     git push
 #adding remote upstream
-#zap = 
+#zap =
 #    git pull upstream
 #    git merge upstream/master
 #    git push origin master
 
 #[.progs]
-#checkout = 
+#checkout =
 #    git clone ssh://swan/~/.progs
 #    cd $MR_REPO
 #    git annex init

@@ -78,7 +78,7 @@ Releases will start from 2022.1.
 - additional (prog) modes.
 - consult-completion-in-region and corfu(-doc) manually triggered.
 - lsp-mode (hook lsp activation after poetry if pyproject.toml exists).
-  Remeber to install (using poetry) python-lsp-server and lsp-mypy.
+  Remember to install (using poetry) python-lsp-server and lsp-mypy.
 - treemacs
 - devdocs.
 - experimenting xeft notdeft and consult-notes.
@@ -87,7 +87,7 @@ Releases will start from 2022.1.
 - pocket-reader.
 
 ### Removed
-- user-requirements* files as pip-tools is superseded by poetry and pipx. 
+- user-requirements* files as pip-tools is superseded by poetry and pipx.
 - Config of pam_environment.
 #### emacs
 - Completions with ivy, swiper counsel.
@@ -145,7 +145,7 @@ Releases will start from 2022.1.
 - org-lint
 
 ### Changed
-- **PS1** multi line prompt. 
+- **PS1** multi line prompt.
 - **brightnessctl** for light control.
 - netctl for eduroam (hash:iconv -t utf16le | openssl md4).
 - .bash .profile and .gitconfig.
@@ -190,7 +190,7 @@ Releases will start from 2022.1.
 - (emacs) Smart mode line.
 - (emacs) Electric and aggressive indent.
 
-### Changed 
+### Changed
 - CapsLock-Ctrl swapped
 - (emacs) Use emacs keybindings instead of evil.
 - (emacs) Several **which-key-add-key-based-replacements**.

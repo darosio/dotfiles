@@ -11,7 +11,7 @@ return-address:
 
 documentclass: letter
 
-include-before: 
+include-before:
     \begin{letter}{
     | OBJ
     | non so}
@@ -28,7 +28,7 @@ geometry: a4paper,mag=1000,truedimen,
     left=1.4truein,top=2truein,right=0.8truein,
     bottom=0.8truein
 
-header-includes: 
+header-includes:
     \topmargin -15mm
     \def\wsumathlogo{\hspace*{-28mm} \vspace{0mm} \includegraphics[scale=0.1]{/home/dan/docs/arte/Cover/cnr/logo.png}}
     \usepackage{fancyhdr}
@@ -36,12 +36,12 @@ header-includes:
     \definecolor{cnr}{cmyk}{1,.7,.08,.54}
     \pagestyle{fancy}
     \fancyhf{}
-    \lhead{\wsumathlogo \color{cnr} \fontspec{GeosansLight} 
+    \lhead{\wsumathlogo \color{cnr} \fontspec{GeosansLight}
 		\Large \hspace*{6mm} \vspace*{-10mm} National Research Council of Italy}
     \rhead{Institute of Biophysics \\
 		{\scriptsize Bruno Kessler Foundation -- Via Sommarive 18 -- 38138 Trento, Italy\\
 		Daniele Arosio -- +39 0461 314607 -- daniele.arosio@cnr.it}}
-	
+
 
 date: \date{\flushleft\today}
 

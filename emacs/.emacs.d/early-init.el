@@ -1,4 +1,4 @@
-;; (setq site-run-file nil)		   ; No site-wide run-time initializations. 
+;; (setq site-run-file nil)		   ; No site-wide run-time initializations.
 (setq inhibit-default-init t)	   ; No site-wide default library
 ;;  Very large threshold for garbage collector during init
 (setq gc-cons-threshold most-positive-fixnum)

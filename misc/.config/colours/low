@@ -1,6 +1,6 @@
 ! -------------------------------------------------
-! file:     .colours/low contrast                           
-! author:   jason ryan - http://jasonwryan.com/    
+! file:     .colours/low contrast
+! author:   jason ryan - http://jasonwryan.com/
 ! vim:enc=utf-8:nu:ai:si:et:ts=4:sw=4:ft=xdefaults:
 ! -------------------------------------------------
 
@@ -31,4 +31,3 @@
 !white
 *color7: #808080
 *color15: #cdcdcd
-

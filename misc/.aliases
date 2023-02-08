@@ -4,7 +4,7 @@ alias lg='git annex list --allrepos'
 alias du.='du -ksh .[!.]* * | sort -h'
 export EDITOR='emacsclient -c -a=""'
 # for data management in annexes
-copythistree() { 
+copythistree() {
     find . -type d -exec mkdir -p $1/{} \;
     }
 # $1: folder in analyses
@@ -33,7 +33,7 @@ ga-dup() {
 }
 ga-duprm() {
   ga-dup | awk -vRS= -vFS='\n' '{for (i = 2; i <= NF; i++) print $i}' \
-   | cut -d ':' -f 2- 
+   | cut -d ':' -f 2-
 }
 ga-duprmgit() {
   ga-duprm | xargs -d '\n' git rm
@@ -46,7 +46,7 @@ alias paclist-time='expac --timefmt="%Y-%m-%d %T" "%l\t%n" | sort'
 alias paclist-size_d='expac -HM "%011m\t%-20n\t%10d" $( comm -23 <(pacman -Qqen|sort) <(pacman -Qqg base base-devel|sort)  ) | sort -n'
 paclist-size() {
     expac -s "%-30n %m" | sort -hk 2 | \
-        awk '{printf "%s %.0f MiB\n", $1, $2/1024/1024}' | column -t 
+        awk '{printf "%s %.0f MiB\n", $1, $2/1024/1024}' | column -t
 }
 
 alias t='tree'
@@ -75,18 +75,18 @@ rr() {
         exit
     fi
 }
-function ranger-cd {                                                               
-    tempfile="$(mktemp -t tmp.XXXXXX)"                                             
-    /usr/bin/ranger --choosedir="$tempfile" "${@:-$(pwd)}"                         
-    test -f "$tempfile" &&                                                         
-    if [ "$(cat -- "$tempfile")" != "$(echo -n `pwd`)" ]; then                     
-        cd -- "$(cat "$tempfile")"                                                 
-    fi                                                                             
-    rm -f -- "$tempfile"                                                           
-}                                                                                  
-# This binds Ctrl-O to ranger-cd:                                                  
-bind '"\C-o":"ranger-cd\C-m"' 
-bind '"\C-f":"rifle `fzf -e`\C-m"' 
+function ranger-cd {
+    tempfile="$(mktemp -t tmp.XXXXXX)"
+    /usr/bin/ranger --choosedir="$tempfile" "${@:-$(pwd)}"
+    test -f "$tempfile" &&
+    if [ "$(cat -- "$tempfile")" != "$(echo -n `pwd`)" ]; then
+        cd -- "$(cat "$tempfile")"
+    fi
+    rm -f -- "$tempfile"
+}
+# This binds Ctrl-O to ranger-cd:
+bind '"\C-o":"ranger-cd\C-m"'
+bind '"\C-f":"rifle `fzf -e`\C-m"'
 
 # Bash's binds to <F1>
 bind '"\e[24~": "urxvt &\n"'
@@ -172,7 +172,7 @@ alias qfn='firefox -qfn'
 pdf_myReduce() {
  gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dNOPAUSE -dQUIET -dBATCH -dPDFSETTINGS=/ebook -sOutputFile=$2 $1
 }
-# -dDownsampleColorImages=true -dColorImageResolution=150 
+# -dDownsampleColorImages=true -dColorImageResolution=150
 pdf_myReduce2() {
  gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.5 -dFILTERIMAGE -dNOPAUSE -dQUIET -dBATCH -dPDFSETTINGS=/screen -sOutputFile=$2 $1
 }

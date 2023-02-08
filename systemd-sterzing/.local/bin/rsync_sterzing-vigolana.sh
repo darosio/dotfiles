@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 #
 out=/tmp/$(basename "$0")-$(date +%d%H%M%S)
 rsnapshots_path=/mnt/rsnapshots
@@ -45,7 +45,7 @@ thishost=$(uname -n)
 # umount rsnapshots ?
 {
     echo
-    echo "### Clean Syncronizations (syncthing) ###"
+    echo "### Clean Synchronizations (syncthing) ###"
     find ~/Sync/ -name \*sync-conflict\* -exec ls -lF	{} +
 } >> "$out" 2>&1
 

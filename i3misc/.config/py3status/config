@@ -86,7 +86,7 @@ script_path = "~/conflict.sh"
 }
 
 battery 1 {
-        format = "%status %percentage %remaining@%consumption" #%emptytime 
+        format = "%status %percentage %remaining@%consumption" #%emptytime
         format_down = "No battery"
         path = "/sys/class/power_supply/BAT%d/uevent"
         low_threshold = 5

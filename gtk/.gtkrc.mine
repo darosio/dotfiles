@@ -11,7 +11,7 @@
 #text[INSENSITIVE] = "#93a1a1"
 
 
-style "mycolors" 
+style "mycolors"
 {
     #base[NORMAL] = "black"
     base[NORMAL] = "#002b36"

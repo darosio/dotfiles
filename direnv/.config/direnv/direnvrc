@@ -12,7 +12,7 @@ layout_poetry() {
     fi
 
     if [[ -z $VIRTUAL_ENV || ! -d $VIRTUAL_ENV ]]; then
-        log_status "No virtual environment exists. Executing \`poetry install\` to create one."    
+        log_status "No virtual environment exists. Executing \`poetry install\` to create one."
         poetry install
         VIRTUAL_ENV=$(poetry env info --path)
     fi
@@ -53,7 +53,7 @@ layout_hatch() {
     VIRTUAL_ENV=$(hatch env find)
 
     if [[ -z $VIRTUAL_ENV || ! -d $VIRTUAL_ENV ]]; then
-        log_status "No virtual environment folder yet. Executing \`hatch env create\` to create it."    
+        log_status "No virtual environment folder yet. Executing \`hatch env create\` to create it."
         hatch env create
     #     VIRTUAL_ENV=$(poetry env info --path)
     fi

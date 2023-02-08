@@ -1,6 +1,6 @@
 #!/bin/bash
 
-while ``;
+while eval;
 do
     while ping -c1 omero > /dev/null 2>&1;
     do
@@ -11,5 +11,3 @@ do
     echo "restarted..."
     sleep 2
 done
-
-

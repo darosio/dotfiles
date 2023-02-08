@@ -72,7 +72,11 @@
 # FreeBSD is supported if linprocfs is mounted at /compat/linux/proc/
 # FreeBSD 8.0 supports up to a level of Linux 2.6.16
 
-import sys, os, errno, string
+import errno
+import os
+import string
+import sys
+
 try:
     # md5 module is deprecated on python 2.6
     # so try the newer hashlib first
@@ -162,7 +166,7 @@ def getMemStats(pid):
         #Note Shared + Private = Rss above
         #The Rss in smaps includes video card mem etc.
         if have_pss:
-            pss_adjust=0.5 #add 0.5KiB as this average error due to trunctation
+            pss_adjust=0.5 #add 0.5KiB as this average error due to truncation
             Pss=sum([float(line.split()[1])+pss_adjust for line in Pss_lines])
             Shared = Pss - Private
     elif (2,6,1) <= kv <= (2,6,9):
@@ -287,7 +291,7 @@ if __name__ == '__main__':
     sys.stdout.write("\n Private  +   Shared  =  RAM used\tProgram \n\n")
     # We must close explicitly, so that any EPIPE exception
     # is handled by our excepthook, rather than the default
-    # one which is reenabled after this script finishes.
+    # one which is re enabled after this script finishes.
     sys.stdout.close()
 
 #Warn of possible inaccuracies
@@ -336,4 +340,3 @@ if __name__ == '__main__':
          "for each program, so totals are not reported.\n"
         )
     sys.stderr.close()
-

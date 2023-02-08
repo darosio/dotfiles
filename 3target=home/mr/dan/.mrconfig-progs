@@ -5,7 +5,7 @@
 #include = cat /usr/share/mr/vis
 
 [.progs]
-checkout = 
+checkout =
     git clone ssh://swan/~/.progs
     cd $MR_REPO
     git annex init $HOSTNAME
@@ -14,10 +14,10 @@ update =
 	git_annex_sync
 	git annex add .
 	git_annex_sync
-zap =                                                                           
-	git add .                                                                   
+zap =
+	git add .
 	git_annex_sync
-#git_annex_sync = git pull; git add .; git commit -m "updated `date -I`" 
+#git_annex_sync = git pull; git add .; git commit -m "updated `date -I`"
 
 
 #[.progsoftware]

@@ -7,7 +7,7 @@ Persistent=true
 ;OnCalendar=daily
 RandomizedDelaySec=3min
 OnCalendar=*-*-* 12:10:00
-;OnUnitActiveSec=1h 
+;OnUnitActiveSec=1h
 Unit=recollindex.service
 
 [Install]

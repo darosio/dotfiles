@@ -1,10 +1,10 @@
-#!/bin/sh
+#!/usr/bin/env sh
 
 echo "### RSNAPSHOT DAILY ###"
 sudo mount /media/rsnapshots
-rsnapshot -v sync > /tmp/rsnapshot.out 2>&1 || cat /tmp/rsnapshot.out 
-cat /tmp/rsnapshot.out 
-rsnapshot -v daily > /tmp/rsnapshot.out 2>&1 || cat /tmp/rsnapshot.out 
-cat /tmp/rsnapshot.out 
+rsnapshot -v sync > /tmp/rsnapshot.out 2>&1 || cat /tmp/rsnapshot.out
+cat /tmp/rsnapshot.out
+rsnapshot -v daily > /tmp/rsnapshot.out 2>&1 || cat /tmp/rsnapshot.out
+cat /tmp/rsnapshot.out
 sudo umount /media/rsnapshots
 echo

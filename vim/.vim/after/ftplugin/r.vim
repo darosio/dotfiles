@@ -6,7 +6,7 @@ set modelines=1	" modeline must be within first or last 1 line
 "       - To initialize vim/R session, start screen/tmux, open some *.R file in vim and then hit ,r key
 "       - Object/omni completion command CTRL-X CTRL-O
 "       - To update object list for omni completion, run :RUpdateObjList
-" My favorite Vim/R window arrangement 
+" My favorite Vim/R window arrangement
 "	tmux attach
 "	Open *.R file in Vim and hit ,r to open R
 "	Go to R pane and create another pane with C-a %
@@ -15,7 +15,7 @@ set modelines=1	" modeline must be within first or last 1 line
 " Useful tmux commands
 "       tmux new -s <myname>       start new session with a specific name
 "	tmux ls (C-a-s)            list tmux session
-"       tmux attach -t <id>        attach to specific session  
+"       tmux attach -t <id>        attach to specific session
 "       tmux kill-session -t <id>  kill specific session
 " 	C-a-: kill-session         kill a session
 " 	C-a %                      split pane vertically
@@ -36,14 +36,14 @@ set modelines=1	" modeline must be within first or last 1 line
 " For tmux support
 let g:ScreenImpl = 'Tmux'
 let vimrplugin_screenvsplit = 0 " For vertical tmux split
-let g:ScreenShellInitialFocus = 'shell' 
+let g:ScreenShellInitialFocus = 'shell'
 " instruct to use your own .screenrc file
 let g:vimrplugin_noscreenrc = 1
 " For integration of r-plugin with screen.vim
 let g:vimrplugin_screenplugin = 1
 " Don't use conque shell if installed
 let vimrplugin_conqueplugin = 0
-" map the letter 'r' to send visually selected lines to R 
+" map the letter 'r' to send visually selected lines to R
 let g:vimrplugin_map_r = 1
 " see R documentation in a Vim buffer
 let vimrplugin_vimpager = "vertical"
@@ -51,10 +51,10 @@ let vimrplugin_vimpager = "vertical"
 set shiftwidth=4
 set tabstop=8
 " start R with ,r key
-map  <Leader>R <Plug>RStart 
+map  <Leader>R <Plug>RStart
 vmap <Leader>R <Plug>RStart
 " send selection to R with CR
-vmap <CR> <Plug>RDSendSelection 
+vmap <CR> <Plug>RDSendSelection
 " send line to R with space bar
 nmap <CR> <Plug>RDSendLine
 " }}}

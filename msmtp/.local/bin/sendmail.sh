@@ -1,5 +1,5 @@
-#!/bin/sh
-
+#!/usr/bin/env sh
+#
 if ! ping -c1 www.google.com > /dev/null 2>&1; then
 	if ! wget -O -  www.google.com > /dev/null 2>&1; then
 		# the end has come
@@ -9,4 +9,4 @@ if ! ping -c1 www.google.com > /dev/null 2>&1; then
 fi
 
 export PASSWORD_STORE_DIR=~/Sync/.pass
-msmtp-runqueue.sh 2>&1 >> ~/.sendmail.log
+msmtp-runqueue.sh >> ~/.sendmail.log  2>&1

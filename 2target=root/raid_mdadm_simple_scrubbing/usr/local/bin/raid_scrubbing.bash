@@ -1,8 +1,9 @@
 #!/bin/bash
-
+#
 out=/tmp/raid_scrubbing.out
 
 echo "To: daniele.arosio@cnr.it" 				 > $out
+# shellcheck disable=SC2129
 echo "From: $HOSTNAME" 							>> $out
 echo "Subject: RAID scrubbing on $HOSTNAME" 	>> $out
 printf "\nmismatches before: " 					>> $out
@@ -15,6 +16,7 @@ time (while cat /proc/mdstat | grep speed > /dev/null
 do
 	sleep 10
 done)										>> $out  2>&1
+# shellcheck disable=SC2129
 printf "\nmismatches after: " 					>> $out
 cat /sys/block/*/md/mismatch_cnt				>> $out
 mdadm --misc --detail /dev/md/*					>> $out

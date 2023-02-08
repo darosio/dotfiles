@@ -389,7 +389,7 @@ bar {
     mode              hide
     workspace_buttons yes
     #tray_output       none
-    
+
     font pango:FontAwesome 11
 
     colors {
@@ -414,7 +414,7 @@ bar {
 #client.focused_inactive #268bd2 #268bd2 #fdf6e3 #484e50
 #client.unfocused        #333333 #93a1a1 #fdf6e3 #292d2e
 
-#shortcuts 
+#shortcuts
 bindsym $mod+t exec pcmanfm
 bindsym $mod+Shift+m exec lxterminal -e alsamixer
 bindsym $mod+p exec bash -c dpass
@@ -459,8 +459,8 @@ bindsym $mod+Shift+period exec recoll
 bindsym $mod+Print exec xfce4-screenshooter
 
 # mod+f12 toggle light to darl solarized
-bindsym $mod+F11 exec xrdb -DSOLARIZED_DARK -merge .Xresources 
-bindsym $mod+F12 exec xrdb -DSOLARIZED_LIGHT -merge .Xresources 
+bindsym $mod+F11 exec xrdb -DSOLARIZED_DARK -merge .Xresources
+bindsym $mod+F12 exec xrdb -DSOLARIZED_LIGHT -merge .Xresources
 
 # Favorite programs
 # F2 and F3 for thunderbird and firefox
@@ -484,7 +484,7 @@ exec --no-startup-id autokey-gtk
 #exec --no-startup-id zim
 #exec --no-startup-id nm-applet
 
-#exec xsetroot -solid '#101010' 
+#exec xsetroot -solid '#101010'
 #exec xsetroot -solid "#e1dce0"
 exec xsetroot -solid "#002b36"
 #exec xsetroot -solid "#fdf6e3" # Light

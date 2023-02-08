@@ -87,5 +87,5 @@ fb() {
  goobook query "" |fzf | goobook dquery `cut -f 1`
 }
 sf() {
- recoll -t -b -a $* | fzf -m 
+ recoll -t -b -a $* | fzf -m
 }

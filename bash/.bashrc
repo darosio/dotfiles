@@ -1,6 +1,4 @@
-#
-# ~/.bashrc
-#
+# shellcheck shell=bash
 
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
@@ -42,14 +40,14 @@ function color_my_prompt {
   local __git_branch_color="$GREEN"
   local __prompt_tail="$RESET$"
   local __git_branch=$(__git_ps1);
-  # colour branch name depending on state
-  if [[ "${__git_branch}" =~ "*" ]]; then     # if repository is dirty
+  # color branch name depending on state
+  if [[ "${__git_branch}" = * ]]; then     # if repository is dirty
       __git_branch_color="$RED"
   elif [[ "${__git_branch}" =~ "$" ]]; then   # if there is something stashed
       __git_branch_color="$YELLOW"
   elif [[ "${__git_branch}" =~ "%" ]]; then   # if there are only untracked files
       __git_branch_color="$LIGHT_GRAY"
-  elif [[ "${__git_branch}" =~ "+" ]]; then   # if there are staged files
+  elif [[ "${__git_branch}" =~ + ]]; then   # if there are staged files
       __git_branch_color="$CYAN"
   fi
   if [[ -n "$VIRTUAL_ENV" ]]; then
@@ -83,5 +81,3 @@ eval "$(direnv hook bash)"
 
 export GPG_TTY=$(tty)
 gpg-connect-agent updatestartuptty /bye > /dev/null
-
-#eval "$(fasd --init auto)"

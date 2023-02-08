@@ -19,14 +19,14 @@ setlocal nonumber
 nmap <F9> :TOC<CR>
 
 " Dr Bunsen
-"func! WordProcessorMode() 
+"func! WordProcessorMode()
 setlocal formatoptions=1
-setlocal noexpandtab 
-map j gj 
+setlocal noexpandtab
+map j gj
 map k gk
 set thesaurus+=/home/dan/.vim/thesaurus/mthesaur.txt
 set formatprg=par
-setlocal wrap 
+setlocal wrap
 setlocal linebreak
 
 " SPELL
@@ -47,7 +47,7 @@ map <F6> :call MySpellLang()<CR>
 imap <F6> <C-o>:call MySpellLang()<CR>
 
 noremap Q gqap
-" search and correct mispelled words ]s [s \s
+" search and correct misspelled words ]s [s \s
 nnoremap \s ea<C-X><C-S>
 nnoremap \t ea<C-X><C-T>
 
@@ -57,7 +57,7 @@ nnoremap \t ea<C-X><C-T>
 "set complete+=s "use thesaurus and was doing a lot of confusion"
 " I would rather use default: .,w,b,u,],i
 "set complete=.,b,u,]
-set complete+=kspell 
+set complete+=kspell
 
 """ Abbreviation (Macros)
 source ~/.vim/keystrokes.vim
