@@ -11,12 +11,22 @@ repos:
       - id: check-case-conflict
       - id: check-merge-conflict
       - id: check-symlinks
+      - id: destroyed-symlinks
       - id: check-yaml # hyper
       - id: check-toml # hyper
       # - id: debug-statements
       # - id: end-of-file-fixer # hyper
       - id: mixed-line-ending
+      - id: detect-private-key
       # - id: trailing-whitespace # hyper
+
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.4.0
+    hooks:
+    - id: detect-secrets
+      args: ['--baseline', '.secrets.baseline', '--exclude-files', 'emacs/.emacs.d/straight/versions/default.el','--exclude-files', 'goldendict/.goldendict/config']
+      exclude: .hatch
+      
 
   # - repo: https://github.com/charliermarsh/ruff-pre-commit
   #   rev: "v0.0.241"
