@@ -24,7 +24,7 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
 dependencies = []
-version = "3.1.0"
+version = "3.2.0"
 
 [project.urls]
 Documentation = "https://github.com/unknown/dotfiles#readme"
@@ -42,11 +42,11 @@ python = "3.10"
 ch = "cz ch --incremental --unreleased-version HEAD"
 init =  ["pre-commit install",
         "pre-commit install --hook-type commit-msg --hook-type pre-push"]
-bump = "cz bump --major-version-zero -ch {args}"  # e.g. "--increment PATCH", "--files-only", "--no-verify" to bypass pre-commit and commit-msg hooks
+bump = "cz bump -ch {args}"  # e.g. "--increment PATCH", "--files-only", "--no-verify" to bypass pre-commit and commit-msg hooks
 
 [tool.commitizen]
 name = "cz_customize"
-version = "3.1.0"
+version = "3.2.0"
 tag_format = "$version"
 version_files = [
   "pyproject.toml:version",

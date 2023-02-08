@@ -9,16 +9,13 @@ repos:
     hooks:
       - id: check-added-large-files # hyper
       - id: check-case-conflict
-      # - id: check-merge-conflict
-      # - id: check-symlinks
-      # - id: check-yaml # hyper
-      # - id: check-toml # hyper
+      - id: check-merge-conflict
+      - id: check-symlinks
+      - id: check-yaml # hyper
+      - id: check-toml # hyper
       # - id: debug-statements
       # - id: end-of-file-fixer # hyper
-      # - id: mixed-line-ending
-      # - id: name-tests-test
-      #   args: ["--pytest-test-first"]
-      # - id: requirements-txt-fixer
+      - id: mixed-line-ending
       # - id: trailing-whitespace # hyper
 
   # - repo: https://github.com/charliermarsh/ruff-pre-commit
@@ -47,17 +44,6 @@ repos:
   #       types_or: [yaml, markdown, html, css, scss, javascript, json]
   #       args: [--prose-wrap=always]
 
-  # - repo: https://github.com/pre-commit/pygrep-hooks
-  #   rev: v1.10.0
-  #   hooks:
-  #     - id: python-check-blanket-noqa
-  #     # - id: python-check-blanket-type-ignore # same as ruff PGH
-  #     - id: python-no-eval
-  #     - id: python-use-type-annotations
-  #     - id: rst-backticks
-  #     - id: rst-directive-colons
-  #     - id: rst-inline-touching-normal
-
   # - repo: https://github.com/asottile/pyupgrade
   #   rev: v3.3.1
   #   hooks:
@@ -70,12 +56,6 @@ repos:
   #     - id: flake8
   #       additional_dependencies: [flake8-bandit, flake8-rst-docstrings]
   #       require_serial: true
-
-  # - repo: https://github.com/terrencepreilly/darglint
-  #   rev: v1.8.1
-  #   hooks:
-  #     - id: darglint
-  #       stages: [manual]
 
   # - repo: https://github.com/codespell-project/codespell
   #   rev: v2.2.2
