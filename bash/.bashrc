@@ -8,12 +8,16 @@
 # To bind \C-s in ranger as forward search in readline is less useful
 stty stop undef
 alias ls='ls --color=auto'
+# shellcheck source=/dev/null
 source "$HOME/.functions"
+# shellcheck source=/dev/null
 source "$HOME/.aliases"
+# shellcheck source=/dev/null
 source "$HOME/.progs/bash_aliases"
-
+# shellcheck source=/dev/null
 [[ -r ~/.hatch-complete.bash ]] && source "$HOME/.hatch-complete.bash"
 
+# shellcheck source=/dev/null
 # host specific bash_profile
 [[ -r .bashrc.$HOSTNAME ]] && . ".bashrc.$HOSTNAME"
 
@@ -39,15 +43,17 @@ function color_my_prompt {
   local __cur_location="$BLUE\w"           # capital 'W': current directory, small 'w': full file path
   local __git_branch_color="$GREEN"
   local __prompt_tail="$RESET$"
-  local __git_branch=$(__git_ps1);
+  local __git_branch
+  __git_branch=$(__git_ps1);
   # color branch name depending on state
-  if [[ "${__git_branch}" = * ]]; then     # if repository is dirty
+  # shellcheck disable=2049,2076 # some magic PS1 which I don't understand well
+  if [[ "${__git_branch}" =~ "*" ]]; then     # if repository is dirty
       __git_branch_color="$RED"
   elif [[ "${__git_branch}" =~ "$" ]]; then   # if there is something stashed
       __git_branch_color="$YELLOW"
   elif [[ "${__git_branch}" =~ "%" ]]; then   # if there are only untracked files
       __git_branch_color="$LIGHT_GRAY"
-  elif [[ "${__git_branch}" =~ + ]]; then   # if there are staged files
+  elif [[ "${__git_branch}" =~ "+" ]]; then   # if there are staged files
       __git_branch_color="$CYAN"
   fi
   if [[ -n "$VIRTUAL_ENV" ]]; then
@@ -62,12 +68,19 @@ function color_my_prompt {
 export PROMPT_COMMAND=color_my_prompt
 # if .git-prompt.sh exists, set options and execute it
 if [ -f /usr/share/git/completion/git-prompt.sh ]; then
+  # shellcheck disable=SC2034
   GIT_PS1_SHOWDIRTYSTATE=true
+  # shellcheck disable=SC2034
   GIT_PS1_SHOWSTASHSTATE=true
+  # shellcheck disable=SC2034
   GIT_PS1_SHOWUNTRACKEDFILES=true
+  # shellcheck disable=SC2034
   GIT_PS1_SHOWUPSTREAM="auto"
+  # shellcheck disable=SC2034
   GIT_PS1_HIDE_IF_PWD_IGNORED=true
+  # shellcheck disable=SC2034
   GIT_PS1_SHOWCOLORHINTS=true
+  # shellcheck source=/dev/null
   source /usr/share/git/completion/git-prompt.sh
 fi
 
@@ -79,5 +92,6 @@ fi
 # direnv
 eval "$(direnv hook bash)"
 
-export GPG_TTY=$(tty)
+GPG_TTY=$(tty)
+export GPG_TTY
 gpg-connect-agent updatestartuptty /bye > /dev/null

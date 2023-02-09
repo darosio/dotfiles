@@ -12,6 +12,7 @@ mdadm --misc --detail /dev/md/*					>> $out
 
 echo check >> /sys/block/*/md/sync_action
 sleep 5
+# shellcheck disable=SC2002 # I don't want changes here
 time (while cat /proc/mdstat | grep speed > /dev/null
 do
 	sleep 10
