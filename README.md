@@ -5,13 +5,23 @@ Version: "3.2.1"
 ## Requirements
 
 1. GNU stow
+2. watchexec – for emacs package management with straight
+3. hatch – install using `pipx install hatch`
+
+Initialize pre-commit hooks:
+
+	hatch run init
 
 ## Usage
 
-to create symlink into $HOME folder:
+To create symlink into $HOME:
 
-	cd ~/.dotfile
+	cd ~/workspace/dotfiles # or new location of dotfiles/
 	stow package-version
+
+when target is for example =/home use:
+
+	stow -t /home mr
 
 for some packages a folder must be created first, e.g.:
 
@@ -20,47 +30,21 @@ for some packages a folder must be created first, e.g.:
 
 pick package-version as needed.
 
-Plan to use machine-specific git branches.
+Better practice is to use specialized scripts e.g.:
 
-I location of .dotfiles is moved please first:
+	gh.stow.sh
+	psd.stow.sh
+	emacs.stow.sh
+	rclone.stow.sh
+	recoll.stow.sh
+	goldendict.stow.sh
 
-stow -t ~/ misc
-stoe -t ~/ bash
-
-Remember to create folders and linkers where needed.
-
-Better use:
-
-*.stow.sh
-
-Requires:
-
-pipx install hatch
-
-Run:
-
-hatch run init
-
-## submodule problem
-I had once and solved the detached head problem following:
-https://stackoverflow.com/questions/18770545/why-is-my-git-submodule-head-detached-from-master
-
-git branch -u refs/remotes/origin/master master
-git co master
-
-check .gitmodule .git/config
-
-or:
- $ cd <submodule-path>
-    $ git checkout <branch>
-    $ cd <parent-repo-path>
-    # <submodule-path> is here path relative to parent repo root
-    # without starting path separator
-    $ git config -f .gitmodules submodule.<submodule-path>.branch <branch>
+Plan to use machine-specific git branches is on hold.
 
 ## add new submodules
-    $ git submodule add -b <branch> <repository> [<submodule-path>]
-    $ git submodule update --remote
+
+	git submodule add -b <branch> <repository> [<submodule-path>]
+    git submodule update --remote
 
 ## remove submodules
 
@@ -74,21 +58,36 @@ or:
     Delete the now untracked submodule files
     rm -rf path_to_submodule
 
+## submodule problem
+I had once and solved the detached head problem following:
+https://stackoverflow.com/questions/18770545/why-is-my-git-submodule-head-detached-from-master
 
-## emacs
+	git branch -u refs/remotes/origin/master master
+	git co master
 
-straight external requirement:
-- watchexec
+check .gitmodule .git/config or:
 
-straight-remove-unused-repos
-straight-prune-build
-straight-pull-all
-straight-check-all
-straight-freeze-versions
+	cd <submodule-path>
+    git checkout <branch>
+    cd <parent-repo-path> # relative to parent repo root without starting path separator
+    git config -f .gitmodules submodule.<submodule-path>.branch <branch>
+
+
+# emacs
+
+TODO: [notes](/home/dan/Sync/notes/arch/emacs.org "emacs")
 
 Keybinding reserved to users are: C-c <letter> and F5 to F9.
 
-### Configured packages include:
+Package management useful commands:
+
+	straight-remove-unused-repos
+	straight-prune-build
+	straight-pull-all
+	straight-check-all
+	straight-freeze-versions
+
+## Configured packages include:
 - use-package with async
 - which-key
 - modalka
@@ -136,8 +135,6 @@ Keybinding reserved to users are: C-c <letter> and F5 to F9.
 - ORB with org-noter with precise insertion
 - csv-mode `C-c C-a`.
 - `C-c o a` mu4e-compose-attach-captured-message.
-
-
 
 ## Vanilla emacs
 Using emacs as editor serving also the following purposes:
