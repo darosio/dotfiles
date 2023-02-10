@@ -81,6 +81,7 @@ repos:
   rev: v0.9.0.2
   hooks:
   - id: shellcheck
+    args: [-x]
     # args: [--severity=style]    # Show errors, warnings, info and style
 
 - repo: https://github.com/commitizen-tools/commitizen

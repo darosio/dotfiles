@@ -3,7 +3,7 @@
 checkout = git clone 'https://github.com/darosio/ClopHfit.git' 'ClopHfit'
 
 [dotfiles]
-checkout = git clone 'git@bitbucket.org:darosio/dotfiles.git' 'dotfiles'
+checkout = git clone 'https://github.com/darosio/dotfiles.git' 'dotfiles'
 
 [HIV_pipeline_mpba]
 checkout = git clone 'https://github.com/darosio/HIV_pipeline_mpba.git' 'HIV_pipeline_mpba'
@@ -12,7 +12,7 @@ checkout = git clone 'https://github.com/darosio/HIV_pipeline_mpba.git' 'HIV_pip
 checkout = git clone 'git@bitbucket.org:darosio/imgread.git' 'imgread'
 
 [lfin]
-checkout = git clone 'git@bitbucket.org:darosio/lfin.git' 'lfin'
+checkout = git clone 'https://github.com/darosio/lfin.git' 'lfin'
 
 [nima]
 checkout = git clone 'https://github.com/darosio/nima.git' 'nima'
@@ -24,7 +24,7 @@ checkout = git clone 'https://github.com/darosio/pH-Cl-maps.git' 'ph-cl-maps'
 checkout = git clone 'git@bitbucket.org:darosio/prenspire.git' 'prenspire'
 
 [progs]
-checkout = git clone 'git@bitbucket.org:darosio/progs.git' 'progs'
+checkout = git clone 'https://github.com/darosio/progs.git' 'progs'
 
 [crispr]
 checkout = git clone 'https://github.com/ncasiraghi/crispr.git' 'crispr'

@@ -3,6 +3,16 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
+# Source global definitions
+if [ -f /etc/bash.bashrc ]; then
+	. /etc/bash.bashrc
+fi
+
+# Uncomment the following line if you don't like systemctl's auto-paging feature:
+# export SYSTEMD_PAGER=
+
+# User specific aliases and functions
+
 ##DD SSH_AUTH_SOCK=`ss -xl | grep -o '/run/user/1000/keyring-.*/ssh'`
 ##DD [ -z "$SSH_AUTH_SOCK" ] || export SSH_AUTH_SOCK
 # To bind \C-s in ranger as forward search in readline is less useful
@@ -65,7 +75,7 @@ function color_my_prompt {
   PS1="$__user_and_host $__cur_location$__git_branch_color$__git_branch\n$__pyenv_prompt$__prompt_tail "
 }
 # configure PROMPT_COMMAND which is executed each time before PS1
-export PROMPT_COMMAND=color_my_prompt
+export PROMPT_COMMAND=(color_my_prompt)
 # if .git-prompt.sh exists, set options and execute it
 if [ -f /usr/share/git/completion/git-prompt.sh ]; then
   # shellcheck disable=SC2034

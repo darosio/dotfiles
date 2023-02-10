@@ -41,6 +41,11 @@ Better practice is to use specialized scripts e.g.:
 
 Plan to use machine-specific git branches is on hold.
 
+Update using `mr`:
+
+	cd workspace/repo
+	mr register
+
 ## add new submodules
 
 	git submodule add -b <branch> <repository> [<submodule-path>]
