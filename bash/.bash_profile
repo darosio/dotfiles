@@ -11,9 +11,14 @@ export PATH
 # shellcheck source=/dev/null
 [[ -f ~/.bashrc ]] && . "$HOME"/.bashrc
 
+# .config/environment.d/*.conf
+set -a
+# shellcheck source=/dev/null
+source <(/usr/lib/systemd/user-environment-generators/30-systemd-environment-d-generator)
+set +a
+
 systemctl --user import-environment PATH
-# systemctl --user import-environment DISPLAY
-#[[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && startx
+
 if [ -z "$DISPLAY" ] && [ -n "$XDG_VTNR" ] && [ "$XDG_VTNR" -eq 1 ]; then
 	startx
 fi

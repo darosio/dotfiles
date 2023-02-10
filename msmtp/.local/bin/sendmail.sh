@@ -8,5 +8,5 @@ if ! ping -c1 www.google.com > /dev/null 2>&1; then
 	fi
 fi
 
-export PASSWORD_STORE_DIR=~/Sync/.pass
+# export PASSWORD_STORE_DIR=~/Sync/.pass
 msmtp-runqueue.sh >> ~/.sendmail.log  2>&1
