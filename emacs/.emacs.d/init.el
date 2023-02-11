@@ -3470,11 +3470,25 @@ Marked 2 is a mac app that renders markdown."
   (use-package sphinx-doc
 	:commands (sphinx-doc)
 	:hook (python-mode-hook . sphinx-doc-mode))
-  (use-package blacken
-	:after (python)
-	:bind (:map python-mode-map
-				("C-c =" . blacken-buffer))
-	:hook (python-mode-hook . blacken-mode))
+  ;; (use-package blacken
+  ;; 	:after (python)
+  ;; 	:bind (:map python-mode-map
+  ;; 				("C-c =" . blacken-buffer))
+  ;; 	:hook (python-mode-hook . blacken-mode))
+  (use-package apheleia
+	:preface
+	(defun aj-toggle-fold ()
+	  "Toggle fold all lines larger than indentation on current line"
+	  (interactive)
+	  (let ((col 1))
+		(save-excursion
+		  (back-to-indentation)
+		  (setq col (+ 1 (current-column)))
+		  (set-selective-display
+		   (if selective-display nil (or col 1))))))
+	:bind ("C-<tab>" . aj-toggle-fold)
+	:init (apheleia-global-mode +1))
+
   (use-package eval-in-repl
 	:after (python)
 	:hook (python-mode-hook . (lambda () (require 'eval-in-repl-python) ))
