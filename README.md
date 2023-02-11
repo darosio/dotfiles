@@ -10,18 +10,18 @@ Version: "3.2.1"
 
 Initialize pre-commit hooks:
 
-	hatch run init
+    hatch run init
 
 ## Usage
 
 To create symlink into $HOME:
 
-	cd ~/workspace/dotfiles # or new location of dotfiles/
-	stow package-version
+    cd ~/workspace/dotfiles # or new location of dotfiles/
+    stow package-version
 
 when target is for example =/home use:
 
-	stow -t /home mr
+    stow -t /home mr
 
 for some packages a folder must be created first, e.g.:
 
@@ -32,27 +32,26 @@ pick package-version as needed.
 
 Better practice is to use specialized scripts e.g.:
 
-	gh.stow.sh
-	psd.stow.sh
-	emacs.stow.sh
-	rclone.stow.sh
-	recoll.stow.sh
-	goldendict.stow.sh
+    gh.stow.sh
+    psd.stow.sh
+    emacs.stow.sh
+    rclone.stow.sh
+    recoll.stow.sh
+    goldendict.stow.sh
 
 Plan to use machine-specific git branches is on hold.
 
 Update using `mr`:
 
-	cd workspace/repo
-	mr register
+    cd workspace/repo
+    mr register
 
 ## add new submodules
 
-	git submodule add -b <branch> <repository> [<submodule-path>]
+    git submodule add -b <branch> <repository> [<submodule-path>]
     git submodule update --remote
 
 ## remove submodules
-
 
     Delete the relevant section from the .gitmodules file.
     Stage the .gitmodules changes git add .gitmodules
@@ -64,19 +63,19 @@ Update using `mr`:
     rm -rf path_to_submodule
 
 ## submodule problem
+
 I had once and solved the detached head problem following:
 https://stackoverflow.com/questions/18770545/why-is-my-git-submodule-head-detached-from-master
 
-	git branch -u refs/remotes/origin/master master
-	git co master
+    git branch -u refs/remotes/origin/master master
+    git co master
 
 check .gitmodule .git/config or:
 
-	cd <submodule-path>
+    cd <submodule-path>
     git checkout <branch>
     cd <parent-repo-path> # relative to parent repo root without starting path separator
     git config -f .gitmodules submodule.<submodule-path>.branch <branch>
-
 
 # emacs
 
@@ -86,13 +85,14 @@ Keybinding reserved to users are: C-c <letter> and F5 to F9.
 
 Package management useful commands:
 
-	straight-remove-unused-repos
-	straight-prune-build
-	straight-pull-all
-	straight-check-all
-	straight-freeze-versions
+    straight-remove-unused-repos
+    straight-prune-build
+    straight-pull-all
+    straight-check-all
+    straight-freeze-versions
 
 ## Configured packages include:
+
 - use-package with async
 - which-key
 - modalka
@@ -102,8 +102,8 @@ Package management useful commands:
 - mu4e and calendar https://jherrlin.github.io/posts/emacs-mu4e/
 - deft with native insert mode; can create new ./proj/file
 - open file in emacs with external application: `SPC f f` `M-o x`
-- completion with company and (ivy-)yasnippet `SPC i s` also for longer org
-  easy template; dropped: auto-yasnippet and yatemplate
+- completion with company and (ivy-)yasnippet `SPC i s` also for longer org easy
+  template; dropped: auto-yasnippet and yatemplate
 - projectile, magit, auto-completion, counsel recoll
 - org babel, graphviz, plantuml, markdown, criticmarkup
 - zeal-at-point
@@ -123,12 +123,14 @@ Package management useful commands:
 - calendars with calfw-org
 - org
   - org-lint
-  - org-bullet org-attach org-download org-cliplink org-pdftools org-autolist org-indent
+  - org-bullet org-attach org-download org-cliplink org-pdftools org-autolist
+    org-indent
   - ox-rst -pandoc -twbs -beamer -md -koma-letter
   - org-compat for mpv links
-  - org-agenda views with daily and weekly review using org-super-agenda and org-ql.
-   - shopping and weight captures
-   - plantuml graphviz ditaa Jupyter
+  - org-agenda views with daily and weekly review using org-super-agenda and
+    org-ql.
+    - shopping and weight captures
+    - plantuml graphviz ditaa Jupyter
 - org-mime for mu4e compose.
 - auctex cdlatex
 - proj todos can go with either org-projectile or magit-todos.
@@ -142,7 +144,9 @@ Package management useful commands:
 - `C-c o a` mu4e-compose-attach-captured-message.
 
 ## Vanilla emacs
+
 Using emacs as editor serving also the following purposes:
+
 - PIM
   - GTD (org, superagenda, …)
   - email (mu4e)

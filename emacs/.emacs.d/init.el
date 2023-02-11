@@ -3477,6 +3477,7 @@ Marked 2 is a mac app that renders markdown."
   ;; 	:hook (python-mode-hook . blacken-mode))
   (use-package apheleia
 	:preface
+	;; https://blog.chmouel.com/2016/09/07/dealing-with-yaml-in-emacs/
 	(defun aj-toggle-fold ()
 	  "Toggle fold all lines larger than indentation on current line"
 	  (interactive)
