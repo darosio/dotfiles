@@ -12,6 +12,12 @@ fi
 # export SYSTEMD_PAGER=
 
 # User specific aliases and functions
+alias memory='sudo ps_mem -p $(pgrep -d, -u $USER)' # pipx install ps_mem
+memory_users () {
+	for i in $(ps -e -o user= | sort | uniq); do
+		printf '%-20s%10s\n' "$i" "$(sudo ps_mem --total -p "$(pgrep -d, -u "$i")")"
+	done
+}
 
 ##DD SSH_AUTH_SOCK=`ss -xl | grep -o '/run/user/1000/keyring-.*/ssh'`
 ##DD [ -z "$SSH_AUTH_SOCK" ] || export SSH_AUTH_SOCK
