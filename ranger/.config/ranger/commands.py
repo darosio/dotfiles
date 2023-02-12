@@ -4,19 +4,19 @@
 # documentation.  Do NOT add them all here, or you may end up with defunct
 # commands when upgrading ranger.
 
-# You always need to import ranger.api.commands here to get the Command class:
-from ranger.api.commands import *
-
 # A simple command for demonstration purposes follows.
 # -----------------------------------------------------------------------------
+
 
 # You can import any python module as needed.
 import os
 
+# You always need to import ranger.api.commands here to get the Command class:
+from ranger.api.commands import Command
+
+
 # Any class that is a subclass of "Command" will be integrated into ranger as a
 # command.  Try typing ":my_edit<ENTER>" in ranger!
-
-
 class my_edit(Command):
     # The so-called doc-string of the class will be visible in the built-in
     # help that is accessible by typing "?c" inside ranger.
@@ -61,30 +61,31 @@ class my_edit(Command):
         return self._tab_directory_content()
 
 
-class fzf_select(Command):
+class FZFselect(Command):
     """
-    :fzf_select
-
     Find a file using fzf.
+
+    :FZFselect
 
     With a prefix argument select only directories.
 
     See: https://github.com/junegunn/fzf
     """
+
     def execute(self):
+        """Execute fzf selection."""
         import subprocess
+
         if self.quantifier:
             # match only directories
-            command="find -L . \( -path '*/\.*' -o -fstype 'dev' -o -fstype 'proc' \) -prune \
-            -o -type d -print 2> /dev/null | sed 1d | cut -b3- | fzf +m"
+            command = r"find -L . \( -path '*/\.*' -o -fstype 'dev' -o -fstype 'proc' \) -prune -o -type d -print 2> /dev/null | sed 1d | cut -b3- | fzf +m"  # noqa: E501
         else:
             # match files and directories
-            command="find -L . \( -path '*/\.*' -o -fstype 'dev' -o -fstype 'proc' \) -prune \
-            -o -print 2> /dev/null | sed 1d | cut -b3- | fzf +m"
+            command = r"find -L . \( -path '*/\.*' -o -fstype 'dev' -o -fstype 'proc' \) -prune -o -print 2> /dev/null | sed 1d | cut -b3- | fzf +m"  # noqa: E501
         fzf = self.fm.execute_command(command, stdout=subprocess.PIPE)
         stdout, stderr = fzf.communicate()
         if fzf.returncode == 0:
-            fzf_file = os.path.abspath(stdout.decode('utf-8').rstrip('\n'))
+            fzf_file = os.path.abspath(stdout.decode("utf-8").rstrip("\n"))
             if os.path.isdir(fzf_file):
                 self.fm.cd(fzf_file)
             else:

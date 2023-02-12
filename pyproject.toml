@@ -91,8 +91,9 @@ type = "confirm"
 
 [tool.hatch.envs.default]
 dependencies = [
-  "commitizen < 2.40.1",
-  "pre-commit"
+  "commitizen",
+  "pre-commit",
+  "python-lsp-ruff"
 ]
 python = "3.10"
 
@@ -103,3 +104,55 @@ init = [
   "pre-commit install",
   "pre-commit install --hook-type commit-msg --hook-type pre-push"
 ]
+
+[tool.ruff]
+extend-exclude = ["ranger/.config/ranger/commands.py"]
+ignore = [
+  "ANN101",
+  "ANN102",
+  "ANN201"
+]
+line-length = 88
+select = [
+  "A",  # builtins
+  "ANN",  # typing annotation
+  "ARG",  # unused arguments
+  "B",  # bugbear
+  "C",
+  "C4",  # comprehensions
+  "C90",  # mccabe
+  "D",  # pydocstyle
+  "DTZ",  # dates
+  "E",  # pycodestyle
+  "TRY",  # exceptions
+  "EM",  # exceptions
+  "ERA",  # eradicate
+  "F",  # pyflakes
+  "FBT",  # boolean-trap
+  "I",  # isort
+  "ICN",  # import conventions (opinionated)
+  "ISC",  # implicit-str-concat
+  "N",  # pep8-naming
+  "PD",  # pandas-vet
+  "PGH",  # pygrep WAIT
+  "PL",  # pylint see PLR2004...
+  "PT",  # pytest-style
+  "PTH",  # use-pathlib
+  "Q",  # quotes
+  "RUF",  # Ruff
+  "S",  # bandit WAIT
+  "SIM",  # simplify
+  "TID",  # tidy-imports
+  "UP",  # pyupgrade WAIT
+  "YTT",  # 2020
+  "W"  # pycodestyle
+]
+
+[tool.ruff.isort]
+combine-as-imports = true
+force-single-line = true
+required-imports = ["from __future__ import annotations"]
+split-on-trailing-comma = true
+
+[tool.ruff.pydocstyle]
+convention = "numpy"
