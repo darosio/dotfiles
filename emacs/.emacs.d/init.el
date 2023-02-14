@@ -1140,9 +1140,10 @@ completing-read prompter."
 	;; (corfu-doc-mode +1)
 	)
   )
-  (use-package comint
-	:straight (:type built-in)
-	:bind ("C-c <tab>" . comint-dynamic-complete-filename))
+(use-package comint
+  :straight (:type built-in)
+  :bind ("C-c <tab>" . comint-dynamic-complete-filename))
+;; (use-package emacs-oauth2-auto)
 (use-package yasnippet					; Yasnippet
   :bind
   ("M-g Y a" . yas-reload-all)
@@ -1704,8 +1705,6 @@ completing-read prompter."
 			("w" "Weight" table-line (file+headline da-gtd "Weight")
 			 "|%t|%?|")
 
-			("a" "Experimental appointments" entry (file+headline da-gtd "Appointments") "* %? %:subject\n SCHEDULED:%^T--%^T\n %a\n")
-
 			("h" "new Habit" entry (file+headline da-gtd "Habits")
 			 "* TODO %? \nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:REPEAT_TO_STATE: TODO\n:END:\n%a")
 			("i" "Idea" entry (file "~/Sync/box/org/ideas.org") "* %^{Idea} \n%u\n%a\n%?" :empty-lines 1)
@@ -1719,6 +1718,13 @@ completing-read prompter."
 			 "* %? %:subject\n :PROPERTIES:\n :calendar-id: danielepietroarosio@gmail.com\n :END:\n:org-gcal:\n%^T--%^T\n%a\n:END:" :empty-lines 1)
 			("gf" "Gcal figli" entry (file  "~/Sync/box/org/gcal/figli.org")
 			 "* %? %:subject\n :PROPERTIES:\n :calendar-id: c87gevr5pc3191on8c7nh8b4nc@group.calendar.google.com\n :END:\n:org-gcal:\n%^T--%^T\n%a\n:END:" :empty-lines 1)
+			("ga" "Appointment" entry (file "~/Sync/box/org/gcal/dpa.org")
+			 "* %?\n:PROPERTIES:\n:calendar-id:\tdanielepietroarosio@gmail.com\n:END:\n:org-gcal:\n%^T--%^T\n:END:\n\n" :jump-to-captured t)
+			("gv" "Gcal figli" entry (file  "~/Sync/box/org/gcal/figli.org")
+			 "* %?\n:PROPERTIES:\n:calendar-id:\tc87gevr5pc3191on8c7nh8b4nc@group.calendar.google.com\n:END:\n:org-gcal:\n%^T--%^T\n:END:\n\n" :jump-to-captured t)
+
+			("a" "Experimental appointments" entry (file+headline da-gtd "Appointments") "* %? %:subject\n SCHEDULED:%^T--%^T\n %a\n")
+
 			("r" "Review")              ;reviews
 			("rd" "Review: Daily" entry (file+olp+datetree "/tmp/daily-reviews.org")
 			 (file "~/.emacs.d/templates/my_dailyreviewtemplate.org"))
@@ -2634,19 +2640,24 @@ completing-read prompter."
     ("<f14> o g d" . org-gcal-delete-at-point)
     ("<f14> o g g" . org-gcal-sync)
     ("<f14> o g G" . org-gcal-fetch)
+	:commands (org-gcal-reload-client-id-secret)
     :init
     (which-key-add-key-based-replacements "<f14> o g" "Gcal")
+    (setq org-gcal-client-id "1086004898054-uhp29b0kek41obv1dma52rpog8pr44gu.apps.googleusercontent.com")
+	(setq org-gcal-client-secret "sP2Jupy5GKtdDAAgupQrSzc2")
     :config
-	(setq org-gcal-auto-archive nil)
-    (setq org-gcal-token-file "~/.emacs.d/org-gcal/.org-gcal-token"
-          org-gcal-client-id "1086004898054-uhp29b0kek41obv1dma52rpog8pr44gu.apps.googleusercontent.com"
-          org-gcal-client-secret "sP2Jupy5GKtdDAAgupQrSzc2"
-          org-gcal-file-alist '(("danielepietroarosio@gmail.com" .
-                                 "~/Sync/box/org/gcal/dpa.org")
-                                ("c87gevr5pc3191on8c7nh8b4nc@group.calendar.google.com" .
-                                 "~/Sync/box/org/gcal/figli.org")
-                                ("tq1af7efj4l9h8glgqi2g5vmsg@group.calendar.google.com" .
-                                 "~/Sync/box/org/gcal/IBF.org"))))
+	;; (setq org-gcal-auto-archive nil)
+    ;; (setq org-gcal-client-id "danielepietroarosio@gmail.com")
+	;; (org-gcal-reload-client-id-secret)
+    (setq org-gcal-file-alist '(("danielepietroarosio@gmail.com" .
+								 "~/Sync/box/org/gcal/dpa.org")
+								("c87gevr5pc3191on8c7nh8b4nc@group.calendar.google.com" .
+								 "~/Sync/box/org/gcal/figli.org")
+								("tq1af7efj4l9h8glgqi2g5vmsg@group.calendar.google.com" .
+								 "~/Sync/box/org/gcal/IBF.org")))
+	(setq plstore-cache-passphrase-for-symmetric-encryption t)
+	;; (add-hook 'org-agenda-mode-hook (lambda () (org-gcal-sync) ))
+	)
   (use-package calfw                    ; apparently need by calfw-org
     :bind
     ("<f14> o g W" . cfw:open-calendar-buffer))
