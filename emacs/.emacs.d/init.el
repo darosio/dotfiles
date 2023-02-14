@@ -1723,7 +1723,10 @@ completing-read prompter."
 			("gv" "Gcal figli" entry (file  "~/Sync/box/org/gcal/figli.org")
 			 "* %?\n:PROPERTIES:\n:calendar-id:\tc87gevr5pc3191on8c7nh8b4nc@group.calendar.google.com\n:END:\n:org-gcal:\n%^T--%^T\n:END:\n\n" :jump-to-captured t)
 
-			("a" "Experimental appointments" entry (file+headline da-gtd "Appointments") "* %? %:subject\n SCHEDULED:%^T--%^T\n %a\n")
+			("a" "Calendar" entry (file  "~/Sync/box/org/calendar.org")
+			 "* %? %:subject\n%^T--%^T\n%a\n\n" :jump-to-captured t :time-prompt t)
+			("c" "Calendar" entry (file+olp+datetree "~/Sync/box/org/calendar.org")
+			 "* %? %:subject\n%T\n%a\n\n" :jump-to-captured t :time-prompt t)
 
 			("r" "Review")              ;reviews
 			("rd" "Review: Daily" entry (file+olp+datetree "/tmp/daily-reviews.org")
@@ -2462,13 +2465,16 @@ completing-read prompter."
 				(directory-files "~/Sync/notes/home/" t "\\.org$")
 				(directory-files-recursively "~/Sync/notes/arch/" "\\.org$") ; org files in all sub folders
 				)))
-	(setq                               ; (1) Agenda files
-	 org-directory "~/Sync/box/org"
-	 org-agenda-files (append da-agenda-and-refile-files
-							  '("~/Sync/box/org/inbox.box.org"
-								"~/Sync/box/org/gcal/"))
-	 org-agenda-diary-file "~/Sync/box/org/journal.org"
-	 org-agenda-include-diary t)        ; to display holidays in org-agenda
+	(setq org-directory "~/Sync/box/org")
+	;; (1) Agenda files
+	(setq org-agenda-files (append da-agenda-and-refile-files
+								   '("~/Sync/box/org/inbox.box.org"
+									 "~/Sync/box/org/calendar.org"
+									 "~/Sync/box/org/gcal/IBF.org"
+									 "~/Sync/box/org/gcal/dpa.org"
+									 "~/Sync/box/org/gcal/figli.org")))
+	(setq org-agenda-diary-file "~/Sync/box/org/journal.org")
+	(setq org-agenda-include-diary t)        ; to display holidays in org-agenda
 	(use-package org-archive :straight org
 	  :config
 	  (setq                             ; (2) Archives
@@ -2636,13 +2642,13 @@ completing-read prompter."
         holiday-islamic-holidays nil)
   (use-package org-gcal
     :bind
-    ("<f14> o g p" . org-gcal-post-at-point) ; (add-hook 'org-capture-before-finalize-hook)
-    ("<f14> o g d" . org-gcal-delete-at-point)
-    ("<f14> o g g" . org-gcal-sync)
-    ("<f14> o g G" . org-gcal-fetch)
+    ("C-c C-g p" . org-gcal-post-at-point) ; (add-hook 'org-capture-before-finalize-hook)
+    ("C-c C-g d" . org-gcal-delete-at-point)
+    ("C-c C-g g" . org-gcal-sync)
+    ("C-c C-g G" . org-gcal-fetch)
 	:commands (org-gcal-reload-client-id-secret)
     :init
-    (which-key-add-key-based-replacements "<f14> o g" "Gcal")
+    (which-key-add-key-based-replacements "C-c C-g" "Gcal")
     (setq org-gcal-client-id "1086004898054-uhp29b0kek41obv1dma52rpog8pr44gu.apps.googleusercontent.com")
 	(setq org-gcal-client-secret "sP2Jupy5GKtdDAAgupQrSzc2")
     :config
@@ -2660,10 +2666,10 @@ completing-read prompter."
 	)
   (use-package calfw                    ; apparently need by calfw-org
     :bind
-    ("<f14> o g W" . cfw:open-calendar-buffer))
+    ("C-c C-g W" . cfw:open-calendar-buffer))
   (use-package calfw-org
     :bind
-    (("<f14> o g w" . cfw:open-org-calendar)
+    (("C-c C-g w" . cfw:open-org-calendar)
      :map org-agenda-mode-map
      ("W" . cfw:open-org-calendar)))
   )
@@ -3153,17 +3159,17 @@ With a prefix ARG, remove start location."
 (progn                                  ; Magit
   (use-package magit
     :bind
-    ("C-x g" . magit-status)
-    ("<f14> g s" . magit-status)
-    ("<f14> g f" . magit-find-file-other-window)
-    ("<f14> g x" . magit-checkout)
-    ("<f14> g e" . magit-ediff-resolve)
-    ("<f14> g c" . magit-clone)
-    ("<f14> g i" . magit-init)
+    ("C-c g g" . magit-status)
+    ("C-c g f" . magit-find-file-other-window)
+    ("C-c g x" . magit-checkout)
+    ("C-c g e" . magit-ediff-resolve)
+    ("C-c g c" . magit-clone)
+    ("C-c g i" . magit-init)
     (:map git-commit-mode-map
           ("M-n" . mk-transpose-line-down)
           ("M-p" . mk-transpose-line-up))
     :init
+    (which-key-add-key-based-replacements "C-c g" "Git")
     (setq magit-repository-directories '(("/home/dan/workspace" . 4)
 										 ("/home/dati" . 2)
                                          ("~/Sync" . 9)))
@@ -3171,24 +3177,24 @@ With a prefix ARG, remove start location."
     (setq magit-display-buffer-function 'magit-display-buffer-fullframe-status-v1))
   (use-package magit-todos
     :after (magit)
-    :bind ("<f14> g 2" . magit-todos-list))
+    :bind ("C-c g 2" . magit-todos-list))
   (use-package magit-annex)
   (use-package git-modes)
   (use-package gitignore-templates)
   (use-package browse-at-remote
-    :bind ("<f14> g b" . bar-browse))
+    :bind ("C-c g b" . bar-browse))
   (use-package git-messenger
-    :bind ("<f14> g m" . git-messenger:popup-message))
+    :bind ("C-c g m" . git-messenger:popup-message))
   (use-package git-timemachine
     ;; :straight (:type git :repo "https://codeberg.org/pidu/git-timemachine")
 	:bind
-	("<f14> g t" . git-timemachine)
-	("<f14> g T" . git-timemachine-toggle))
+	("C-c g t" . git-timemachine)
+	("C-c g T" . git-timemachine-toggle))
   (use-package diff-hl
 	:commands global-diff-hl-mode
 	:bind
-	(("<f14> g n" . diff-hl-next-hunk)	; consider removing
-	 ("<f14> g p" . diff-hl-previous-hunk))
+	(("C-c g n" . diff-hl-next-hunk)	; consider removing
+	 ("C-c g p" . diff-hl-previous-hunk))
 	:hook
 	((magit-pre-refresh-hook . diff-hl-magit-pre-refresh)
 	 (magit-post-refresh-hook . diff-hl-magit-post-refresh))
@@ -3369,22 +3375,12 @@ Marked 2 is a mac app that renders markdown."
   (use-package devdocs
 	:demand t
 	:bind ("C-c D" . devdocs-lookup))
-  (defhydra hydra-for-py (:color blue :hint nil :exit nil)
-    "
-   ^Send^         ^Tests^       ^Format^
-  ^^^^^^^^-------------------------------------
-  ^ ^             _t_: tests    _b_: black
-  ^ ^             ^ ^           _c_: create-doc
-  ^ ^             _q_: quit     _n_: numpydoc
-  "
-    ;; ("s" run-python :color red)
-    ;; ("r" python-shell-send-region :color red)
-    ;; ("f" python-shell-send-defun :color red)
-    ("t" python-pytest-dispatch)
-    ("b" blacken-buffer)
-    ("c" sphinx-doc)
-    ("n" numpydoc-generate)
-    ("q" nil :color blue))
+  (use-package numpydoc
+	:commands (numpydoc-generate)
+	:bind (:map python-mode-map
+				("C-c C-N" . numpydoc-generate))
+	:config (setq numpydoc-insertion-style 'yas) ;'prompt|nil
+	:after python)
   (use-package python
     :straight (:type built-in)
     :bind	(("C-c t m p" . python-mode)
@@ -3450,43 +3446,18 @@ Marked 2 is a mac app that renders markdown."
 	(setq lsp-ui-sideline-enable nil)
 	(setq lsp-ui-flycheck-list-position 'right)
 	)
-  ;; (use-package buffer-env
-  ;; 	:hook
-  ;; 	(hack-local-variables-hook . buffer-env-update)
-  ;; 	:config
-  ;; 	(setq buffer-env-script-name ".venv/bin/activate")
-  ;; 	)
-  ;; (use-package direnv
-  ;; 	;; :init
-  ;; 	:config
-  ;; 	(direnv-mode))
   (use-package envrc
 	:commands envrc-global-mode
 	:after python
 	:init
 	(envrc-global-mode))
-
   (use-package python-pytest			;install projectile
 	:after (python)
 	:bind (:map python-mode-map
-				("C-c H-t" . python-pytest-dispatch)))
-  (use-package numpydoc
-	;; :commands (numpydoc-generate)
-	:config
-	(setq numpydoc-insertion-style 'yas)) ;'prompt|nil
-  (use-package python-docstring
-	:hook (python-mode-hook . python-docstring-mode)
-	:config
-	(setq python-docstring-sentence-end-double-space nil))
-  (use-package sphinx-doc
-	:commands (sphinx-doc)
-	:hook (python-mode-hook . sphinx-doc-mode))
-  ;; (use-package blacken
-  ;; 	:after (python)
-  ;; 	:bind (:map python-mode-map
-  ;; 				("C-c =" . blacken-buffer))
-  ;; 	:hook (python-mode-hook . blacken-mode))
+				("C-c T" . python-pytest-dispatch)
+				("<f8>" . python-pytest-dispatch)))
   (use-package apheleia
+	:commands apheleia-global-mode
 	:preface
 	;; https://blog.chmouel.com/2016/09/07/dealing-with-yaml-in-emacs/
 	(defun aj-toggle-fold ()
@@ -3500,7 +3471,6 @@ Marked 2 is a mac app that renders markdown."
 		   (if selective-display nil (or col 1))))))
 	:bind ("C-<tab>" . aj-toggle-fold)
 	:init (apheleia-global-mode +1))
-
   (use-package eval-in-repl
 	:after (python)
 	:hook (python-mode-hook . (lambda () (require 'eval-in-repl-python) ))
@@ -3704,6 +3674,4 @@ Marked 2 is a mac app that renders markdown."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(org-agenda-files
-   '("/home/dan/Sync/box/org/gtd.org" "/home/dan/Sync/box/org/ideas.org" "/home/dan/Sync/box/org/inbox.org" "/home/dan/Sync/box/org/journal.org" "/home/dan/Sync/box/org/projects.org" "/home/dan/Sync/proj/Grants.org" "/home/dan/Sync/proj/lab.org" "/home/dan/Sync/proj/proj_&_references.org" "/home/dan/Sync/notes/home/acquisti.org" "/home/dan/Sync/notes/home/borino.org" "/home/dan/Sync/notes/home/casa.org" "/home/dan/Sync/notes/home/energia.org" "/home/dan/Sync/notes/home/escursioni_camper.org" "/home/dan/Sync/notes/home/finanze.org" "/home/dan/Sync/notes/home/home.org" "/home/dan/Sync/notes/home/mutuo.org" "/home/dan/Sync/notes/home/ricette.org" "/home/dan/Sync/notes/arch/My_PCs.org" "/home/dan/Sync/notes/arch/archlinux.org" "/home/dan/Sync/notes/arch/emacs.org"))
  '(safe-local-variable-values '((org-download-image-dir . "./WORK/"))))

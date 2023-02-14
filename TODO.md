@@ -1,5 +1,10 @@
 For Calibre just remember: /Sync/media/books
 
+- [ ] define and save appropriate orgzly setting (e.le.2d or s.today) ad.2 o.e
+- [ ] archive (or not archive) past events automatically
+- [ ] capture in calfw
+- [ ] links
+
 In general store:
 
     .local/share/applications/***.desktop
