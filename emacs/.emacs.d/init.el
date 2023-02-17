@@ -956,20 +956,19 @@ HEIGHT, if supplied, specifies height of letters to use."
            ("M-g M-g" . consult-goto-line)           ;; orig. goto-line
            ("M-g o" . consult-outline)
            ("M-g M-o" . consult-org-heading)
-           ("M-g a" . consult-org-agenda)
            ("M-g m" . consult-mark)
-           ("M-g C-m" . consult-global-mark)
+           ("M-g M-m" . consult-global-mark)
            ("M-g i" . consult-imenu)
-           ("M-g C-i" . consult-imenu-multi)
+           ("M-g M-i" . consult-imenu-multi)
            ;; M-s bindings (search-map)
+           ("M-s a" . consult-org-agenda)
            ("M-s f" . consult-find)
-           ("M-s F" . consult-locate)
+           ("M-s M-f" . consult-locate)
            ("M-s g" . consult-grep)
-           ("M-s G" . consult-git-grep)
+           ("M-s M-g" . consult-git-grep)
            ("M-s r" . consult-ripgrep)
            ("M-s l" . consult-line)
-           ("M-s L" . consult-line-multi)
-           ("M-s m" . consult-multi-occur)
+           ("M-s M-l" . consult-line-multi)
            ("M-s k" . consult-keep-lines)
            ("M-s u" . consult-focus-lines)
            ;; Isearch integration
@@ -978,7 +977,7 @@ HEIGHT, if supplied, specifies height of letters to use."
            ("M-e" . consult-isearch-history)         ;; orig. isearch-edit-string
            ("M-s e" . consult-isearch-history)       ;; orig. isearch-edit-string
            ("M-s l" . consult-line)                  ;; needed by consult-line to detect isearch
-		   ("M-s L" . consult-line-multi)           ;; needed by consult-line to detect isearch
+		   ("M-s M-l" . consult-line-multi)           ;; needed by consult-line to detect isearch
 		   )
 	;; Enable automatic preview at point in the *Completions* buffer. This is
 	;; relevant when you use the default completion UI. You may want to also
@@ -1695,6 +1694,8 @@ completing-read prompter."
 			 "* %^{State|TODO|NEXT|WAIT|PASS|MAYB} %? \t%^{Tag|:WORK:|:PERSONAL:}\n%[~/.emacs.d/templates/da-property-string]\n" :empty-lines 1)
 			("e" "File email" entry (file org-default-notes-file)
 			 "* \"%:subject\"\n%[~/.emacs.d/templates/da-property-string-email]%i%?\n")
+			("W" "Wait for Reply" entry (file+headline da-gtd "E-mail")
+			 "* WAIT for reply \"%:subject\"\n%[~/.emacs.d/templates/da-property-string-email]%i%?\n")
 			("P" "new Project" entry (file "~/Sync/box/org/projects.org")
 			 "* %? \t%^{Tag|:WORK:proj:|:PERSONAL:proj:}\n%[~/.emacs.d/templates/da-property-string]\n%^{CATEGORY}p" :empty-lines 1 :prepend t)
 			("n" "Next urgent task" entry (file+headline da-gtd "Tasks")
@@ -1708,25 +1709,31 @@ completing-read prompter."
 			("h" "new Habit" entry (file+headline da-gtd "Habits")
 			 "* TODO %? \nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:REPEAT_TO_STATE: TODO\n:END:\n%a")
 			("i" "Idea" entry (file "~/Sync/box/org/ideas.org") "* %^{Idea} \n%u\n%a\n%?" :empty-lines 1)
-			("j" "Journal" entry (file+olp+datetree "~/Sync/box/org/journal.org") "* %? %^g\n%t\n%a\n%i" ) ; prefix C-1 alternative to time-prompt t
-			("m" "Meeting" entry (file+olp+datetree "~/Sync/box/org/journal.org") "* MEETING %? :MEETING:\n%T" :clock-in t :clock-resume t)
+			;; backward will archive past event or trigger further actions
+			;; do I need :cal: it could be used in the view to archive refile
+			("c" "Calendar in Journal" entry (file+olp+datetree "~/Sync/box/org/journal.org")
+			 "* %? %:subject\t:cal:\n%^T\n%a\n%i\n" :jump-to-captured t :time-prompt t)
+			;; "* %? %^g\n%t\n%a\n%i" ) ; prefix C-1 alternative to time-prompt t
+			("j" "Journal" entry (file+olp+datetree "~/Sync/box/org/journal.org")
+			 "* %? %:subject %^G\n%T\n%a\n%i\n" :jump-to-captured t :time-prompt t)
+			;; ("m" "Meeting" entry (file+olp+datetree "~/Sync/box/org/journal.org") "* MEETING %? :MEETING:\n%T" :clock-in t :clock-resume t)
 			("k" "supermarKet" entry (file+headline "~/Sync/box/org/shopping.org" "Supermarket") "* %? \t:buy:\n" :unnarrowed t :kill-buffer t)
 			;; XXX: captures for: (1) project [entry and file template],
 			;; (2) peso [table-line]
 			("g" "Gcals")              ; gcals
-			("gg" "Gcal dpa" entry (file  "~/Sync/box/org/gcal/dpa.org")
+			("gG" "Gcal dpa" entry (file  "~/Sync/box/org/gcal/dpa.org")
 			 "* %? %:subject\n :PROPERTIES:\n :calendar-id: danielepietroarosio@gmail.com\n :END:\n:org-gcal:\n%^T--%^T\n%a\n:END:" :empty-lines 1)
-			("gf" "Gcal figli" entry (file  "~/Sync/box/org/gcal/figli.org")
+			("gF" "Gcal figli" entry (file  "~/Sync/box/org/gcal/figli.org")
 			 "* %? %:subject\n :PROPERTIES:\n :calendar-id: c87gevr5pc3191on8c7nh8b4nc@group.calendar.google.com\n :END:\n:org-gcal:\n%^T--%^T\n%a\n:END:" :empty-lines 1)
-			("ga" "Appointment" entry (file "~/Sync/box/org/gcal/dpa.org")
-			 "* %?\n:PROPERTIES:\n:calendar-id:\tdanielepietroarosio@gmail.com\n:END:\n:org-gcal:\n%^T--%^T\n:END:\n\n" :jump-to-captured t)
-			("gv" "Gcal figli" entry (file  "~/Sync/box/org/gcal/figli.org")
-			 "* %?\n:PROPERTIES:\n:calendar-id:\tc87gevr5pc3191on8c7nh8b4nc@group.calendar.google.com\n:END:\n:org-gcal:\n%^T--%^T\n:END:\n\n" :jump-to-captured t)
+			("gg" "Appointment" entry (file "~/Sync/box/org/gcal/dpa.org")
+			 "* %? %:subject\n:PROPERTIES:\n:calendar-id:\tdanielepietroarosio@gmail.com\n:END:\n:org-gcal:\n%^T--%^T\n:END:\n%a\n%i\n" :jump-to-captured t)
+			("gf" "Gcal figli" entry (file  "~/Sync/box/org/gcal/figli.org")
+			 "* %? %:subject\n:PROPERTIES:\n:calendar-id:\tc87gevr5pc3191on8c7nh8b4nc@group.calendar.google.com\n:END:\n:org-gcal:\n%^T--%^T\n:END:\n%a\n%i\n" :jump-to-captured t)
 
-			("a" "Calendar" entry (file  "~/Sync/box/org/calendar.org")
-			 "* %? %:subject\n%^T--%^T\n%a\n\n" :jump-to-captured t :time-prompt t)
-			("c" "Calendar" entry (file+olp+datetree "~/Sync/box/org/calendar.org")
-			 "* %? %:subject\n%T\n%a\n\n" :jump-to-captured t :time-prompt t)
+			;; ("a" "Calendar" entry (file+olp+datetree "~/Sync/box/org/calendar.org")
+			;;  "* %? %:subject\n%^T--%^T\n%a\n%i\n" :jump-to-captured t :time-prompt t)
+			;; ("c" "Calendar" entry (file+olp+datetree "~/Sync/box/org/calendar.org")
+			;;  "* %? %:subject\n%T\n%a\n%i\n" :jump-to-captured t :time-prompt t)
 
 			("r" "Review")              ;reviews
 			("rd" "Review: Daily" entry (file+olp+datetree "/tmp/daily-reviews.org")
@@ -1737,9 +1744,6 @@ completing-read prompter."
 			("R" "Reply to" entry
 			 (file+headline da-gtd "E-mail")
 			 "* TODO Reply \"%:subject\"\nDEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+2d\"))\n%[~/.emacs.d/templates/da-property-string-email]%i%?\n")
-			("W" "Wait for Reply" entry
-			 (file+headline da-gtd "E-mail")
-			 "* WAIT for reply \"%:subject\"\n%[~/.emacs.d/templates/da-property-string-email]%i%?\n")
 			)
 		  org-capture-templates-contexts '(("R" ((in-mode . "mu4e-view-mode")))
 										   ("W" ((in-mode . "mu4e-view-mode")))
@@ -1952,6 +1956,7 @@ completing-read prompter."
 			   tags "*"
 			   ((org-agenda-files '("~/Sync/box/org/journal.org")))
 			   ) ; XXX: finish this and review to
+			  ("B" ((tags "TIMESTAMP<=\"<now>\"")))
 			  ("b" "Backwards calendar loops"
 			   agenda ""
 			   ((org-agenda-overriding-header "Backwards calendar loops")
@@ -1961,6 +1966,7 @@ completing-read prompter."
 				(org-agenda-start-day "-10d")
 				(org-agenda-start-with-log-mode t)
 				(org-agenda-include-diary nil)
+				(org-agenda-skip-timestamp-if-done nil)
 				(org-agenda-use-time-grid t)))
 			  ("f" "Forwards loops, habits and recurring tasks"
 			   (
@@ -2196,6 +2202,8 @@ completing-read prompter."
 		   org-mode-map
 		   ("H-<return>" . org-next-link)
 		   ("H-S-<return>" . org-previous-link)
+		   ("<C-S-left>" . nil)
+		   ("<C-S-right>" . nil)
 		   ("M-g ; ;" . org-capture-goto-last-stored) ; `C-x r b` for bookmarks
 		   ("M-g ; :" . org-refile-goto-last-stored)
 		   ("C-c t o i" . org-indent-mode))
@@ -2469,8 +2477,6 @@ completing-read prompter."
 	;; (1) Agenda files
 	(setq org-agenda-files (append da-agenda-and-refile-files
 								   '("~/Sync/box/org/inbox.box.org"
-									 "~/Sync/box/org/calendar.org"
-									 "~/Sync/box/org/gcal/IBF.org"
 									 "~/Sync/box/org/gcal/dpa.org"
 									 "~/Sync/box/org/gcal/figli.org")))
 	(setq org-agenda-diary-file "~/Sync/box/org/journal.org")
@@ -2541,7 +2547,8 @@ completing-read prompter."
 	 org-fast-tag-selection-single-key t ; 'expert doesn't show
 	 org-fast-tag-selection-include-todo nil
 	 org-tags-column -82
-	 org-support-shift-select t)
+	 org-support-shift-select t		;do not change state with left right arrow
+	 )
 	;; Enable auto clock resolution for finding open clocks
 	(use-package org-clock :straight org
 	  :config
@@ -2642,34 +2649,31 @@ completing-read prompter."
         holiday-islamic-holidays nil)
   (use-package org-gcal
     :bind
-    ("C-c C-g p" . org-gcal-post-at-point) ; (add-hook 'org-capture-before-finalize-hook)
-    ("C-c C-g d" . org-gcal-delete-at-point)
-    ("C-c C-g g" . org-gcal-sync)
-    ("C-c C-g G" . org-gcal-fetch)
+    ("C-c G p" . org-gcal-post-at-point) ; (add-hook 'org-capture-before-finalize-hook)
+    ("C-c G d" . org-gcal-delete-at-point)
+    ("C-c G g" . org-gcal-sync)
+    ("C-c G G" . org-gcal-fetch)
 	:commands (org-gcal-reload-client-id-secret)
     :init
-    (which-key-add-key-based-replacements "C-c C-g" "Gcal")
+    (which-key-add-key-based-replacements "C-c G" "Gcal")
     (setq org-gcal-client-id "1086004898054-uhp29b0kek41obv1dma52rpog8pr44gu.apps.googleusercontent.com")
 	(setq org-gcal-client-secret "sP2Jupy5GKtdDAAgupQrSzc2")
     :config
-	;; (setq org-gcal-auto-archive nil)
-    ;; (setq org-gcal-client-id "danielepietroarosio@gmail.com")
+	(setq org-gcal-auto-archive t)
 	;; (org-gcal-reload-client-id-secret)
-    (setq org-gcal-file-alist '(("danielepietroarosio@gmail.com" .
-								 "~/Sync/box/org/gcal/dpa.org")
-								("c87gevr5pc3191on8c7nh8b4nc@group.calendar.google.com" .
-								 "~/Sync/box/org/gcal/figli.org")
-								("tq1af7efj4l9h8glgqi2g5vmsg@group.calendar.google.com" .
-								 "~/Sync/box/org/gcal/IBF.org")))
+    (setq org-gcal-file-alist
+		  '(("danielepietroarosio@gmail.com" . "~/Sync/box/org/gcal/dpa.org")
+			;; ("tq1af7efj4l9h8glgqi2g5vmsg@group.calendar.google.com" . "~/Sync/box/org/gcal/IBF.org")
+			("c87gevr5pc3191on8c7nh8b4nc@group.calendar.google.com" . "~/Sync/box/org/gcal/figli.org")))
 	(setq plstore-cache-passphrase-for-symmetric-encryption t)
 	;; (add-hook 'org-agenda-mode-hook (lambda () (org-gcal-sync) ))
 	)
-  (use-package calfw                    ; apparently need by calfw-org
+  (use-package calfw                    ; needed by calfw-org
     :bind
-    ("C-c C-g W" . cfw:open-calendar-buffer))
+    ("C-c G W" . cfw:open-calendar-buffer))
   (use-package calfw-org
     :bind
-    (("C-c C-g w" . cfw:open-org-calendar)
+    (("C-c G w" . cfw:open-org-calendar)
      :map org-agenda-mode-map
      ("W" . cfw:open-org-calendar)))
   )
@@ -2692,13 +2696,13 @@ completing-read prompter."
 	:commands (flycheck-vale-setup)
 	:config (flycheck-vale-setup))
 
-  (use-package lsp-ltex
-	:hook (text-mode . (lambda ()
-						 (require 'lsp-ltex)
-						 (lsp)))  ; or lsp-deferred
-	:init
-	(setq flycheck-checker-error-threshold 600)
-	(setq lsp-ltex-version "15.2.0"))  ; make sure you have set this, see below
+  ;; (use-package lsp-ltex
+  ;; 	:hook (text-mode . (lambda ()
+  ;; 						 (require 'lsp-ltex)
+  ;; 						 (lsp)))  ; or lsp-deferred
+  ;; 	:init
+  ;; 	(setq flycheck-checker-error-threshold 600)
+  ;; 	(setq lsp-ltex-version "15.2.0"))  ; make sure you have set this, see below
 
   (use-package languagetool
 	:config
@@ -3282,7 +3286,7 @@ With a prefix ARG, remove start location."
 							   (setq-local tab-width 2)
 							   (setq-local indent-line-function 'insert-tab)))
 	)
-  (use-package yaml-mode				; yay -S yamllint
+  (use-package yaml-mode				; yay -S (yamllint) prettier with apheleia
 	:mode "\\.yml\\'"
 	:hook ((yaml-mode . turn-off-flyspell))
 	)
@@ -3311,6 +3315,11 @@ With a prefix ARG, remove start location."
 		  ("Proj" ?p "~/Sync/proj")
 		  ("Org" ?o "~/Sync/box/org")
 		  ))
+  (setq
+   consult-notes-ripgrep-args
+   "rg --multiline --null --line-buffered --color=never --max-columns=1000 --path-separator / --ignore-case --no-heading --line-number --hidden --glob=!.git/ -g *.org -g *.md -g *.txt -g *.rst--sortr=accessed"
+   ;; --smart-case --search-zip
+   )
   ;; ;; Set org-roam integration, denote integration, or org-heading integration e.g.:
   (setq consult-notes-org-headings-files '("~/Sync/proj/lab.org"
                                            "~/Sync/box/org/journal.org"
