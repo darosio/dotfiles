@@ -1665,7 +1665,6 @@ completing-read prompter."
     (setq org-babel-default-header-args:jupyter-python '((:async . "yes")
                                                          (:session . "py01")
                                                          (:kernel . "python3"))))
-  (use-package org-super-agenda)        ;groups query from org-agenda or org-ql
   (use-package org
     :commands (org-capture-finalize
 			   org-speed-move-safe
@@ -2215,55 +2214,11 @@ completing-read prompter."
 	  ;; For tag searches ignore tasks with scheduled and deadline dates FIXME better control this in each agenda custom view
 	  ;; needed to avoid seeing missed tasks in my unscheduled view; next tasks in daily review view; in w but W is ok;
 	  (setq org-agenda-tags-todo-honor-ignore-options t)
-	  (defvar in-7days (org-read-date nil nil "+7d"))
-	  (defvar in-14days (org-read-date nil nil "+14d"))
 	  ;; (setq org-agenda-follow-indirect t)
 	  ;; FIXME: could help following projects individually
 	  (advice-add 'org-agenda-goto :after
 				  (lambda (&rest args)
 					(org-narrow-to-subtree)))
-	  (defvar da-super-agenda-groups
-		'((:name "Overdue (WORK)"
-				 :and (:tag "WORK" :deadline past)
-				 :and (:tag "WORK" :scheduled past)
-				 :order 1)
-		  (:name "Overdue (PERSONAL)"
-				 :and (:tag "PERSONAL" :deadline past)
-				 :and (:tag "PERSONAL" :scheduled past)
-				 :order 21)
-		  (:name "Overdue (Unassigned)"
-				 :deadline past
-				 :scheduled past
-				 :order 11)
-		  (:name "Scheduled tasks and future deadlines (WORK)"
-				 :and (:tag "WORK" :deadline today)
-				 :and (:tag "WORK" :deadline future)
-				 :and (:tag "WORK" :scheduled today)
-				 :and (:tag "WORK" :scheduled future)
-				 :order 3)
-		  (:name "Scheduled tasks and future deadlines (PERSONAL)"
-				 :and (:tag "PERSONAL" :deadline today)
-				 :and (:tag "PERSONAL" :deadline future)
-				 :and (:tag "PERSONAL" :scheduled today)
-				 :and (:tag "PERSONAL" :scheduled future)
-				 :order 23)
-		  (:name "Scheduled tasks and future deadlines (Unassigned)"
-				 :deadline today
-				 :deadline future
-				 :scheduled today
-				 :scheduled future
-				 :order 13)
-		  (:name "Unscheduled (WORK)"
-				 :tag "WORK"
-				 :order 2)
-		  (:name "Unscheduled (PERSONAL)"
-				 :tag "PERSONAL"
-				 :order 22)
-		  (:name "Unscheduled (Unassigned)"
-				 :anything t
-				 :order 12)
-		  ))
-
 	  (setq org-element-use-cache nil)
 	  ;; org-compat
 	  (setq org-agenda-overriding-columns-format "%TODO 100%ITEM %7EFFORT %SCHEDULED %DEADLINE 100%TAGS")
@@ -2302,6 +2257,21 @@ completing-read prompter."
 				(tags "-NOTE-REFILE/DONE|CANC"
 					  ((org-agenda-overriding-header "Tasks to Archive")))
 				))
+			  ("2" "Scattered action list"
+			   (
+				(tags-todo "-proj")
+				(agenda "" ((org-agenda-span 1)))
+				(tags "+proj"
+					  ((org-agenda-overriding-header "All projects scattered outside the agenda files")
+					   (org-tags-exclude-from-inheritance '("proj"))))
+				)
+			   (
+				(org-agenda-sorting-strategy '(priority-down todo-state-down category-keep habit-down))
+				(org-agenda-files da-refile-files)
+				(org-tags-match-list-sublevels 'indented)
+				(org-agenda-compact-blocks nil)
+				)
+			   )
 			  ("a" "Actions list [today]"
 			   (
 				(agenda "Journal"
@@ -2310,25 +2280,16 @@ completing-read prompter."
 						 (org-agenda-sorting-strategy '(deadline-up time-up scheduled-down priority-down))
 						 (org-deadline-warning-days 0)
 						 ))
-				(tags-todo "+PRIORITY=\"A\""
-						   ((org-agenda-overriding-header "Important")
-							(org-agenda-todo-ignore-scheduled 'all)
-							(org-agenda-todo-ignore-deadlines 'near)))
-				(tags-todo "+Effort<=0:15"
-						   ((org-agenda-overriding-header "Quick Picks")
-							(org-agenda-todo-ignore-scheduled 'all)
-							(org-agenda-todo-ignore-deadlines 'near)))
 				))
-
-			  ("D" "Daily review"
+			  ("d" "Daily review"
 			   (
 				(agenda "Today"
 						((org-agenda-span 1)
-						 (org-deadline-warning-days 14)
+						 (org-deadline-warning-days 0)
 						 (org-agenda-entry-types '(:timestamp :scheduled :deadline))
 						 (org-agenda-sorting-strategy '(deadline-up time-up scheduled-down priority-down))
 						 ))
-				(agenda ""
+				(agenda "Next 6 days"
 						((org-agenda-start-day "+1d")
 						 (org-agenda-span 6)
 						 (org-agenda-show-all-dates nil)
@@ -2336,8 +2297,21 @@ completing-read prompter."
 						  '((weekly) (1300)
 							"      " "················"))
 						 ))
+				(tags-todo "+Effort>\"0\"&Effort<=\"0:15\""
+						   ((org-agenda-overriding-header "Quick Picks")
+							(org-agenda-todo-ignore-scheduled 'all)
+							(org-agenda-todo-ignore-deadlines 'far)))
 				(tags-todo "-proj-recurring+PRIORITY=\"A\"/MAYB|TODO|NEXT" ;do not use -todo for refile archive
-						   ((org-agenda-overriding-header "Pick list")
+						   ((org-agenda-overriding-header "Pick list (standalone tasks)")
+							(org-agenda-files (append da-agenda-files
+													  '("~/Sync/notes/arch/emacs.org"
+														"~/Sync/notes/arch/archlinux.org")))
+							(org-agenda-todo-ignore-scheduled 'all)
+							(org-agenda-todo-ignore-deadlines 'near)
+							(org-tags-match-list-sublevels 'indented)
+							))
+				(tags-todo "+study-PRIORITY=\"A\"" ;do not use -todo for refile archive
+						   ((org-agenda-overriding-header "Pick list (to study)")
 							(org-agenda-files (append da-agenda-files
 													  '("~/Sync/notes/arch/emacs.org"
 														"~/Sync/notes/arch/archlinux.org")))
@@ -2355,74 +2329,10 @@ completing-read prompter."
 							(org-tags-match-list-sublevels 'indented)
 							(org-agenda-sorting-strategy '(category-keep todo-state-down priority-down habit-down))
 							))
-				(tags-todo "+study-PRIORITY=\"A\"" ;do not use -todo for refile archive
-						   ((org-agenda-overriding-header "Pick list (to study)")
-							(org-agenda-files (append da-agenda-files
-													  '("~/Sync/notes/arch/emacs.org"
-														"~/Sync/notes/arch/archlinux.org")))
-							(org-agenda-todo-ignore-scheduled t)
-							(org-agenda-todo-ignore-deadlines t)
-							(org-tags-match-list-sublevels 'indented)
-							))
 				)
 			   ((org-agenda-include-diary nil)
-				(org-agenda-sorting-strategy '(habit-down time-up tag-down category-keep priority-down))
-				(org-agenda-compact-blocks t)))
-			  ("d" "Daily review"
-			   ((org-super-agenda-mode)
-				(agenda "Today" ((org-agenda-span 1)
-								 (org-deadline-warning-days 14)
-								 (org-super-agenda-groups
-								  `((:log t)
-									(:discard (:todo ("DONE" "CANC")))
-									(:name "Overdue deadlines" :deadline past)
-									(:name "Overdue schedule" :scheduled past)
-									(:name "Agenda" :time-grid t
-										   :deadline today
-										   :scheduled today :order 2)
-									;; works in agenda using \` instead of \'
-									(:discard (:deadline (before ,in-7days)))
-									(:name "Due soon" :deadline future)
-									))))
-				(agenda "" ((org-agenda-start-day "+1d")
-							(org-agenda-span 6)
-							(org-agenda-show-all-dates nil)
-							(org-agenda-time-grid
-							 '((weekly) (0800 1800)
-							   "      " "················"))
-							(org-super-agenda-groups
-							 '((:discard (:todo ("DONE" "CANC")))
-							   (:name none :time-grid t
-									  :scheduled future
-									  :deadline future
-									  )))))
-				(tags "-WAITING-PASSED-HOLDING-MAYBE" ;do not use -todo for refile archive
-					  ((org-agenda-overriding-header "")
-					   (org-agenda-files (append da-agenda-files
-												 '("~/Sync/notes/arch/emacs.org"
-												   "~/Sync/notes/arch/archlinux.org")))
-					   (org-agenda-todo-ignore-scheduled t)
-					   (org-tags-match-list-sublevels 'indented)
-					   (org-agenda-sorting-strategy '(todo-state-down priority-down category-keep habit-down))
-					   (org-super-agenda-groups
-						`(
-						  (:name "Tasks to refile" :tag "REFILE")
-						  (:name "Tasks to archive"
-								 :and (:not (:tag ("NOTE")) :todo ("DONE" "CANC")))
-						  (:discard (:and (:tag ("NOTE") :todo ("DONE" "CANC"))))
-						  (:discard (:not (:todo t))) ;;XXX: not needed
-						  (:discard (:deadline t :scheduled t))
-						  ;; (:name "Future deadlines" :deadline (after ,in-14days) :order 1)
-						  ;; (:name "Next-week deadlines" :deadline (after ,in-7days))
-						  ;; (:name "Due within next 7 days" :deadline future)
-						  (:discard (:not (:priority "A" :todo ("PASS" "WAIT" "NEXT"))))
-						  (:name "Standalone tasks" :category "gtd" :order 0)
-						  (:auto-outline-path t)
-						  ;; (:auto-parent t)
-						  (:auto-category t))))))
-			   ((org-agenda-include-diary nil)
-				(org-agenda-sorting-strategy '(habit-down time-up tag-down category-keep priority-down))
-				(org-agenda-compact-blocks t)))
+				;; (org-agenda-sorting-strategy '(deadline-up scheduled-up habit-down time-up tag-down category-keep priority-up))
+				(org-agenda-compact-blocks nil)))
 			  ("f" "Forwards loops, habits and recurring tasks"
 			   (
 				(agenda "scheduled"
@@ -2454,17 +2364,6 @@ completing-read prompter."
 				(org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline 'scheduled))
 				(org-tags-match-list-sublevels 'indented)
 				))
-			  ("2" "Scattered action list"
-			   ((org-super-agenda-mode)
-				(tags-todo "-proj")
-				(agenda "" ((org-agenda-span 1)))
-				(tags "+proj"
-					  ((org-agenda-overriding-header "All projects scattered outside the agenda files")
-					   (org-tags-exclude-from-inheritance '("proj")))))
-			   ((org-super-agenda-groups da-super-agenda-groups)
-				(org-agenda-sorting-strategy '(priority-down todo-state-down category-keep habit-down))
-				(org-agenda-files da-refile-files)
-				(org-tags-match-list-sublevels 'indented)))
 			  ("w" "Follow-up list"
 			   (
 				(tags "-proj/!WAIT|PASS"
@@ -2475,11 +2374,14 @@ completing-read prompter."
 				)
 			   (
 				(org-tags-match-list-sublevels 'indented)))
-
-			  ("J" "Projects list"
+			  ("j" "Projects list"
 			   (
 				;; (tags "+proj/-HOLD-MAYB-PASS-WAIT-CANC-DONE"; -Proj=\"ignore\"
-				(tags "+proj/-DONE-CANC"
+				(tags "+proj+DEADLINE={.+}/-DONE-CANC"
+					  ((org-agenda-overriding-header "Projects due")
+					   (org-tags-exclude-from-inheritance '("proj"))
+					   ))
+				(tags "+proj-DEADLINE={.+}/-DONE-CANC"
 					  ((org-agenda-overriding-header "Projects")
 					   (org-tags-exclude-from-inheritance '("proj"))
 					   ))
@@ -2494,40 +2396,6 @@ completing-read prompter."
 										  '("~/Sync/notes/arch/emacs.org"
 											"~/Sync/notes/arch/archlinux.org")))
 				(org-agenda-sorting-strategy '(category-keep priority-down))
-				;; (org-use-property-inheritance t)
-				(org-agenda-tag-filter-preset '("-WAITING" "-PASSED" "-HOLDING" "-MAYBE" "-ENDED"))
-				))
-			  ("j" "Projects list"
-			   ((org-super-agenda-mode)
-				;; (tags "+proj/-HOLD-MAYB-PASS-WAIT-CANC-DONE"; -Proj=\"ignore\"
-				(tags "+proj/-DONE-CANC"
-					  ((org-agenda-overriding-header "Active projects")
-					   (org-tags-exclude-from-inheritance '("proj")) ; (org-use-tag-inheritance nil)
-					   (org-super-agenda-groups da-super-agenda-groups)
-					   ;; (:name "Stuck work projects" :and (:tag "WORK" :not (:children "NEXT")))
-					   (org-agenda-skip-function '(org-agenda-skip-subtree-if 'nottodo '("NEXT")))))
-				(tags "+proj/-DONE-CANC"
-					  ((org-agenda-overriding-header "Stuck projects")
-					   (org-tags-exclude-from-inheritance '("proj")) ; (org-use-tag-inheritance nil)
-					   ;; (org-agenda-skip-function '(org-agenda-skip-subtree-if 'todo '("NEXT")))
-					   (org-super-agenda-groups (append '((:discard (:children "NEXT")))
-														da-super-agenda-groups))))
-				(tags "+proj"
-					  ((org-agenda-overriding-header "")
-					   (org-super-agenda-groups
-						'((:discard (:regexp ":proj:"))
-						  (:name "DONE" :todo "DONE")
-						  (:name "NEXT" :todo "NEXT")
-						  (:name "To follow-up" :todo ("PASS" "WAIT"))
-						  (:name "TODO" :todo "TODO")
-						  (:name "To reconsider" :todo ("HOLD" "MAYB"))
-						  (:name "CANC" :todo "CANC")
-						  (:discard (:anything t)))))))
-			   ((org-tags-match-list-sublevels 'indented)
-				(org-agenda-files (append da-agenda-files
-										  '("~/Sync/notes/arch/emacs.org"
-											"~/Sync/notes/arch/archlinux.org")))
-				(org-agenda-sorting-strategy '(priority-down))
 				;; (org-use-property-inheritance t)
 				(org-agenda-tag-filter-preset '("-WAITING" "-PASSED" "-HOLDING" "-MAYBE" "-ENDED"))
 				))
@@ -2602,9 +2470,6 @@ completing-read prompter."
 	:config
 	(setq ob-async-no-async-languages-alist
 		  '("jupyter-python" "jupyter-julia" "jupyter-R"))
-	)
-  (use-package org-ql
-	:bind ("M-s q" . org-ql-search)
 	)
   (use-package org-autolist
 	:after (org)
