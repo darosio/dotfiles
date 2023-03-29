@@ -1002,7 +1002,7 @@ HEIGHT, if supplied, specifies height of letters to use."
 	;; :preview-key on a per-command basis using the `consult-customize' macro.
 	(consult-customize
 	 consult-theme :preview-key '(:debounce 0.4 any)
-	 consult-ripgrep consult-git-grep ;consult-grep
+	 consult-ripgrep consult-git-grep consult-org-agenda ;consult-grep
 	 consult-bookmark consult-recent-file consult-xref
 	 consult--source-recent-file consult--source-project-recent-file consult--source-bookmark
 	 :preview-key "<right>")
@@ -1198,28 +1198,26 @@ completing-read prompter."
     ;; For multi language within same doc.
     :bind
     ("C-c t g" . guess-language-mode)
-    ("<f14> s e" . (lambda () (interactive)
-                     (ispell-change-dictionary "en_US-large")
-                     ;; (setq company-ispell-dictionary "/usr/share/dict/usa")
-                     (flyspell-buffer)))
-    ("<f14> s i" . (lambda () (interactive)
-                     (ispell-change-dictionary "it_IT")
-					 ;; TODO: consult-flyspell and cape (ispell|dict)
-                     ;; (setq company-ispell-dictionary "/usr/share/dict/italian")
-                     (flyspell-buffer)))
+    ("C-c s e" . (lambda () (interactive)
+                   (ispell-change-dictionary "en_US-large")
+                   ;; (setq company-ispell-dictionary "/usr/share/dict/usa")
+                   (flyspell-buffer)))
+    ("C-c s i" . (lambda () (interactive)
+                   (ispell-change-dictionary "it_IT")
+				   ;; TODO: consult-flyspell and cape (ispell|dict)
+                   ;; (setq company-ispell-dictionary "/usr/share/dict/italian")
+                   (flyspell-buffer)))
     ;; :hook
     ;; (flyspell-mode . guess-language-mode)
     ;; ;; (flyspell-mode-prog . guess-language-mode)
     ;; (text-mode . guess-language-mode)
     :functions guess-language-switch-function
     :init
-    (which-key-add-key-based-replacements "<f14> s" "Spell")
-    (which-key-add-key-based-replacements "<f14> s e" "english")
-    (which-key-add-key-based-replacements "<f14> s i" "italian")
+    (which-key-add-key-based-replacements "C-c s" "Spell")
     :config
     (setq guess-language-langcodes '((en . ("en_US-large" "English"))
                                      (it . ("it_IT" "Italian")))
-          guess-language-min-paragraph-length 35
+          guess-language-min-paragraph-length 15
           guess-language-languages '(en it))
     (defun guess-language-switch-function (lang beginning end)
       "Switch additional dictionaries. LANG is the ISO 639-1 code of the language
@@ -1236,420 +1234,337 @@ completing-read prompter."
 	  )
     (add-hook 'guess-language-after-detection-functions #'guess-language-switch-function))
   )
-(progn                                  ; mu4e
-  ;; XXX: email in org html
-  ;; https://vxlabs.com/2015/01/28/sending-emails-with-math-and-source-code/
-  ;; https://github.com/daviwil/emacs-from-scratch/blob/master/show-notes/Emacs-Mail-04.org
-  ;; ;; http://pragmaticemacs.com/emacs/email-templates-in-mu4e-with-yasnippet/
-  ;; (add-hook 'mu4e-compose-mode-hook 'spacemacs/load-yasnippet)
-  (use-package mu4e
-    :straight (:type built-in)			; in AUR/mu
-	:commands (mu4e-compose-new
-			   mu4e-context-current)
-	:hook
-	((mu4e-view-mode-hook . variable-pitch-mode)
-	 ;; (message-mode-hook . ; http://www.djcbsoftware.nl/code/mu/mu4e/Compose-hooks.html
-	 (mu4e-compose-mode-hook .
-							 (lambda()
-							   "My settings for message composition."
-							   (let* ((ctx (mu4e-context-current))
-									  (name (if ctx (mu4e-context-name ctx))))
-								 (when name
-								   (cond
-									((string= name "cnr")
-									 (save-excursion (message-add-header "Bcc: daniele.arosio@cnr.it\n")))
-									((string= name "pec")
-									 (save-excursion (message-remove-header "Bcc:*")))
-									)))
-							   (set-fill-column 80)
-							   (visual-fill-column-mode)
-							   ;; (ispell-minor-mode)
-							   ;; (flyspell-mode)
-							   ;; (org~mu4e-mime-switch-headers-or-body)
-							   ;; (turn-on-obligor)   ;; this prevented flyspell correction
-							   ;; (turn-on-orgstruct)  ;; probably included in ++
-							   ;; (turn-on-orgstruct++)  ;; =,he= to send bibtex email
-							   ;; (typo-mode)
-							   (footnote-mode)))
-	 ;; (message-mode-hook . mu4e-compose-mode)
-	 ;; (mu4e-headers-mode . variable-pitch-mode)
-	 )
-	:bind
-	(("<f14> a m" . mu4e)
-	 ("C-x m" . mu4e)
-	 :map
-	 mu4e-compose-mode-map
-	 ("C-c o a" . mu4e-compose-attach-captured-message)
-	 ("C-c o b" . message-goto-bcc)
-	 ("C-c o c" . message-goto-cc)
-	 ("C-c o m" . message-goto-body)
-	 ("C-c o s" . message-goto-subject)
-	 ("C-c o t" . message-goto-to)
-	 :map
-	 mu4e-view-mode-map
-	 ("f" . mu4e-headers-mark-for-flag)
-	 ("<tab>"     . org-next-link)	; 'shr-next-link
-	 ("<backtab>" . org-previous-link)	; 'shr-previous-link
-	 ("G"         . end-of-buffer)
-	 ("V"         . mu4e-view-verify-msg-popup)
-	 ("v"         . visual-fill-column-mode)
-	 ("C-c l" . org-store-link)         ; requires ol.el
-	 :map
-	 mu4e-headers-mode-map
-	 ("G"         . end-of-buffer)
-	 ("D" . "T d")
-	 ("f"         . mu4e-headers-mark-for-flag)
-	 )
-	;; :custom-face
-	;; (mu4e-header-marks-face ((t (:height 180 ))))
-	;; (mu4e-header-value-face ((t (:height 150))))
-	;; (mu4e-view-body-face ((t (:height 140))))
-	;; :init
-	;; ;; use mu4e as Default
-	;; (setq mail-user-agent 'mu4e-user-agent)
-	;; (set-variable 'read-mail-command 'mu4e)
+(use-package mu4e						; mu4e
+  :straight (:type built-in)			; in AUR/mu
+  :commands (mu4e-compose-new
+			 mu4e-context-current)
+  :hook
+  ;; (mu4e-view-mode-hook . variable-pitch-mode)
+  (mu4e-compose-mode-hook . (lambda()
+							  "My settings for message composition."
+							  (let* ((ctx (mu4e-context-current))
+									 (name (if ctx (mu4e-context-name ctx))))
+								(when name
+								  (cond
+								   ((string= name "cnr")
+									(save-excursion (message-add-header "Bcc: daniele.arosio@cnr.it\n")))
+								   ((string= name "pec")
+									(save-excursion (message-remove-header "Bcc:*")))
+								   )))
+							  (set-fill-column 80)
+							  (visual-fill-column-mode)
+							  (guess-language-mode)))
+  :bind
+  (("<f14> a m" . mu4e)
+   ("C-x m" . mu4e)
+   :map mu4e-compose-mode-map
+   ("C-c o a" . mu4e-compose-attach-captured-message)
+   ("C-c o b" . message-goto-bcc)
+   ("C-c o c" . message-goto-cc)
+   ("C-c o m" . message-goto-body)
+   ("C-c o s" . message-goto-subject)
+   ("C-c o t" . message-goto-to)
+   :map mu4e-view-mode-map
+   ("f" . mu4e-headers-mark-for-flag)
+   ("<tab>"     . org-next-link)	; 'shr-next-link
+   ("<backtab>" . org-previous-link)	; 'shr-previous-link
+   ("G"         . end-of-buffer)
+   ("V"         . mu4e-view-verify-msg-popup)
+   ("v"         . visual-fill-column-mode)
+   ("C-c l" . org-store-link)         ; requires ol.el
+   :map mu4e-headers-mode-map
+   ("G"         . end-of-buffer)
+   ("D" . "T d")
+   ("f"         . mu4e-headers-mark-for-flag)
+   )
+  :config
+  (setq mail-user-agent 'mu4e-user-agent) ;; use mu4e as Default
+  (set-variable 'read-mail-command 'mu4e)
+  ;; (when (fboundp 'imagemagick-register-types) (imagemagick-register-types))
+  ;; (setq mu4e-maildir (expand-file-name "~/Maildir"))
+  (setq mu4e-get-mail-command "mbsync -a")
+  (setq mu4e-update-interval 30)
+  (setq
+   mu4e-index-cleanup nil      ;; don't do a full cleanup check
+   mu4e-index-lazy-check t)    ;; don't consider up-to-date dirs
+  (auth-source-pass-enable)
+  (setq auth-source-debug t)
+  (setq auth-source-do-cache nil)
+  (setq auth-sources '(password-store))
+  (setq smtpmail-queue-mail  nil)
+  (setq smtpmail-queue-dir   "~/Maildir/queue/cur") ; Remember to "mu mkdir" and "touch /queue/.noindex"
+  ;; (setq smtpmail-debug-info t)
+  ;; (setq mu4e-read-option-use-builtin nil
+  ;; 		mu4e-completing-read-function 'completing-read)
+  (setq mu4e-attachment-dir "~/")
+  (setq mu4e-change-filenames-when-moving t) ; rename files when moving (Needed for mbsync)
+  (setq mu4e-completing-read-function 'completing-read) ; use convenient completion for navigation =j o=
+  (setq mu4e-compose-keep-self-cc nil) ;default
+  (setq mu4e-context-policy 'pick-first) ; start with the first (default) context;
+  (setq mu4e-headers-include-related t) ; =W= now  'P r' to view threads
+  (setq mu4e-headers-skip-duplicates nil) ; =V= now 'P u' to skip duplicates
+  (setq mu4e-view-show-images t)	; enable inline images and VIEW
+  (setq mu4e-confirm-quit nil)
+  (setq mu4e-hide-index-messages t)  ; hide updating messages
+  (setq mu4e-use-fancy-chars t)
+  ;; (add-to-list 'mu4e-view-mime-part-actions '(:name "delete" :handler gnus-article-delete-part :receives temp))
+  (setq mu4e-compose-forward-as-attachment nil)
+  (setq mu4e-view-show-addresses t)		; show full addresses
+  (setq mu4e-headers-leave-behavior 'ask) ; default while 'apply leaving headers view apply all marks
+  (setq mu4e-save-multiple-attachments-without-asking t)
+  (setq fill-flowed-encode-column 998) ; https://www.ietf.org/rfc/rfc2822.txt
+  (setq shr-color-visible-luminance-min 80)
+  (setq mu4e-maildir-shortcuts			; Shortcuts
+		'(("/cnr/INBOX"         . ?i)
+		  ("/gmail/Inbox"       . ?j)
+		  ("/gmail/archive"     . ?g)
+		  ("/cnr/Sent"          . ?s)
+		  ("/cnr/Templates"     . ?t)
+		  ("/archive"           . ?a)
+		  ("/archives/personal" . ?p)
+		  ("/cnr/refs"          . ?r)
+		  ("/cnr/keepup"        . ?k)
+		  ("/cnr/Drafts"        . ?d)))
+  (setq mu4e-bookmarks					; Bookmarks
+		'((:query "flag:unread AND NOT flag:trashed AND NOT maildir:/feeds"
+                  :name "Unread messages"
+                  :key ?u)
+          (:query "maildir:/feeds" :name "Feeds" :key ?f)
+          (:query "date:today..now" :name "Today's messages" :key ?t)
+          (:query "date:7d..now" :name "Last 7 days" :key ?w)
+          (:query "mime:image/*" :name "Messages with images" :key ?p)
+          (:query "size:5M..500M" :name "Big messages" :key ?b)
+          (:query "flag:unread NOT flag:trashed AND (flag:list OR from:trac@sagemath.org)"
+                  :name "Unread bulk messages" :key ?l)
+          ;; (:query ,(mapconcat 'identity
+          ;;                     (mapcar
+          ;;                      (lambda (maildir)
+		  ;; 					   (concat "maildir:" (car maildir)))
+          ;;                      mu4e-maildir-shortcuts) " OR ")
+          ;;         :name "All inboxes" :key ?i)
+		  ))
+  (use-package mu4e-context :straight mu4e
 	:config
-	;; (when (fboundp 'imagemagick-register-types) (imagemagick-register-types))
-	;; ;;location of my maildir
-	;; (setq mu4e-maildir (expand-file-name "~/Maildir"))
-	(setq mu4e-attachment-dir "~/")
-	(setq mu4e-change-filenames-when-moving t) ; rename files when moving (Needed for mbsync)
-	(setq mu4e-completing-read-function 'completing-read) ; use convenient completion for navigation =j o=
-	(setq mu4e-compose-keep-self-cc nil) ;default
-	(setq mu4e-context-policy 'pick-first) ; start with the first (default) context;
-	(setq mu4e-get-mail-command "mbsync -a")
-	(setq mu4e-headers-include-related nil) ; =W= to view threads
-	(setq mu4e-headers-skip-duplicates nil) ; =V= to skip duplicates
-	(setq mu4e-view-show-images t)	; enable inline images and VIEW
-	(setq mu4e-confirm-quit nil)
-	(setq mu4e-update-interval 30)
-	(setq mu4e-hide-index-messages t)  ; hide updating messages
-	(setq mu4e-use-fancy-chars t)
-	(add-to-list 'mu4e-view-mime-part-actions '(:name "delete" :handler gnus-article-delete-part :receives temp))
-    (setq mu4e-maildir-shortcuts '(("/cnr/INBOX"         . ?i)
-								   ("/gmail/Inbox"       . ?j)
-								   ("/gmail/archive"     . ?g)
-								   ("/cnr/Sent"          . ?s)
-								   ("/cnr/Templates"     . ?t)
-								   ("/archive"           . ?a)
-								   ("/archives/personal" . ?p)
-								   ("/cnr/refs"          . ?r)
-								   ("/cnr/keepup"        . ?k)
-								   ("/cnr/Drafts"        . ?d)))
-    (setq mu4e-bookmarks		; Bookmarks
-		  '((:query "flag:unread AND NOT flag:trashed AND NOT maildir:/feeds"
-                    :name "Unread messages"
-                    :key ?u)
-            (:query "maildir:/feeds" :name "Feeds" :key ?f)
-            (:query "date:today..now" :name "Today's messages" :key ?t)
-            (:query "date:7d..now" :name "Last 7 days" :key ?w)
-            (:query "mime:image/*" :name "Messages with images" :key ?p)
-            (:query "size:5M..500M" :name "Big messages" :key ?b)
-            (:query "flag:unread NOT flag:trashed AND (flag:list OR from:trac@sagemath.org)"
-                    :name "Unread bulk messages" :key ?l)
-            (:query ,(mapconcat 'identity
-                                (mapcar
-                                 (lambda (maildir)
-								   (concat "maildir:" (car maildir)))
-                                 mu4e-maildir-shortcuts) " OR ")
-                    :name "All inboxes" :key ?i)))
-	(setq mu4e-compose-forward-as-attachment nil)
-	;; https://jherrlin.github.io/posts/emacs-mu4e/
-	;; (setq mu4e-compose-complete-addresses t)
-	;; (setq mu4e-compose-dont-reply-to-self t)
-	;; (setq smtpmail-debug-info t)
-	;; (setq smtpmail-stream-type 'starttls)
-	;; (setq mm-sign-option 'guided)
-	;;
-	(setq mu4e-view-show-addresses t)	; show full addresses
-	(setq mu4e-headers-leave-behavior 'apply) ; leaving headers view apply all marks
-	(setq mu4e-save-multiple-attachments-without-asking t)
-	(setq mu4e-html2text-command "html2text -utf8 -width 78") ;'w3m 'mu4e-shr2text
-	(setq fill-flowed-encode-column 998) ; https://www.ietf.org/rfc/rfc2822.txt
-	;; (set-face-attribute 'mu4e-view-body-face nil :inherit 'variable-pitch :height 150)
-	;; (set-face-attribute 'mu4e-unread-face nil :inherit '(fixed-pitch shadow bold) :height 130)
-	;; (set-face-attribute 'mu4e-header-face nil :inherit 'fixed-pitch :height 130)
-	(use-package mu4e-context :straight mu4e
-	  :config
-	  (setq mu4e-contexts
-			`( ,(make-mu4e-context
-				 :name "cnr"
-				 :enter-func (lambda () (mu4e-message "Entering Cnr context"))
-				 :leave-func (lambda () (mu4e-message "Leaving Cnr context"))
-				 ;; we match based on the maildir folder
-				 ;; http://cachestocaches.com/2017/3/complete-guide-email-emacs-using-mu-and-/
-				 :match-func (lambda (msg)
-							   (when msg
-								 (string-prefix-p "/cnr" (mu4e-message-field msg :maildir))))
-				 :vars '( ( user-mail-address      . "daniele.arosio@cnr.it"  )
-						  ( user-full-name         . "Daniele Arosio" )
-						  ( mu4e-sent-folder   . "/cnr/Sent" )
-						  ( mu4e-drafts-folder . "/cnr/Drafts" )
-						  ( mu4e-trash-folder  . "/cnr/Trash" )
-						  ( mu4e-refile-folder . "/archive" )
-						  ( mu4e-compose-signature .
-							(concat
-							 "Daniele Arosio\n"
-							 "Consiglio Nazionale delle Ricerche (CNR)\n"
-							 "Istituto di Biofisica\n"
-							 "Via Sommarive 18\n"
-							 "38123 Trento, Italy\n"
-							 "tel +39 0461 314607\n"))))
-			   ,(make-mu4e-context
-				 :name "gmail"
-				 :enter-func (lambda () (mu4e-message "Switch to the gmail context"))
-				 ;; no leave-func
-				 :match-func (lambda (msg)
-							   (when msg
-								 (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
-				 :vars '( ( user-mail-address       . "danielepietroarosio@gmail.com" )
-						  ( user-full-name          . "daniele arosio" )
-						  (mu4e-drafts-folder . "/gmail/draft")
-						  (mu4e-trash-folder . "/gmail/trash")
-						  ( mu4e-compose-signature  .
-							(concat
-							 "daniele arosio\n"
-							 "38123 Trento\n"))))
-			   ,(make-mu4e-context
-				 :name "pec"
-				 :match-func (lambda (msg)
-							   (when msg
-								 (string-prefix-p "/pec" (mu4e-message-field msg :maildir))))
-				 :vars '( (user-mail-address  . "daniele.arosio@postecert.it" )
-						  (user-full-name     . "Daniele Arosio" )
-						  (mu4e-drafts-folder . "/pec/Drafts")
-						  (mu4e-trash-folder  . "/pec/trash")
-						  (mu4e-sent-folder   . "/pec/Sent Items")
-						  (mu4e-compose-signature .
-												  (concat
-												   "daniele arosio\n"
-												   "38123 Trento\n"))))
-			   ))
-	  )
-	(use-package mu4e-compose :straight mu4e
-	  :config
-	  (setq mu4e-sent-messages-behavior	; Save msg into sent folder only for pec
-			(lambda ()
-			  (if (string= (message-sendmail-envelope-from) "daniele.arosio@postecert.it")
-				  'sent
-				'delete)))
-	  ;; default is to ask-if-none (ask when there's no context yet, and none match)
-	  (setq mu4e-compose-context-policy 'ask-if-none)
-	  (setq mu4e-compose-format-flowed t)  ; Set format=flowed
-	  )
-	(use-package mu4e-draft :straight mu4e
-	  :config
-	  (setq mu4e-compose-signature-auto-include nil)
-	  (setq mu4e-compose-in-new-frame t) ; every new email composition gets its own frame
-	  )
-	(use-package mu4e-headers :straight mu4e
-	  :functions (mu4e-headers-mark-and-next
-				  mu4e~headers-goto-docid)
-	  :config
-	  (setq mu4e-headers-date-format "%y/%m/%d")
-	  (setq mu4e-headers-fields	'((:human-date     .  12)
+	(setq mu4e-contexts
+		  `( ,(make-mu4e-context
+			   :name "cnr"
+			   :enter-func (lambda () (mu4e-message "Entering Cnr context"))
+			   :leave-func (lambda () (mu4e-message "Leaving Cnr context"))
+			   ;; we match based on the maildir folder
+			   ;; http://cachestocaches.com/2017/3/complete-guide-email-emacs-using-mu-and-/
+			   :match-func (lambda (msg)
+							 (when msg
+							   (string-prefix-p "/cnr" (mu4e-message-field msg :maildir))))
+			   :vars '( ( user-mail-address      . "daniele.arosio@cnr.it"  )
+						;; ( smtpmail-smtp-user      . "daniele.arosio@cnr.it" )
+						;; ( smtpmail-smtp-server    . "smtp.cnr.it" )
+						;; ;; ( smtpmail-smtp-service   . 587 )
+						( user-full-name         . "Daniele Arosio" )
+						( mu4e-sent-folder   . "/cnr/Sent" )
+						( mu4e-drafts-folder . "/cnr/Drafts" )
+						( mu4e-trash-folder  . "/cnr/Trash" )
+						( mu4e-refile-folder . "/archive" )
+						( mu4e-compose-signature .
+						  (concat
+						   "Daniele Arosio\n"
+						   "Consiglio Nazionale delle Ricerche (CNR)\n"
+						   "Istituto di Biofisica\n"
+						   "Via Sommarive 18\n"
+						   "38123 Trento, Italy\n"
+						   "tel +39 0461 314607\n"))))
+			 ,(make-mu4e-context
+			   :name "gmail"
+			   :enter-func (lambda () (mu4e-message "Switch to the gmail context"))
+			   ;; no leave-func
+			   :match-func (lambda (msg)
+							 (when msg
+							   (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
+			   :vars '( ( user-mail-address       . "danielepietroarosio@gmail.com" )
+						;; ( smtpmail-smtp-user      . "danielepietroarosio@gmail.com" )
+						;; ( smtpmail-smtp-server    . "smtp.gmail.com" )
+						;; ( user-full-name          . "daniele arosio" )
+						(mu4e-drafts-folder . "/gmail/draft")
+						(mu4e-trash-folder . "/gmail/trash")
+						( mu4e-compose-signature  .
+						  (concat
+						   "daniele arosio\n"
+						   "38123 Trento\n"))))
+			 ,(make-mu4e-context
+			   :name "pec"
+			   :match-func (lambda (msg)
+							 (when msg
+							   (string-prefix-p "/pec" (mu4e-message-field msg :maildir))))
+			   :vars '( (user-mail-address  . "daniele.arosio@postecert.it" )
+						;; ( smtpmail-smtp-user      . "daniele.arosio@postecert.it" )
+						;; ( smtpmail-smtp-server    . "mail.postecert.it" )
+						;; ( smtpmail-smtp-service   . 465 )
+						;; ( smtpmail-stream-type 'plain)
+						(user-full-name     . "Daniele Arosio" )
+						(mu4e-drafts-folder . "/pec/Drafts")
+						(mu4e-trash-folder  . "/pec/trash")
+						(mu4e-sent-folder   . "/pec/Sent Items")
+						(mu4e-compose-signature .
+												(concat
+												 "daniele arosio\n"
+												 "38123 Trento\n"))))
+			 ))
+	)
+  (use-package mu4e-compose :straight mu4e
+	:config
+	(setq ;; Save msg into sent folder only for pec
+	 mu4e-sent-messages-behavior
+	 (lambda ()
+	   (if (string= (message-sendmail-envelope-from) "daniele.arosio@postecert.it")
+		   'sent
+		 'delete)))
+	(setq mu4e-compose-context-policy 'ask-if-none)
+	(setq mu4e-compose-format-flowed t)  ; Set format=flowed
+	)
+  (use-package mu4e-draft :straight mu4e
+	:config
+	(setq mu4e-compose-signature-auto-include nil)
+	(setq mu4e-compose-in-new-frame t) ; every new email composition gets its own frame
+	)
+  (use-package mu4e-headers :straight mu4e
+	:functions (mu4e-headers-mark-and-next
+				mu4e~headers-goto-docid)
+	:config
+	(setq mu4e-headers-date-format "%y/%m/%d")
+	(setq mu4e-headers-fields	'((:human-date     .  12)
 								  (:flags          .   6)
 								  (:size           .   7)
-								  (:thread-subject . nil)
-								  (:from           .  22)))
-	  (setq mu4e-headers-auto-update t)	; default
-	  (setq mu4e-headers-visible-lines 10)
-	  )
-	(use-package message
-	  :straight (:type built-in)
-      :functions (message-sendmail-envelope-from
-                  message-add-header
-                  message-remove-header)
-	  :config
-	  (setq message-kill-buffer-on-exit t) ; don't keep message buffers around
-	  ;; (setq message-send-mail-function 'smtpmail-send-it)
-	  (setq message-send-mail-function 'message-send-mail-with-sendmail)
-	  (setq message-sendmail-envelope-from 'header)
-	  (setq message-sendmail-f-is-evil nil)
-	  (setq message-citation-line-format "On %a %d %b %Y at %R, %f wrote:\n")
-	  (setq message-citation-line-function 'message-insert-formatted-citation-line)
-	  )
-	(use-package sendmail
-	  :straight (:type built-in)
-	  :config
-	  (setq mail-specify-envelope-from t)
-	  (setq mail-envelope-from 'header)
-	  (setq mail-interactive t)
-      )
-	(use-package org-msg
-	  ;; :demand t
-	  :after (mu4e)
-	  :bind (
-			 :map mu4e-main-mode-map
-			 ("C-c O" . org-msg-mode)
-			 :map mu4e-view-mode-map
-			 ("C-c O" . org-msg-mode)
-			 ;; :map  mu4e-headers-mode-map
-			 ;; ("C-c o" . org-msg-mode)
-			 ;; :map mu4e-compose-mode-map
-			 ;; ("C-c o" . org-msg-mode)
-			 )
-	  :config
-	  (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil tex:dvipng") ; \\n:t
-	  (setq org-msg-startup "hidestars indent inlineimages")
-	  (setq org-msg-greeting-fmt "\nHi%s,\n\n")
-	  (setq org-msg-greeting-name-limit 3)
-	  (setq org-msg-default-alternatives '((new		. (utf-8))
-										   (reply-to-html	. (utf-8 html))
-										   (reply-to-text	. (utf-8))))
-	  (setq org-msg-convert-citation t)
-	  (setq org-msg-signature "
+								  (:mailing-list . 10)
+								  (:from           .  20)
+								  (:thread-subject)
+								  ))
+	(setq mu4e-headers-auto-update t)	; default
+	(setq mu4e-headers-visible-lines 10)
+	)
+  (use-package message
+	:straight (:type built-in)
+    :functions (message-sendmail-envelope-from
+                message-add-header
+                message-remove-header)
+	:config
+	(setq message-kill-buffer-on-exit t) ; don't keep message buffers around
+	;; (setq message-send-mail-function 'smtpmail-send-it) ; This is
+	;; relevant for queue
+	(setq message-send-mail-function 'message-send-mail-with-sendmail)
+	(setq message-sendmail-envelope-from 'header)
+	(setq message-sendmail-f-is-evil nil)
+	(setq message-citation-line-format "On %a %d %b %Y at %R, %f wrote:\n")
+	(setq message-citation-line-function 'message-insert-formatted-citation-line)
+	)
+  (use-package sendmail
+	:straight (:type built-in)
+	:config
+	(setq mail-specify-envelope-from t)
+	(setq mail-envelope-from 'header)
+	(setq mail-interactive t)
+    )
+  (use-package org-msg
+	;; :demand t
+	:after (mu4e)
+	:bind (
+		   :map mu4e-main-mode-map
+		   ("C-c O" . org-msg-mode)
+		   :map mu4e-view-mode-map
+		   ("C-c O" . org-msg-mode)
+		   ;; :map  mu4e-headers-mode-map
+		   ;; ("C-c o" . org-msg-mode)
+		   ;; :map mu4e-compose-mode-map
+		   ;; ("C-c o" . org-msg-mode)
+		   )
+	:config
+	(setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil tex:dvipng") ; \\n:t
+	(setq org-msg-startup "hidestars indent inlineimages")
+	(setq org-msg-greeting-fmt "\nHi%s,\n\n")
+	(setq org-msg-greeting-name-limit 3)
+	(setq org-msg-default-alternatives '((new		. (utf-8))
+										 (reply-to-html	. (utf-8 html))
+										 (reply-to-text	. (utf-8))))
+	(setq org-msg-convert-citation t)
+	(setq org-msg-signature "
 #+begin_signature
   --  daniele \\\\
 #+end_signature")
-	  ;; (org-msg-mode)
-	  )
-	(use-package org-mu4e :straight mu4e
-	  :bind (:map mu4e-compose-mode-map
-				  ("C-c o O" . org~mu4e-mime-switch-headers-or-body))
-	  :config
-	  (setq mu4e-org-link-query-in-headers-mode t) ; `C-c l` store query
-	  (setq org-mu4e-convert-to-html t)
-	  )
-	(use-package org-mime
-	  :bind (
-			 :map mu4e-compose-mode-map
-			 ("C-c M-O" . org-mime-edit-mail-in-org-mode)
-			 ("C-c M-o" . org-mime-htmlize)
-			 :map org-mode-map
-			 ("C-c M-o" . org-mime-org-subtree-htmlize)
-			 ("C-c M-O" . org-mime-org-buffer-htmlize))
-	  :config
-	  (setq org-mime-library 'semi)
-	  (setq org-mime-export-ascii 'utf-8)
-	  (setq org-mime-export-options '(
-									  :with-latex dvipng
-									  :section-numbers nil
-									  :with-author nil
-									  :with-toc nil))
-	  :hook
-	  (org-mime-html-hook . (lambda ()
-							  (org-mime-change-element-style
-							   "pre" (format "color: %s; background-color: %s; padding: 0.5em;"
-											 "#E6E1DC" "#232323"
-											 ;; "darkred" "burlywood"
-											 ))))
-	  ;; the following can be used to nicely offset block quotes in email bodies
-	  (org-mime-html-hook . (lambda ()
-							  (org-mime-change-element-style
-							   "blockquote" "border-left: 2px solid gray; padding-left: 4px;")))
-	  ;; (message-send-hook . org-mime-confirm-when-no-multipart)
-	  (mu4e-compose-mode-hook . (lambda ()(require 'org-mime))) ; work w/out server
-	  )
-	;; FIXME: just try to not load
-	;; (use-package mu4e-view-common :straight mu4e
-	;;   :preface
-	;;   (defun mu4e-action-save-to-pdf (msg)
-	;; 	(let* ((date (mu4e-message-field msg :date)) ;;XXX This
-	;; 									;function does not exist anymore.
-	;; 		   (infile (mu4e~write-body-to-html msg))
-	;; 		   (outfile (format-time-string "%Y-%m-%d%H%M%S.pdf" date)))
-	;; 	  (with-temp-buffer
-	;; 		(shell-command
-	;; 		 (format "wkhtmltopdf %s ~/%s" infile outfile) t))))
-	;;   (defun jcs-view-in-eww (msg)
-	;; 	(eww-browse-url (concat "file://" (mu4e~write-body-to-html msg))))
-	;;   ;; view-attachment-actions  https://vxlabs.com/tag/mu4e/
-	;;   (defun my-remove-attachment (msg num)
-	;; 	"Remove attachment."
-	;; 	(let* ((attach (mu4e~view-get-attach msg num)) ;;XXX This
-	;; 									;function does not exist anymore.
-	;; 		   (path (mu4e-msg-field msg :path))
-	;; 		   (filename (and attach (plist-get attach :name)))
-	;; 		   (cmd (format "touch /tmp/%s-removed; altermime --input=%s --replace='%s' --with='/tmp/%s-removed'"
-	;; 						filename path filename filename)))
-	;; 	  (when (and filename
-	;; 				 (yes-or-no-p
-	;; 				  (format "Are you sure you want to remove '%s'?" filename)))
-	;; 		(shell-command cmd)
-	;; 		(message cmd))))
-	;;   :config
-	;;   (setq mu4e-view-actions
-	;; 		'(("capture message" . mu4e-action-capture-message)
-	;; 		  ("show this thread" . mu4e-action-show-thread)))
-	;;   (add-to-list 'mu4e-view-actions
-	;; 			   '("view in browser" . mu4e-action-view-in-browser) t)
-	;;   (add-to-list 'mu4e-view-actions
-	;; 			   '("print to pdf" . mu4e-action-save-to-pdf) t)
-	;;   (add-to-list 'mu4e-view-actions
-	;; 			   '("eww view" . jcs-view-in-eww) t)
-	;;   (add-to-list 'mu4e-view-attachment-actions
-	;; 			   '("remove-attachment" . my-remove-attachment))
-	;;   )
-	(use-package mu4e-mark :straight mu4e ; Tags and personal archive
-	  :bind (:map
-			 mu4e-headers-mode-map
-			 ("z" . mu4e-headers-mark-for-tag)
-			 ("P" . mu4e-headers-mark-for-personal)
-			 :map
-			 mu4e-view-mode-map
-			 ("z" . mu4e-view-mark-for-tag)
-			 ("P" . mu4e-view-mark-for-personal))
-	  :config
-	  (add-to-list 'mu4e-marks
-				   ;; https://gist.github.com/lgatto/7091552
-				   '(tag
-					 :char       "z"
-					 :prompt     "gtag"
-					 :ask-target (lambda () (read-string "What tag do you want to add?"))
-					 :action      (lambda (docid msg target)
-									(mu4e-action-retag-message msg (concat "+" target)))))
-	  (add-to-list 'mu4e-marks
-				   '(personal
-					 :char       "P"
-					 :prompt     "personal"
-					 :show-target (lambda (target) "personal")
-					 :action      (lambda (docid msg target)
-									;; must come before proc-move since retag runs
-									;; 'sed' on the file
-									(mu4e-action-retag-message msg "-\\Inbox")
-									(mu4e--server-move docid "/archives/personal" "+S-u-N"))))
-	  (mu4e~headers-defun-mark-for tag)
-	  (mu4e~headers-defun-mark-for personal)
-	  (mu4e~view-defun-mark-for tag)
-	  (mu4e~view-defun-mark-for personal)
-	  )
-	;; FIXME
-	(setq 								; smtp queue
-	 smtpmail-queue-mail  t
-	 smtpmail-queue-dir  (expand-file-name "~/Maildir/queue/cur") ; Remember to "mu mkdir" and "touch .noindex"
-	 ;; (set-language-environment "UTF-8")	; required by mu4e-send-delay for sending correctly formatted email
-	 ;; (progn                    ; send delay
-	 ;;   (add-to-list 'load-path "~/.spacemacs.d/mu4e-send-delay")
-	 ;;   (require 'mu4e-send-delay)
-	 ;;   (mu4e-send-delay-setup)
-	 ;;   (add-hook 'mu4e-main-mode-hook 'mu4e-send-delay-initialize-send-queue-timer)
-	 ;;   (add-hook 'mu4e-main-mode-hook
-	 ;;   		(lambda ()
-	 ;;   		  (define-key mu4e-compose-mode-map (kbd "C-c C-c") 'mu4e-send-delay-send-and-exit)))
-	 ;;   (setq mu4e-send-delay-default-delay "5m" mu4e-send-delay-timer 120)
-	 ;;   )
-	 )
+	;; (org-msg-mode)
 	)
-  (use-package mu4e-jump-to-list
-    :after mu4e)
-  (progn                ; multiple attachments
-    ;; ;;  and dired: turn-on-gnus-dired-mode C-c RET C-a ; XXX IVY
-    ;; ;;  https://emacs.stackexchange.com/questions/14652/attach-multiple-files-from-the-same-directory-to-an-email-message
-    ;; (ivy-add-actions
-    ;;  'counsel-locate
-    ;;  '(("a" (lambda (x)
-	;; 		  (unless (memq major-mode '(mu4e-compose-mode message-mode))
-    ;;             (compose-mail))
-	;; 		  (mml-attach-file x)) "Attach to email")))
-    ;; (ivy-add-actions
-    ;;  'counsel-fzf
-    ;;  '(("a" (lambda (x)
-	;; 		  (unless (memq major-mode '(mu4e-compose-mode message-mode))
-    ;;             (compose-mail))
-	;; 		  (mail-add-attachment x)) "Attach to email")))
-    )
+  (use-package mu4e-org :straight mu4e
+	:bind (:map mu4e-compose-mode-map
+				("C-c o O" . org~mu4e-mime-switch-headers-or-body))
+	:config
+	(setq mu4e-org-link-query-in-headers-mode t) ; `C-c l` store query
+	(setq org-mu4e-convert-to-html t)
+	)
+  (use-package org-mime
+	:bind (
+		   :map mu4e-compose-mode-map
+		   ("C-c M-O" . org-mime-edit-mail-in-org-mode)
+		   ("C-c M-o" . org-mime-htmlize)
+		   :map org-mode-map
+		   ("C-c M-o" . org-mime-org-subtree-htmlize)
+		   ("C-c M-O" . org-mime-org-buffer-htmlize))
+	:config
+	(setq org-mime-library 'semi)
+	(setq org-mime-export-ascii 'utf-8)
+	(setq org-mime-export-options '(
+									:with-latex dvipng
+									:section-numbers nil
+									:with-author nil
+									:with-toc nil))
+	:hook
+	(org-mime-html-hook . (lambda ()
+							(org-mime-change-element-style
+							 "pre" (format "color: %s; background-color: %s; padding: 0.5em;"
+										   "#E6E1DC" "#232323"
+										   ;; "darkred" "burlywood"
+										   ))))
+	;; the following can be used to nicely offset block quotes in email bodies
+	(org-mime-html-hook . (lambda ()
+							(org-mime-change-element-style
+							 "blockquote" "border-left: 2px solid gray; padding-left: 4px;")))
+	;; (message-send-hook . org-mime-confirm-when-no-multipart)
+	(mu4e-compose-mode-hook . (lambda ()(require 'org-mime))) ; work w/out server
+	)
+  (use-package mu4e-mark :straight mu4e ; Tags and personal archive
+	:after mu4e
+	:bind (:map
+		   mu4e-headers-mode-map
+		   ("M-z" . mu4e-headers-mark-for-tag)
+		   ("M-p" . mu4e-headers-mark-for-personal)
+		   :map
+		   mu4e-view-mode-map
+		   ("M-z" . mu4e-view-mark-for-tag)
+		   ("M-p" . mu4e-view-mark-for-personal))
+	:config
+	(add-to-list 'mu4e-marks
+				 ;; https://gist.github.com/lgatto/7091552
+				 '(tag
+				   :char       "M-z"
+				   :prompt     "gtag"
+				   :ask-target (lambda () (read-string "What tag do you want to add?"))
+				   :action      (lambda (docid msg target)
+								  (mu4e-action-retag-message msg (concat "+" target)))))
+	(add-to-list 'mu4e-marks
+				 '(personal
+				   :char       "M-p"
+				   :prompt     "personal"
+				   :show-target (lambda (target) "personal")
+				   :action      (lambda (docid msg target)
+								  ;; must come before proc-move since retag runs
+								  ;; 'sed' on the file
+								  (mu4e-action-retag-message msg "-\\Inbox")
+								  (mu4e--server-move docid "/archives/personal" "+S-u-N"))))
+	(mu4e~headers-defun-mark-for tag)
+	(mu4e~headers-defun-mark-for personal)
+	;; FIXME
+	;; (mu4e~view-defun-mark-for tag)
+	;; (mu4e~view-defun-mark-for personal)
+	)
   )
+(use-package mu4e-jump-to-list
+  :after mu4e)
 (progn                                  ; org
   (use-package jupyter
 	:straight (:no-native-compile t :no-byte-compile t)
@@ -1774,6 +1689,9 @@ completing-read prompter."
 	;; (font-lock-add-keywords 'org-mode
 	;;                         '(("^ *\\([-]\\) "
 	;;                            (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
+	(consult-customize
+	 da-consult-org
+	 :preview-key "<right>")
 	(use-package prog-mode
 	  :straight (:type built-in)
 	  :config
@@ -1947,6 +1865,7 @@ completing-read prompter."
 	(use-package ox-twbs :init (eval-after-load 'ox '(require 'ox-twbs)))
 	(use-package auctex
 	  :defer t
+	  :mode ("\\.tex\\'" . TeX-latex-mode)
 	  :config
 	  (use-package tex
 		:straight auctex
@@ -2827,6 +2746,7 @@ completing-read prompter."
            ("M-b" . citar-insert-preset))
 	;; ;; https://github.com/bdarcus/citar/wiki/Notes-configuration
 	:custom
+	(org-cite-global-bibliography completion-bibliography)
 	(citar-bibliography completion-bibliography)
 	(citar-library-paths completion-library-path)
 	(citar-notes-paths '("~/Sync/notes/org-roam/biblio"))
@@ -2860,6 +2780,10 @@ completing-read prompter."
 							 ":PROPERTIES:\n"
 							 ":NOTER_DOCUMENT: ${file}\n"
 							 ":END:"))))
+	:hook
+	(LaTeX-mode-hook . citar-capf-setup)
+	(org-mode-hook . citar-capf-setup)
+	(markdown-mode-hook . citar-capf-setup)
 	:config
 	(setq citar-notes-source 'citar-file)
 	(setq citar-symbols
@@ -2870,12 +2794,12 @@ completing-read prompter."
 	)
   ;; https://github.com/bdarcus/citar/wiki/Notes-configuration
   (use-package citar-org-roam
-	:after citar org-roam
-	:commands citar-org-roam-mode
+	:after (citar org-roam)
+	:commands (citar-org-roam-mode)
 	:config (citar-org-roam-mode))
   (use-package citar-embark
-	:after citar embark
-	:commands citar-embark-mode
+	:after (citar embark)
+	:commands (citar-embark-mode)
 	:init (citar-embark-mode))
   (use-package oc
 	:straight org

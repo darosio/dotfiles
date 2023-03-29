@@ -5,3 +5,4 @@ mkdir -p "$HOME"/.config/environment.d
 stow -t "$HOME" emacs
 cd "$HOME"/.emacs.d || exit
 ln -s "$HOME"/Sync/.emacs/* .
+rm -r "$HOME"/.cache/org-persist
