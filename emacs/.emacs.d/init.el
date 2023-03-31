@@ -1,54 +1,64 @@
-;;; package --- Summary my configuration init.el
-;;; Commentary:
-;; Binding keys reserved to user: "C-c <letter>" and <F5> to <F9>.
+;;; init.el --- Personal Emacs configuration file
+;;
+;; Author: DanieleArosio <daniele.arosio@cnr.it>
+;; Version: 3.2.1
+;;
+;; This file contains my personal Emacs configuration.
+;;
 
-;; Resizing the Emacs frame can be a terribly expensive part of changing the
-;; font. By inhibiting this, we easily halve startup times with fonts that are
-;; larger than the system default.
-(setq frame-inhibit-implied-resize t)
+;;; Commentary:
+;; Binding keys reserved to user are: "C-c <letter>" and <F5> to <F9>.
+
+;;; Code:
+
 ;; Disable GUI elements
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
+
+;; Inhibit frame resizing to speed up startup time
+(setq frame-inhibit-implied-resize t)
+
+;; Disable splash screen and file dialogs
 (setq inhibit-splash-screen t)
 (setq use-file-dialog nil)
-(declare-function doom-reset-file-handler-alist-h "init.el")
-;;; init.el --- Personal configuration file -*- lexical-binding: t; no-byte-compile: t; -*-
-;; `file-name-handler-alist' is consulted on every `require', `load' and various
-;; path/io functions. You get a minor speed up by nooping this. However, this
-;; may cause problems on builds of Emacs where its site lisp files aren't
-;; byte-compiled and we're forced to load the *.el.gz files (e.g. on Alpine)
-(unless (daemonp)
+
+;; Set global variables
+(setq-default debug-on-error t)
+(setq-default debug-on-quit t)
+
+;; Set custom variables
+;; Ensure Doom is running out of this file's directory
+(custom-set-variables
+ '(user-emacs-directory (file-truename (file-name-directory load-file-name))))
+
+;; Define a constant variable
+(defconst emacs-start-time (current-time))
+
+;;; package --- Summary my configuration init.el
+;; Disable GUI elements
+(setq inhibit-splash-screen t)
+(setq use-file-dialog nil)
+
+(progn                                  ; Package configuration
+  ;; Disable file-name-handler-alist during startup
   (defvar doom--initial-file-name-handler-alist file-name-handler-alist)
   (setq file-name-handler-alist nil)
   ;; Restore `file-name-handler-alist' later, because it is needed for handling
   ;; encrypted or compressed files, among other things.
-  (defun doom-reset-file-handler-alist-h ()
-    ;; Re-add rather than `setq', because changes to `file-name-handler-alist'
-    ;; since startup ought to be preserved.
-    (dolist (handler file-name-handler-alist)
-      (add-to-list 'doom--initial-file-name-handler-alist handler))
-    (setq file-name-handler-alist doom--initial-file-name-handler-alist))
-  (add-hook 'emacs-startup-hook #'doom-reset-file-handler-alist-h)
-  )
-;; Ensure Doom is running out of this file's directory
-(setq user-emacs-directory (file-truename (file-name-directory load-file-name)))
+  (add-hook 'emacs-startup-hook
+			(lambda ()
+              (dolist (handler file-name-handler-alist)
+				(add-to-list 'doom--initial-file-name-handler-alist handler))
+              (setq file-name-handler-alist doom--initial-file-name-handler-alist)))
 
-;;; Code:
-(setq debug-on-error t)
-(setq debug-on-quit t)
-(defconst emacs-start-time (current-time))
-(defmacro csetq (sym val)
-  "Define variables: SYM VAL."
-  `(funcall (or (get ',sym 'custom-set) 'set-default) ',sym ,val))
+  ;; Use 'setq-default' instead of custom-set or setq to set variables
+  (setq-default straight-vc-git-default-clone-depth 1)
+  (setq-default straight-recipes-gnu-elpa-use-mirror t)
 
-(progn                                  ; Package configuration
-  ;; straight
-  (csetq straight-vc-git-default-clone-depth 1)
-  (csetq straight-recipes-gnu-elpa-use-mirror t)
+  ;; Bootstrap straight.el
   (defvar bootstrap-version)
-  (let ((bootstrap-file
-		 (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+  (let ((bootstrap-file (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
 		(bootstrap-version 5))
 	(unless (file-exists-p bootstrap-file)
       (with-current-buffer
@@ -59,25 +69,31 @@
 		(eval-print-last-sexp)))
 	(load bootstrap-file nil 'nomessage))
 
-  (declare-function straight-use-package "straight")
+  ;; (declare-function straight-use-package "straight")
+  (require 'straight)
+  ;; Load use-package
   (straight-use-package 'use-package)
-  (eval-when-compile
-    (require 'use-package))
+  (eval-when-compile (require 'use-package))
+
   ;; list-load-path-shadows built-in org
   (straight-use-package 'org)
 
-  (eval-and-compile
-	;; This is a variable that has been renamed but straight still refers when
-	;; doing :straight (:no-native-compile t)
-	;; (setq comp-deferred-compilation-black-list nil) ; He need it only for jupyter
-	(setq-local straight-use-package-by-default t)
-	(setq straight-cache-autoloads t)		; XXX: Issue prune-build periodically.
-	(setq straight-check-for-modifications '(watch-files find-when-checking))
-	)
+  ;; Install packages using straight.el by default
+  (setq-local straight-use-package-by-default t)
+
+  ;; Enable autoload caching and check for modifications
+  (setq straight-cache-autoloads t)
+  (setq straight-check-for-modifications '(watch-files find-when-checking))
+
+  ;; Configure use-package
+  (require 'server)
   (if (daemonp)
-	  (progn (csetq use-package-always-demand t)
-			 (setenv "EDITOR" "emacsclient"))
-	(csetq use-package-always-defer t))
+      (progn
+		(setq use-package-always-demand nil
+              process-connection-type nil
+              server-raise-frame t)
+		(setenv "EDITOR" "emacsclient -c -a=''"))
+	(setq use-package-always-defer t))
 
   (use-package use-package
 	:straight use-package
@@ -89,85 +105,294 @@
   (use-package use-package-ensure-system-package)
   (use-package async)
   )
-(use-package emacs						; Base UI
-  :preface
-  (defun xah-toggle-line-spacing ()
-	"Toggle line spacing between no extra space to extra half line height.
-URL `http://xahlee.info/emacs/emacs/emacs_toggle_line_spacing.html'
-Version 2017-06-02"
-	(interactive)
-	(if line-spacing
-		(setq line-spacing nil)
-	  (setq line-spacing 0.5))
-	(redraw-frame (selected-frame)))
-  :config
-  (setq-default cursor-in-non-selected-windows nil)
-  (setq-default cursor-type '(bar . 3))
-  (setq-default echo-keystrokes 0.1)
-  (setq-default enable-recursive-minibuffers t)
-  (setq-default fill-column 76)
-  (setq-default indent-tabs-mode t)
-  (setq-default tab-always-indent 'complete) ; see company completion
-  (setq-default indicate-empty-lines t)
-  (setq-default inhibit-startup-screen t)
-  (setq-default major-mode 'text-mode)
-  (setq-default resize-mini-windows t)
-  (setq-default ring-bell-function 'ignore)
-  (setq-default truncate-lines t) ; truncating lines
-  (setq-default scroll-margin 3)
-  (setq-default scroll-step 1)
-  (setq-default sentence-end-double-space nil)
-  (setq-default show-paren-delay 0.05)	; Show matching parenthesis
-  (setq-default tab-width 4)
-  (setq-default buffer-file-coding-system 'utf-8-auto-unix)
-  (prefer-coding-system 'utf-8)
-  (set-default-coding-systems 'utf-8)
-  (set-terminal-coding-system 'utf-8)
-  (set-keyboard-coding-system 'utf-8)
-  (tooltip-mode    0)
-  (show-paren-mode 1)			; highlight parenthesis
-  (save-place-mode 1)			; remember last position in file
-  (blink-cursor-mode 1)		; Don't blink the cursor
-  (fset 'yes-or-no-p 'y-or-n-p)
-  (global-hl-line-mode)
-  (put 'narrow-to-region 'disabled nil) ; narrow to region =C-x n n=
-  (setq image-use-external-converter t) ;27.1 viewer don't display many png
-  (setq x-stretch-cursor t)
-  (setq font-lock-maximum-decoration t)
-  :bind (("M-/" . hippie-expand)
-		 ("H-;" . comment-box)
-		 ("H-<backspace>" . kill-whole-line)
-		 ("H-\\" . indent-region)
-		 ("C-c t A" . auto-revert-mode)
-		 ("C-c t o e" . org-toggle-pretty-entities)
-		 ("C-c t d" . toggle-debug-on-error)
-		 ("C-c t l" . display-line-numbers-mode)
-		 ("C-c t o n" . org-num-mode)
-		 ("C-c t m c" . conf-mode)
-		 ("C-c t m o" . org-mode)
-		 ("C-c t m t" . text-mode)
-		 ("C-c t v" . variable-pitch-mode)
-		 ("C-c t w" . whitespace-mode)
-		 ("C-c t 5" . xah-toggle-line-spacing)
-		 ))
-(progn                                  ; UI more setting
-(use-package all-the-icons
-  :if (display-graphic-p)
-  :commands (all-the-icons-material
-			 all-the-icons-faicon
-			 all-the-icons-octicon))
-(use-package bookmark                 ; persistent bookmarks
-  :straight (:type built-in)
-  :init (setq bookmark-save-flag 2
-			  ;; to avoid sync conflicts in ~/Sync/.emacs
-			  bookmark-default-file "~/.emacs.d/bookmarks"))
-(use-package ediff                    ; Fix diff behavior
-  :custom
-  (ediff-window-setup-function 'ediff-setup-windows-plain)
-  (ediff-split-window-function (if (> (frame-width) 150)
-								   'split-window-horizontally
-                                 'split-window-vertically))
-  (ediff-diff-options "-w"))
+(progn                                  ; UI base setting
+  (use-package bookmark
+	:straight (:type built-in)
+	:custom
+	(bookmark-save-flag 2))
+  (use-package browse-url
+	:straight (:type built-in)
+	:custom
+	(browse-url-browser-function 'browse-url-generic)
+	(browse-url-generic-program "firefox"))
+  (use-package ediff
+	:straight (:type built-in)
+	:custom
+	(ediff-window-setup-function 'ediff-setup-windows-plain)
+	(ediff-split-window-function
+	 (if (> (frame-width) 150)
+		 'split-window-horizontally
+	   'split-window-vertically))
+	(ediff-diff-options "-w"))
+  (use-package emacs
+	:preface
+	;; Go to change fonts
+	(defun mk-set-font (font &optional height)
+	  "Set font FONT as main font for all frames.
+HEIGHT, if supplied, specifies height of letters to use."
+	  (interactive
+	   (list (completing-read "Use font: " (font-family-list)) nil))
+	  (set-face-attribute 'default nil :family font)
+	  (when height
+		(set-face-attribute 'default nil :height height))
+	  (set-face-attribute 'variable-pitch nil :family font))
+	;; http://xahlee.info/emacs/emacs/emacs_toggle_line_spacing.html
+	(defun xah-toggle-line-spacing ()
+      "Toggle line spacing between no extra space to extra half line height."
+      (interactive)
+      (setq-local line-spacing (if line-spacing nil 0.5))
+      (redraw-frame))
+	:config
+	(setq-default blink-cursor-mode 0		; Don't blink the cursor
+				  buffer-file-coding-system 'utf-8-auto
+				  cursor-in-non-selected-windows nil
+				  cursor-type '(bar . 3)
+				  echo-keystrokes 0.1
+				  enable-recursive-minibuffers t
+				  fill-column 76
+				  font-lock-maximum-decoration t
+				  gc-cons-threshold (* 50 1000 1000)
+				  global-mark-ring-max 1024
+				  image-use-external-converter t ; 27.1 viewer don't display many png
+				  indent-tabs-mode nil	; use spaces instead of tabs for indentation
+				  indicate-empty-lines t
+				  inhibit-startup-screen t
+				  kept-new-versions 6
+				  kept-old-versions 2
+				  major-mode 'text-mode
+				  mark-ring-max 64
+				  read-process-output-max (* 1024 1024)
+				  resize-mini-windows t
+				  ring-bell-function 'ignore
+				  save-interprogram-paste-before-kill t
+				  save-place-mode t		; remember last position in file
+				  scroll-margin 3
+				  scroll-step 1
+				  select-enable-clipboard t
+				  sentence-end-double-space nil
+				  show-paren-delay 0.05
+				  tab-always-indent 'complete
+				  tab-width 4
+				  truncate-lines t
+				  x-stretch-cursor t
+				  yank-pop-change-selection t)
+	(prefer-coding-system 'utf-8)
+	(set-default-coding-systems 'utf-8)
+	(set-terminal-coding-system 'utf-8)
+	(set-keyboard-coding-system 'utf-8)
+	(tooltip-mode 0)
+	(show-paren-mode 1)			; highlight parenthesis
+	(global-hl-line-mode 1)
+	(put 'narrow-to-region 'disabled nil) ; narrow to region =C-x n n=
+	(fset 'yes-or-no-p 'y-or-n-p)
+	:bind
+	(("M-/" . hippie-expand)
+	 ("H-;" . comment-box)
+	 ("H-<backspace>" . kill-whole-line)
+	 ("H-\\" . indent-region)
+	 ("C-c t A" . auto-revert-mode)
+	 ("C-c t o e" . org-toggle-pretty-entities)
+	 ("C-c t d" . toggle-debug-on-error)
+	 ("C-c t l" . display-line-numbers-mode)
+	 ("C-c t o n" . org-num-mode)
+	 ("C-c t m c" . conf-mode)
+	 ("C-c t m o" . org-mode)
+	 ("C-c t m t" . text-mode)
+	 ("C-c t v" . variable-pitch-mode)
+	 ("C-c t w" . whitespace-mode)
+	 ("C-c t 5" . xah-toggle-line-spacing)
+	 ("M-g F" . mk-set-font))
+	)
+  (use-package files
+	:straight (:type built-in)
+	:preface
+	;; Revert buffer without prompting
+	(defun my-revert-buffer (&rest _)
+	  "Revert buffer without prompting."
+	  (revert-buffer t t))
+	:custom
+	;; Disable automatic saving of buffers
+	(auto-save-default nil)
+	;; Save backup files in a temporary directory
+	(auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
+	;; Copy backup files instead of renaming them
+	(copy-backup-files t)
+	;; Store backup files in a temporary directory
+	(backup-directory-alist `((".*" . ,temporary-file-directory)))
+	;; Delete old backup files
+	(delete-old-versions t)
+	;; Keep the 4 newest versions of a file
+	(kept-new-versions 4)
+	;; Keep the 2 oldest versions of a file
+	(kept-old-versions 2)
+	;; Warn when opening large files
+	(large-file-warning-threshold 10240000)
+	;; Require final newline in files
+	(require-final-newline t)
+	;; Display version control status in the mode line
+	(vc-display-status t)
+	;; Follow symbolic links in version control operations
+	(vc-follow-symlinks t)
+	;; Enable version control for files
+	(version-control t)
+	:bind
+	("C-x B" . revert-buffer)
+	:hook
+	;; After saving make scripts executable
+	(after-save-hook . executable-make-buffer-file-executable-if-script-p))
+  ;; (use-package frame                   ;window split more consistent? ;;
+  ;; 	:straight (:type built-in)
+  ;; 	:config                                                            ;;
+  ;; 	(setq window-divider-default-right-width 1)                        ;;
+  ;; 	(setq window-divider-default-bottom-width 1)                       ;;
+  ;; 	(setq window-divider-default-places 'right-only)                   ;;
+  ;; 	:hook (after-init-hook . window-divider-mode))                     ;;
+  (use-package isearch
+	:straight (:type built-in)
+	:config
+	(setq isearch-allow-scroll t)
+	:bind-keymap
+	("C-c /" . search-map)
+	;; :bind
+	;; (:map search-map
+    ;;       ("s" . isearch-forward)
+    ;;       ("r" . isearch-backward))
+	:demand t)
+  (use-package simple
+	:straight (:type built-in)
+	:init
+	(setq blink-matching-delay 0.5
+		  blink-matching-paren 'jump-offscreen
+		  kill-read-only-ok t
+		  suggest-key-bindings nil)
+	:preface
+	(defun mk-auto-fill-mode ()
+	  "Enable ‘auto-fill-mode’ limiting it to comments."
+	  (setq-local comment-auto-fill-only-comments t)
+	  (auto-fill-mode 1))
+	:config
+	(column-number-mode 1)
+	:bind
+	("C-z" . undo)
+	("C-c q" . auto-fill-mode)
+	("M-h" . mark-word)
+	("M-S-h" . mark-paragraph)
+	:hook
+	((gitignore-mode-hook . mk-auto-fill-mode)
+	 (haskell-cabal-mode-hook . mk-auto-fill-mode)
+	 (prog-mode-hook . mk-auto-fill-mode)
+	 (proof-mode-hook . mk-auto-fill-mode)
+	 ;; (text-mode . auto-fill-mode)
+	 (yaml-mode-hook . mk-auto-fill-mode)))
+  (use-package window
+	:straight (:type built-in)
+	:defer t
+	:preface
+	(defvar prot/window-configuration nil
+	  "Current window-monocle configuration.")
+	(declare-function one-window-p "window")
+	(defun prot/window-single-toggle ()
+	  "Monocle toggle. Substitute zygospore."
+	  (interactive)
+	  (if (one-window-p)
+		  (when prot/window-configuration
+			(set-window-configuration prot/window-configuration))
+		(setq prot/window-configuration (current-window-configuration))
+		(delete-other-windows)))
+	:init
+	(setq display-buffer-alist
+		  '(;; top side window
+			("\\*\\(Flymake\\|Package-Lint\\|vc-git :\\).*"
+			 (display-buffer-in-side-window)
+			 (window-height . 0.16)
+			 (side . top)
+			 (slot . 0)
+			 (window-parameters . ((no-other-window . t))))
+			("\\*Messages.*"
+			 (display-buffer-in-side-window)
+			 (window-height . 0.16)
+			 (side . top)
+			 (slot . 1)
+			 (window-parameters . ((no-other-window . t))))
+			("\\*\\(Backtrace\\|Warnings\\|Compile-Log\\)\\*"
+			 (display-buffer-in-side-window)
+			 (window-height . 0.16)
+			 (side . top)
+			 (slot . 2)
+			 (window-parameters . ((no-other-window . t))))
+			;; bottom side window
+			("\\*\\(Output\\|Register Preview\\).*"
+			 (display-buffer-in-side-window)
+			 (window-width . 0.16)       ; See the :hook
+			 (side . bottom)
+			 (slot . -1)
+			 (window-parameters . ((no-other-window . t))))
+			(".*\\*\\(Completions\\|Embark Live Occur\\).*"
+			 (display-buffer-in-side-window)
+			 (window-height . 0.16)
+			 (side . bottom)
+			 (slot . 0)
+			 (window-parameters . ((no-other-window . t))))
+			("^\\(\\*e?shell\\|vterm\\).*"
+			 (display-buffer-in-side-window)
+			 (window-height . 0.16)
+			 (side . bottom)
+			 (slot . 1))
+			;; left side window
+			("\\*Help.*"
+			 (display-buffer-in-side-window)
+			 (window-width . 0.30)       ; See the :hook
+			 (side . left)
+			 (slot . 0))
+			;; right side window
+			("\\*Faces\\*"
+			 (display-buffer-in-side-window)
+			 (window-width . 0.25)
+			 (side . right)
+			 (slot . 0)
+			 (window-parameters . ((no-other-window . t)
+								   (mode-line-format . (" "
+														mode-line-buffer-identification)))))
+			("\\*Custom.*"
+			 (display-buffer-in-side-window)
+			 (window-width . 0.25)
+			 (side . right)
+			 (slot . 1))
+			;; bottom buffer (NOT side window)
+			("\\*\\vc-\\(incoming\\|outgoing\\).*"
+			 (display-buffer-at-bottom))
+			;; ("\\*Embark Occur.*"
+			;;  (display-buffer-at-bottom))
+			))
+	(setq window-combination-resize t)
+	(setq even-window-sizes 'height-only)
+	(setq window-sides-vertical nil)
+	;; Note that the the syntax for `use-package' hooks is controlled by
+	;; the `use-package-hook-name-suffix' variable.  The "-hook" suffix is
+	;; not an error of mine.
+	:hook ((help-mode-hook . visual-line-mode)
+		   (Custom-mode-hook . visual-line-mode))
+	:bind (("H-n" . next-buffer)
+		   ("H-p" . previous-buffer)
+		   ("H-o" . other-window)
+		   ("H-2" . split-window-below)
+		   ("H-3" . split-window-right)
+		   ("H-0" . delete-window)
+		   ("H-1" . delete-other-windows)
+		   ("H-5" . delete-frame)
+		   ("H-{" . shrink-window-horizontally)
+		   ("H-}" . enlarge-window-horizontally)
+		   ("H-[" . shrink-window)
+		   ("H-]" . enlarge-window)
+		   ("H-=" . balance-windows-area)
+		   ("H-m" . prot/window-single-toggle)
+		   ("H-s" . window-toggle-side-windows)
+		   ("H-q" . delete-window)            ; emulate i3wm
+		   ("H-<up>" . windmove-up)
+		   ("H-<left>" . windmove-left)
+		   ("H-<down>" . windmove-down)
+		   ("H-<right>" . windmove-right)))
+  )
 (progn                                ; printing
   (setq lpr-command "gtklp")
   ;; (setq ps-lpr-command "gtklp")
@@ -192,84 +417,21 @@ Version 2017-06-02"
   ;;   (pr-update-menus t)		; update now printer and utility menus
   ;;   )
   )
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defun mk-set-font (font &optional height)
-  "Set font FONT as main font for all frames.
-HEIGHT, if supplied, specifies height of letters to use."
-  (interactive
-   (list (completing-read "Use font: " (font-family-list)) nil))
-  (set-face-attribute 'default nil :family font)
-  (when height
-    (set-face-attribute 'default nil :height height))
-  (set-face-attribute 'variable-pitch nil :family font))
-(global-set-key (kbd "<f14> o f") #'mk-set-font)
-(straight-use-package 'f)
-(require 'f)
-;; (use-package f :demand t)
-;; (declare-function f-expand "f")
-(use-package files
-  :straight (:type built-in)
-  :init
-  (setq auto-save-default nil	       ; stop creating #autosave# files
-        auto-save-file-name-transforms `((".*" ,temporary-file-directory t))
-        backup-by-copying t	       ; don't clobber symlinks
-        ;; make-backup-files nil
-        ;; create-lockfiles nil
-        ;; backup-directory-alist '(("." . "~/.emacs.d/backup"))
-        backup-directory-alist (list (cons "." (f-expand "backups" user-emacs-directory)))
-        delete-old-versions t
-        kept-new-versions 4
-        kept-old-versions 2
-        ;; large-file-warning-threshold (* 15 1024 1024) ; large file warning
-        large-file-warning-threshold 10240000
-        require-final-newline t
-        vc-display-status t
-        vc-follow-symlinks t	      ; follow symlinks without asking
-        version-control t)
-  :config
-  (advice-add 'revert-buffer :filter-args (lambda (&rest _rest) (list nil t)))
-  :bind
-  ("C-x B" . revert-buffer)
-  :hook
-  ;; (before-save . whitespace-cleanup) ; not compatible with deft
-  (after-save-hook . executable-make-buffer-file-executable-if-script-p)
-  ;; rend les scripts executable par défault si c'est UN script.
-  ;;    (lambda () (executable-make-buffer-file-executable-if-script-p)))
-  )
-(use-package simple
-  :straight (:type built-in)
-  :init
-  (setq
-   blink-matching-delay 0.5
-   blink-matching-paren 'jump-offscreen
-   kill-read-only-ok t
-   suggest-key-bindings nil)
-  :preface
-  (defun mk-auto-fill-mode ()
-    "Enable ‘auto-fill-mode’ limiting it to comments."
-    (setq-local comment-auto-fill-only-comments t)
-    (auto-fill-mode 1))
-  :config
-  (column-number-mode 1)
-  :bind
-  ("C-z" . undo)
-  ("C-c q" . auto-fill-mode)
-  ("M-h" . mark-word)
-  ("M-S-h" . mark-paragraph)
-  :hook
-  ((gitignore-mode-hook . mk-auto-fill-mode)
-   (haskell-cabal-mode-hook . mk-auto-fill-mode)
-   (prog-mode-hook . mk-auto-fill-mode)
-   (proof-mode-hook . mk-auto-fill-mode)
-   ;; (text-mode . auto-fill-mode)
-   (yaml-mode-hook . mk-auto-fill-mode)))
+
+(use-package all-the-icons
+  :if (display-graphic-p)
+  :commands (all-the-icons-material
+			 all-the-icons-faicon
+			 all-the-icons-octicon))
 (use-package unfill
   :bind
   ("C-c M-q" . unfill-toggle))
-(use-package isearch
-  :straight (:type built-in)
-  :config
-  (setq isearch-allow-scroll t))
+(use-package aggressive-indent
+  :bind
+  ("C-c t i" . aggressive-indent-mode)
+  :hook
+  (emacs-lisp-mode-hook . aggressive-indent-mode)
+  (html-mode-hook . aggressive-indent-mode))
 (use-package delsel
   :init
   (delete-selection-mode 1))
@@ -283,17 +445,14 @@ HEIGHT, if supplied, specifies height of letters to use."
   (electric-indent-mode 0)
   ;; python is excluded by aggressive indent because of not absolute indentation
   :hook (python-mode-hook . electric-indent-mode))
-(use-package aggressive-indent
-  :bind
-  ("C-c t i" . aggressive-indent-mode)
-  :hook
-  ((emacs-lisp-mode-hook . aggressive-indent-mode)
-   (html-mode-hook . aggressive-indent-mode)))
-(use-package which-key                ; needed here by which-key replacements
+(use-package which-key
   :commands (which-key-mode)
-  :bind ("H-<f1>" . which-key-show-top-level)
-  :init (which-key-mode 1)
-  :config (setq which-key-idle-delay 0.05))
+  :bind
+  ("H-<f1>" . which-key-show-top-level)
+  :init
+  (which-key-mode 1)
+  :config
+  (setq which-key-idle-delay 0.05))
 (use-package visual-fill-column
   :commands (visual-fill-column-split-window-sensibly
 			 visual-fill-column-adjust) ;; although are functions
@@ -303,154 +462,33 @@ HEIGHT, if supplied, specifies height of letters to use."
   ("<C-f12>" . no-distraction-disable)
   :preface
   (defun no-distraction-enable ()
-    "Switch to no distraction env"
-    (interactive)
-    (visual-fill-column-mode)
-    (text-scale-increase 2)
-    ;; (wc-mode)
-    )
+	"Switch to no distraction env"
+	(interactive)
+	(visual-fill-column-mode)
+	(text-scale-increase 2)
+	;; (wc-mode)
+	)
   (defun no-distraction-disable ()
-    "Switch off from no distraction env"
-    (interactive)
-    (visual-fill-column-mode -1)
-    (text-scale-set 0)
-    ;; (wc-mode -1)
-    )
+	"Switch off from no distraction env"
+	(interactive)
+	(visual-fill-column-mode -1)
+	(text-scale-set 0)
+	;; (wc-mode -1)
+	)
   :init
   (setq visual-fill-column-center-text t
-        visual-fill-column-width 98
-        visual-fill-column-fringes-outside-margins nil
-        ;; set right curly arrow even when visual line mode is wrapping logical lines into visual ones.
-        visual-line-fringe-indicators '(bottom-left-angle top-right-angle)
-        ;; allow splitting windows with wide margins
-        split-window-preferred-function #'visual-fill-column-split-window-sensibly)
+		visual-fill-column-width 98
+		visual-fill-column-fringes-outside-margins nil
+		;; set right curly arrow even when visual line mode is wrapping logical lines into visual ones.
+		visual-line-fringe-indicators '(bottom-left-angle top-right-angle)
+		;; allow splitting windows with wide margins
+		split-window-preferred-function #'visual-fill-column-split-window-sensibly)
   ;; :config
   ;; adjust margins upon text resize
   (advice-add 'text-scale-adjust :after #'visual-fill-column-adjust)
   :hook
   (visual-fill-column-mode-hook . visual-line-mode))
-(use-package window
-  :straight (:type built-in)
-  :defer t
-  :preface
-  (defvar prot/window-configuration nil
-    "Current window-monocle configuration.")
-  (declare-function one-window-p "window")
-  (defun prot/window-single-toggle ()
-    "Monocle toggle. Substitute zygospore."
-    (interactive)
-    (if (one-window-p)
-        (when prot/window-configuration
-          (set-window-configuration prot/window-configuration))
-      (setq prot/window-configuration (current-window-configuration))
-      (delete-other-windows)))
-  :init
-  (setq display-buffer-alist
-        '(;; top side window
-          ("\\*\\(Flymake\\|Package-Lint\\|vc-git :\\).*"
-           (display-buffer-in-side-window)
-           (window-height . 0.16)
-           (side . top)
-           (slot . 0)
-           (window-parameters . ((no-other-window . t))))
-          ("\\*Messages.*"
-           (display-buffer-in-side-window)
-           (window-height . 0.16)
-           (side . top)
-           (slot . 1)
-           (window-parameters . ((no-other-window . t))))
-          ("\\*\\(Backtrace\\|Warnings\\|Compile-Log\\)\\*"
-           (display-buffer-in-side-window)
-           (window-height . 0.16)
-           (side . top)
-           (slot . 2)
-           (window-parameters . ((no-other-window . t))))
-          ;; bottom side window
-          ("\\*\\(Output\\|Register Preview\\).*"
-           (display-buffer-in-side-window)
-           (window-width . 0.16)       ; See the :hook
-           (side . bottom)
-           (slot . -1)
-           (window-parameters . ((no-other-window . t))))
-          (".*\\*\\(Completions\\|Embark Live Occur\\).*"
-           (display-buffer-in-side-window)
-           (window-height . 0.16)
-           (side . bottom)
-           (slot . 0)
-           (window-parameters . ((no-other-window . t))))
-          ("^\\(\\*e?shell\\|vterm\\).*"
-           (display-buffer-in-side-window)
-           (window-height . 0.16)
-           (side . bottom)
-           (slot . 1))
-          ;; left side window
-          ("\\*Help.*"
-           (display-buffer-in-side-window)
-           (window-width . 0.30)       ; See the :hook
-           (side . left)
-           (slot . 0))
-          ;; right side window
-          ("\\*Faces\\*"
-           (display-buffer-in-side-window)
-           (window-width . 0.25)
-           (side . right)
-           (slot . 0)
-           (window-parameters . ((no-other-window . t)
-                                 (mode-line-format . (" "
-                                                      mode-line-buffer-identification)))))
-          ("\\*Custom.*"
-           (display-buffer-in-side-window)
-           (window-width . 0.25)
-           (side . right)
-           (slot . 1))
-          ;; bottom buffer (NOT side window)
-          ("\\*\\vc-\\(incoming\\|outgoing\\).*"
-           (display-buffer-at-bottom))
-		  ;; ("\\*Embark Occur.*"
-		  ;;  (display-buffer-at-bottom))
-		  ))
-  (setq window-combination-resize t)
-  (setq even-window-sizes 'height-only)
-  (setq window-sides-vertical nil)
-  ;; Note that the the syntax for `use-package' hooks is controlled by
-  ;; the `use-package-hook-name-suffix' variable.  The "-hook" suffix is
-  ;; not an error of mine.
-  :hook ((help-mode-hook . visual-line-mode)
-         (Custom-mode-hook . visual-line-mode))
-  :bind (("H-n" . next-buffer)
-         ("H-p" . previous-buffer)
-         ("H-o" . other-window)
-         ("H-2" . split-window-below)
-         ("H-3" . split-window-right)
-         ("H-0" . delete-window)
-         ("H-1" . delete-other-windows)
-         ("H-5" . delete-frame)
-         ("H-{" . shrink-window-horizontally)
-         ("H-}" . enlarge-window-horizontally)
-         ("H-[" . shrink-window)
-         ("H-]" . enlarge-window)
-         ("H-=" . balance-windows-area)
-         ("H-m" . prot/window-single-toggle)
-         ("H-s" . window-toggle-side-windows)
-		 ("H-q" . delete-window)            ; emulate i3wm
-		 ("H-<up>" . windmove-up)
-		 ("H-<left>" . windmove-left)
-		 ("H-<down>" . windmove-down)
-		 ("H-<right>" . windmove-right)))
-(use-package frame                   ;window split more consistent? ;;
-  :straight (:type built-in)
-  :config                                                            ;;
-  (setq window-divider-default-right-width 1)                        ;;
-  (setq window-divider-default-bottom-width 1)                       ;;
-  (setq window-divider-default-places 'right-only)                   ;;
-  :hook (after-init-hook . window-divider-mode))                     ;;
-(use-package browse-url
-  :straight (:type built-in)
-  :config
-  (setq browse-url-browser-function 'browse-url-generic)
-  (setq browse-url-generic-program "firefox")
-  )
-)
+
 (progn                                  ; single packages
   (use-package crux
 	:bind
@@ -2741,6 +2779,7 @@ completing-read prompter."
 	"~/Sync/notes/org-roam/biblio" "Folder (or file) for notes.")
   (use-package citar
 	:bind (("M-s b" . citar-open)
+		   ("M-s c" . citar-open-note)
 		   ("M-s M-b" . citar-insert-citation)
            :map minibuffer-local-map
            ("M-b" . citar-insert-preset))
@@ -3230,7 +3269,7 @@ Marked 2 is a mac app that renders markdown."
 				("C-c r" . lsp-rename)
 				;; ("s-l" . nil)
 				)
-	:bind-keymap ("S-SPC" . lsp-command-map)
+	:bind-keymap ("C-L" . lsp-command-map)
 	:init
 	(setq lsp-keymap-prefix "S-SPC")
 	;; (setq read-process-output-max (* 1024 1024)) ;; 1mb

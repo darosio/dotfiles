@@ -1,11 +1,24 @@
-;; (setq site-run-file nil)		   ; No site-wide run-time initializations.
-(setq inhibit-default-init t)	   ; No site-wide default library
-;;  Very large threshold for garbage collector during init
+;;; early-init.el --- Initialization code run before `init.el'
+
+;;; Commentary:
+;; This file contains initialization code that is run before `init.el` is loaded.
+;; It is used to configure basic Emacs settings that need to be set before loading
+;; other packages.
+
+;;; Code:
+;; Disable site-wide initialization and default library
+(setq site-run-file nil
+      inhibit-default-init t)
+
+;; Increase threshold for garbage collector during initialization
 (setq gc-cons-threshold most-positive-fixnum)
-(setq package-enable-at-startup nil)	; We'll use straight.el
+
+;; Disable package initialization at startup
+(setq package-enable-at-startup nil)
+
+;; Optionally set native-compilation ELN load path
 ;; (setq native-comp-eln-load-path
 ;;       (list (expand-file-name "eln-cache" user-emacs-directory)))
-;; Reset garbage collector limit after init process has ended (8Mo)
-(add-hook 'after-init-hook
-          #'(lambda () (setq gc-cons-threshold (* 8 1024 1024)
-							 gc-cons-percentage 0.1)))
+
+(provide 'early-init)
+;;; early-init.el ends here
