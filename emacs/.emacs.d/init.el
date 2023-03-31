@@ -35,11 +35,6 @@
 ;; Define a constant variable
 (defconst emacs-start-time (current-time))
 
-;;; package --- Summary my configuration init.el
-;; Disable GUI elements
-(setq inhibit-splash-screen t)
-(setq use-file-dialog nil)
-
 (progn                                  ; Package configuration
   ;; Disable file-name-handler-alist during startup
   (defvar doom--initial-file-name-handler-alist file-name-handler-alist)
@@ -240,24 +235,14 @@ HEIGHT, if supplied, specifies height of letters to use."
 	:hook
 	;; After saving make scripts executable
 	(after-save-hook . executable-make-buffer-file-executable-if-script-p))
-  ;; (use-package frame                   ;window split more consistent? ;;
-  ;; 	:straight (:type built-in)
-  ;; 	:config                                                            ;;
-  ;; 	(setq window-divider-default-right-width 1)                        ;;
-  ;; 	(setq window-divider-default-bottom-width 1)                       ;;
-  ;; 	(setq window-divider-default-places 'right-only)                   ;;
-  ;; 	:hook (after-init-hook . window-divider-mode))                     ;;
+
   (use-package isearch
 	:straight (:type built-in)
 	:config
 	(setq isearch-allow-scroll t)
 	:bind-keymap
-	("C-c /" . search-map)
-	;; :bind
-	;; (:map search-map
-    ;;       ("s" . isearch-forward)
-    ;;       ("r" . isearch-backward))
-	:demand t)
+	("<f7>" . search-map))
+
   (use-package simple
 	:straight (:type built-in)
 	:init
@@ -284,9 +269,9 @@ HEIGHT, if supplied, specifies height of letters to use."
 	 (proof-mode-hook . mk-auto-fill-mode)
 	 ;; (text-mode . auto-fill-mode)
 	 (yaml-mode-hook . mk-auto-fill-mode)))
+
   (use-package window
 	:straight (:type built-in)
-	:defer t
 	:preface
 	(defvar prot/window-configuration nil
 	  "Current window-monocle configuration.")
@@ -299,80 +284,11 @@ HEIGHT, if supplied, specifies height of letters to use."
 			(set-window-configuration prot/window-configuration))
 		(setq prot/window-configuration (current-window-configuration))
 		(delete-other-windows)))
-	:init
-	(setq display-buffer-alist
-		  '(;; top side window
-			("\\*\\(Flymake\\|Package-Lint\\|vc-git :\\).*"
-			 (display-buffer-in-side-window)
-			 (window-height . 0.16)
-			 (side . top)
-			 (slot . 0)
-			 (window-parameters . ((no-other-window . t))))
-			("\\*Messages.*"
-			 (display-buffer-in-side-window)
-			 (window-height . 0.16)
-			 (side . top)
-			 (slot . 1)
-			 (window-parameters . ((no-other-window . t))))
-			("\\*\\(Backtrace\\|Warnings\\|Compile-Log\\)\\*"
-			 (display-buffer-in-side-window)
-			 (window-height . 0.16)
-			 (side . top)
-			 (slot . 2)
-			 (window-parameters . ((no-other-window . t))))
-			;; bottom side window
-			("\\*\\(Output\\|Register Preview\\).*"
-			 (display-buffer-in-side-window)
-			 (window-width . 0.16)       ; See the :hook
-			 (side . bottom)
-			 (slot . -1)
-			 (window-parameters . ((no-other-window . t))))
-			(".*\\*\\(Completions\\|Embark Live Occur\\).*"
-			 (display-buffer-in-side-window)
-			 (window-height . 0.16)
-			 (side . bottom)
-			 (slot . 0)
-			 (window-parameters . ((no-other-window . t))))
-			("^\\(\\*e?shell\\|vterm\\).*"
-			 (display-buffer-in-side-window)
-			 (window-height . 0.16)
-			 (side . bottom)
-			 (slot . 1))
-			;; left side window
-			("\\*Help.*"
-			 (display-buffer-in-side-window)
-			 (window-width . 0.30)       ; See the :hook
-			 (side . left)
-			 (slot . 0))
-			;; right side window
-			("\\*Faces\\*"
-			 (display-buffer-in-side-window)
-			 (window-width . 0.25)
-			 (side . right)
-			 (slot . 0)
-			 (window-parameters . ((no-other-window . t)
-								   (mode-line-format . (" "
-														mode-line-buffer-identification)))))
-			("\\*Custom.*"
-			 (display-buffer-in-side-window)
-			 (window-width . 0.25)
-			 (side . right)
-			 (slot . 1))
-			;; bottom buffer (NOT side window)
-			("\\*\\vc-\\(incoming\\|outgoing\\).*"
-			 (display-buffer-at-bottom))
-			;; ("\\*Embark Occur.*"
-			;;  (display-buffer-at-bottom))
-			))
-	(setq window-combination-resize t)
-	(setq even-window-sizes 'height-only)
-	(setq window-sides-vertical nil)
-	;; Note that the the syntax for `use-package' hooks is controlled by
-	;; the `use-package-hook-name-suffix' variable.  The "-hook" suffix is
-	;; not an error of mine.
-	:hook ((help-mode-hook . visual-line-mode)
+	:config
+    (setq window-sides-vertical nil)
+    :hook ((help-mode-hook . visual-line-mode)
 		   (Custom-mode-hook . visual-line-mode))
-	:bind (("H-n" . next-buffer)
+    :bind (("H-n" . next-buffer)
 		   ("H-p" . previous-buffer)
 		   ("H-o" . other-window)
 		   ("H-2" . split-window-below)
@@ -392,11 +308,29 @@ HEIGHT, if supplied, specifies height of letters to use."
 		   ("H-<left>" . windmove-left)
 		   ("H-<down>" . windmove-down)
 		   ("H-<right>" . windmove-right)))
-  )
-(progn                                ; printing
-  (setq lpr-command "gtklp")
+
+  (use-package electric
+    :straight (:type built-in)
+    :config
+    (electric-indent-mode 0)
+    ;; python is excluded by aggressive indent because of not absolute indentation
+    :hook (python-mode-hook . electric-indent-mode))
+
+  (use-package print-settings
+    :straight (:type built-in)
+    :custom
+    (lpr-command "lpr")
+    (printer-name "HP_LaserJet_CM1415fn")
+    (ps-print-header nil)
+    (ps-print-footer nil)
+    (ps-print-color-p t)
+    (ps-print-header-frame nil)
+    (ps-print-banner nil)
+    (ps-print-scale 1.0)
+    (ps-print-duplex nil))
+  ;; (setq lpr-command "gtklp")
   ;; (setq ps-lpr-command "gtklp")
-  ;; (progn					; printing; need: gv, ghostscript
+  ;; 		   	; printing; need: gv, ghostscript
   ;;   (require 'printing)		; load printing package
   ;;   ;; (setq pr-path-alist
   ;;   ;; 	'((unix      "." "~/bin" ghostview mpage PATH)
@@ -415,96 +349,92 @@ HEIGHT, if supplied, specifies height of letters to use."
   ;; 	  (lps_08c nil   nil nil  "lps_08c")
   ;; 	  ))
   ;;   (pr-update-menus t)		; update now printer and utility menus
-  ;;   )
   )
-
-(use-package all-the-icons
-  :if (display-graphic-p)
-  :commands (all-the-icons-material
-			 all-the-icons-faicon
-			 all-the-icons-octicon))
-(use-package unfill
-  :bind
-  ("C-c M-q" . unfill-toggle))
-(use-package aggressive-indent
-  :bind
-  ("C-c t i" . aggressive-indent-mode)
-  :hook
-  (emacs-lisp-mode-hook . aggressive-indent-mode)
-  (html-mode-hook . aggressive-indent-mode))
-(use-package delsel
-  :init
-  (delete-selection-mode 1))
-(use-package fix-word
-  :bind
-  ("M-c" . fix-word-capitalize)
-  ("M-l" . fix-word-downcase)
-  ("M-u" . fix-word-upcase))
-(use-package electric
-  :config
-  (electric-indent-mode 0)
-  ;; python is excluded by aggressive indent because of not absolute indentation
-  :hook (python-mode-hook . electric-indent-mode))
-(use-package which-key
-  :commands (which-key-mode)
-  :bind
-  ("H-<f1>" . which-key-show-top-level)
-  :init
-  (which-key-mode 1)
-  :config
-  (setq which-key-idle-delay 0.05))
-(use-package visual-fill-column
-  :commands (visual-fill-column-split-window-sensibly
-			 visual-fill-column-adjust) ;; although are functions
-  :bind
-  ("C-c v" . visual-fill-column-mode)
-  ("<f12>" . no-distraction-enable)
-  ("<C-f12>" . no-distraction-disable)
-  :preface
-  (defun no-distraction-enable ()
-	"Switch to no distraction env"
-	(interactive)
-	(visual-fill-column-mode)
-	(text-scale-increase 2)
-	;; (wc-mode)
-	)
-  (defun no-distraction-disable ()
-	"Switch off from no distraction env"
-	(interactive)
-	(visual-fill-column-mode -1)
-	(text-scale-set 0)
-	;; (wc-mode -1)
-	)
-  :init
-  (setq visual-fill-column-center-text t
-		visual-fill-column-width 98
-		visual-fill-column-fringes-outside-margins nil
-		;; set right curly arrow even when visual line mode is wrapping logical lines into visual ones.
-		visual-line-fringe-indicators '(bottom-left-angle top-right-angle)
-		;; allow splitting windows with wide margins
-		split-window-preferred-function #'visual-fill-column-split-window-sensibly)
-  ;; :config
-  ;; adjust margins upon text resize
-  (advice-add 'text-scale-adjust :after #'visual-fill-column-adjust)
-  :hook
-  (visual-fill-column-mode-hook . visual-line-mode))
-
 (progn                                  ; single packages
+  (use-package all-the-icons
+    :if (display-graphic-p)
+    :commands (all-the-icons-material
+			   all-the-icons-faicon
+			   all-the-icons-octicon))
+
+  (use-package unfill
+    :bind
+    ("C-c M-q" . unfill-toggle))
+
+  (use-package aggressive-indent
+    :bind
+    ("C-c t i" . aggressive-indent-mode)
+    :hook
+    (emacs-lisp-mode-hook . aggressive-indent-mode)
+    (html-mode-hook . aggressive-indent-mode))
+
+  (use-package delsel
+    :init
+    (delete-selection-mode 1))
+
+  (use-package fix-word
+    :bind
+    ("M-c" . fix-word-capitalize)
+    ("M-l" . fix-word-downcase)
+    ("M-u" . fix-word-upcase))
+
+  (use-package which-key
+    :commands (which-key-mode)
+    :bind
+    ("H-<f1>" . which-key-show-top-level)
+    :init
+    (which-key-mode 1)
+    :config
+    (setq which-key-idle-delay 0.05))
+
+  (use-package visual-fill-column
+    :commands (visual-fill-column-split-window-sensibly
+			   visual-fill-column-adjust) ;; although are functions
+    :bind (("C-c v" . visual-fill-column-mode)
+           ("<f12>" . no-distraction-enable)
+           ("<C-f12>" . no-distraction-disable))
+    :init
+    (setq visual-fill-column-center-text t
+		  visual-fill-column-width 98
+		  visual-fill-column-fringes-outside-margins nil
+		  ;; set right curly arrow even when visual line mode is wrapping logical lines into visual ones.
+		  visual-line-fringe-indicators '(bottom-left-angle top-right-angle)
+		  ;; allow splitting windows with wide margins
+		  split-window-preferred-function #'visual-fill-column-split-window-sensibly)
+    :config
+    ;; adjust margins upon text resize
+    (advice-add 'text-scale-adjust :after #'visual-fill-column-adjust)
+    :hook
+    (visual-fill-column-mode-hook . visual-line-mode)
+    :preface
+    (defun no-distraction-enable ()
+      "Switch to no distraction env"
+      (interactive)
+      (visual-fill-column-mode)
+      (text-scale-increase 2))
+    (defun no-distraction-disable ()
+      "Switch off from no distraction env"
+      (interactive)
+      (visual-fill-column-mode -1)
+      (text-scale-set 0)))
+
   (use-package crux
-	:bind
-	("C-a" . crux-move-beginning-of-line)
-	("H-O" . crux-smart-open-line)
-	("C-O" . crux-smart-open-line-above)
-	("H-C-S-o" . crux-duplicate-and-comment-current-line-or-region))
-  (use-package recentf 					; enable recent files mode.
-	:init
-	(recentf-mode t)
-	:config
-	(setq recentf-exclude
-		  `(,(expand-file-name "straight/build/" user-emacs-directory)
-			,(expand-file-name "eln-cache/" user-emacs-directory)
-			,(expand-file-name "etc/" user-emacs-directory)
-			,(expand-file-name "var/" user-emacs-directory))))
+    :bind
+    ("C-a" . crux-move-beginning-of-line)
+    ("H-O" . crux-smart-open-line)
+    ("C-O" . crux-smart-open-line-above)
+    ("H-C-S-o" . crux-duplicate-and-comment-current-line-or-region))
+
+  (use-package recentf
+    ;; :config
+    ;; (setq recentf-exclude
+    ;;       `(,(expand-file-name "straight/build/" user-emacs-directory)
+    ;;         ,(expand-file-name "eln-cache/" user-emacs-directory)
+    ;;         ,(expand-file-name "etc/" user-emacs-directory)
+    ;;         ,(expand-file-name "var/" user-emacs-directory)))
+    :init
+    (recentf-mode t))
+
   (use-package avy                      ; Move around
     :bind (("M-g w" . avy-goto-word-1)
            ("M-g M-w" . avy-copy-line)
@@ -514,38 +444,43 @@ HEIGHT, if supplied, specifies height of letters to use."
            ("M-g y k" . avy-kill-whole-line)
            ("M-g g" . avy-goto-line)
            ("M-g c" . avy-goto-char-2)))
+
   (use-package ace-window
-	:demand t
-	:bind
-	("H-w" . ace-window)
-	("C-'" . ace-window)
+    :demand t
+    :bind
+    ("H-w" . ace-window)
+    ("C-'" . ace-window)
     ("C-c w" . ace-select-window)
-	("C-c W" . ace-swap-window)
-	:config
-	(setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
-	(setq aw-scope 'global)				; 'frame
-	(setq aw-dispatch-always nil))
+    ("C-c W" . ace-swap-window)
+    :config
+    (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+    (setq aw-scope 'global)				; 'frame
+    (setq aw-dispatch-always nil))
+
   (use-package transpose-frame
-	:bind
-	("H-E" . transpose-frame))
+    :bind
+    ("H-E" . transpose-frame))
+
   (use-package imenu-list               ; F9
     :bind
     ("<f9>" . imenu-list)
     ("<C-f9>" . imenu-list-smart-toggle))
-  ;; (setq byte-compile-warnings '(cl-functions)) ; FIXME: when deft update
-  (use-package deft                     ; Notes
+
+  (use-package pass
+    :bind ("C-x P" . pass))
+
+  (use-package tzc
+    :demand t
+    :defines tzc-favourite-time-zones
     :bind
-    ("M-s C-n" . deft)
+    ("C-x T c" . tzc-convert-current-time)
+    ("C-x T t" . tzc-convert-time-at-mark)
+    ("C-x T w" . tzc-world-clock)
     :config
-    (setq deft-directory "~/Sync/notes"
-          deft-recursive t
-          deft-use-filename-as-title t
-          deft-file-naming-rules '((nospace . "_") (case-fn . downcase)) ;; to preserve slashes
-          deft-extensions '("org" "md" "markdown")  ;;"txt"
-          deft-default-extension "org"
-          deft-use-filter-string-for-filename t))
+    (setq tzc-favourite-time-zones '("Europe/Rome")))
+
   (use-package flycheck                 ; Syntax checking
-	:bind (
+    :bind (
 		   ("C-c e l" . flycheck-list-errors)
 		   ("C-c e e" . flycheck-mode)
 		   ("C-c e b" . flycheck-buffer)
@@ -559,36 +494,39 @@ HEIGHT, if supplied, specifies height of letters to use."
 		   ("C-c e v" . flycheck-verify-setup)
 		   ("C-c e y" . flycheck-copy-errors-as-kill)
 		   ("C-c e x" . flycheck-explain-error-at-point))
-	:functions which-key-add-key-based-replacements
+    :functions which-key-add-key-based-replacements
     :init
     (which-key-add-key-based-replacements "<f14> e" "Errors check")
     :config
     ;; https://www.flycheck.org/en/latest/languages.html
-	(setq-default flycheck-disabled-checkers '(proselint)) ;will use vale
+    (setq-default flycheck-disabled-checkers '(proselint)) ;will use vale
     ;; (setq flycheck-python-flake8-executable "flake8") ;yay -S flake8
     ;; (setq flycheck-python-mypy-executable "mypy")
     (setq-default
      ;; flycheck-emacs-lisp-initialize-packages t; auto will be enough?
      flycheck-emacs-lisp-load-path 'inherit
      flycheck-temp-prefix ".flycheck")
-	:hook (
+    :hook (
            (gitignore-mode-hook . flycheck-mode)
            (markdown-mode-hook . flycheck-mode)
            (prog-mode-hook . flycheck-mode)
            ;; (python-mode-hook . (lambda () (flycheck-add-next-checker  'python-mypy)))
 		   (yaml-mode-hook . flycheck-mode))
-	;; :custom-face
-	;; (flycheck-fringe-error ((t (:background "#6C3333" :weight bold))))
-	)
+    ;; :custom-face
+    ;; (flycheck-fringe-error ((t (:background "#6C3333" :weight bold))))
+    )
+
   (use-package doom-modeline
-	:demand t
-	:commands (doom-modeline-mode)
-	:custom (doom-modeline-minor-modes t)
-	:config (doom-modeline-mode 1))
+    :demand t
+    :commands (doom-modeline-mode)
+    :custom (doom-modeline-minor-modes t)
+    :config (doom-modeline-mode 1))
+
   (use-package minions
-	:commands (minions-mode)
-	:init
-	(minions-mode 1))
+    :commands (minions-mode)
+    :init
+    (minions-mode 1))
+
   (use-package char-menu
     :init
     (setq-default
@@ -605,15 +543,16 @@ HEIGHT, if supplied, specifies height of letters to use."
         "Ξ" "ο" "π" "ρ" "σ" "τ" "υ" "φ" "χ" "ψ" "ω" "Ω")))
     :bind
     ("C-c C" . char-menu))
+
   (use-package smartparens
-	:commands (smartparens-global-mode)
+    :commands (smartparens-global-mode)
     :init
     (add-hook 'prog-mode-hook #'smartparens-mode)
     (setq sp-highlight-pair-overlay nil)
-	(setq sp-highlight-wrap-overlay nil)
+    (setq sp-highlight-wrap-overlay nil)
     (setq sp-highlight-wrap-tag-overlay nil)
-	:bind
-	(:map smartparens-mode-map
+    :bind
+    (:map smartparens-mode-map
           ("<C-backspace>" . sp-backward-kill-sexp)
           ("H-b" . sp-backward-sexp)
           ("H-d" . sp-kill-sexp)
@@ -625,17 +564,19 @@ HEIGHT, if supplied, specifies height of letters to use."
           ("H-}" . sp-forward-barf-sexp)
           ("H-(" . sp-backward-slurp-sexp)
           ("H-{" . sp-backward-barf-sexp))
-	:hook
-	(inferior-python-mode-hook . smartparens-mode)
-	(jupyter-repl-mode-hook . smartparens-mode)
-	:config
-	(smartparens-global-mode 1)
-	(advice-add 'sp-add-to-previous-sexp :after (lambda () (just-one-space)))
-	(advice-add 'sp-add-to-previous-sexp :after (lambda () (sp-forward-sexp)))
-	(add-to-list 'sp-no-reindent-after-kill-modes 'haskell-cabal-mode)
-	(add-to-list 'sp-no-reindent-after-kill-modes 'haskell-mode))
+    :hook
+    (inferior-python-mode-hook . smartparens-mode)
+    (jupyter-repl-mode-hook . smartparens-mode)
+    :config
+    (smartparens-global-mode 1)
+    (advice-add 'sp-add-to-previous-sexp :after (lambda () (just-one-space)))
+    (advice-add 'sp-add-to-previous-sexp :after (lambda () (sp-forward-sexp)))
+    (add-to-list 'sp-no-reindent-after-kill-modes 'haskell-cabal-mode)
+    (add-to-list 'sp-no-reindent-after-kill-modes 'haskell-mode))
+
   (use-package expand-region
     :bind ("C-=" . er/expand-region))
+
   (use-package hideshow
     :bind
     ("C-c t f" . hs-minor-mode)
@@ -645,58 +586,59 @@ HEIGHT, if supplied, specifies height of letters to use."
           ("H-Z" . hs-show-all))
     :hook
     (prog-mode-hook . hs-minor-mode))
+
   (use-package calc
     :bind ("<f14> a c" . calc))
+
   (use-package dired
-	:straight (:type built-in)
-	:functions (dired-get-filename)
-	:init (setq delete-by-moving-to-trash t
-				dired-auto-revert-buffer t
-				dired-dwim-target t
-				dired-keep-marker-copy nil
-				dired-listing-switches "-GAlh --group-directories-first"
-				dired-recursive-copies 'always
-				dired-recursive-deletes 'always)
-	:preface (progn
+    :straight (:type built-in)
+    :functions (dired-get-filename)
+    :init (setq delete-by-moving-to-trash t
+			    dired-auto-revert-buffer t
+			    dired-dwim-target t
+			    dired-keep-marker-copy nil
+			    dired-listing-switches "-GAlh --group-directories-first"
+			    dired-recursive-copies 'always
+			    dired-recursive-deletes 'always)
+    :preface (progn
 			   (defun mk-dired-open-external (file)
-				 "Open specified FILE with application determined by the OS."
-				 (interactive (list (dired-get-filename)))
-				 (call-process "xdg-open" nil 0 nil file))
+			     "Open specified FILE with application determined by the OS."
+			     (interactive (list (dired-get-filename)))
+			     (call-process "xdg-open" nil 0 nil file))
 			   (defun mk-dired-first-file ()
-				 "Jump to the first file in current directory."
-				 (interactive)
-				 (goto-char (point-min))
-				 (dired-next-line 2))
+			     "Jump to the first file in current directory."
+			     (interactive)
+			     (goto-char (point-min))
+			     (dired-next-line 2))
 			   (defun mk-dired-last-file ()
-				 "Jump to the last file in current directory."
-				 (interactive)
-				 (goto-char (point-max))
-				 (dired-previous-line 1))
+			     "Jump to the last file in current directory."
+			     (interactive)
+			     (goto-char (point-max))
+			     (dired-previous-line 1))
 			   )
-	:bind (:map
+    :bind (:map
 		   dired-mode-map
 		   ("<next>" . mk-dired-last-file)
 		   ("<prior>" . mk-dired-first-file)
 		   ("b" . dired-up-directory)
 		   ("e" . mk-dired-open-external)
 		   ("w" . wdired-change-to-wdired-mode))
-	:hook
-	(dired-mode-hook . toggle-truncate-lines)
-	(dired-mode-hook . turn-on-gnus-dired-mode))
+    :hook
+    (dired-mode-hook . toggle-truncate-lines)
+    (dired-mode-hook . turn-on-gnus-dired-mode))
   (use-package dired-x
-	:straight (:type built-in)
-	:init (setq dired-clean-up-buffers-too t))
+    :straight (:type built-in)
+    :init (setq dired-clean-up-buffers-too t))
   (use-package wdired
-	:after (dired)
-	:init (setq wdired-allow-to-change-permissions t)
-	:bind (:map wdired-mode-map
-				("<next>" . mk-dired-last-file)
-				("<prior>" . mk-dired-first-file)))
-  (use-package ranger
-	:bind ("C-c C-O" . ranger))
+    :after (dired)
+    :init (setq wdired-allow-to-change-permissions t)
+    :bind (:map wdired-mode-map
+			    ("<next>" . mk-dired-last-file)
+			    ("<prior>" . mk-dired-first-file)))
+
   (use-package visual-regexp
-	:bind
-	("C-c %" . vr/query-replace))
+    :bind
+    ("C-c %" . vr/query-replace))
   )
 (progn                                  ; Themes, Fonts and mode-line
   (set-fontset-font "fontset-default" nil
@@ -718,7 +660,7 @@ HEIGHT, if supplied, specifies height of letters to use."
   (use-package solarized-theme
 	:init (if (daemonp) (load-theme 'solarized-selenized-dark t)))
   )
-(progn                                  ; Keybindings
+(progn                                  ; Keybindings and mk-utils
   (use-package hydra
     :commands (hydra-default-pre
                hydra-keyboard-quit
@@ -782,31 +724,21 @@ HEIGHT, if supplied, specifies height of letters to use."
 	("M-p" . mk-transpose-line-up)
 	("M-r" . mk-duplicate-line)
 	)
-  (global-unset-key (kbd "<menu>"))
   (use-package modalka
 	:commands (modalka-define-kbd)
-	:functions which-key-add-key-based-replacements
+	;; :functions which-key-add-key-based-replacements
 	:init
 	(which-key-add-key-based-replacements "C-c t m" "Toggle mode")
 	(which-key-add-key-based-replacements "C-c t o" "Toggle org")
-	(which-key-add-key-based-replacements "<f14> <tab>" "prev-buffer")
-	(which-key-add-key-based-replacements "<f14> C-<tab>" "next-buffer")
 	(setq-default modalka-cursor-type '(hbar . 3))
 	(set-cursor-color "red")
 	:bind
-	(("<menu>" . modalka-mode)
-	 ("<insert>" . modalka-mode)
-	 ("<f14> <tab>" . switch-to-prev-buffer)
-	 ("<f14> C-<tab>" . switch-to-next-buffer)
-	 ("<f14> Q" . save-buffers-kill-emacs)
+	(("<insert>" . modalka-mode)
 	 ("C-c Q" . save-buffers-kill-emacs)
 	 ("<f15> Q" . quit-window)
 	 :map modalka-mode-map
 	 ("i" . modalka-mode)
 	 ("G" . end-of-buffer)
-	 ("J" . avy-goto-line)
-	 ("L" . avy-goto-line)
-	 ("x q" . delete-window)
 	 ("Q" . mk-sort-lines-dwim)
 	 ("X" . mk-open-default-dir)
 	 ;; simple
@@ -818,73 +750,31 @@ HEIGHT, if supplied, specifies height of letters to use."
 	 ("<SPC> t n" . mk-narrow-to-region)
 	 ("<SPC> t w" . widen)
 	 ("<SPC> t y" . mk-yank-primary))
-	:hook
-	((compilation-mode-hook . modalka-mode)
-	 (conf-toml-mode-hook . modalka-mode)
-	 (conf-unix-mode-hook . modalka-mode)
-	 (gitignore-mode-hook . modalka-mode)
-	 (haskell-cabal-mode-hook . modalka-mode)
-	 (help-mode-hook . modalka-mode)
-	 (info-mode-hook . modalka-mode)
-	 (mustache-mode-hook . modalka-mode)
-	 (prog-mode-hook . modalka-mode)
-	 (proof-mode-hook . modalka-mode)
-	 (bibtex-mode-hook . modalka-mode)
-	 ;; (text-mode-hook . mk-modalka-mode-no-git-commit)
-	 (yaml-mode-hook . modalka-mode)
-	 (ztree-mode-hook . modalka-mode))
-	:preface
-	(defun mk-modalka-mode-no-git-commit ()
-      "Enable ‘modalka-mode’ unless get edit git commit message."
-      (unless (string-equal (buffer-name) "COMMIT_EDITMSG")
-		(modalka-mode 1)))
-	:config
-	;; (modalka-define-kbd "SPC" "C-SPC")
-	(modalka-define-kbd "?" "M-,")
-	(modalka-define-kbd "a" "C-a")
-	(modalka-define-kbd "e" "C-e")
-	(modalka-define-kbd "b" "C-b")
-	(modalka-define-kbd "f" "C-f")
-	(modalka-define-kbd "c b" "C-c C-b")
-	(modalka-define-kbd "c c" "C-c C-c")
-	(modalka-define-kbd "c k" "C-c C-k")
-	(modalka-define-kbd "c w" "C-c C-w")
-	(modalka-define-kbd "d" "C-d")
-	;; (modalka-define-kbd "g" "C-g")
-	(modalka-define-kbd "g g" "M-<")
-	(modalka-define-kbd "G" "M->")
-	(modalka-define-kbd "h" "M-h")
-	(modalka-define-kbd "H" "M-H")
-	(modalka-define-kbd "i" "C-i")
-	(modalka-define-kbd "j" "M-j")
-	(modalka-define-kbd "k" "C-k")
-	(modalka-define-kbd "l" "C-l")
-	(modalka-define-kbd "m" "C-m")
-	(modalka-define-kbd "n" "C-n")
-	(modalka-define-kbd "o" "C-o")
-	(modalka-define-kbd "p" "C-p")
-	(modalka-define-kbd "q" "<f15> Q")
-	(modalka-define-kbd "r" "C-r")
-	(modalka-define-kbd "t" "C-t")
-	(modalka-define-kbd "u" "C-u")
-	(modalka-define-kbd "v" "C-v")
-	(modalka-define-kbd "w" "C-w")
-	(modalka-define-kbd "x ;" "C-x C-;")
-	(modalka-define-kbd "x e" "C-x C-e")
-	(modalka-define-kbd "x o" "C-x C-o")
-	(modalka-define-kbd "x w" "C-x C-w")
-	(modalka-define-kbd "x x" "C-x C-x")
-	(modalka-define-kbd "x SPC" "C-x SPC") ;rectangles
-	(modalka-define-kbd "x r t" "C-x r t")
-	(modalka-define-kbd "x r c" "C-x r c")
-	(modalka-define-kbd "x r d" "C-x r d")
-	(modalka-define-kbd "x r r" "C-x r r") ;rectangles to register
-	(modalka-define-kbd "x r x" "C-x r x") ;register
-	(modalka-define-kbd "x r g" "C-x r g")
-	(modalka-define-kbd "x b" "C-x b")	;switch-buffer
-	(modalka-define-kbd "x m" "C-x m")	;mu4e-compose-new
-	(modalka-define-kbd "W" "<f15> D") 	; trick F15
-	)
+	;; (text-mode-hook . mk-modalka-mode-no-git-commit)
+    :config
+    (modalka-define-kbd "g g" "M-<")
+    (modalka-define-kbd "G" "M->")
+    (modalka-define-kbd "j" "M-j")
+    (modalka-define-kbd "l" "C-l")
+    (modalka-define-kbd "q" "<f15> Q")
+    (modalka-define-kbd "r" "C-r")
+    (modalka-define-kbd "t" "C-t")
+    (modalka-define-kbd "u" "C-u")
+    (modalka-define-kbd "v" "C-v")
+    (modalka-define-kbd "w" "C-w")
+    (modalka-define-kbd "x ;" "C-x C-;")
+    (modalka-define-kbd "x e" "C-x C-e")
+    (modalka-define-kbd "x o" "C-x C-o")
+    (modalka-define-kbd "x w" "C-x C-w")
+    (modalka-define-kbd "x x" "C-x C-x")
+    (modalka-define-kbd "x r t" "C-x r t")
+    (modalka-define-kbd "x r c" "C-x r c")
+    (modalka-define-kbd "x r d" "C-x r d")
+    (modalka-define-kbd "x r r" "C-x r r") ;rectangles to register
+    (modalka-define-kbd "x r x" "C-x r x") ;register
+    (modalka-define-kbd "x r g" "C-x r g")
+    (modalka-define-kbd "W" "<f15> D") 	; trick F15
+    )
   )
 (progn                                  ; Completion: vertico.
   (use-package vertico
@@ -895,7 +785,6 @@ HEIGHT, if supplied, specifies height of letters to use."
 	 :map vertico-map
 	 ("<next>" . vertico-scroll-up) ; minibuf history M-n M-p
 	 ("<prior>" . vertico-scroll-down)
-	 ;; ("?" . minibuffer-completion-help)
 	 ("<M-RET>" . minibuffer-force-complete-and-exit)
 	 ("M-<tab>" . minibuffer-complete)
 	 )
@@ -903,166 +792,161 @@ HEIGHT, if supplied, specifies height of letters to use."
 	(minibuffer-setup-hook . vertico-repeat-save)
 	:init
 	(vertico-mode t)
-	:config
-	(setq vertico-scroll-margin 0)	;; Different scroll margin
-	(setq vertico-count 20)			;; Show more candidates
-	(setq vertico-resize t)	;; Grow and shrink the Vertico minibuffer
-	(setq vertico-cycle t) ;; Cycling for `vertico-next' and `vertico-previous'
-	)
+    :custom
+    (vertico-scroll-margin 0)
+    (vertico-count 20)
+    (vertico-resize t)
+    ;; Cycling for `vertico-next' and `vertico-previous'
+    (vertico-cycle t))
   (use-package vertico-repeat)
+
   (use-package orderless
-	:init
-	;; Configure a custom style dispatcher (see the Consult wiki)
-	;; (setq orderless-style-dispatchers '(+orderless-dispatch)
-	;;       orderless-component-separator #'orderless-escapable-split-on-space)
-	(setq completion-styles '(orderless basic)
-          completion-category-defaults nil
-		  ;; ;; for tramp
-		  ;; (completion-category-overrides '((file (styles basic partial-completion))))
-          completion-category-overrides '((file (styles partial-completion)))))
+    :custom
+    (completion-styles '(orderless basic))
+    (completion-category-defaults nil)
+    (completion-category-overrides '((file (styles basic partial-completion)))))
+
   (use-package savehist
-	:after (vertico)
-	:init
-	(savehist-mode)
-	:config
-	(add-to-list 'savehist-additional-variables 'vertico-repeat-history)
-	)
-  ;; A few more useful configurations.
+    :after (vertico)
+    :init
+    (savehist-mode)
+    :config
+    (add-to-list 'savehist-additional-variables 'vertico-repeat-history))
+
   (use-package emacs
-	:bind
-	("C-c l f" . find-library)
-	("C-c l a" . apropos-library)
-	("C-c l l" . load-library)
-	;;         Mind mark, bookmark and register
-	;; tmm ; `M-\`'
-	:functions which-key-add-key-based-replacements
-	:preface
-	;; Add prompt indicator to `completing-read-multiple'.
-	(defun crm-indicator (args)
+    :bind
+    (("C-c l f" . find-library) ;; tmm =M-\`= and Mind mark, bookmark and register
+     ("C-c l a" . apropos-library)
+     ("C-c l l" . load-library))
+    :init
+    (which-key-add-key-based-replacements
+      "<f14> a" "Apps"
+      "C-c f" "Files")
+    :preface
+    ;; Improve `completing-read-multiple' prompt by adding a prefix.
+    (defun crm-indicator (args)
       (cons (concat "[CRM] " (car args)) (cdr args)))
-	:init
-	(which-key-add-key-based-replacements "<f14> g" "Git")
-	(which-key-add-key-based-replacements "<f14> a" "Apps")
-	(which-key-add-key-based-replacements "C-c f" "Files")
-	(advice-add #'completing-read-multiple :filter-args #'crm-indicator)
-	;; Do not allow the cursor in the minibuffer prompt
-	(setq minibuffer-prompt-properties
-          '(read-only t cursor-intangible t face minibuffer-prompt))
-	(add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
-	;; Emacs 28: Hide commands in M-x which do not work in the current mode.
-	;; Vertico commands are hidden in normal buffers.
-	(setq read-extended-command-predicate
-	      #'command-completion-default-include-p)
-	;; Enable recursive minibuffers
-	(setq enable-recursive-minibuffers t))
+    :config
+    (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
+    ;; Make minibuffer prompt read-only and cursor-intangible.
+    (setq minibuffer-prompt-properties '(read-only t cursor-intangible t face minibuffer-prompt))
+    (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
+    ;; Emacs 28: Hide commands in M-x which do not work in the current mode.
+    ;; Vertico commands are hidden in normal buffers.
+    (setq read-extended-command-predicate #'command-completion-default-include-p)
+    ;; Enable recursive minibuffers
+    (setq enable-recursive-minibuffers t))
+
   (use-package marginalia
-	:commands (marginalia-mode)
-	:bind (:map minibuffer-local-map
-				("M-A" . marginalia-cycle))
-	:init (marginalia-mode))
+    :commands (marginalia-mode)
+    :bind (:map minibuffer-local-map
+			    ("M-A" . marginalia-cycle))
+    :init (marginalia-mode))
+
   (use-package consult
-	:commands (consult--customize-put
+    :commands (consult--customize-put
 			   consult--customize-set
 			   consult-completion-in-region)
-	:bind (("C-/" . consult-line)
-		   ("<f14> ," . consult-buffer)
-		   ("C-c f f" . consult-find)
-		   ("C-c f F" . consult-locate)
-		   ("C-c f z" . (lambda () (interactive)(cd "~/")(consult-find)))
-		   ("C-c f r" . consult-recent-file)
-		   ("C-c f e" . consult-file-externally)
-		   ("M-g T" . consult-theme)
-		   ("M-g M" . consult-minor-mode-menu)
-           ("C-c m" . consult-mode-command)
-           ("C-c k" . consult-kmacro)
-           ;; C-x bindings (ctl-x-map)
-           ("C-x :" . consult-complex-command)       ;; C-x M-: repeat-complex-command
-           ("C-x b" . consult-buffer)                ;; orig. switch-to-buffer
-           ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
-           ("C-x 5 b" . consult-buffer-other-frame)  ;; orig. switch-to-buffer-other-frame
-           ("C-x r b" . consult-bookmark)            ;; orig. bookmark-jump
-           ;; Custom M-# bindings for fast register access
-           ("M-#" . consult-register-load)
-           ("M-\"" . consult-register-store)          ;; M-' orig. abbrev-prefix-mark (unrelated)
-           ("H-M-'" . consult-register)
-           ;; Other custom bindings
-           ("M-y" . consult-yank-pop)                ;; orig. yank-pop
-           ("<help> a" . consult-apropos)            ;; orig. apropos-command
-           ;; M-g bindings (goto-map)
-           ("M-g e" . consult-compile-error)
-           ("M-g f" . consult-flycheck)               ;; Alternative: consult-flymake
-           ("M-g M-g" . consult-goto-line)           ;; orig. goto-line
-           ("M-g o" . consult-outline)
-           ("M-g M-o" . consult-org-heading)
-           ("M-g m" . consult-mark)
-           ("M-g M-m" . consult-global-mark)
-           ("M-g i" . consult-imenu)
-           ("M-g M-i" . consult-imenu-multi)
-           ;; M-s bindings (search-map)
-           ("M-s a" . consult-org-agenda)
-           ("M-s f" . consult-find)
-           ("M-s M-f" . consult-locate)
-           ("M-s g" . consult-grep)
-           ("M-s M-g" . consult-git-grep)
-           ("M-s r" . consult-ripgrep)
-           ("M-s l" . consult-line)
-           ("M-s M-l" . consult-line-multi)
-           ("M-s k" . consult-keep-lines)
-           ("M-s u" . consult-focus-lines)
-           ;; Isearch integration
-           ("M-s e" . consult-isearch-history)
-           :map isearch-mode-map
-           ("M-e" . consult-isearch-history)         ;; orig. isearch-edit-string
-           ("M-s e" . consult-isearch-history)       ;; orig. isearch-edit-string
-           ("M-s l" . consult-line)                  ;; needed by consult-line to detect isearch
-		   ("M-s M-l" . consult-line-multi)           ;; needed by consult-line to detect isearch
-		   )
-	;; Enable automatic preview at point in the *Completions* buffer. This is
-	;; relevant when you use the default completion UI. You may want to also
-	;; enable `consult-preview-at-point-mode` in Embark Collect buffers.
-	:hook (completion-list-mode-hook . consult-preview-at-point-mode)
-	;; :init
-	;; ;; `consult-register-store' and the Emacs built-ins.
-	;; (setq register-preview-delay 0.5
+    :bind
+    (("C-/" . consult-line)
+	 ("C-c f f" . consult-find)
+	 ("C-c f F" . consult-locate)
+	 ("C-c f z" . (lambda () (interactive)(cd "~/")(consult-find)))
+	 ("C-c f r" . consult-recent-file)
+	 ("C-c f e" . consult-file-externally)
+	 ("M-g T" . consult-theme)
+	 ("M-g M" . consult-minor-mode-menu)
+     ("C-c m" . consult-mode-command)
+     ("C-c k" . consult-kmacro)
+     ;; C-x bindings (ctl-x-map)
+     ("C-x :" . consult-complex-command)       ;; C-x M-: repeat-complex-command
+     ("C-c b" . consult-buffer)                ;; orig. switch-to-buffer
+     ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
+     ("C-x 5 b" . consult-buffer-other-frame)  ;; orig. switch-to-buffer-other-frame
+     ("C-x r b" . consult-bookmark)            ;; orig. bookmark-jump
+     ;; Custom M-# bindings for fast register access
+     ("M-#" . consult-register-load)
+     ("M-\"" . consult-register-store)          ;; M-' orig. abbrev-prefix-mark (unrelated)
+     ("H-M-'" . consult-register)
+     ;; Other custom bindings
+     ("M-y" . consult-yank-pop)                ;; orig. yank-pop
+     ("<help> a" . consult-apropos)            ;; orig. apropos-command
+     ;; M-g bindings (goto-map)
+     ("M-g e" . consult-compile-error)
+     ("M-g f" . consult-flycheck)               ;; Alternative: consult-flymake
+     ("M-g M-g" . consult-goto-line)           ;; orig. goto-line
+     ("M-g o" . consult-outline)
+     ("M-g M-o" . consult-org-heading)
+     ("M-g m" . consult-mark)
+     ("M-g M-m" . consult-global-mark)
+     ("M-g i" . consult-imenu)
+     ("M-g M-i" . consult-imenu-multi)
+     ;; M-s bindings (search-map)
+     ("M-s a" . consult-org-agenda)
+     ("M-s f" . consult-find)
+     ("M-s M-f" . consult-locate)
+     ("M-s g" . consult-grep)
+     ("M-s M-g" . consult-git-grep)
+     ("M-s r" . consult-ripgrep)
+     ("M-s l" . consult-line)
+     ("M-s M-l" . consult-line-multi)
+     ("M-s k" . consult-keep-lines)
+     ("M-s u" . consult-focus-lines)
+     ;; Isearch integration
+     ("M-s e" . consult-isearch-history)
+     :map isearch-mode-map
+     ("M-e" . consult-isearch-history)         ;; orig. isearch-edit-string
+     ("M-s e" . consult-isearch-history)       ;; orig. isearch-edit-string
+     ("M-s l" . consult-line)                  ;; needed by consult-line to detect isearch
+	 ("M-s M-l" . consult-line-multi)           ;; needed by consult-line to detect isearch
+	 )
+    ;; Enable automatic preview at point in the *Completions* buffer. This is
+    ;; relevant when you use the default completion UI. You may want to also
+    ;; enable `consult-preview-at-point-mode` in Embark Collect buffers.
+    :hook (completion-list-mode-hook . consult-preview-at-point-mode)
+    ;; :init
+    ;; ;; `consult-register-store' and the Emacs built-ins.
+    ;; (setq register-preview-delay 0.5
     ;;       register-preview-function #'consult-register-format)
-	;; (advice-add #'register-preview :override #'consult-register-window)
-	;; (setq xref-show-xrefs-function #'consult-xref
-	;; 			xref-show-definitions-function #'consult-xref)
-	:config
-	;; Use `consult-completion-in-region' if Vertico is enabled.
-	;; Otherwise use the default `completion--in-region' function.
-	(setq completion-in-region-function
+    ;; (advice-add #'register-preview :override #'consult-register-window)
+    ;; (setq xref-show-xrefs-function #'consult-xref
+    ;; 			xref-show-definitions-function #'consult-xref)
+    :config
+    ;; Use `consult-completion-in-region' if Vertico is enabled.
+    ;; Otherwise use the default `completion--in-region' function.
+    (setq completion-in-region-function
 		  (lambda (&rest args)
-			(apply (if vertico-mode
+		    (apply (if vertico-mode
 					   #'consult-completion-in-region
-					 #'completion--in-region)
+				     #'completion--in-region)
 				   args)))
-	;; :preview-key on a per-command basis using the `consult-customize' macro.
-	(consult-customize
-	 consult-theme :preview-key '(:debounce 0.4 any)
-	 consult-ripgrep consult-git-grep consult-org-agenda ;consult-grep
-	 consult-bookmark consult-recent-file consult-xref
-	 consult--source-recent-file consult--source-project-recent-file consult--source-bookmark
-	 :preview-key "<right>")
-	(setq consult-ripgrep-args
+    ;; :preview-key on a per-command basis using the `consult-customize' macro.
+    (consult-customize
+     consult-theme :preview-key '(:debounce 0.4 any)
+     consult-ripgrep consult-git-grep consult-org-agenda ;consult-grep
+     consult-bookmark consult-recent-file consult-xref
+     consult--source-recent-file consult--source-project-recent-file consult--source-bookmark
+     :preview-key "<right>")
+    (setq consult-ripgrep-args
 		  "rg --hidden --null --line-buffered --color=never --max-columns=1000 --path-separator /  --smart-case --no-heading --line-number .")
-	;; Optionally configure the narrowing key.
-	;; Both < and C-+ work reasonably well.
-	(setq consult-narrow-key "<") ;; (kbd "C-+")
-	)
+    ;; Optionally configure the narrowing key.
+    ;; Both < and C-+ work reasonably well.
+    (setq consult-narrow-key "<") ;; (kbd "C-+")
+    )
+
   (use-package embark-consult
-	:demand t ; only necessary if you have the hook below
-	;; if you want to have consult previews as you move around an
-	;; auto-updating embark collect buffer
-	:hook
-	(embark-collect-mode-hook . consult-preview-at-point-mode)
-	)
+    :demand t ; only necessary if you have the hook below
+    ;; if you want to have consult previews as you move around an
+    ;; auto-updating embark collect buffer
+    :hook
+    (embark-collect-mode-hook . consult-preview-at-point-mode))
+
   (use-package embark
-	:commands (embark--truncate-target
+    :commands (embark--truncate-target
 			   embark-completing-read-prompter)
-	:functions (which-key--hide-popup-ignore-command
-				which-key--show-keymap)
-	:bind (("C-." . embark-act)
+    :functions (which-key--hide-popup-ignore-command
+			    which-key--show-keymap)
+    :bind (("C-." . embark-act)
 		   ("C->" . embark-act-noquit)
 		   ("M-." . embark-dwim)	   ; orig. xref-find-definition
 		   ("C-h B" . embark-bindings) ;; alternative for `describe-bindings'
@@ -1072,115 +956,116 @@ HEIGHT, if supplied, specifies height of letters to use."
 		   :map minibuffer-local-map
 		   ("H-e" . embark-export)
 		   ("H-b" . embark-become))
-	:preface
-	(defun embark-which-key-indicator ()
+    :preface
+    (defun embark-which-key-indicator ()
 	  "An embark indicator that displays keymaps using which-key.
 The which-key help message will show the type and value of the
 current target followed by an ellipsis if there are further
 targets."
 	  (lambda (&optional keymap targets prefix)
-		(if (null keymap)
-			(which-key--hide-popup-ignore-command)
+	    (if (null keymap)
+		    (which-key--hide-popup-ignore-command)
 		  (which-key--show-keymap
 		   (if (eq (plist-get (car targets) :type) 'embark-become)
 			   "Become"
-			 (format "Act on %s '%s'%s"
-					 (plist-get (car targets) :type)
-					 (embark--truncate-target (plist-get (car targets) :target))
-					 (if (cdr targets) "…" "")))
+		     (format "Act on %s '%s'%s"
+				     (plist-get (car targets) :type)
+				     (embark--truncate-target (plist-get (car targets) :target))
+				     (if (cdr targets) "…" "")))
 		   (if prefix
 			   (pcase (lookup-key keymap prefix 'accept-default)
-				 ((and (pred keymapp) km) km)
-				 (_ (key-binding prefix 'accept-default)))
-			 keymap)
+			     ((and (pred keymapp) km) km)
+			     (_ (key-binding prefix 'accept-default)))
+		     keymap)
 		   nil nil t (lambda (binding)
 					   (not (string-suffix-p "-argument" (cdr binding))))))))
 
-	(defun embark-hide-which-key-indicator (fn &rest args)
+    (defun embark-hide-which-key-indicator (fn &rest args)
 	  "Hide the which-key indicator immediately when using the
 completing-read prompter."
 	  (which-key--hide-popup-ignore-command)
 	  (let ((embark-indicators
-			 (remq #'embark-which-key-indicator embark-indicators)))
-		(apply fn args)))
+		     (remq #'embark-which-key-indicator embark-indicators)))
+	    (apply fn args)))
 
-	(defun embark-act-noquit ()
+    (defun embark-act-noquit ()
 	  "Run action but don't quit the minibuffer afterwards."
 	  (interactive)
 	  (let ((embark-quit-after-action nil))
-		(embark-act)))
+	    (embark-act)))
 
-	:config (setq embark-indicators
-				  '(embark-which-key-indicator
-					embark-highlight-indicator
-					embark-isearch-highlight-indicator))
-	(advice-add #'embark-completing-read-prompter
-				:around #'embark-hide-which-key-indicator))
+    :config
+    (setq embark-indicators
+		  '(embark-which-key-indicator
+			embark-highlight-indicator
+			embark-isearch-highlight-indicator))
+    (advice-add #'embark-completing-read-prompter
+			    :around #'embark-hide-which-key-indicator))
+
   (use-package affe
-	:after (orderless)
-	:bind (("C-x x" . affe-find)
+    :after (orderless)
+    :bind (("C-x x" . affe-find)
 		   ("C-x X" . affe-grep))
-	;; :custom ((affe-regexp-function #'orderless-pattern-compiler)
-	;; 		 (affe-highlight-function #'orderless-highlight-matches))
-	)
-  (use-package wgrep
-	:demand t)
+    ;; :custom ((affe-regexp-function #'orderless-pattern-compiler)
+    ;; 		 (affe-highlight-function #'orderless-highlight-matches))
+    )
+
+  (use-package wgrep :demand t)
   (use-package consult-recoll
-	:bind
-	("M-s /" . consult-recoll)
-	)
+    :bind
+    ("M-s /" . consult-recoll))
+
   (use-package consult-flycheck)
   ;; Use Dabbrev with Corfu!
   (use-package abbrev
-	:straight (:type built-in)
-	:config
-	(setq abbrev-file-name "~/.emacs.d/abbrev_defs")
-	(setq save-abbrevs 'silent)
+    :straight (:type built-in)
+    :config
+    (setq abbrev-file-name "~/.emacs.d/abbrev_defs")
+    (setq save-abbrevs 'silent)
     (setq-default abbrev-mode t)
-	:bind
-	("C-c t a" . abbrev-mode)
-	)
+    :bind
+    ("C-c t a" . abbrev-mode)
+    )
   (use-package dabbrev
-	;; Swap M-/ and C-M-/
-	:bind (("M-/" . dabbrev-completion)
+    ;; Swap M-/ and C-M-/
+    :bind (("M-/" . dabbrev-completion)
 		   ("C-M-/" . dabbrev-expand))
-	;; Other useful Dabbrev configurations.
-	:custom
-	(dabbrev-ignored-buffer-regexps '("\\.\\(?:pdf\\|jpe?g\\|png\\)\\'")))
+    ;; Other useful Dabbrev configurations.
+    :custom
+    (dabbrev-ignored-buffer-regexps '("\\.\\(?:pdf\\|jpe?g\\|png\\)\\'")))
   (use-package corfu
-	:hook (;;(prog-mode-hook . corfu-mode)
+    :hook (;;(prog-mode-hook . corfu-mode)
 		   (org-mode-hook . corfu-mode))
-	:bind
-	(:map corfu-map
+    :bind
+    (:map corfu-map
 		  ("C-n" . corfu-next)
 		  ("C-p" . corfu-previous))
-	:custom
-	(corfu-cycle t)
-	;; (corfu-auto t)
-	;; (corfu-separator ?\s)
-	(corfu-quit-no-match t)
-	(corfu-commit-predicate nil)
-	:config
-	(setq corfu-preselect t)
-	(setq read-extended-command-predicate #'command-completion-default-include-p)
-	)
+    :custom
+    (corfu-cycle t)
+    ;; (corfu-auto t)
+    ;; (corfu-separator ?\s)
+    (corfu-quit-no-match t)
+    (corfu-commit-predicate nil)
+    :config
+    (setq corfu-preselect t)
+    (setq read-extended-command-predicate #'command-completion-default-include-p)
+    )
   (use-package corfu-doc
-	:bind (:map corfu-map
-				("C-h" . corfu-doc-toggle)
-				("C-n" . corfu-doc-scroll-down)
-				("C-p" . corfu-doc-scroll-up))
-	;; :config
-	;; (setq corfu-doc-delay 0.2
-	;; 		corfu-doc-max-width 80
-	;; 		corfu-doc-max-height 40)
-	;; :init
-	;; (corfu-doc-mode +1)
-	)
+    :bind (:map corfu-map
+			    ("C-h" . corfu-doc-toggle)
+			    ("C-n" . corfu-doc-scroll-down)
+			    ("C-p" . corfu-doc-scroll-up))
+    ;; :config
+    ;; (setq corfu-doc-delay 0.2
+    ;; 		corfu-doc-max-width 80
+    ;; 		corfu-doc-max-height 40)
+    ;; :init
+    ;; (corfu-doc-mode +1)
+    )
   )
 (use-package comint
   :straight (:type built-in)
   :bind ("C-c <tab>" . comint-dynamic-complete-filename))
-;; (use-package emacs-oauth2-auto)
 (use-package yasnippet					; Yasnippet
   :bind
   ("M-g Y a" . yas-reload-all)
@@ -2554,14 +2439,6 @@ completing-read prompter."
 	:commands (flycheck-vale-setup)
 	:config (flycheck-vale-setup))
 
-  ;; (use-package lsp-ltex
-  ;; 	:hook (text-mode . (lambda ()
-  ;; 						 (require 'lsp-ltex)
-  ;; 						 (lsp)))  ; or lsp-deferred
-  ;; 	:init
-  ;; 	(setq flycheck-checker-error-threshold 600)
-  ;; 	(setq lsp-ltex-version "15.2.0"))  ; make sure you have set this, see below
-
   (use-package languagetool
 	:config
 	(setq languagetool-java-arguments '("-Dfile.encoding=UTF-8"
@@ -2728,6 +2605,7 @@ completing-read prompter."
 			   :target (file+head "websites/${slug}.org" "#+title: ${title}")
 			   :unnarrowed t))))
 	)
+
   (use-package org-roam-ui
 	:straight
     (:host github :repo "org-roam/org-roam-ui" :branch "main" :files ("*.el" "out"))
@@ -2741,6 +2619,102 @@ completing-read prompter."
           org-roam-ui-follow t
           org-roam-ui-update-on-save t
           org-roam-ui-open-on-start t))
+
+  (use-package deft                     ; Notes
+    :bind
+    ("M-s C-n" . deft)
+    :config
+    (setq deft-directory "~/Sync/notes"
+          deft-recursive t
+          deft-use-filename-as-title t
+          deft-file-naming-rules '((nospace . "_") (case-fn . downcase)) ;; to preserve slashes
+          deft-extensions '("org" "md" "markdown")  ;;"txt"
+          deft-default-extension "org"
+          deft-use-filter-string-for-filename t))
+
+  (use-package consult-notes
+    :straight (:type git :host github :repo "mclear-tools/consult-notes")
+    :commands (consult-notes
+               consult-notes-search-in-all-notes
+               ;; if using org-roam
+               consult-notes-org-roam-find-node
+               consult-notes-org-roam-find-node-relation)
+    :bind
+    ("M-s n" . consult-notes-search-in-all-notes)
+    ("M-s M-n" . consult-notes)
+    ("M-s N" . consult-notes-org-roam-find-node)
+    :config
+    (setq consult-notes-file-dir-sources
+		  '(
+		    ("Notes" ?n "~/Sync/notes")
+		    ("Proj" ?p "~/Sync/proj")
+		    ("Org" ?o "~/Sync/box/org")
+		    ))
+    (setq
+     consult-notes-ripgrep-args
+     "rg --multiline --null --line-buffered --color=never --max-columns=1000 --path-separator / --ignore-case --no-heading --line-number --hidden --glob=!.git/ -g *.org -g *.md -g *.txt -g *.rst--sortr=accessed"
+     ;; --smart-case --search-zip
+     )
+    ;; ;; Set org-roam integration, denote integration, or org-heading integration e.g.:
+    (setq consult-notes-org-headings-files '("~/Sync/proj/lab.org"
+                                             "~/Sync/box/org/journal.org"
+										     "~/Sync/box/org/projects.org"))
+    (consult-notes-org-headings-mode)
+    (consult-notes-org-roam-mode)
+    ;; embark support
+    (defun consult-notes-open-dired (cand)
+	  "Open notes directory dired with point on file CAND."
+	  (interactive "fNote: ")
+	  ;; dired-jump is in dired-x.el but is moved to dired in Emacs 28
+	  (dired-jump nil cand))
+    (defun consult-notes-marked (cand)
+	  "Open a notes file CAND in Marked 2.
+Marked 2 is a mac app that renders markdown."
+	  (interactive "fNote: ")
+	  (call-process-shell-command (format "open -a \"Marked 2\" \"%s\"" (expand-file-name cand))))
+    (defun consult-notes-grep (cand)
+	  "Run grep in directory of notes file CAND."
+	  (interactive "fNote: ")
+	  (consult-grep (file-name-directory cand)))
+    (defvar-keymap consult-notes-map
+	  :doc "Keymap for Embark notes actions."
+	  :parent embark-file-map
+	  "d" #'consult-notes-dired
+	  "g" #'consult-notes-grep
+	  "m" #'consult-notes-marked)
+    (add-to-list 'embark-keymap-alist `(,consult-notes-category . consult-notes-map))
+    ;; make embark-export use dired for notes
+    (setf (alist-get consult-notes-category embark-exporters-alist) #'embark-export-dired)
+
+    ;; Search org-roam notes for citations (depends on citar)
+    )
+
+  (use-package consult-org-roam
+    :commands consult-org-roam-mode
+    :after org-roam
+    :init
+    (require 'consult-org-roam)
+    ;; Activate the minor mode
+    (consult-org-roam-mode 1)
+    :custom
+    ;; Use `ripgrep' for searching with `consult-org-roam-search'
+    (consult-org-roam-grep-func #'consult-ripgrep)
+    ;; Configure a custom narrow key for `consult-buffer'
+    (consult-org-roam-buffer-narrow-key ?r)
+    ;; Display org-roam buffers right after non-org-roam buffers
+    ;; in consult-buffer (and not down at the bottom)
+    (consult-org-roam-buffer-after-buffers t)
+    :config
+    ;; Eventually suppress previewing for certain functions
+    (consult-customize
+     consult-org-roam-forward-links
+     :preview-key (kbd "M-."))
+    :bind
+    ;; Define some convenient keybindings as an addition
+    ("C-c n R" . consult-org-roam-file-find)
+    ("C-c n b" . consult-org-roam-backlinks)
+    ("C-c n l" . consult-org-roam-forward-links)
+    ("C-c n r" . consult-org-roam-search))
   )
 (progn                                  ; Bibliography
   (use-package bibtex
@@ -3153,89 +3127,6 @@ With a prefix ARG, remove start location."
   (use-package dna-mode
 	:bind ("C-c t m d" . dna-mode))
   )
-(use-package consult-notes
-  :straight (:type git :host github :repo "mclear-tools/consult-notes")
-  :commands (consult-notes
-             consult-notes-search-in-all-notes
-             ;; if using org-roam
-             consult-notes-org-roam-find-node
-             consult-notes-org-roam-find-node-relation)
-  :bind
-  ("M-s n" . consult-notes-search-in-all-notes)
-  ("M-s M-n" . consult-notes)
-  ("M-s N" . consult-notes-org-roam-find-node)
-  :config
-  (setq consult-notes-file-dir-sources
-		'(
-		  ("Notes" ?n "~/Sync/notes")
-		  ("Proj" ?p "~/Sync/proj")
-		  ("Org" ?o "~/Sync/box/org")
-		  ))
-  (setq
-   consult-notes-ripgrep-args
-   "rg --multiline --null --line-buffered --color=never --max-columns=1000 --path-separator / --ignore-case --no-heading --line-number --hidden --glob=!.git/ -g *.org -g *.md -g *.txt -g *.rst--sortr=accessed"
-   ;; --smart-case --search-zip
-   )
-  ;; ;; Set org-roam integration, denote integration, or org-heading integration e.g.:
-  (setq consult-notes-org-headings-files '("~/Sync/proj/lab.org"
-                                           "~/Sync/box/org/journal.org"
-										   "~/Sync/box/org/projects.org"))
-  (consult-notes-org-headings-mode)
-  (consult-notes-org-roam-mode)
-  ;; embark support
-  (defun consult-notes-open-dired (cand)
-	"Open notes directory dired with point on file CAND."
-	(interactive "fNote: ")
-	;; dired-jump is in dired-x.el but is moved to dired in Emacs 28
-	(dired-jump nil cand))
-  (defun consult-notes-marked (cand)
-	"Open a notes file CAND in Marked 2.
-Marked 2 is a mac app that renders markdown."
-	(interactive "fNote: ")
-	(call-process-shell-command (format "open -a \"Marked 2\" \"%s\"" (expand-file-name cand))))
-  (defun consult-notes-grep (cand)
-	"Run grep in directory of notes file CAND."
-	(interactive "fNote: ")
-	(consult-grep (file-name-directory cand)))
-  (defvar-keymap consult-notes-map
-	:doc "Keymap for Embark notes actions."
-	:parent embark-file-map
-	"d" #'consult-notes-dired
-	"g" #'consult-notes-grep
-	"m" #'consult-notes-marked)
-  (add-to-list 'embark-keymap-alist `(,consult-notes-category . consult-notes-map))
-  ;; make embark-export use dired for notes
-  (setf (alist-get consult-notes-category embark-exporters-alist) #'embark-export-dired)
-
-  ;; Search org-roam notes for citations (depends on citar)
-  )
-
-(use-package consult-org-roam
-  :commands consult-org-roam-mode
-  :after org-roam
-  :init
-  (require 'consult-org-roam)
-  ;; Activate the minor mode
-  (consult-org-roam-mode 1)
-  :custom
-  ;; Use `ripgrep' for searching with `consult-org-roam-search'
-  (consult-org-roam-grep-func #'consult-ripgrep)
-  ;; Configure a custom narrow key for `consult-buffer'
-  (consult-org-roam-buffer-narrow-key ?r)
-  ;; Display org-roam buffers right after non-org-roam buffers
-  ;; in consult-buffer (and not down at the bottom)
-  (consult-org-roam-buffer-after-buffers t)
-  :config
-  ;; Eventually suppress previewing for certain functions
-  (consult-customize
-   consult-org-roam-forward-links
-   :preview-key (kbd "M-."))
-  :bind
-  ;; Define some convenient keybindings as an addition
-  ("C-c n R" . consult-org-roam-file-find)
-  ("C-c n b" . consult-org-roam-backlinks)
-  ("C-c n l" . consult-org-roam-forward-links)
-  ("C-c n r" . consult-org-roam-search))
 (progn                                  ; python
   (use-package devdocs
 	:demand t
@@ -3269,7 +3160,7 @@ Marked 2 is a mac app that renders markdown."
 				("C-c r" . lsp-rename)
 				;; ("s-l" . nil)
 				)
-	:bind-keymap ("C-L" . lsp-command-map)
+	:bind-keymap ("C-S-l" . lsp-command-map)
 	:init
 	(setq lsp-keymap-prefix "S-SPC")
 	;; (setq read-process-output-max (* 1024 1024)) ;; 1mb
@@ -3351,18 +3242,8 @@ Marked 2 is a mac app that renders markdown."
 				("C-c s" . py-isort-buffer)
 				("C-c S" . py-isort-region)))
   )
+
 (use-package ess)
-(use-package pass
-  :bind ("C-x P" . pass))
-(use-package tzc
-  :demand t
-  :defines tzc-favourite-time-zones
-  :bind
-  ("C-x T c" . tzc-convert-current-time)
-  ("C-x T t" . tzc-convert-time-at-mark)
-  ("C-x T w" . tzc-world-clock)
-  :config
-  (setq tzc-favourite-time-zones '("Europe/Rome")))
 (use-package emojify
   :bind ("C-c E" . emojify-insert-emoji)
   :hook (after-init-hook . global-emojify-mode)
@@ -3489,37 +3370,6 @@ Marked 2 is a mac app that renders markdown."
   :init
   (eval-after-load 'ox '(require 'ox-hugo))
   )
-
-;; (custom-set-faces
-;;  ;; custom-set-faces was added by Custom.
-;;  ;; If you edit it by hand, you could mess it up, so be careful.
-;;  ;; Your init file should contain only one such instance.
-;;  ;; If there is more than one, they won't work right.
-;;  '(flycheck-fringe-error ((t (:background "#6C3333" :weight bold))))
-;;  '(font-lock-function-name-face ((t (:inherit fixed-pitch))))
-;;  '(header-line ((t (:background "#fbf8ef"))))
-;;  '(hl-line ((t (:extend t :height 140 :background "dark violet"))))
-;;  '(markup-meta-face ((t (:height 140 :family "Inconsolata"))))
-;;  '(org-block ((t (:inherit fixed-pitch :foreground "#655370" :background "gainsboro"))))
-;;  '(org-block-begin-line ((t (:inherit fixed-pitch :background "#ddd8eb" :foreground "#9380b2"))))
-;;  '(org-block-end-line ((t (:inherit fixed-pitch :background "#ddd8eb" :foreground "#9380b2"))))
-;;  '(org-code ((t (:inherit (shadow fixed-pitch)))))
-;;  '(org-document-info ((t)))
-;;  '(org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
-;;  '(org-done ((t (:strike-through t))))
-;;  '(org-headline-done ((t (:inherit default :weight bold :strike-through t))))
-;;  '(org-indent ((t (:inherit (org-hide fixed-pitch)))))
-;;  '(org-link ((t (:underline t))))
-;;  '(org-meta-line ((t (:inherit (font-lock-comment-face fixed-pitch)))))
-;;  '(org-property-value ((t (:inherit fixed-pitch))) t)
-;;  '(org-scheduled-previously ((t (:weight bold :underline nil))))
-;;  '(org-special-keyword ((t (:inherit (font-lock-comment-face fixed-pitch)))))
-;;  '(org-table ((t (:inherit fixed-pitch))))
-;;  '(org-tag ((t (:inherit (shadow fixed-pitch) :weight bold :height 0.95))))
-;;  '(org-verbatim ((t (:inherit (shadow fixed-pitch)))))
-;;  '(slack-all-thread-buffer-thread-header-face ((t (:weight bold :height 1.8)))))
-
-;; Telega
 
 (setq debug-on-error nil)
 (setq debug-on-quit nil)

@@ -37,7 +37,8 @@ tag_format = "$version"
 version = "3.2.1"
 version_files = [
   "pyproject.toml:version",
-  "README.md:Version"
+  "README.md:Version",
+  "emacs/.emacs.d/init.el:Version"
 ]
 
 [tool.commitizen.customize]

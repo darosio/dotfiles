@@ -77,6 +77,15 @@ check .gitmodule .git/config or:
     cd <parent-repo-path> # relative to parent repo root without starting path separator
     git config -f .gitmodules submodule.<submodule-path>.branch <branch>
 
+# Applications [optional] requirements
+
+## Ranger
+
+- xls2csv
+- xlsx2csv
+- feh
+- …
+
 # emacs
 
 TODO: [notes](/home/dan/Sync/notes/arch/emacs.org "emacs")
@@ -142,6 +151,8 @@ Package management useful commands:
 - ORB with org-noter with precise insertion
 - csv-mode `C-c C-a`.
 - `C-c o a` mu4e-compose-attach-captured-message.
+
+- apheleia in place of blacken support black and prettier.
 
 ## Vanilla emacs
 
