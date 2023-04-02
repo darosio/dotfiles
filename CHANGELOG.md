@@ -6,6 +6,43 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 Releases will start from 2022.1.
 
+## 3.3.0 (2023-04-02)
+
+### Feat
+
+- **emacs**: Drop ranger Fix windows Add lpr Refactor init.el
+- **emacs**: Update mu Adjust consult preview Hook citar-capf
+- **emacs**: Drop org-super-agenda and org-ql
+- **emacs**: Reorganize agendas and include org-roam in refile targets
+- **emacs**: consult notes keybindings like `M-s n` and fix and cleanup
+- **emacs**: drop sphinx-doc python-docstring-mode (hyperscheduler)
+- **ranger**: Preview eml using maildrop `reformime`
+- Add syncthing, refactor mrconfigs and cleanup
+- **ranger**: Update config files
+- **emacs**: apheleia in place of black, pretty-js etc.
+
+### Fix
+
+- **emacs**: gcal oauth2 with captures
+- **ranger**: org file opening
+- **memory**: As alias see https://github.com/pixelb/scripts
+- **mr|bash**: mr config and bashrc
+- environment.d for rclone, emacs, etc.
+- **gh**: Auth with token
+
+### Docs
+
+- Update readme
+
+### Style
+
+- Drop yamllint in favor of prettier
+
+### Refactor
+
+- **emacs**: init files with ChatGPT; `M-s c` to open ref notes
+- Adopt ruff black blacken-docs in all scripts
+
 ## 3.2.1 (2023-02-09)
 
 ### Fix
