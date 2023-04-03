@@ -181,7 +181,7 @@ HEIGHT, if supplied, specifies height of letters to use."
 	(global-hl-line-mode 1)
 	(put 'narrow-to-region 'disabled nil) ; narrow to region =C-x n n=
 	(fset 'yes-or-no-p 'y-or-n-p)
-	:bind
+    :bind
 	(("M-/" . hippie-expand)
 	 ("H-;" . comment-box)
 	 ("H-<backspace>" . kill-whole-line)
@@ -197,7 +197,8 @@ HEIGHT, if supplied, specifies height of letters to use."
 	 ("C-c t v" . variable-pitch-mode)
 	 ("C-c t w" . whitespace-mode)
 	 ("C-c t 5" . xah-toggle-line-spacing)
-	 ("M-g F" . mk-set-font))
+	 ("M-g F" . mk-set-font)
+     ("C-c Q" . save-buffers-kill-emacs))
 	)
   (use-package files
 	:straight (:type built-in)
@@ -240,9 +241,7 @@ HEIGHT, if supplied, specifies height of letters to use."
   (use-package isearch
 	:straight (:type built-in)
 	:config
-	(setq isearch-allow-scroll t)
-	:bind-keymap
-	("<f7>" . search-map))
+	(setq isearch-allow-scroll t))
 
   (use-package simple
 	:straight (:type built-in)
@@ -263,7 +262,8 @@ HEIGHT, if supplied, specifies height of letters to use."
 	("C-c q" . auto-fill-mode)
 	("M-h" . mark-word)
 	("M-S-h" . mark-paragraph)
-	:hook
+	("<f7> c" . count-words)
+    :hook
 	((gitignore-mode-hook . mk-auto-fill-mode)
 	 (haskell-cabal-mode-hook . mk-auto-fill-mode)
 	 (prog-mode-hook . mk-auto-fill-mode)
@@ -385,6 +385,8 @@ HEIGHT, if supplied, specifies height of letters to use."
     ("H-<f1>" . which-key-show-top-level)
     :init
     (which-key-mode 1)
+	(which-key-add-key-based-replacements "C-c t m" "Toggle mode")
+    (which-key-add-key-based-replacements "C-c t o" "Toggle org")
     :config
     (setq which-key-idle-delay 0.05))
 
@@ -497,7 +499,7 @@ HEIGHT, if supplied, specifies height of letters to use."
 		   ("C-c e x" . flycheck-explain-error-at-point))
     :functions which-key-add-key-based-replacements
     :init
-    (which-key-add-key-based-replacements "<f14> e" "Errors check")
+    (which-key-add-key-based-replacements "C-c e" "Errors check/lint")
     :config
     ;; https://www.flycheck.org/en/latest/languages.html
     (setq-default flycheck-disabled-checkers '(proselint)) ;will use vale
@@ -589,7 +591,8 @@ HEIGHT, if supplied, specifies height of letters to use."
     (prog-mode-hook . hs-minor-mode))
 
   (use-package calc
-    :bind ("<f14> a c" . calc))
+    :bind ("M-g M-a c" . calc)
+    )
 
   (use-package dired
     :straight (:type built-in)
@@ -693,12 +696,14 @@ HEIGHT, if supplied, specifies height of letters to use."
   ;; (straight-use-package '(mk :local-repo "~/.emacs.d/mk/" :branch "vanilla" :includes(mk-text mk-utils)))
   (use-package mk-utils
 	:demand t
+    :defer 0
 	:straight nil
 	:load-path "~/.emacs.d/mk")
   (use-package mk-text                  ; XXX: composable or objed
 	;;https://github.com/paldepind/composable.el
 	;;https://github.com/clemera/objed
 	:demand t
+    :defer 0
 	:straight nil
 	:load-path "~/.emacs.d/mk/"
 	:commands
@@ -718,63 +723,17 @@ HEIGHT, if supplied, specifies height of letters to use."
 	:bind
 	("C-SPC" . mk-mark-command)
 	("C-r" . mk-smart-indent)
-	("<f15> D" . mk-copy-rest-of-line)
+	;; ("<f15> D" . mk-copy-rest-of-line)
+    ;; ("C-W" . "<f15> D") 	; trick F15
 	("M-S" . mk-eat-indent)
 	("M-j" . mk-join-lines)
 	("M-n" . mk-transpose-line-down)
 	("M-p" . mk-transpose-line-up)
 	("M-r" . mk-duplicate-line)
-	)
-  (use-package modalka
-	:commands (modalka-define-kbd)
-	;; :functions which-key-add-key-based-replacements
-	:init
-	(which-key-add-key-based-replacements "C-c t m" "Toggle mode")
-	(which-key-add-key-based-replacements "C-c t o" "Toggle org")
-	(setq-default modalka-cursor-type '(hbar . 3))
-	(set-cursor-color "red")
-	:bind
-	(("<insert>" . modalka-mode)
-	 ("C-c Q" . save-buffers-kill-emacs)
-	 ("<f15> Q" . quit-window)
-	 :map modalka-mode-map
-	 ("i" . modalka-mode)
-	 ("G" . end-of-buffer)
-	 ("Q" . mk-sort-lines-dwim)
-	 ("X" . mk-open-default-dir)
-	 ;; simple
-	 ("<SPC> s w" . count-words)
-	 ("<SPC> s ;" . eval-expression)
-	 ("<SPC> s l" . list-processes)
-	 ;; mk-text
-	 ("<SPC> t e" . mk-add-to-end-of-lines)
-	 ("<SPC> t n" . mk-narrow-to-region)
-	 ("<SPC> t w" . widen)
-	 ("<SPC> t y" . mk-yank-primary))
-	;; (text-mode-hook . mk-modalka-mode-no-git-commit)
-    :config
-    (modalka-define-kbd "g g" "M-<")
-    (modalka-define-kbd "G" "M->")
-    (modalka-define-kbd "j" "M-j")
-    (modalka-define-kbd "l" "C-l")
-    (modalka-define-kbd "q" "<f15> Q")
-    (modalka-define-kbd "r" "C-r")
-    (modalka-define-kbd "t" "C-t")
-    (modalka-define-kbd "u" "C-u")
-    (modalka-define-kbd "v" "C-v")
-    (modalka-define-kbd "w" "C-w")
-    (modalka-define-kbd "x ;" "C-x C-;")
-    (modalka-define-kbd "x e" "C-x C-e")
-    (modalka-define-kbd "x o" "C-x C-o")
-    (modalka-define-kbd "x w" "C-x C-w")
-    (modalka-define-kbd "x x" "C-x C-x")
-    (modalka-define-kbd "x r t" "C-x r t")
-    (modalka-define-kbd "x r c" "C-x r c")
-    (modalka-define-kbd "x r d" "C-x r d")
-    (modalka-define-kbd "x r r" "C-x r r") ;rectangles to register
-    (modalka-define-kbd "x r x" "C-x r x") ;register
-    (modalka-define-kbd "x r g" "C-x r g")
-    (modalka-define-kbd "W" "<f15> D") 	; trick F15
+	;; ("<C-S-e>" . mk-add-to-end-of-lines)
+	;; ("C-Y" . mk-yank-primary)
+    ;; ("Q" . mk-sort-lines-dwim)
+    ;; ("X" . mk-open-default-dir)
     )
   )
 (progn                                  ; Completion: vertico.
@@ -820,9 +779,7 @@ HEIGHT, if supplied, specifies height of letters to use."
      ("C-c l a" . apropos-library)
      ("C-c l l" . load-library))
     :init
-    (which-key-add-key-based-replacements
-      "<f14> a" "Apps"
-      "C-c f" "Files")
+    (which-key-add-key-based-replacements "C-c f" "Files")
     :preface
     ;; Improve `completing-read-multiple' prompt by adding a prefix.
     (defun crm-indicator (args)
@@ -1179,7 +1136,7 @@ completing-read prompter."
 							  (visual-fill-column-mode)
 							  (guess-language-mode)))
   :bind
-  (("<f14> a m" . mu4e)
+  (("M-g M-a m" . mu4e)
    ("C-x m" . mu4e)
    :map mu4e-compose-mode-map
    ("C-c o a" . mu4e-compose-attach-captured-message)
@@ -1629,7 +1586,7 @@ completing-read prompter."
 	(use-package org-lint :straight org
 	  :bind (:map
 			 org-mode-map
-			 ("<f14> e o" . org-lint))
+			 ("C-c e o" . org-lint))
 	  )
 	;; (use-package org-compat :straight org
 	;;   :config
@@ -2455,9 +2412,9 @@ completing-read prompter."
                langtool-correct-buffer
                langtool-check-done
 			   langtool-switch-default-language)
-	:bind ("<f14> x l" . hydra-LT/body)
+	:bind ("<f7> l" . hydra-LT/body)
 	:init
-	(which-key-add-key-based-replacements "<f14> x" "teXt writing")
+	(which-key-add-key-based-replacements "<f7>" "Writing")
 	(defhydra hydra-LT (:color pink :hint nil)
       "A hydra for Langtool."
       ("p" langtool-goto-previous-error "previous")
@@ -2478,50 +2435,50 @@ completing-read prompter."
           langtool-default-language "en-US"))
   (use-package wordnut					;because offline
 	:bind
-	("<f14> x w" . wordnut-lookup-current-word)
-	("<f14> x W" . wordnut-search))
+	("<f7> w" . wordnut-lookup-current-word)
+	("<f7> W" . wordnut-search))
   (use-package sdcv						;because offline and rich (overwhelming)
 	:bind
-	("<f14> x s" . sdcv-search-pointer)
+	("<f7> s" . sdcv-search-pointer)
 	(:map sdcv-mode-map
 		  ("n" . sdcv-next-dictionary)
 		  ("p" . sdcv-previous-dictionary)))
   (use-package dictionary				;because light
 	:bind
-	("<f14> x d" . dictionary-search)
+	("<f7> d" . dictionary-search)
 	:config
 	(setq dictionary-server "dict.org"))
   (use-package powerthesaurus
 	:bind
-	("<f14> x p 0" . powerthesaurus-lookup-dwim)
-	("<f14> x p p" . powerthesaurus-lookup-synonyms-dwim)
-	("<f14> x p a" . powerthesaurus-lookup-antonyms-dwim)
-	("<f14> x p d" . powerthesaurus-lookup-definitions-dwim)
-	("<f14> x p r" . powerthesaurus-lookup-related-dwim)
-	("<f14> x p s" . powerthesaurus-lookup-sentences-dwim))
+	("<f7> p 0" . powerthesaurus-lookup-dwim)
+	("<f7> p p" . powerthesaurus-lookup-synonyms-dwim)
+	("<f7> p a" . powerthesaurus-lookup-antonyms-dwim)
+	("<f7> p d" . powerthesaurus-lookup-definitions-dwim)
+	("<f7> p r" . powerthesaurus-lookup-related-dwim)
+	("<f7> p s" . powerthesaurus-lookup-sentences-dwim))
   (use-package writegood-mode
 	:bind
-	("<f14> x g" . writegood-mode)
-	("<f14> x Gl" . writegood-grade-level)
-	("<f14> x Gr" . writegood-reading-ease))
+	("<f7> g" . writegood-mode)
+	("<f7> Gl" . writegood-grade-level)
+	("<f7> Gr" . writegood-reading-ease))
   (use-package artbollocks-mode
 	:bind
-	("<f14> x a" . artbollocks-mode)
-	("<f14> x Ar" . artbollocks-reading-ease)
-	("<f14> x AR" . artbollocks-readability-index)
-	("<f14> x Al" . artbollocks-grade-level)
-	("<f14> x Aw" . artbollocks-word-count)
-	("<f14> x As" . artbollocks-sentence-count)) ; XXX: maybe write-good is enough
+	("<f7> a" . artbollocks-mode)
+	("<f7> Ar" . artbollocks-reading-ease)
+	("<f7> AR" . artbollocks-readability-index)
+	("<f7> Al" . artbollocks-grade-level)
+	("<f7> Aw" . artbollocks-word-count)
+	("<f7> x As" . artbollocks-sentence-count)) ; XXX: maybe write-good is enough
   (use-package academic-phrases
 	:bind
-	("<f14> x i" . academic-phrases-by-section)
-	("<f14> x I" . academic-phrases))
+	("<f7> i" . academic-phrases-by-section)
+	("<f7> I" . academic-phrases))
   (use-package google-translate
 	:defines google-translate-translation-directions-alist
 	:commands (google-translate-at-point
 			   google-translate-at-point-reverse)
 	:bind
-	("<f14> x t" . google-translate-smooth-translate)
+	("<f7> t" . google-translate-smooth-translate)
 	:init
 	(setq google-translate-translation-directions-alist
           '(("it" . "en") ("en" . "it") ("it" . "de") ("it" . "fr"))
@@ -2553,8 +2510,8 @@ completing-read prompter."
   (use-package cm-mode                  ;critic markup
 	;; :hook (text-mode . cm-mode)
 	:bind
-	("<f14> x M" . cm-mode)
-	("<f14> x m" . cm-prefix-map))
+	("<f7> M" . cm-mode)
+	("<f7> m" . cm-prefix-map))
   (use-package typo
 	:bind
 	("C-c t t" . typo-global-mode)
@@ -3304,8 +3261,7 @@ With a prefix ARG, remove start location."
     ("i" slack-clipboard-image-upload)
     ("x" slack-ws-close "Close Slack")
     ("q" nil "cancel" :color blue))
-  :bind (("<f14> a s" . (lambda () (interactive "") (slack-start) (hydra-slack/body)))
-         ;; ("<f14> a s s" . slack-start)
+  :bind (("M-g M-a s" . (lambda () (interactive "") (slack-start) (hydra-slack/body)))
          :map slack-mode-map
 		 ("M-p" . slack-room-pins-list)
          ("\C-n" . slack-buffer-goto-next-message)
@@ -3313,10 +3269,9 @@ With a prefix ARG, remove start location."
          ("H-<tab>" . hydra-slack/body)
          ("@" . slack-message-embed-mention)
          ("#" . slack-message-embed-channel))
-  ;; :chords (("hh" . hydra-slack/body))
   :init
   (which-key-add-key-based-replacements
-    "<f14> a s" "Slack")
+    "M-g M-a s" "Slack")
   (setq slack-buffer-emojify t) ;; if you want to enable emoji, default nil
   (setq slack-prefer-current-team t)
   :config
@@ -3349,7 +3304,7 @@ With a prefix ARG, remove start location."
 
   (keyfreq-autosave-mode 1))
 (use-package pocket-reader
-  :bind ("<f14> a r" . pocket-reader))
+  :bind ("M-g M-a r" . pocket-reader))
 (use-package calibredb
   :commands calibredb
   ;; ripgrep-all (rga)
