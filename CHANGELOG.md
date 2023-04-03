@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 Releases will start from 2022.1.
 
+## 3.4.0 (2023-04-03)
+
+### Feat
+
+- **emacs**: removed modalka refactor keybinding
+
+### Fix
+
+- **emacs**: daemon demanding packages
+
 ## 3.3.0 (2023-04-02)
 
 ### Feat
