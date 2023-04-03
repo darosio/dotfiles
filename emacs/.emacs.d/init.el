@@ -85,6 +85,7 @@
   (if (daemonp)
       (progn
 		(setq use-package-always-demand nil
+              use-package-always-defer 5
               process-connection-type nil
               server-raise-frame t)
 		(setenv "EDITOR" "emacsclient -c -a=''"))
