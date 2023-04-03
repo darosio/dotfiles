@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 Releases will start from 2022.1.
 
+## 3.4.1 (2023-04-03)
+
+### Fix
+
+- **emacs**: Update packages init.el and readme
+
 ## 3.4.0 (2023-04-03)
 
 ### Feat

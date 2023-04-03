@@ -1,7 +1,7 @@
 ;;; init.el --- Personal Emacs configuration file
 ;;
 ;; Author: DanieleArosio <daniele.arosio@cnr.it>
-;; Version: 3.4.0
+;; Version: 3.4.1
 ;;
 ;; This file contains my personal Emacs configuration.
 ;;
