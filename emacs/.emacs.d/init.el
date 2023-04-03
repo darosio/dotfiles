@@ -85,7 +85,6 @@
   (if (daemonp)
       (progn
 		(setq use-package-always-demand nil
-              use-package-always-defer 5
               process-connection-type nil
               server-raise-frame t)
 		(setenv "EDITOR" "emacsclient -c -a=''"))
@@ -145,7 +144,7 @@ HEIGHT, if supplied, specifies height of letters to use."
 				  cursor-type '(bar . 3)
 				  echo-keystrokes 0.1
 				  enable-recursive-minibuffers t
-				  fill-column 76
+				  fill-column 80
 				  font-lock-maximum-decoration t
 				  gc-cons-threshold (* 50 1000 1000)
 				  global-mark-ring-max 1024
@@ -1050,6 +1049,19 @@ completing-read prompter."
 	:bind ("M-s y" . consult-yasnippet))
   )
 (progn                                  ; Spell checking
+  ;; (use-package flyspell
+  ;;   :ensure nil
+  ;;   :hook ((text-mode . flyspell-mode)
+  ;;          (org-mode . flyspell-mode))
+  ;;   :config
+  ;;   (setq flyspell-issue-message-flag nil
+  ;;         ispell-program-name "hunspell"
+  ;;         ispell-really-hunspell t)
+  ;;   (add-hook 'flyspell-mode-hook #'langtool-check-done))
+
+  ;; (use-package flyspell-correct-ivy
+  ;;   :ensure t
+  ;;   :after flyspell)
   (use-package ispell
     :config
     (setq ispell-program-name (executable-find "hunspell")
@@ -1058,6 +1070,7 @@ completing-read prompter."
     (add-to-list 'ispell-skip-region-alist
                  '(;("^#+BEGIN_SRC" . "^#+END_SRC")
                    ("^From:" . "line--$"))))
+
   (use-package flyspell
 	:bind (("C-c t s" . flyspell-mode)
 		   ("C-c t S" . flyspell-correct-auto-mode)
@@ -1068,6 +1081,7 @@ completing-read prompter."
 		   ("C-." . nil)
 		   ("C-," . nil))
 	:hook ((text-mode-hook . flyspell-mode)
+		   (org-mode-hook . flyspell-mode)
 		   (prog-mode-hook . flyspell-prog-mode)
 		   (change-log-mode-hook . (lambda () (flyspell-mode -1)))
 		   (log-edit-mode-hook . (lambda () (flyspell-mode -1)))))
@@ -1896,11 +1910,10 @@ completing-read prompter."
 	  ;;   (org-id-get-create))
 	  ;; :hook (org-capture-before-finalize . nemacs-org-capture-add-basic-properties)
 	  :hook
-	  ((org-capture-mode-hook . (lambda () (modalka-mode 0)))
-	   (org-after-refile-insert-hook . save-buffer))
+	  (org-after-refile-insert-hook . save-buffer)
 	  :config
 	  (setq org-capture-templates
-			'(
+		    '(
 			  ("t" "Todo simple entry" entry (file org-default-notes-file)
 			   "* TODO %?\n%[~/.emacs.d/templates/da-property-string]\n")
 			  ("f" "Fast capture and exit" entry (file org-default-notes-file)
@@ -1966,17 +1979,17 @@ completing-read prompter."
 	  ;;                (file+headline da-gtd "E-mail")
 	  ;;                ,(format "%s\n%s\n%s" "* WAIT for reply %:subject" da-property-string "%i%?")))
 	  (setq org-capture-templates-contexts '(("R" ((in-mode . "mu4e-view-mode")))
-											 ("W" ((in-mode . "mu4e-view-mode")))
-											 ("R" ((in-mode . "mu4e-headers-mode")))
-											 ("W" ((in-mode . "mu4e-headers-mode")))))
+										     ("W" ((in-mode . "mu4e-view-mode")))
+										     ("R" ((in-mode . "mu4e-headers-mode")))
+										     ("W" ((in-mode . "mu4e-headers-mode")))))
 	  :bind
 	  (("C-c c" . org-capture)
 	   ("C-c T" . (lambda () (interactive "") (org-capture nil "T")))
 	   ("C-c R d" . nemacs-org-capture-review-daily)
 	   ("C-c R w" . my-new-weekly-review))
 	  )
-	(setq org-use-property-inheritance nil)	; default
-	(use-package org-agenda :straight org
+    (setq org-use-property-inheritance nil)	; default
+    (use-package org-agenda :straight org
 	  :bind
 	  (("M-s A" . (lambda () (interactive "") (org-agenda nil "s")))
 	   :map org-agenda-mode-map
@@ -2018,214 +2031,214 @@ completing-read prompter."
 	  ;; FIXME: could help following projects individually
 	  (advice-add 'org-agenda-goto :after
 				  (lambda (&rest args)
-					(org-narrow-to-subtree)))
+				    (org-narrow-to-subtree)))
 	  (setq org-element-use-cache nil)
 	  ;; org-compat
 	  (setq org-agenda-overriding-columns-format "%TODO 100%ITEM %7EFFORT %SCHEDULED %DEADLINE 100%TAGS")
 
 	  (setq org-agenda-custom-commands
-			'(
+		    '(
 			  ("b" "Backwards calendar loops"
 			   (
-				(agenda "Backward"
-						((org-agenda-overriding-header "Backwards calendar loops")
-						 ;; (org-agenda-overriding-columns-format "%20ITEM %DEADLINE")
-						 ;; (org-agenda-view-columns-initially t)
-						 (org-agenda-span 10)
-						 (org-agenda-start-day "-10d")
-						 (org-agenda-start-with-log-mode t)
-						 (org-agenda-include-diary nil)
-						 (org-agenda-skip-timestamp-if-done nil)
-						 ))
-				(agenda "Planning"
-						((org-agenda-start-day "+1d")
-						 (org-agenda-span 14)
-						 (org-agenda-show-all-dates nil)
-						 ))
-				(tags-todo "-recurring-STYLE=\"habit\"&DEADLINE>\"<+14d>\""
+			    (agenda "Backward"
+					    ((org-agenda-overriding-header "Backwards calendar loops")
+					     ;; (org-agenda-overriding-columns-format "%20ITEM %DEADLINE")
+					     ;; (org-agenda-view-columns-initially t)
+					     (org-agenda-span 10)
+					     (org-agenda-start-day "-10d")
+					     (org-agenda-start-with-log-mode t)
+					     (org-agenda-include-diary nil)
+					     (org-agenda-skip-timestamp-if-done nil)
+					     ))
+			    (agenda "Planning"
+					    ((org-agenda-start-day "+1d")
+					     (org-agenda-span 14)
+					     (org-agenda-show-all-dates nil)
+					     ))
+			    (tags-todo "-recurring-STYLE=\"habit\"&DEADLINE>\"<+14d>\""
 						   ((org-agenda-overriding-header "Next deadlines")
-							(org-agenda-sorting-strategy '(deadline-up))
-							))
-				)
+						    (org-agenda-sorting-strategy '(deadline-up))
+						    ))
+			    )
 			   (
-				(org-agenda-show-future-repeats t)
-				(org-agenda-compact-blocks nil)
-				))
+			    (org-agenda-show-future-repeats t)
+			    (org-agenda-compact-blocks nil)
+			    ))
 			  ("0" "Tasks to refile or archive"
 			   (
-				(tags "REFILE" ((org-agenda-overriding-header "Tasks to Refile")))
-				(tags "-NOTE-REFILE/DONE|CANC"
+			    (tags "REFILE" ((org-agenda-overriding-header "Tasks to Refile")))
+			    (tags "-NOTE-REFILE/DONE|CANC"
 					  ((org-agenda-overriding-header "Tasks to Archive")))
-				))
+			    ))
 			  ("2" "Scattered action list"
 			   (
-				(tags-todo "-proj")
-				(agenda "" ((org-agenda-span 1)))
-				(tags "+proj"
+			    (tags-todo "-proj")
+			    (agenda "" ((org-agenda-span 1)))
+			    (tags "+proj"
 					  ((org-agenda-overriding-header "All projects scattered outside the agenda files")
 					   (org-tags-exclude-from-inheritance '("proj"))))
-				)
+			    )
 			   (
-				(org-agenda-sorting-strategy '(priority-down todo-state-down category-keep habit-down))
-				(org-agenda-files da-refile-files)
-				(org-tags-match-list-sublevels 'indented)
-				(org-agenda-compact-blocks nil)
-				)
+			    (org-agenda-sorting-strategy '(priority-down todo-state-down category-keep habit-down))
+			    (org-agenda-files da-refile-files)
+			    (org-tags-match-list-sublevels 'indented)
+			    (org-agenda-compact-blocks nil)
+			    )
 			   )
 			  ("a" "Actions list [today]"
 			   (
-				(agenda "Journal"
-						((org-agenda-entry-types '(:timestamp :scheduled :deadline))
-						 (org-agenda-span 1)
-						 (org-agenda-sorting-strategy '(deadline-up time-up scheduled-down priority-down))
-						 (org-deadline-warning-days 0)
-						 ))
-				))
+			    (agenda "Journal"
+					    ((org-agenda-entry-types '(:timestamp :scheduled :deadline))
+					     (org-agenda-span 1)
+					     (org-agenda-sorting-strategy '(deadline-up time-up scheduled-down priority-down))
+					     (org-deadline-warning-days 0)
+					     ))
+			    ))
 			  ("d" "Daily review"
 			   (
-				(agenda "Today"
-						((org-agenda-span 1)
-						 (org-deadline-warning-days 0)
-						 (org-agenda-entry-types '(:timestamp :scheduled :deadline))
-						 (org-agenda-sorting-strategy '(deadline-up time-up scheduled-down priority-down))
-						 ))
-				(agenda "Next 6 days"
-						((org-agenda-start-day "+1d")
-						 (org-agenda-span 6)
-						 (org-agenda-show-all-dates nil)
-						 (org-agenda-time-grid
+			    (agenda "Today"
+					    ((org-agenda-span 1)
+					     (org-deadline-warning-days 0)
+					     (org-agenda-entry-types '(:timestamp :scheduled :deadline))
+					     (org-agenda-sorting-strategy '(deadline-up time-up scheduled-down priority-down))
+					     ))
+			    (agenda "Next 6 days"
+					    ((org-agenda-start-day "+1d")
+					     (org-agenda-span 6)
+					     (org-agenda-show-all-dates nil)
+					     (org-agenda-time-grid
 						  '((weekly) (1300)
-							"      " "················"))
-						 ))
-				(tags-todo "+Effort>\"0\"&Effort<=\"0:15\""
+						    "      " "················"))
+					     ))
+			    (tags-todo "+Effort>\"0\"&Effort<=\"0:15\""
 						   ((org-agenda-overriding-header "Quick Picks")
-							(org-agenda-todo-ignore-scheduled 'all)
-							(org-agenda-todo-ignore-deadlines 'far)))
-				(tags-todo "-proj-recurring+PRIORITY=\"A\"/MAYB|TODO|NEXT" ;do not use -todo for refile archive
+						    (org-agenda-todo-ignore-scheduled 'all)
+						    (org-agenda-todo-ignore-deadlines 'far)))
+			    (tags-todo "-proj-recurring+PRIORITY=\"A\"/MAYB|TODO|NEXT" ;do not use -todo for refile archive
 						   ((org-agenda-overriding-header "Pick list (standalone tasks)")
-							(org-agenda-files (append da-agenda-files
+						    (org-agenda-files (append da-agenda-files
 													  '("~/Sync/notes/arch/emacs.org"
-														"~/Sync/notes/arch/archlinux.org")))
-							(org-agenda-todo-ignore-scheduled 'all)
-							(org-agenda-todo-ignore-deadlines 'near)
-							(org-tags-match-list-sublevels 'indented)
-							))
-				(tags-todo "+study-PRIORITY=\"A\"" ;do not use -todo for refile archive
+													    "~/Sync/notes/arch/archlinux.org")))
+						    (org-agenda-todo-ignore-scheduled 'all)
+						    (org-agenda-todo-ignore-deadlines 'near)
+						    (org-tags-match-list-sublevels 'indented)
+						    ))
+			    (tags-todo "+study-PRIORITY=\"A\"" ;do not use -todo for refile archive
 						   ((org-agenda-overriding-header "Pick list (to study)")
-							(org-agenda-files (append da-agenda-files
+						    (org-agenda-files (append da-agenda-files
 													  '("~/Sync/notes/arch/emacs.org"
-														"~/Sync/notes/arch/archlinux.org")))
-							(org-agenda-todo-ignore-scheduled t)
-							(org-agenda-todo-ignore-deadlines t)
-							(org-tags-match-list-sublevels 'indented)
-							))
-				(tags-todo "+proj-WAITING-PASSED-HOLDING-MAYBE/PASS|WAIT|NEXT" ;do not use -todo for refile archive
+													    "~/Sync/notes/arch/archlinux.org")))
+						    (org-agenda-todo-ignore-scheduled t)
+						    (org-agenda-todo-ignore-deadlines t)
+						    (org-tags-match-list-sublevels 'indented)
+						    ))
+			    (tags-todo "+proj-WAITING-PASSED-HOLDING-MAYBE/PASS|WAIT|NEXT" ;do not use -todo for refile archive
 						   ((org-agenda-overriding-header "Pick list (projects)")
-							(org-agenda-files (append da-agenda-files
+						    (org-agenda-files (append da-agenda-files
 													  '("~/Sync/notes/arch/emacs.org"
-														"~/Sync/notes/arch/archlinux.org")))
-							(org-agenda-todo-ignore-scheduled t)
-							(org-agenda-todo-ignore-deadlines t)
-							(org-tags-match-list-sublevels 'indented)
-							(org-agenda-sorting-strategy '(category-keep todo-state-down priority-down habit-down))
-							))
-				)
+													    "~/Sync/notes/arch/archlinux.org")))
+						    (org-agenda-todo-ignore-scheduled t)
+						    (org-agenda-todo-ignore-deadlines t)
+						    (org-tags-match-list-sublevels 'indented)
+						    (org-agenda-sorting-strategy '(category-keep todo-state-down priority-down habit-down))
+						    ))
+			    )
 			   ((org-agenda-include-diary nil)
-				;; (org-agenda-sorting-strategy '(deadline-up scheduled-up habit-down time-up tag-down category-keep priority-up))
-				(org-agenda-compact-blocks nil)))
+			    ;; (org-agenda-sorting-strategy '(deadline-up scheduled-up habit-down time-up tag-down category-keep priority-up))
+			    (org-agenda-compact-blocks nil)))
 			  ("f" "Forwards loops, habits and recurring tasks"
 			   (
-				(agenda "scheduled"
-						((org-agenda-entry-types '(:scheduled :deadline))
-						 (org-agenda-start-day "+15d")
-						 (org-agenda-span 165)
-						 (org-agenda-include-diary nil)
-						 (org-agenda-show-all-dates nil)
-						 (org-agenda-time-grid nil)
-						 ))
-				(tags-todo "+SCHEDULED>=\"<+180d>\"\|+DEADLINE>=\"<+180d>\""
+			    (agenda "scheduled"
+					    ((org-agenda-entry-types '(:scheduled :deadline))
+					     (org-agenda-start-day "+15d")
+					     (org-agenda-span 165)
+					     (org-agenda-include-diary nil)
+					     (org-agenda-show-all-dates nil)
+					     (org-agenda-time-grid nil)
+					     ))
+			    (tags-todo "+SCHEDULED>=\"<+180d>\"\|+DEADLINE>=\"<+180d>\""
 						   ((org-agenda-overriding-header "Over 6 months")
-							))
-				)
+						    ))
+			    )
 			   (
-				(org-agenda-sorting-strategy '(deadline-up))
-				))
+			    (org-agenda-sorting-strategy '(deadline-up))
+			    ))
 			  ("l" "Standalone unscheduled tasks"
 			   (
-				(tags "-proj-recurring-STYLE=\"habit\"+WORK/TODO|NEXT"
+			    (tags "-proj-recurring-STYLE=\"habit\"+WORK/TODO|NEXT"
 					  ((org-agenda-overriding-header "Work")))
-				(tags "-proj-recurring-STYLE=\"habit\"+PERSONAL-WORK/TODO|NEXT"
+			    (tags "-proj-recurring-STYLE=\"habit\"+PERSONAL-WORK/TODO|NEXT"
 					  ((org-agenda-overriding-header "Personal")))
-				(tags "-proj-recurring-STYLE=\"habit\"-WORK-PERSONAL/TODO|NEXT"
+			    (tags "-proj-recurring-STYLE=\"habit\"-WORK-PERSONAL/TODO|NEXT"
 					  ((org-agenda-overriding-header "Unassigned")))
-				)
+			    )
 			   (
-				(org-agenda-sorting-strategy '(priority-down category-keep tag-down))
-				(org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline 'scheduled))
-				(org-tags-match-list-sublevels 'indented)
-				))
+			    (org-agenda-sorting-strategy '(priority-down category-keep tag-down))
+			    (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline 'scheduled))
+			    (org-tags-match-list-sublevels 'indented)
+			    ))
 			  ("w" "Follow-up list"
 			   (
-				(tags "-proj/!WAIT|PASS"
+			    (tags "-proj/!WAIT|PASS"
 					  ((org-agenda-overriding-header "Follow-up tasks list")))
-				(tags "+proj/!WAIT|PASS"
+			    (tags "+proj/!WAIT|PASS"
 					  ((org-agenda-overriding-header "Follow-up projects list")
 					   (org-tags-exclude-from-inheritance '("proj"))))
-				)
+			    )
 			   (
-				(org-tags-match-list-sublevels 'indented)))
+			    (org-tags-match-list-sublevels 'indented)))
 			  ("j" "Projects list"
 			   (
-				;; (tags "+proj/-HOLD-MAYB-PASS-WAIT-CANC-DONE"; -Proj=\"ignore\"
-				(tags "+proj+DEADLINE={.+}/-DONE-CANC"
+			    ;; (tags "+proj/-HOLD-MAYB-PASS-WAIT-CANC-DONE"; -Proj=\"ignore\"
+			    (tags "+proj+DEADLINE={.+}/-DONE-CANC"
 					  ((org-agenda-overriding-header "Projects due")
 					   (org-tags-exclude-from-inheritance '("proj"))
 					   ))
-				(tags "+proj-DEADLINE={.+}/-DONE-CANC"
+			    (tags "+proj-DEADLINE={.+}/-DONE-CANC"
 					  ((org-agenda-overriding-header "Projects")
 					   (org-tags-exclude-from-inheritance '("proj"))
 					   ))
-				(tags "+proj"
+			    (tags "+proj"
 					  ((org-agenda-overriding-header "Project tasks")
 					   (org-agenda-sorting-strategy '(todo-state-up))
 					   (org-agenda-skip-function '(org-agenda-skip-entry-if 'regexp ":proj:"))
 					   ))
-				)
+			    )
 			   ((org-tags-match-list-sublevels 'indented)
-				(org-agenda-files (append da-agenda-files
+			    (org-agenda-files (append da-agenda-files
 										  '("~/Sync/notes/arch/emacs.org"
-											"~/Sync/notes/arch/archlinux.org")))
-				(org-agenda-sorting-strategy '(category-keep priority-down))
-				;; (org-use-property-inheritance t)
-				(org-agenda-tag-filter-preset '("-WAITING" "-PASSED" "-HOLDING" "-MAYBE" "-ENDED"))
-				))
+										    "~/Sync/notes/arch/archlinux.org")))
+			    (org-agenda-sorting-strategy '(category-keep priority-down))
+			    ;; (org-use-property-inheritance t)
+			    (org-agenda-tag-filter-preset '("-WAITING" "-PASSED" "-HOLDING" "-MAYBE" "-ENDED"))
+			    ))
 			  ("h" "Tasks and projects on hold"
 			   (
-				(tags "-proj/+HOLD"
+			    (tags "-proj/+HOLD"
 					  ((org-agenda-overriding-header "Tasks on hold")))
-				(tags "+proj/+HOLD"
+			    (tags "+proj/+HOLD"
 					  ((org-agenda-overriding-header "Projects on hold")
 					   (org-tags-exclude-from-inheritance '("proj"))))
-				(tags-todo "TIMESTAMP<=\"<now>\"")
-				)
+			    (tags-todo "TIMESTAMP<=\"<now>\"")
+			    )
 			   (
-				(org-tags-match-list-sublevels 'indented)))
+			    (org-tags-match-list-sublevels 'indented)))
 			  ("i" "Idea and hold, maybe, someday tasks and-or projects"
 			   (
-				(tags "-proj-SCHEDULED={.+}-DEADLINE={.+}/+MAYB"
+			    (tags "-proj-SCHEDULED={.+}-DEADLINE={.+}/+MAYB"
 					  ((org-agenda-overriding-header "Tasks for someday")
 					   ))
-				(tags "+proj/+MAYB"
+			    (tags "+proj/+MAYB"
 					  ((org-agenda-overriding-header "Projects for someday")
 					   (org-tags-exclude-from-inheritance '("proj"))))
-				(tags "+idea/-MAYB"
+			    (tags "+idea/-MAYB"
 					  ((org-agenda-overriding-header "Ideas")
 					   (org-tags-match-list-sublevels 'indented)
 					   (org-agenda-sorting-strategy '(todo-state-up priority-down category-keep tag-down))))
-				)
+			    )
 			   (
-				(org-agenda-sorting-strategy '(todo-state-up priority-down tag-down category-keep))
-				))
+			    (org-agenda-sorting-strategy '(todo-state-up priority-down tag-down category-keep))
+			    ))
 
 			  ("c" . "Contexts")
 			  ("ce" "@errand" tags-todo "@errand")
@@ -2235,36 +2248,36 @@ completing-read prompter."
 			  ("ct" "@telephone" tags-todo "@telephone")
 			  ("E" "Export agenda"
 			   ((agenda "" ((org-agenda-ndays 7)                      ;; overview of appointments
-							(org-agenda-start-on-weekday nil)         ;; calendar begins today
-							(org-agenda-repeating-timestamp-show-all t)
-							(org-agenda-entry-types '(:timestamp :sexp))))
-				(agenda "" ((org-agenda-ndays 1)                      ;; daily agenda
-							(org-deadline-warning-days 700)             ;; 7 day advanced warning for deadlines
-							(org-agenda-todo-keyword-format "[ ]")
-							(org-agenda-scheduled-leaders '("" ""))
-							(org-agenda-prefix-format "%t%s")))
-				(todo "TODO"                                          ;; todos sorted by context
+						    (org-agenda-start-on-weekday nil)         ;; calendar begins today
+						    (org-agenda-repeating-timestamp-show-all t)
+						    (org-agenda-entry-types '(:timestamp :sexp))))
+			    (agenda "" ((org-agenda-ndays 1)                      ;; daily agenda
+						    (org-deadline-warning-days 700)             ;; 7 day advanced warning for deadlines
+						    (org-agenda-todo-keyword-format "[ ]")
+						    (org-agenda-scheduled-leaders '("" ""))
+						    (org-agenda-prefix-format "%t%s")))
+			    (todo "TODO"                                          ;; todos sorted by context
 					  ((org-agenda-prefix-format "[ ] %T: ")
 					   (org-agenda-sorting-strategy '(tag-up priority-down))
 					   (org-agenda-todo-keyword-format "")
 					   (org-agenda-overriding-header "\nTasks by Context\n------------------\n"))))
 			   ((org-agenda-with-colors nil)
-				(org-agenda-remove-tags t)
-				(htmlize-output-type 'css)
-				(ps-number-of-columns 2)
-				(ps-landscape-mode t))
+			    (org-agenda-remove-tags t)
+			    (htmlize-output-type 'css)
+			    (ps-number-of-columns 2)
+			    (ps-landscape-mode t))
 			   ("~/agenda.pdf" "~/agenda.html"))
 			  ))
 	  )
-	(use-package org-clock :straight org
+    (use-package org-clock :straight org
 	  :config
 	  (setq org-clock-out-remove-zero-time-clocks t) ; Removes clocked tasks with 0:00 duration
 	  (setq org-clock-auto-clock-resolution (quote when-no-clock-is-running))	; Enable auto clock resolution for finding open clocks
 	  )
-	(org-clock-persistence-insinuate)		; Resume clocking task when emacs is restarted
-	(setq org-global-properties (quote (("Effort_ALL" . "0:15 0:30 0:45 1:00 1:30 2:00 3:00 4:00 6:00 0:00")
-										("STYLE_ALL" . "habit"))))
-	)
+    (org-clock-persistence-insinuate)		; Resume clocking task when emacs is restarted
+    (setq org-global-properties (quote (("Effort_ALL" . "0:15 0:30 0:45 1:00 1:30 2:00 3:00 4:00 6:00 0:00")
+									    ("STYLE_ALL" . "habit"))))
+    )
   (use-package ob-async
 	:after (ob)
 	:config
@@ -2379,31 +2392,9 @@ completing-read prompter."
 	 ("W" . cfw:open-org-calendar)))
   )
 (progn                                  ; Writing
-  ;; https://www.reddit.com/r/emacs/comments/ni2lmx/is_it_possible_to_use_gnuemacs_as_an_alternative/
-  (use-package wc-mode
-    :disabled
-    :bind (("C-c w" . wc-mode)
-           :map wc-mode-map
-           ("C-c C-w" . org-refile)       ; even if it was undefined
-           ("C-c w w" . wc-set-word-goal)
-           ("C-c w l" . wc-set-line-goal)
-           ("C-c w a" . wc-set-char-goal)
-           ("C-c w c" . wc-count)
-           ("C-c w q" . wc-mode))
-    ;; 	"xw"  #'(wc-mode :which-key "word count")
-    :config
-    (setq wc-modeline-format "Wd.%tw  Ch.%tc"))
   (use-package flycheck-vale
 	:commands (flycheck-vale-setup)
 	:config (flycheck-vale-setup))
-
-  (use-package languagetool
-	:config
-	(setq languagetool-java-arguments '("-Dfile.encoding=UTF-8"
-										"-cp" "/usr/share/languagetool:/usr/share/java/languagetool/*")
-		  languagetool-console-command "org.languagetool.commandline.Main"
-		  languagetool-server-command "org.languagetool.server.HTTPServer")
-    )
 
   (use-package langtool
 	:commands (langtool-goto-previous-error
@@ -2527,9 +2518,9 @@ completing-read prompter."
 	(add-to-list 'display-buffer-alist
 				 '("\\*org-roam\\*"
                    (display-buffer-in-side-window)
-                   (side . right)
+                   (side . left)
                    (slot . 0)
-                   (window-width . 0.33)
+                   (window-width . 0.40)
                    (window-parameters . ((no-other-window . t)
 										 (no-delete-other-windows . t)))))
 	:custom

@@ -12,6 +12,12 @@ Initialize pre-commit hooks:
 
     hatch run init
 
+When bump version
+
+    hatch run bump
+    git push
+    git push --tags
+
 ## Usage
 
 To create symlink into $HOME:
@@ -76,6 +82,15 @@ check .gitmodule .git/config or:
     git checkout <branch>
     cd <parent-repo-path> # relative to parent repo root without starting path separator
     git config -f .gitmodules submodule.<submodule-path>.branch <branch>
+
+# Development
+
+Commit following commitizen but consider this is a repository of configurations
+e.g. when updating emacs packages
+
+    feat(emacs): Update packages
+
+what would normally called `build: Update dependencies`.
 
 # Applications [optional] requirements
 
