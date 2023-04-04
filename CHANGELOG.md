@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 Releases will start from 2022.1.
 
+## 3.4.2 (2023-04-04)
+
+### Fix
+
+- **emacs**: org -roam -protocol
+- **emacs**: use-package-autoload-keymap might not be defined at runtime
+- **emacs**: pdf-tools demand
+
+### chore
+
+- **emacs**: gscholar-bibtex `M-s C-b`
+
 ## 3.4.1 (2023-04-03)
 
 ### Fix
