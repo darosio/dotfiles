@@ -425,9 +425,9 @@ HEIGHT, if supplied, specifies height of letters to use."
   (use-package crux
     :bind
     ("C-a" . crux-move-beginning-of-line)
-    ("H-O" . crux-smart-open-line)
-    ("C-O" . crux-smart-open-line-above)
-    ("H-C-S-o" . crux-duplicate-and-comment-current-line-or-region))
+    ("C-o" . crux-smart-open-line)
+    ("C-S-o" . crux-smart-open-line-above)
+    ("C-H-o" . crux-duplicate-and-comment-current-line-or-region))
 
   (use-package recentf
     ;; :config
@@ -707,35 +707,32 @@ HEIGHT, if supplied, specifies height of letters to use."
     :defer 0
 	:straight nil
 	:load-path "~/.emacs.d/mk/"
-	:commands
-	(mk-transpose-line-down
-	 mk-transpose-line-up
-	 mk-duplicate-line
-	 mk-mark-command
-	 mk-smart-indent
-	 mk-eat-indent
-	 mk-join-lines
-	 mk-copy-rest-of-line
-	 mk-copy-buffer
-	 mk-yark-primary
-	 mk-narrow-to-region
-	 mk-add-to-end-of-lines
-	 mk-sort-lines-dwim)
+	:commands (mk-transpose-line-down
+	           mk-transpose-line-up
+	           mk-duplicate-line
+	           mk-mark-command
+	           mk-smart-indent
+	           mk-eat-indent
+	           mk-join-lines
+	           mk-copy-rest-of-line
+	           mk-copy-buffer
+	           mk-yark-primary
+	           mk-narrow-to-region
+	           mk-add-to-end-of-lines
+	           mk-sort-lines-dwim)
 	:bind
 	("C-SPC" . mk-mark-command)
-	("C-r" . mk-smart-indent)
-	;; ("<f15> D" . mk-copy-rest-of-line)
-    ;; ("C-W" . "<f15> D") 	; trick F15
+	("C-S-r" . mk-smart-indent)
 	("M-S" . mk-eat-indent)
-	("M-j" . mk-join-lines)
+	("M-C-j" . mk-join-lines)
 	("M-n" . mk-transpose-line-down)
 	("M-p" . mk-transpose-line-up)
 	("M-r" . mk-duplicate-line)
-	;; ("<C-S-e>" . mk-add-to-end-of-lines)
-	;; ("C-Y" . mk-yank-primary)
-    ;; ("Q" . mk-sort-lines-dwim)
-    ;; ("X" . mk-open-default-dir)
-    )
+    ("C-H-w" . mk-copy-rest-of-line)
+	("C-c E e" . mk-add-to-end-of-lines)
+	("C-S-y" . mk-yank-primary)
+    ("C-c E s" . mk-sort-lines-dwim)
+    ("C-$" . (lambda () (interactive) (move-end-of-line 1) (yank))))
   )
 (progn                                  ; Completion: vertico.
   (use-package vertico
@@ -1034,8 +1031,7 @@ completing-read prompter."
   ;; ;; disable yas minor mode map ;; use hippie-expand instead [sp]
   ;; (setq yas-minor-mode-map (make-sparse-keymap))
   :init
-  (which-key-add-key-based-replacements "<f14> Y" "Yasnippet")
-  (which-key-add-key-based-replacements "<f14> i" "Insert")
+  (which-key-add-key-based-replacements "M-g Y" "Yasnippet")
   :hook
   (prog-mode-hook . yas-minor-mode)
   (org-mode-hook . yas-minor-mode)
@@ -3102,41 +3098,36 @@ With a prefix ARG, remove start location."
 			   lsp-enable-which-key-integration)
 	:custom
 	(lsp-completion-provider :none) ;; we use Corfu!
-	:bind (:map lsp-mode-map
-				("C-c r" . lsp-rename)
-				;; ("s-l" . nil)
-				)
-	:bind-keymap ("C-S-l" . lsp-command-map)
-	:init
-	(setq lsp-keymap-prefix "S-SPC")
-	;; (setq read-process-output-max (* 1024 1024)) ;; 1mb
-	:hook
-	(python-mode-hook . lsp-deferred)
-	(lsp-mode-hook . lsp-enable-which-key-integration)
-	;; (lsp-mode-hook . (lambda ()
-	;; 				   (let ((lsp-keymap-prefix "S-SPC"))
-	;; 					 (lsp-enable-which-key-integration))))
-	:defines
-	(lsp-pylsp-plugins-flake8-enabled
-	 lsp-pylsp-plugins-autopep8-enabled
-	 lsp-pylsp-plugins-mccabe-enabled
-	 lsp-pylsp-plugins-pycodestyle-enabled
-	 lsp-pylsp-plugins-pydocstyle-enabled
-	 lsp-pylsp-plugins-pylint-enabled
-	 lsp-pylsp-plugins-pyflakes-enabled
-	 lsp-pylsp-plugins-yapf-enabled
-	 lsp-pylsp-plugins-flake8-config)
-	:config
-	(setq lsp-pylsp-plugins-flake8-enabled t) ;; (setq pylsp.plugins.flake8.enabled t)
-	(setq lsp-pylsp-plugins-autopep8-enabled nil)
-	(setq lsp-pylsp-plugins-mccabe-enabled nil)
-	(setq lsp-pylsp-plugins-pycodestyle-enabled nil)
-	(setq lsp-pylsp-plugins-pydocstyle-enabled nil)
-	(setq lsp-pylsp-plugins-pylint-enabled nil)
-	(setq lsp-pylsp-plugins-pyflakes-enabled nil)
-	(setq lsp-pylsp-plugins-yapf-enabled nil)
-	(setq lsp-pylsp-plugins-flake8-config ".flake8")
-	)
+    :init
+    (setq lsp-keymap-prefix "C-S-l")
+    ;; (setq read-process-output-max (* 1024 1024)) ;; 1mb
+    :hook
+    (python-mode-hook . lsp-deferred)
+    (lsp-mode-hook . lsp-enable-which-key-integration)
+    ;; (lsp-mode-hook . (lambda ()
+    ;; 				   (let ((lsp-keymap-prefix "S-SPC"))
+    ;; 					 (lsp-enable-which-key-integration))))
+    :defines
+    (lsp-pylsp-plugins-flake8-enabled
+     lsp-pylsp-plugins-autopep8-enabled
+     lsp-pylsp-plugins-mccabe-enabled
+     lsp-pylsp-plugins-pycodestyle-enabled
+     lsp-pylsp-plugins-pydocstyle-enabled
+     lsp-pylsp-plugins-pylint-enabled
+     lsp-pylsp-plugins-pyflakes-enabled
+     lsp-pylsp-plugins-yapf-enabled
+     lsp-pylsp-plugins-flake8-config)
+    :config
+    (setq lsp-pylsp-plugins-flake8-enabled t) ;; (setq pylsp.plugins.flake8.enabled t)
+    (setq lsp-pylsp-plugins-autopep8-enabled nil)
+    (setq lsp-pylsp-plugins-mccabe-enabled nil)
+    (setq lsp-pylsp-plugins-pycodestyle-enabled nil)
+    (setq lsp-pylsp-plugins-pydocstyle-enabled nil)
+    (setq lsp-pylsp-plugins-pylint-enabled nil)
+    (setq lsp-pylsp-plugins-pyflakes-enabled nil)
+    (setq lsp-pylsp-plugins-yapf-enabled nil)
+    (setq lsp-pylsp-plugins-flake8-config ".flake8")
+    )
   (use-package lsp-ui
 	:requires
 	(lsp-mode flycheck)
@@ -3191,7 +3182,7 @@ With a prefix ARG, remove start location."
 
 (use-package ess)
 (use-package emojify
-  :bind ("C-c E" . emojify-insert-emoji)
+  :bind ("C-c M-e" . emojify-insert-emoji)
   :hook (after-init-hook . global-emojify-mode)
   :custom (emojify-emoji-set "emojione-v2.2.6-22"))
 (use-package slack
