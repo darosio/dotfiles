@@ -1478,6 +1478,7 @@ completing-read prompter."
                                                          (:session . "py01")
                                                          (:kernel . "python3"))))
   (use-package org
+    :demand 2
     :commands (org-capture-finalize
 			   org-speed-move-safe
 			   org-narrow-to-subtree
@@ -2514,6 +2515,7 @@ completing-read prompter."
 (progn									; org-roam
   (use-package org-roam
 	:after org
+    :demand 2
 	:commands (org-roam-db-autosync-mode)
 	:init
 	;; Help keep the `org-roam-buffer', toggled via `org-roam-buffer-toggle', sticky.
@@ -2552,10 +2554,10 @@ completing-read prompter."
 	  ;;# xdg-mime default org-protocol.desktop x-scheme-handler/org-protocol
 	  :config
 	  (setq org-roam-capture-ref-templates
-			'(("r" "ref" plain "%?"
-			   :target (file+head "websites/${slug}.org" "#+title: ${title}")
-			   :unnarrowed t))))
-	)
+	    	'(("r" "ref" plain "%?"
+	    	   :target (file+head "websites/${slug}.org" "#+title: ${title}")
+	    	   :unnarrowed t)))
+      ))
 
   (use-package org-roam-ui
 	:straight
