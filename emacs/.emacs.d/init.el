@@ -2873,7 +2873,6 @@ With a prefix ARG, remove start location."
 	(with-eval-after-load 'pdf-annot
       (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note)))
 
-  :; TODO: will remove in favor of embark actions
   (use-package engine-mode
 	:commands (engine/set-keymap-prefix
                engine/get-query
@@ -2932,7 +2931,9 @@ With a prefix ARG, remove start location."
 	(defengine youtube
       "http://www.youtube.com/results?aq=f&oq=&search_query=%s"
       :keybinding "y"))
+
   (use-package gscholar-bibtex
+    :bind ("M-s C-b" . gscholar-bibtex)
 	:config
 	(setq gscholar-bibtex-default-source "Google Scholar")
 	(setq gscholar-bibtex-database-file "/home/dan/Sync/biblio/biblio.bib")
