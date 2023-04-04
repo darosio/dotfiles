@@ -70,6 +70,8 @@
   (straight-use-package 'use-package)
   (eval-when-compile (require 'use-package))
 
+  (declare-function use-package-autoload-keymap "use-package")
+
   ;; list-load-path-shadows built-in org
   (straight-use-package 'org)
 
