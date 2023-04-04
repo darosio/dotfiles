@@ -2665,7 +2665,7 @@ Marked 2 is a mac app that renders markdown."
     ("C-c n l" . consult-org-roam-forward-links)
     ("C-c n r" . consult-org-roam-search))
   )
-(progn                                  ; Bibliography
+(progn ;; Bibliography
   (use-package bibtex
 	:bind (:map bibtex-mode-map
 				("<backtab>" . hs-toggle-hiding)
@@ -2700,6 +2700,7 @@ Marked 2 is a mac app that renders markdown."
 	  "~/Sync/biblio/books/") "List of folders containing pdf and other documents.")
   (defvar completion-notes-path
 	"~/Sync/notes/org-roam/biblio" "Folder (or file) for notes.")
+
   (use-package citar
 	:bind (("M-s b" . citar-open)
 		   ("M-s c" . citar-open-note)
@@ -2763,6 +2764,7 @@ Marked 2 is a mac app that renders markdown."
 	:after (citar embark)
 	:commands (citar-embark-mode)
 	:init (citar-embark-mode))
+
   (use-package oc
 	:straight org
 	:after (org)
@@ -2777,32 +2779,29 @@ Marked 2 is a mac app that renders markdown."
   (use-package oc-csl :straight org	:after (oc)
 	:init (setq org-cite-csl-styles-dir "~/Zotero/styles"))
   (use-package oc-natbib :straight org :after oc)
-  ;; (use-package citeproc
-  ;; 	:after (oc oc-csl))
+
   (use-package pdf-tools
-	:functions pdf-loader-install
-	:bind (:map pdf-view-mode-map
-				;; ("t" . org-ref-pdf-to-bibtex)
-				("C-s" . isearch-forward)
-				("/" . pdf-occur)
-				("C-?" . pdf-isearch-occur))
-	:init
-	(pdf-loader-install)
-	:config
-	(setq pdf-view-resize-factor 1.1    ; more fine-grained zooming
-          ;; pdf-misc-print-program "/usr/bin/gtklp"
-		  )
-	(use-package pdf-misc
-	  :straight pdf-tools
-	  :config
-	  (setq pdf-misc-print-program "/usr/bin/gtklp"))
-	(use-package pdf-annot
-	  :straight pdf-tools
+    :demand t
+    :functions pdf-loader-install
+    :bind (:map pdf-view-mode-map
+                ("C-s" . isearch-forward)
+                ("/" . pdf-occur)
+                ("C-?" . pdf-isearch-occur))
+    :init
+    (pdf-loader-install)
+    :config
+    (setq pdf-view-resize-factor 1.1)   ;; more fine-grained zooming
+    (use-package pdf-misc
+      :straight pdf-tools
+      :config (setq pdf-misc-print-program "/usr/bin/gtklp"))
+    (use-package pdf-annot
+      :straight pdf-tools
       :bind (:map pdf-view-mode-map
                   ("h" . pdf-annot-add-highlight-markup-annotation))
-      :config
-      ;; automatically annotate highlights
-      (setq pdf-annot-activate-created-annotations nil)))
+      :config (setq-local pdf-annot-activate-created-annotations nil)))
+
+  ;; https://github.com/fuxialexander/org-pdftools
+  ;; Maybe defun are unused but follow the instruction
   (use-package org-noter
 	:commands  (org-noter-insert-note
 				org-noter--valid-session
@@ -2830,9 +2829,8 @@ Marked 2 is a mac app that renders markdown."
 	 org-noter-doc-split-fraction '(0.67 . 0.75)
 	 ;; org-noter-notes-window-location 'other-frame
 	 )
-	;; (require 'org-noter-pdftools) ; org-pdftools suggestion
+	(require 'org-noter-pdftools) ; org-pdftools suggestion
 	)
-  ;; https://github.com/fuxialexander/org-pdftools
   (use-package org-pdftools
 	:hook (org-mode-hook . org-pdftools-setup-link))
   (use-package org-noter-pdftools
@@ -2874,7 +2872,8 @@ With a prefix ARG, remove start location."
 							 (org-noter--pretty-print-location location))))))))
 	(with-eval-after-load 'pdf-annot
       (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note)))
-										;TODO: will remove in favor of embark actions
+
+  :; TODO: will remove in favor of embark actions
   (use-package engine-mode
 	:commands (engine/set-keymap-prefix
                engine/get-query
