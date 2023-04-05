@@ -481,9 +481,8 @@ HEIGHT, if supplied, specifies height of letters to use."
   (use-package ace-window
     :demand t
     :bind (("H-w" . ace-window)
-           ("C-'" . ace-window)
-           ("C-c w" . ace-select-window)
-           ("C-c W" . ace-swap-window))
+           ("C-'" . ace-select-window)
+           ("C-\"" . ace-swap-window))
     :config
     (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)
           aw-scope 'global				; 'frame
