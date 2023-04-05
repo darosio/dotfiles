@@ -397,8 +397,7 @@ HEIGHT, if supplied, specifies height of letters to use."
 			   all-the-icons-octicon))
 
   (use-package unfill
-    :bind
-    ("C-c M-q" . unfill-toggle))
+    :bind ("C-c M-q" . unfill-toggle))
 
   (use-package aggressive-indent
     :bind
@@ -408,8 +407,7 @@ HEIGHT, if supplied, specifies height of letters to use."
     (html-mode-hook . aggressive-indent-mode))
 
   (use-package delsel
-    :init
-    (delete-selection-mode 1))
+    :init (delete-selection-mode 1))
 
   (use-package fix-word
     :bind
@@ -419,8 +417,7 @@ HEIGHT, if supplied, specifies height of letters to use."
 
   (use-package which-key
     :commands (which-key-mode)
-    :bind
-    ("H-<f1>" . which-key-show-top-level)
+    :bind ("H-<f1>" . which-key-show-top-level)
     :init
     (which-key-mode 1)
 	(which-key-add-key-based-replacements "C-c t m" "Toggle mode")
@@ -467,45 +464,37 @@ HEIGHT, if supplied, specifies height of letters to use."
     ("C-H-o" . crux-duplicate-and-comment-current-line-or-region))
 
   (use-package recentf
-    ;; :config
-    ;; (setq recentf-exclude
-    ;;       `(,(expand-file-name "straight/build/" user-emacs-directory)
-    ;;         ,(expand-file-name "eln-cache/" user-emacs-directory)
-    ;;         ,(expand-file-name "etc/" user-emacs-directory)
-    ;;         ,(expand-file-name "var/" user-emacs-directory)))
-    :init
-    (recentf-mode t))
+    ;; (setq recentf-exclude `(,(expand-file-name "straight/build/" user-emacs-directory)
+    ;;                         ,(expand-file-name "eln-cache/" user-emacs-directory)
+    ;;                         ,(expand-file-name "var/" user-emacs-directory)))
+    :init (recentf-mode t))
 
-  (use-package avy                      ; Move around
-    :bind (("M-g w" . avy-goto-word-1)
-           ("M-g M-w" . avy-copy-line)
-           ("M-g y Y" . avy-kill-ring-save-region)
-           ("M-g y y" . avy-kill-ring-save-whole-line)
-           ("M-g y K" . avy-kill-region)
-           ("M-g y k" . avy-kill-whole-line)
+  (use-package avy                      ; XXX: Move around
+    :bind (("M-g M-w" . avy-copy-line)
+           ("M-g w W" . avy-kill-ring-save-region)
+           ("M-g w w" . avy-kill-ring-save-whole-line)
+           ("M-g w K" . avy-kill-region)
+           ("M-g w k" . avy-kill-whole-line)
            ("M-g g" . avy-goto-line)
            ("M-g c" . avy-goto-char-2)))
 
   (use-package ace-window
     :demand t
-    :bind
-    ("H-w" . ace-window)
-    ("C-'" . ace-window)
-    ("C-c w" . ace-select-window)
-    ("C-c W" . ace-swap-window)
+    :bind (("H-w" . ace-window)
+           ("C-'" . ace-window)
+           ("C-c w" . ace-select-window)
+           ("C-c W" . ace-swap-window))
     :config
-    (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
-    (setq aw-scope 'global)				; 'frame
-    (setq aw-dispatch-always nil))
+    (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)
+          aw-scope 'global				; 'frame
+          aw-dispatch-always nil))
 
   (use-package transpose-frame
-    :bind
-    ("H-E" . transpose-frame))
+    :bind ("H-E" . transpose-frame))
 
   (use-package imenu-list               ; F9
-    :bind
-    ("<f9>" . imenu-list)
-    ("<C-f9>" . imenu-list-smart-toggle))
+    :bind (("<f9>" . imenu-list)
+           ("<C-f9>" . imenu-list-smart-toggle)))
 
   (use-package pass
     :bind ("C-x P" . pass))
@@ -513,16 +502,14 @@ HEIGHT, if supplied, specifies height of letters to use."
   (use-package tzc
     :demand t
     :defines tzc-favourite-time-zones
-    :bind
-    ("C-x T c" . tzc-convert-current-time)
-    ("C-x T t" . tzc-convert-time-at-mark)
-    ("C-x T w" . tzc-world-clock)
+    :bind (("C-x T c" . tzc-convert-current-time)
+           ("C-x T t" . tzc-convert-time-at-mark)
+           ("C-x T w" . tzc-world-clock))
     :config
     (setq tzc-favourite-time-zones '("Europe/Rome")))
 
   (use-package flycheck                 ; Syntax checking
-    :bind (
-		   ("C-c e l" . flycheck-list-errors)
+    :bind (("C-c e l" . flycheck-list-errors)
 		   ("C-c e e" . flycheck-mode)
 		   ("C-c e b" . flycheck-buffer)
 		   ("C-c e d" . flycheck-clear)
@@ -565,46 +552,42 @@ HEIGHT, if supplied, specifies height of letters to use."
 
   (use-package minions
     :commands (minions-mode)
-    :init
-    (minions-mode 1))
+    :init (minions-mode 1))
 
   (use-package char-menu
-    :init
-    (setq-default
-     char-menu
-     '("—" "‘’" "“”" "…" "«»"
-       ("Typography"
-        "–" "•" "©" "†" "‡" "°" "·" "§" "№" "★")
-       ("Math"
-        "≈" "≡" "≠" "∞" "×" "±" "∓" "÷" "√" "∇")
-       ("Arrows"
-        "←" "→" "↑" "↓" "⇐" "⇒" "⇑" "⇓")
-       ("Greek"
-        "α" "β" "Δ" "δ" "ε" "ζ" "η" "θ" "λ" "μ" "ν" "ξ"
-        "Ξ" "ο" "π" "ρ" "σ" "τ" "υ" "φ" "χ" "ψ" "ω" "Ω")))
-    :bind
-    ("C-c C" . char-menu))
+    :init (setq-default
+           char-menu
+           '("—" "‘’" "“”" "…" "«»"
+             ("Typography"
+              "–" "•" "©" "†" "‡" "°" "·" "§" "№" "★")
+             ("Math"
+              "≈" "≡" "≠" "∞" "×" "±" "∓" "÷" "√" "∇")
+             ("Arrows"
+              "←" "→" "↑" "↓" "⇐" "⇒" "⇑" "⇓")
+             ("Greek"
+              "α" "β" "Δ" "δ" "ε" "ζ" "η" "θ" "λ" "μ" "ν" "ξ"
+              "Ξ" "ο" "π" "ρ" "σ" "τ" "υ" "φ" "χ" "ψ" "ω" "Ω")))
+    :bind ("C-c C" . char-menu))
 
   (use-package smartparens
-    :commands (smartparens-global-mode)
+    :commands smartparens-global-mode
     :init
     (add-hook 'prog-mode-hook #'smartparens-mode)
-    (setq sp-highlight-pair-overlay nil)
-    (setq sp-highlight-wrap-overlay nil)
-    (setq sp-highlight-wrap-tag-overlay nil)
-    :bind
-    (:map smartparens-mode-map
-          ("<C-backspace>" . sp-backward-kill-sexp)
-          ("H-b" . sp-backward-sexp)
-          ("H-d" . sp-kill-sexp)
-          ("H-f" . sp-forward-sexp)
-          ("H-h" . sp-select-next-thing)
-          ("H-k" . sp-kill-hybrid-sexp)
-          ("H-t" . sp-add-to-previous-sexp)
-		  ("H-)" . sp-forward-slurp-sexp)
-          ("H-}" . sp-forward-barf-sexp)
-          ("H-(" . sp-backward-slurp-sexp)
-          ("H-{" . sp-backward-barf-sexp))
+    (setq sp-highlight-pair-overlay nil
+          sp-highlight-wrap-overlay nil
+          sp-highlight-wrap-tag-overlay nil)
+    :bind (:map smartparens-mode-map
+                ("<C-backspace>" . sp-backward-kill-sexp)
+                ("H-b" . sp-backward-sexp)
+                ("H-d" . sp-kill-sexp)
+                ("H-f" . sp-forward-sexp)
+                ("H-h" . sp-select-next-thing)
+                ("H-k" . sp-kill-hybrid-sexp)
+                ("H-t" . sp-add-to-previous-sexp)
+		        ("H-)" . sp-forward-slurp-sexp)
+                ("H-}" . sp-forward-barf-sexp)
+                ("H-(" . sp-backward-slurp-sexp)
+                ("H-{" . sp-backward-barf-sexp))
     :hook
     (inferior-python-mode-hook . smartparens-mode)
     (jupyter-repl-mode-hook . smartparens-mode)
@@ -619,68 +602,69 @@ HEIGHT, if supplied, specifies height of letters to use."
     :bind ("C-=" . er/expand-region))
 
   (use-package hideshow
-    :bind
-    ("C-c t f" . hs-minor-mode)
-    (:map prog-mode-map
-		  ("<backtab>" . hs-toggle-hiding)
-          ("H-z" . hs-hide-all)
-          ("H-Z" . hs-show-all))
-    :hook
-    (prog-mode-hook . hs-minor-mode))
+    :bind (("C-c t f" . hs-minor-mode)
+           (:map
+            prog-mode-map
+		    ("<backtab>" . hs-toggle-hiding)
+            ("H-z" . hs-hide-all)
+            ("H-Z" . hs-show-all)))
+    :hook (prog-mode-hook . hs-minor-mode))
 
   (use-package calc
-    :bind ("M-g M-a c" . calc)
-    )
+    :bind ("M-g M-a c" . calc))
 
   (use-package dired
-    :straight (:type built-in)
-    :functions (dired-get-filename)
+    :straight nil
+    :hook (dired-mode-hook . (lambda ()
+                               (toggle-truncate-lines)
+                               (turn-on-gnus-dired-mode)))
+    :functions (dired-get-filename
+                dired-next-line
+                dired-previous-line)
     :init (setq delete-by-moving-to-trash t
-			    dired-auto-revert-buffer t
-			    dired-dwim-target t
-			    dired-keep-marker-copy nil
-			    dired-listing-switches "-GAlh --group-directories-first"
-			    dired-recursive-copies 'always
-			    dired-recursive-deletes 'always)
-    :preface (progn
-			   (defun mk-dired-open-external (file)
-			     "Open specified FILE with application determined by the OS."
-			     (interactive (list (dired-get-filename)))
-			     (call-process "xdg-open" nil 0 nil file))
-			   (defun mk-dired-first-file ()
-			     "Jump to the first file in current directory."
-			     (interactive)
-			     (goto-char (point-min))
-			     (dired-next-line 2))
-			   (defun mk-dired-last-file ()
-			     "Jump to the last file in current directory."
-			     (interactive)
-			     (goto-char (point-max))
-			     (dired-previous-line 1))
-			   )
+                dired-auto-revert-buffer t
+                dired-dwim-target t
+                dired-keep-marker-copy nil
+                dired-listing-switches "-GAlh --group-directories-first"
+                dired-recursive-copies 'always
+                dired-recursive-deletes 'always)
+    :preface
+    (defun mk-dired-open-external (file)
+      "Open specified FILE with application determined by the OS."
+      (interactive (list (dired-get-filename)))
+      (call-process "xdg-open" nil 0 nil file))
+    (defun mk-dired-first-file ()
+      "Jump to the first file in current directory."
+      (interactive)
+      (goto-char (point-min))
+      (dired-next-line 2))
+    (defun mk-dired-last-file ()
+      "Jump to the last file in current directory."
+      (interactive)
+      (goto-char (point-max))
+      (dired-previous-line 1))
     :bind (:map
-		   dired-mode-map
-		   ("<next>" . mk-dired-last-file)
-		   ("<prior>" . mk-dired-first-file)
-		   ("b" . dired-up-directory)
-		   ("e" . mk-dired-open-external)
-		   ("w" . wdired-change-to-wdired-mode))
-    :hook
-    (dired-mode-hook . toggle-truncate-lines)
-    (dired-mode-hook . turn-on-gnus-dired-mode))
+    	   dired-mode-map
+    	   ("<next>" . mk-dired-last-file)
+    	   ("<prior>" . mk-dired-first-file)
+    	   ("b" . dired-up-directory)
+    	   ("M-<up>" . dired-up-directory)
+    	   ("e" . mk-dired-open-external)))
   (use-package dired-x
-    :straight (:type built-in)
+    :straight nil
     :init (setq dired-clean-up-buffers-too t))
   (use-package wdired
-    :after (dired)
+    :after dired
     :init (setq wdired-allow-to-change-permissions t)
-    :bind (:map wdired-mode-map
-			    ("<next>" . mk-dired-last-file)
-			    ("<prior>" . mk-dired-first-file)))
+    :bind (:map
+           dired-mode-map
+           ("w" . wdired-change-to-wdired-mode)
+           :map wdired-mode-map
+           ("<next>" . mk-dired-last-file)
+           ("<prior>" . mk-dired-first-file)))
 
   (use-package visual-regexp
-    :bind
-    ("C-c %" . vr/query-replace))
+    :bind ("C-c %" . vr/query-replace))
   )
 (progn ;; hydra, hl-todo and mk-text
 
