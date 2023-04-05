@@ -145,7 +145,7 @@ HEIGHT, if supplied, specifies height of letters to use."
 				  cursor-in-non-selected-windows nil
 				  cursor-type '(bar . 3)
 				  echo-keystrokes 0.1
-				  enable-recursive-minibuffers t
+				  enable-recursive-minibuffers t ; Enable recursive minibuffers
 				  fill-column 80
 				  font-lock-maximum-decoration t
 				  gc-cons-threshold (* 50 1000 1000)
@@ -351,6 +351,43 @@ HEIGHT, if supplied, specifies height of letters to use."
   ;; 	  (lps_08c nil   nil nil  "lps_08c")
   ;; 	  ))
   ;;   (pr-update-menus t)		; update now printer and utility menus
+
+  ;; Themes and fonts
+  (set-fontset-font "fontset-default" nil
+                    (font-spec :size 20 :name "Symbola"))
+  (use-package faces
+    :straight (:type built-in)
+    :config
+    (set-face-attribute 'default nil
+                        :family "IBM Plex mono"
+                        :height 116
+                        :weight 'normal
+                        :width 'normal)
+    (set-face-attribute 'fixed-pitch nil
+                        :family "IBM Plex mono"
+                        :height 120
+                        :weight 'normal
+                        :width 'normal)
+    (set-face-attribute 'variable-pitch nil
+                        :family "IBM Plex Sans"
+                        :height 130
+                        :weight 'normal
+                        :width 'normal))
+  (use-package face-remap
+    :straight (:type built-in)
+    :config
+    (setq text-scale-mode-step 1.05))
+  (use-package spacemacs-theme
+    :defer t
+    :init
+    (if (not (daemonp))
+        (load-theme 'spacemacs-light t)))
+  (use-package poet-theme)
+  (use-package solarized-theme
+    :ensure t
+    :init
+    (if (daemonp)
+        (load-theme 'solarized-selenized-dark t)))
   )
 (progn                                  ; single packages
   (use-package all-the-icons
@@ -645,36 +682,26 @@ HEIGHT, if supplied, specifies height of letters to use."
     :bind
     ("C-c %" . vr/query-replace))
   )
-(progn                                  ; Themes, Fonts and mode-line
-  (set-fontset-font "fontset-default" nil
-					(font-spec :size 20 :name "Symbola"))
-  (use-package face-remap               ; Fonts
-    :init
-    (set-face-attribute 'default nil :family "IBM Plex mono" :height 116 :weight 'normal :width 'normal)
-    (set-face-attribute 'fixed-pitch nil :family "IBM Plex mono" :height 120 :weight 'normal :width 'normal)
-    (set-face-attribute 'variable-pitch nil :family "IBM Plex Sans" :height 130 :weight 'normal :width 'normal)
-    :config
-    (setq text-scale-mode-step 1.05))
-  ;; (load-theme 'leuven t)
-  (use-package spacemacs-theme
-	:defer t
-	;; :init (if (daemonp) (load-theme 'spacemacs-dark t) (load-theme 'spacemacs-light t)))
-	:init (if (not (daemonp)) (load-theme 'spacemacs-light t)))
-  (use-package poet-theme)
-  ;; :defer t
-  (use-package solarized-theme
-	:init (if (daemonp) (load-theme 'solarized-selenized-dark t)))
-  )
-(progn                                  ; Keybindings and mk-utils
+(progn ;; hydra, hl-todo and mk-text
+
   (use-package hydra
+    :bind (("C-x C-b" . hydra-buffer/body))
     :commands (hydra-default-pre
                hydra-keyboard-quit
                hydra--call-interactively-remap-maybe
                hydra-show-hint
                hydra-set-transient-map)
     :config
-    (setq hydra-look-for-remap t)       ; XXX: do I need this?
-    )
+    (defhydra hydra-buffer (:color red :hint nil)
+      ("k" kill-this-buffer "kill")
+      ("K" kill-buffer-and-window "kill all")
+      ("x" delete-window "delete")
+      ("s" save-buffer "save")
+      ("b" consult-buffer "switch")
+      ("e" eval-buffer "evaluate")
+      ("<" previous-buffer "previous")
+      (">" next-buffer "next")))
+
   (use-package hl-todo
     :bind (("C-c 2 2" . hydra-2DO/body)
 		   ("C-c 2 n" . hl-todo-next)
@@ -682,7 +709,7 @@ HEIGHT, if supplied, specifies height of letters to use."
 		   ("C-c 2 i" . hl-todo-insert)
 		   ("C-c 2 o" . hl-todo-occur)
 		   )
-	:init
+	:config
 	(defhydra hydra-2DO (:color pink :hint nil :foreign-keys warn)
       "A hydra for hl-todo."
       ("p" hl-todo-previous "previous")
@@ -690,10 +717,10 @@ HEIGHT, if supplied, specifies height of letters to use."
       ("o" hl-todo-occur "occur")
       ("i" hl-todo-insert "insert")
       ("q" nil "cancel" :color blue))
-	:config
 	(add-to-list 'hl-todo-keyword-faces '("XXX:" . "#ff8c00"))
 	(add-to-list 'hl-todo-keyword-faces '("TODO:" . "#dc143c"))
 	(add-to-list 'hl-todo-keyword-faces '("FIXME:" . "#4e9393")))
+
   ;; (straight-use-package '(mk :local-repo "~/.emacs.d/mk/" :branch "vanilla" :includes(mk-text mk-utils)))
   (use-package mk-utils
 	:demand t
@@ -778,6 +805,7 @@ HEIGHT, if supplied, specifies height of letters to use."
      ("C-c l l" . load-library))
     :init
     (which-key-add-key-based-replacements "C-c f" "Files")
+    (which-key-add-key-based-replacements "C-c l" "Libraries")
     :preface
     ;; Improve `completing-read-multiple' prompt by adding a prefix.
     (defun crm-indicator (args)
@@ -790,8 +818,7 @@ HEIGHT, if supplied, specifies height of letters to use."
     ;; Emacs 28: Hide commands in M-x which do not work in the current mode.
     ;; Vertico commands are hidden in normal buffers.
     (setq read-extended-command-predicate #'command-completion-default-include-p)
-    ;; Enable recursive minibuffers
-    (setq enable-recursive-minibuffers t))
+    )
 
   (use-package marginalia
     :commands (marginalia-mode)
@@ -1004,7 +1031,8 @@ completing-read prompter."
     (corfu-commit-predicate nil)
     :config
     (setq corfu-preselect t)
-    (setq read-extended-command-predicate #'command-completion-default-include-p)
+    ;; Already set
+    ;; (setq read-extended-command-predicate #'command-completion-default-include-p)
     )
   (use-package corfu-doc
     :bind (:map corfu-map
