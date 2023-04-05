@@ -469,15 +469,6 @@ HEIGHT, if supplied, specifies height of letters to use."
     ;;                         ,(expand-file-name "var/" user-emacs-directory)))
     :init (recentf-mode t))
 
-  (use-package avy                      ; XXX: Move around
-    :bind (("M-g M-w" . avy-copy-line)
-           ("M-g w W" . avy-kill-ring-save-region)
-           ("M-g w w" . avy-kill-ring-save-whole-line)
-           ("M-g w K" . avy-kill-region)
-           ("M-g w k" . avy-kill-whole-line)
-           ("M-g g" . avy-goto-line)
-           ("M-g c" . avy-goto-char-2)))
-
   (use-package ace-window
     :demand t
     :bind (("H-w" . ace-window)
@@ -551,21 +542,6 @@ HEIGHT, if supplied, specifies height of letters to use."
   (use-package minions
     :commands (minions-mode)
     :init (minions-mode 1))
-
-  (use-package char-menu
-    :init (setq-default
-           char-menu
-           '("—" "‘’" "“”" "…" "«»"
-             ("Typography"
-              "–" "•" "©" "†" "‡" "°" "·" "§" "№" "★")
-             ("Math"
-              "≈" "≡" "≠" "∞" "×" "±" "∓" "÷" "√" "∇")
-             ("Arrows"
-              "←" "→" "↑" "↓" "⇐" "⇒" "⇑" "⇓")
-             ("Greek"
-              "α" "β" "Δ" "δ" "ε" "ζ" "η" "θ" "λ" "μ" "ν" "ξ"
-              "Ξ" "ο" "π" "ρ" "σ" "τ" "υ" "φ" "χ" "ψ" "ω" "Ω")))
-    :bind ("C-c C" . char-menu))
 
   (use-package smartparens
     :commands smartparens-global-mode
