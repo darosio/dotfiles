@@ -2384,6 +2384,49 @@ completing-read prompter."
 	:commands (flycheck-vale-setup)
 	:config (flycheck-vale-setup))
 
+  ;; ;; affl settings
+  ;; (use-package
+  ;;   :config
+  ;;   (setq affl-language-tool-jar-path "/path/to/languagetool.jar")
+  ;;   (setq affl-language "en-US")
+  ;;   (setq affl-rules '("TYPOS" "GRAMMAR" "STYLE" "MISC"))
+  ;;   (setq affl-language-model "/path/to/en-grammar.dict"))
+
+  ;; ;; textlint settings  sudo npm install -g textlint
+  ;; (use-package flycheck-textlint
+  ;;   :config
+  ;;   (flycheck-textlint-setup)
+  ;;   (setq flycheck-textlint-config "/path/to/.textlintrc"))
+  ;; {
+  ;; "rules": {
+  ;; "en-capitalization": true,
+  ;; "en-spelling": true,
+  ;; "en-maximum-sentence-length": { "max": 100 },
+  ;; "write-good": { "passive": false, "weasel": false }
+  ;; }
+  ;; }
+
+  ;; (global-set-key (kbd "<f7>") nil)
+  ;; (global-set-key (kbd "<f7> t") 'textlint-check-buffer)
+  ;; (global-set-key (kbd "<f7> a") 'affl-check-buffer)
+  ;; pip install proselint
+
+  ;; Verify that proselint is installed correctly by running:
+
+  ;; proselint --version
+
+  ;; Install flycheck-proselint, a Flycheck extension that integrates proselint with Emacs:
+
+  ;; M-x package-install flycheck-proselint
+
+  ;; Configure flycheck-proselint to use proselint by adding the following lines to your Emacs configuration file:
+
+  ;; (flycheck-proselint-setup)
+
+  ;; ;; Optional - Customize proselint path if it's not in $PATH.
+  ;; (setq flycheck-proselint-executable "/path/to/proselint")
+  ;; Note that you must replace "/path/to/proselint" with the actual path to the proselint executable on your system.
+
   (use-package langtool
 	:commands (langtool-goto-previous-error
                langtool-goto-next-error
@@ -2422,11 +2465,6 @@ completing-read prompter."
 	(:map sdcv-mode-map
 		  ("n" . sdcv-next-dictionary)
 		  ("p" . sdcv-previous-dictionary)))
-  (use-package dictionary				;because light
-	:bind
-	("<f7> d" . dictionary-search)
-	:config
-	(setq dictionary-server "dict.org"))
   (use-package powerthesaurus
 	:bind
 	("<f7> p 0" . powerthesaurus-lookup-dwim)
@@ -2479,11 +2517,9 @@ completing-read prompter."
 	:bind
 	("<f7> M" . cm-mode)
 	("<f7> m" . cm-prefix-map))
-  (use-package typo
-	:bind
-	("C-c t t" . typo-global-mode)
-	:hook
-	(text-mode-hook . typo-mode))
+  (use-package typo                     ; Complement `C-x 8`
+	:bind ("C-c t t" . typo-mode)
+	:hook (text-mode-hook . typo-mode))
   )
 (progn									; org-roam
   (use-package org-roam
