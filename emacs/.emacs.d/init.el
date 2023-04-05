@@ -509,22 +509,21 @@ HEIGHT, if supplied, specifies height of letters to use."
     (setq tzc-favourite-time-zones '("Europe/Rome")))
 
   (use-package flycheck                 ; Syntax checking
-    :bind (("C-c e l" . flycheck-list-errors)
-		   ("C-c e e" . flycheck-mode)
-		   ("C-c e b" . flycheck-buffer)
-		   ("C-c e d" . flycheck-clear)
-		   ("C-c e c" . consult-flycheck)
-		   ("C-c e h" . flycheck-describe-checker)
-		   ("C-c e n" . flycheck-next-error)
-		   ("C-c e p" . flycheck-previous-error)
-		   ("C-c e s" . flycheck-select-checker)
-		   ("C-c e S" . flycheck-set-checker-executable)
-		   ("C-c e v" . flycheck-verify-setup)
-		   ("C-c e y" . flycheck-copy-errors-as-kill)
-		   ("C-c e x" . flycheck-explain-error-at-point))
+    :bind (("M-g e l" . flycheck-list-errors)
+		   ("M-g e e" . flycheck-mode)
+		   ("M-g e b" . flycheck-buffer)
+		   ("M-g e d" . flycheck-clear)
+		   ("M-g e h" . flycheck-describe-checker)
+		   ("M-g e n" . flycheck-next-error)
+		   ("M-g e p" . flycheck-previous-error)
+		   ("M-g e s" . flycheck-select-checker)
+		   ("M-g e S" . flycheck-set-checker-executable)
+		   ("M-g e v" . flycheck-verify-setup)
+		   ("M-g e y" . flycheck-copy-errors-as-kill)
+		   ("M-g e x" . flycheck-explain-error-at-point))
     :functions which-key-add-key-based-replacements
     :init
-    (which-key-add-key-based-replacements "C-c e" "Errors check/lint")
+    (which-key-add-key-based-replacements "M-g e" "Errors(flycheck)")
     :config
     ;; https://www.flycheck.org/en/latest/languages.html
     (setq-default flycheck-disabled-checkers '(proselint)) ;will use vale
@@ -810,63 +809,71 @@ HEIGHT, if supplied, specifies height of letters to use."
 			    ("M-A" . marginalia-cycle))
     :init (marginalia-mode))
 
+  ;; (use-package consult
+  ;;   :custom
+  ;;   (completion-in-region-function #'consult-completion-in-region)
+  ;;   (completions-format 'vertical)
+  ;;   :bind ((:map minibuffer-local-map
+  ;;                ("C-r" . consult-history))
+  ;;   :init
+  ;;   (advice-add #'completing-read-multiple
+  ;;               :override #'consult-completing-read-multiple))
+
   (use-package consult
     :commands (consult--customize-put
 			   consult--customize-set
 			   consult-completion-in-region)
-    :bind
-    (("C-/" . consult-line)
-	 ("C-c f f" . consult-find)
-	 ("C-c f F" . consult-locate)
-	 ("C-c f z" . (lambda () (interactive)(cd "~/")(consult-find)))
-	 ("C-c f r" . consult-recent-file)
-	 ("C-c f e" . consult-file-externally)
-	 ("M-g T" . consult-theme)
-	 ("M-g M" . consult-minor-mode-menu)
-     ("C-c m" . consult-mode-command)
-     ("C-c k" . consult-kmacro)
-     ;; C-x bindings (ctl-x-map)
-     ("C-x :" . consult-complex-command)       ;; C-x M-: repeat-complex-command
-     ("C-x b" . consult-buffer)                ;; orig. switch-to-buffer
-     ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
-     ("C-x 5 b" . consult-buffer-other-frame)  ;; orig. switch-to-buffer-other-frame
-     ("C-x r b" . consult-bookmark)            ;; orig. bookmark-jump
-     ;; Custom M-# bindings for fast register access
-     ("M-#" . consult-register-load)
-     ("M-\"" . consult-register-store)          ;; M-' orig. abbrev-prefix-mark (unrelated)
-     ("H-M-'" . consult-register)
-     ;; Other custom bindings
-     ("M-y" . consult-yank-pop)                ;; orig. yank-pop
-     ("<help> a" . consult-apropos)            ;; orig. apropos-command
-     ;; M-g bindings (goto-map)
-     ("M-g e" . consult-compile-error)
-     ("M-g f" . consult-flycheck)               ;; Alternative: consult-flymake
-     ("M-g M-g" . consult-goto-line)           ;; orig. goto-line
-     ("M-g o" . consult-outline)
-     ("M-g M-o" . consult-org-heading)
-     ("M-g m" . consult-mark)
-     ("M-g M-m" . consult-global-mark)
-     ("M-g i" . consult-imenu)
-     ("M-g M-i" . consult-imenu-multi)
-     ;; M-s bindings (search-map)
-     ("M-s a" . consult-org-agenda)
-     ("M-s f" . consult-find)
-     ("M-s M-f" . consult-locate)
-     ("M-s g" . consult-grep)
-     ("M-s M-g" . consult-git-grep)
-     ("M-s r" . consult-ripgrep)
-     ("M-s l" . consult-line)
-     ("M-s M-l" . consult-line-multi)
-     ("M-s k" . consult-keep-lines)
-     ("M-s u" . consult-focus-lines)
-     ;; Isearch integration
-     ("M-s e" . consult-isearch-history)
-     :map isearch-mode-map
-     ("M-e" . consult-isearch-history)         ;; orig. isearch-edit-string
-     ("M-s e" . consult-isearch-history)       ;; orig. isearch-edit-string
-     ("M-s l" . consult-line)                  ;; needed by consult-line to detect isearch
-	 ("M-s M-l" . consult-line-multi)           ;; needed by consult-line to detect isearch
-	 )
+    :bind (("C-/" . consult-line)
+	       ("C-c f f" . consult-find)
+	       ("C-c f F" . consult-locate)
+	       ("C-c f z" . (lambda () (interactive)(cd "~/")(consult-find)))
+	       ("C-c f r" . consult-recent-file)
+	       ("C-c f e" . consult-file-externally)
+	       ("M-g T" . consult-theme)
+	       ("M-g M" . consult-minor-mode-menu)
+           ("C-c m" . consult-mode-command)
+           ("C-c k" . consult-kmacro)
+           ;; C-x bindings (ctl-x-map)
+           ("C-x :" . consult-complex-command)       ;; C-x M-: repeat-complex-command
+           ("C-x b" . consult-buffer)                ;; orig. switch-to-buffer
+           ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
+           ("C-x 5 b" . consult-buffer-other-frame)  ;; orig. switch-to-buffer-other-frame
+           ("C-x r b" . consult-bookmark)            ;; orig. bookmark-jump
+           ;; Custom M-# bindings for fast register access
+           ("M-#" . consult-register-load)
+           ("M-\"" . consult-register-store)          ;; M-' orig. abbrev-prefix-mark (unrelated)
+           ("H-M-'" . consult-register)
+           ;; Other custom bindings
+           ("M-y" . consult-yank-pop)                ;; orig. yank-pop
+           ("<help> a" . consult-apropos)            ;; orig. apropos-command
+           ;; M-g bindings (goto-map)
+           ("M-g E" . consult-compile-error)
+           ("M-g M-g" . consult-goto-line)           ;; orig. goto-line
+           ("M-g o" . consult-outline)
+           ("M-g M-o" . consult-org-heading)
+           ("M-g m" . consult-mark)
+           ("M-g M-m" . consult-global-mark)
+           ("M-g i" . consult-imenu)
+           ("M-g M-i" . consult-imenu-multi)
+           ;; M-s bindings (search-map)
+           ("M-s a" . consult-org-agenda)
+           ("M-s f" . consult-find)
+           ("M-s M-f" . consult-locate)
+           ("M-s g" . consult-grep)
+           ("M-s M-g" . consult-git-grep)
+           ("M-s r" . consult-ripgrep)
+           ("M-s l" . consult-line)
+           ("M-s M-l" . consult-line-multi)
+           ("M-s k" . consult-keep-lines)
+           ("M-s u" . consult-focus-lines)
+           ;; Isearch integration
+           ("M-s e" . consult-isearch-history)
+           :map isearch-mode-map
+           ("M-e" . consult-isearch-history)         ;; orig. isearch-edit-string
+           ("M-s e" . consult-isearch-history)       ;; orig. isearch-edit-string
+           ("M-s l" . consult-line)                  ;; needed by consult-line to detect isearch
+	       ("M-s M-l" . consult-line-multi)           ;; needed by consult-line to detect isearch
+	       )
     ;; Enable automatic preview at point in the *Completions* buffer. This is
     ;; relevant when you use the default completion UI. You may want to also
     ;; enable `consult-preview-at-point-mode` in Embark Collect buffers.
@@ -982,7 +989,9 @@ completing-read prompter."
     :bind
     ("M-s /" . consult-recoll))
 
-  (use-package consult-flycheck)
+  (use-package consult-flycheck
+    :bind ("M-g f" . consult-flycheck))
+
   ;; Use Dabbrev with Corfu!
   (use-package abbrev
     :straight (:type built-in)
@@ -1058,59 +1067,60 @@ completing-read prompter."
   (use-package consult-yasnippet
 	:bind ("M-s y" . consult-yasnippet))
   )
-(progn                                  ; Spell checking
-  ;; (use-package flyspell
-  ;;   :ensure nil
-  ;;   :hook ((text-mode . flyspell-mode)
-  ;;          (org-mode . flyspell-mode))
-  ;;   :config
-  ;;   (setq flyspell-issue-message-flag nil
-  ;;         ispell-program-name "hunspell"
-  ;;         ispell-really-hunspell t)
-  ;;   (add-hook 'flyspell-mode-hook #'langtool-check-done))
-
-  ;; (use-package flyspell-correct-ivy
-  ;;   :ensure t
-  ;;   :after flyspell)
+(progn ;; Spell checking
   (use-package ispell
+    :hook ((text-mode-hook . flyspell-mode)
+	       (org-mode-hook . flyspell-mode)
+	       (prog-mode-hook . flyspell-prog-mode)
+           (LaTeX-mode-hook . flyspell-mode)
+	       (change-log-mode-hook . (lambda () (flyspell-mode -1)))
+	       (log-edit-mode-hook . (lambda () (flyspell-mode -1))))
     :config
     (setq ispell-program-name (executable-find "hunspell")
           ispell-really-hunspell t
-		  ispell-dictionary "en_US-large")
+          ispell-silently-savep t       ; Save personal dictionary silently
+	      ispell-dictionary "en_US-large")
     (add-to-list 'ispell-skip-region-alist
-                 '(;("^#+BEGIN_SRC" . "^#+END_SRC")
-                   ("^From:" . "line--$"))))
+                 '("^From:" . "line--$")) ; Skip email headers and quoted text
+    ;; ("^\\[\\[" . "^\\]\\]") ; Skip org-mode links
+    ;; ("^#+BEGIN_SRC" . "^#+END_SRC")
+    )
 
   (use-package flyspell
-	:bind (("C-c t s" . flyspell-mode)
+    :ensure nil
+    :after ispell
+    :hook ((text-mode-hook . flyspell-mode)
+	       (org-mode-hook . flyspell-mode)
+	       (prog-mode-hook . flyspell-prog-mode)
+           (LaTeX-mode-hook . flyspell-mode)
+	       (change-log-mode-hook . (lambda () (flyspell-mode -1)))
+	       (log-edit-mode-hook . (lambda () (flyspell-mode -1))))
+    :bind (("C-c t s" . flyspell-mode)
 		   ("C-c t S" . flyspell-correct-auto-mode)
 		   :map flyspell-mode-map
-		   ("H-," . flyspell-auto-correct-previous-word)
-		   ("H-C-," . flyspell-goto-next-error)
-		   ("C-;" . nil)
+		   ("H-," . flyspell-auto-correct-previous-word) ; I mostly use flyspell-correct
+		   ("C-;" . nil)                ; to avoid conflicts
 		   ("C-." . nil)
-		   ("C-," . nil))
-	:hook ((text-mode-hook . flyspell-mode)
-		   (org-mode-hook . flyspell-mode)
-		   (prog-mode-hook . flyspell-prog-mode)
-		   (change-log-mode-hook . (lambda () (flyspell-mode -1)))
-		   (log-edit-mode-hook . (lambda () (flyspell-mode -1)))))
+		   ("C-," . nil)))
+
   (use-package flyspell-correct
-	:after (flyspell)
-	:bind (:map flyspell-mode-map
-				("H-<" . flyspell-correct-wrapper)))
+    :after (flyspell)
+    :bind (:map flyspell-mode-map
+    		    ("C-M-i" . flyspell-correct-wrapper)))
+
+  (use-package consult-flyspell
+    :bind (("M-g s" . consult-flyspell)))
+
   (use-package guess-language
     ;; For multi language within same doc.
     :bind
     ("C-c t g" . guess-language-mode)
-    ("C-c s e" . (lambda () (interactive)
+    ("C-c S e" . (lambda () (interactive)
                    (ispell-change-dictionary "en_US-large")
-                   ;; (setq company-ispell-dictionary "/usr/share/dict/usa")
                    (flyspell-buffer)))
-    ("C-c s i" . (lambda () (interactive)
+    ("C-c S i" . (lambda () (interactive)
                    (ispell-change-dictionary "it_IT")
-				   ;; TODO: consult-flyspell and cape (ispell|dict)
-                   ;; (setq company-ispell-dictionary "/usr/share/dict/italian")
+    			   ;; TODO: cape (ispell|dict)
                    (flyspell-buffer)))
     ;; :hook
     ;; (flyspell-mode . guess-language-mode)
@@ -1118,26 +1128,25 @@ completing-read prompter."
     ;; (text-mode . guess-language-mode)
     :functions guess-language-switch-function
     :init
-    (which-key-add-key-based-replacements "C-c s" "Spell")
+    (which-key-add-key-based-replacements "C-c S" "Spell")
     :config
     (setq guess-language-langcodes '((en . ("en_US-large" "English"))
                                      (it . ("it_IT" "Italian")))
           guess-language-min-paragraph-length 15
           guess-language-languages '(en it))
-    (defun guess-language-switch-function (lang beginning end)
-      "Switch additional dictionaries. LANG is the ISO 639-1 code of the language
-       (as a symbol). BEGINNING and END are the endpoints of the region in which
-       LANG was detected but these are ignored."
-      ;; (when (and (featurep 'festival)
-      ;; 		 (festivalp))
-      ;; 	(pcase lang
-      ;; 	  ('en (festival-voice-english-female))
-      ;; 	  ('it (festival-voice-italian-female))))
-      ;; (pcase lang
-      ;;   ('en (setq company-ispell-dictionary "/usr/share/dict/usa"))
-      ;;   ('it (setq company-ispell-dictionary "/usr/share/dict/italian")))
-	  )
-    (add-hook 'guess-language-after-detection-functions #'guess-language-switch-function))
+    ;; (defun guess-language-switch-function (lang beginning end)
+    ;;   "Switch additional dictionaries. LANG is the ISO 639-1 code of the language
+    ;;    (as a symbol). BEGINNING and END are the endpoints of the region in which
+    ;;    LANG was detected but these are ignored."
+    ;; (when (and (featurep 'festival)
+    ;; 		 (festivalp))
+    ;; 	(pcase lang
+    ;; 	  ('en (festival-voice-english-female))
+    ;; 	  ('it (festival-voice-italian-female))))
+    ;;   )
+    ;; (add-hook 'guess-language-after-detection-functions
+    ;; #'guess-language-switch-function)
+    )
   )
 (use-package mu4e						; mu4e
   :straight (:type built-in)			; in AUR/mu
