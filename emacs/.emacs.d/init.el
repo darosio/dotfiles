@@ -843,7 +843,7 @@ HEIGHT, if supplied, specifies height of letters to use."
      ("C-c k" . consult-kmacro)
      ;; C-x bindings (ctl-x-map)
      ("C-x :" . consult-complex-command)       ;; C-x M-: repeat-complex-command
-     ("C-c b" . consult-buffer)                ;; orig. switch-to-buffer
+     ("C-x b" . consult-buffer)                ;; orig. switch-to-buffer
      ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
      ("C-x 5 b" . consult-buffer-other-frame)  ;; orig. switch-to-buffer-other-frame
      ("C-x r b" . consult-bookmark)            ;; orig. bookmark-jump
