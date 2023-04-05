@@ -2474,18 +2474,6 @@ completing-read prompter."
           (google-translate-at-point)
 		(google-translate-at-point-reverse)))
 	(setq google-translate-backend-method 'curl)) ; API changed
-  (use-package markdown-mode
-	:bind (:map markdown-mode-map
-				("<return>" . nil)
-				("M-n" . mk-transpose-line-down)
-				("M-p" . mk-transpose-line-up))
-	:init
-	(setq markdown-url-compose-char ?…)
-	;; (setq markdown-command "multimarkdown")
-	:mode (("README\\.md\\'" . gfm-mode)
-           ("\\.md\\'" . markdown-mode)
-           ("\\.mkd\\'" . markdown-mode)
-           ("\\.markdown\\'" . markdown-mode)))
   (use-package cm-mode                  ;critic markup
 	;; :hook (text-mode . cm-mode)
 	:bind
@@ -2818,7 +2806,7 @@ Marked 2 is a mac app that renders markdown."
 	 org-noter-doc-split-fraction '(0.67 . 0.75)
 	 ;; org-noter-notes-window-location 'other-frame
 	 )
-	(require 'org-noter-pdftools) ; org-pdftools suggestion
+	;; (require 'org-noter-pdftools) ; org-pdftools suggestion FAIL with deman
 	)
   (use-package org-pdftools
 	:hook (org-mode-hook . org-pdftools-setup-link))
@@ -2989,6 +2977,17 @@ With a prefix ARG, remove start location."
   ;; (use-package rg)
   )
 (progn									; Additional modes
+  (use-package markdown-mode
+	:bind (:map markdown-mode-map
+				("<return>" . nil)
+				("M-n" . mk-transpose-line-down)
+				("M-p" . mk-transpose-line-up))
+	:init
+	(setq markdown-url-compose-char ?…)
+	:mode (("README\\.md\\'" . gfm-mode)
+           ("\\.md\\'" . markdown-mode)
+           ("\\.mkd\\'" . markdown-mode)
+           ("\\.markdown\\'" . markdown-mode)))
   (use-package sphinx-mode)
   (use-package plantuml-mode
 	:after (org)
