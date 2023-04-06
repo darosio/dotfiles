@@ -112,6 +112,9 @@
 	:custom
 	(browse-url-browser-function 'browse-url-generic)
 	(browse-url-generic-program "firefox"))
+  (use-package comint
+    :straight (:type built-in)
+    :bind ("C-c <tab>" . comint-dynamic-complete-filename))
   (use-package ediff
 	:straight (:type built-in)
 	:custom
@@ -389,7 +392,7 @@ HEIGHT, if supplied, specifies height of letters to use."
     (if (daemonp)
         (load-theme 'solarized-selenized-dark t)))
   )
-(progn                                  ; single packages
+(progn ;; single packages
   (use-package all-the-icons
     :if (display-graphic-p)
     :commands (all-the-icons-material
@@ -416,7 +419,8 @@ HEIGHT, if supplied, specifies height of letters to use."
     ("M-u" . fix-word-upcase))
 
   (use-package which-key
-    :commands (which-key-mode)
+    :commands (which-key-add-key-based-replacements
+                which-key-mode)
     :bind ("H-<f1>" . which-key-show-top-level)
     :init
     (which-key-mode 1)
@@ -498,41 +502,6 @@ HEIGHT, if supplied, specifies height of letters to use."
     :config
     (setq tzc-favourite-time-zones '("Europe/Rome")))
 
-  (use-package flycheck                 ; Syntax checking
-    :bind (("M-g e l" . flycheck-list-errors)
-		   ("M-g e e" . flycheck-mode)
-		   ("M-g e b" . flycheck-buffer)
-		   ("M-g e d" . flycheck-clear)
-		   ("M-g e h" . flycheck-describe-checker)
-		   ("M-g e n" . flycheck-next-error)
-		   ("M-g e p" . flycheck-previous-error)
-		   ("M-g e s" . flycheck-select-checker)
-		   ("M-g e S" . flycheck-set-checker-executable)
-		   ("M-g e v" . flycheck-verify-setup)
-		   ("M-g e y" . flycheck-copy-errors-as-kill)
-		   ("M-g e x" . flycheck-explain-error-at-point))
-    :functions which-key-add-key-based-replacements
-    :init
-    (which-key-add-key-based-replacements "M-g e" "Errors(flycheck)")
-    :config
-    ;; https://www.flycheck.org/en/latest/languages.html
-    (setq-default flycheck-disabled-checkers '(proselint)) ;will use vale
-    ;; (setq flycheck-python-flake8-executable "flake8") ;yay -S flake8
-    ;; (setq flycheck-python-mypy-executable "mypy")
-    (setq-default
-     ;; flycheck-emacs-lisp-initialize-packages t; auto will be enough?
-     flycheck-emacs-lisp-load-path 'inherit
-     flycheck-temp-prefix ".flycheck")
-    :hook (
-           (gitignore-mode-hook . flycheck-mode)
-           (markdown-mode-hook . flycheck-mode)
-           (prog-mode-hook . flycheck-mode)
-           ;; (python-mode-hook . (lambda () (flycheck-add-next-checker  'python-mypy)))
-		   (yaml-mode-hook . flycheck-mode))
-    ;; :custom-face
-    ;; (flycheck-fringe-error ((t (:background "#6C3333" :weight bold))))
-    )
-
   (use-package doom-modeline
     :demand t
     :commands (doom-modeline-mode)
@@ -575,7 +544,7 @@ HEIGHT, if supplied, specifies height of letters to use."
   (use-package expand-region
     :bind ("C-=" . er/expand-region))
 
-  (use-package hideshow
+  (use-package hideshow ;; XXX: for folding
     :bind (("C-c t f" . hs-minor-mode)
            (:map
             prog-mode-map
@@ -966,15 +935,12 @@ completing-read prompter."
     :bind
     ("M-s /" . consult-recoll))
 
-  (use-package consult-flycheck
-    :bind ("M-g f" . consult-flycheck))
-
   ;; Use Dabbrev with Corfu!
   (use-package abbrev
     :straight (:type built-in)
     :config
-    (setq abbrev-file-name "~/.emacs.d/abbrev_defs")
-    (setq save-abbrevs 'silent)
+    (setq abbrev-file-name "~/.emacs.d/abbrev_defs"
+          save-abbrevs 'silent)
     (setq-default abbrev-mode t)
     :bind
     ("C-c t a" . abbrev-mode)
@@ -1017,9 +983,6 @@ completing-read prompter."
     ;; (corfu-doc-mode +1)
     )
   )
-(use-package comint
-  :straight (:type built-in)
-  :bind ("C-c <tab>" . comint-dynamic-complete-filename))
 (use-package yasnippet					; Yasnippet
   :bind
   ("M-g Y a" . yas-reload-all)
@@ -1044,7 +1007,7 @@ completing-read prompter."
   (use-package consult-yasnippet
 	:bind ("M-s y" . consult-yasnippet))
   )
-(progn ;; Spell checking
+(progn ;; Spell checking and writing
   (use-package ispell
     :hook ((text-mode-hook . flyspell-mode)
 	       (org-mode-hook . flyspell-mode)
@@ -1088,6 +1051,12 @@ completing-read prompter."
   (use-package consult-flyspell
     :bind (("M-g s" . consult-flyspell)))
 
+  (use-package cm-mode ;; critic markup
+    ;; :hook (text-mode . cm-mode)
+    :bind
+    ("<f7> M" . cm-mode)
+    ("<f7> m" . cm-prefix-map))
+
   (use-package guess-language
     ;; For multi language within same doc.
     :bind
@@ -1124,6 +1093,129 @@ completing-read prompter."
     ;; (add-hook 'guess-language-after-detection-functions
     ;; #'guess-language-switch-function)
     )
+
+  (use-package flycheck ;; Syntax checking
+    :commands (flycheck-add-next-checker)
+    :bind (("M-g e l" . flycheck-list-errors)
+		   ("M-g e e" . flycheck-mode)
+		   ("M-g e b" . flycheck-buffer)
+		   ("M-g e d" . flycheck-clear)
+		   ("M-g e h" . flycheck-describe-checker)
+		   ("M-g e n" . flycheck-next-error)
+		   ("M-g e p" . flycheck-previous-error)
+		   ("M-g e s" . flycheck-select-checker)
+		   ("M-g e S" . flycheck-set-checker-executable)
+		   ("M-g e v" . flycheck-verify-setup)
+		   ("M-g e y" . flycheck-copy-errors-as-kill)
+		   ("M-g e x" . flycheck-explain-error-at-point))
+    :hook ((gitignore-mode-hook . flycheck-mode)
+           (markdown-mode-hook . flycheck-mode)
+           (org-mode-hook . flycheck-mode)
+           (text-mode-hook . flycheck-mode)
+           (prog-mode-hook . flycheck-mode)
+		   (yaml-mode-hook . flycheck-mode))
+    :init
+    (which-key-add-key-based-replacements "M-g e" "Errors(flycheck)")
+    :config
+    (setq flycheck-idle-change-delay nil) ; Disable idle checking to avoid performance problems
+    (setq-default flycheck-emacs-lisp-load-path 'inherit))
+
+  (use-package consult-flycheck
+    :bind ("M-g f" . consult-flycheck))
+
+  (use-package flycheck-vale
+    :after flycheck
+    :commands (flycheck-vale-setup
+               flycheck-vale-toggle-enabled)
+    :init
+    (flycheck-vale-toggle-enabled)
+    (add-to-list 'flycheck-checkers 'proselint t)
+    :config
+    (flycheck-vale-setup)
+    (flycheck-add-next-checker 'vale 'proselint)
+    (setq flycheck-checker-error-threshold 1000))
+  (use-package langtool
+    :commands (langtool-goto-previous-error
+               langtool-goto-next-error
+               langtool-check
+               langtool-correct-buffer
+               langtool-check-done
+			   langtool-switch-default-language)
+    :bind ("<f7> l" . hydra-LT/body)
+    :init
+    (which-key-add-key-based-replacements "<f7>" "Writing")
+    (defhydra hydra-LT (:color pink :hint nil)
+      "A hydra for Langtool."
+      ("p" langtool-goto-previous-error "previous")
+      ("n" langtool-goto-next-error "next")
+      ("c" langtool-check "check")
+      ("b" langtool-correct-buffer "correct buffer")
+      ("d" langtool-check-done "done")
+      ("l" langtool-switch-default-language "switch language")
+      ("q" nil "cancel" :color blue))
+    (setq langtool-java-classpath
+          "/usr/share/languagetool:/usr/share/java/languagetool/*"
+          langtool-java-bin "/usr/bin/java"
+          langtool-disabled-rules '("EN_UNPAIRED_BRACKETS"
+                                    "MORFOLOGIK_RULE_EN_US")
+          langtool-mother-tongue "it"
+          langtool-default-language "en-US"))
+
+  (use-package sdcv
+    :bind
+    ("<f7> s" . sdcv-search-pointer)
+    (:map sdcv-mode-map
+		  ("n" . sdcv-next-dictionary)
+		  ("p" . sdcv-previous-dictionary)))
+  (use-package wordnut
+    :bind
+    ("<f7> w" . wordnut-lookup-current-word)
+    ("<f7> W" . wordnut-search))
+  (use-package powerthesaurus
+    :bind
+    ("<f7> p 0" . powerthesaurus-lookup-dwim)
+    ("<f7> p p" . powerthesaurus-lookup-synonyms-dwim)
+    ("<f7> p a" . powerthesaurus-lookup-antonyms-dwim)
+    ("<f7> p d" . powerthesaurus-lookup-definitions-dwim)
+    ("<f7> p r" . powerthesaurus-lookup-related-dwim)
+    ("<f7> p s" . powerthesaurus-lookup-sentences-dwim))
+
+  (use-package academic-phrases
+    :bind
+    ("<f7> i" . academic-phrases-by-section)
+    ("<f7> I" . academic-phrases))
+  (use-package writegood-mode
+    :bind
+    ("<f7> g" . writegood-mode)
+    ("<f7> Gl" . writegood-grade-level)
+    ("<f7> Gr" . writegood-reading-ease))
+  (use-package typo ;; Complement `C-x 8`
+    :bind ("C-c t t" . typo-mode)
+    :hook (text-mode-hook . typo-mode))
+
+  (use-package google-translate
+    :defines google-translate-translation-directions-alist
+    :commands (google-translate-at-point
+			   google-translate-at-point-reverse)
+    :bind
+    ("<f7> t" . google-translate-smooth-translate)
+    :init
+    (setq google-translate-translation-directions-alist
+          '(("it" . "en") ("en" . "it") ("it" . "de") ("it" . "fr"))
+          google-translate-output-destination kill-ring
+          google-translate-enable-ido-completion t
+          google-translate-show-phonetic t
+		  ;; google-translate-listen-program
+          google-translate-pop-up-buffer-set-focus t)
+    (defun google-translate--search-tkk () "Search TKK." (list 430675 2721866130))
+    (defun my-google-translate-at-point()
+      "reverse translate if prefix"
+      (interactive)
+      (if current-prefix-arg
+          (google-translate-at-point)
+	    (google-translate-at-point-reverse)))
+    ;; API changed
+    (setq google-translate-backend-method 'curl))
   )
 (use-package mu4e						; mu4e
   :straight (:type built-in)			; in AUR/mu
@@ -2381,142 +2473,7 @@ completing-read prompter."
 	 :map org-agenda-mode-map
 	 ("W" . cfw:open-org-calendar)))
   )
-(progn                                  ; Writing
-  (use-package flycheck-vale
-	:commands (flycheck-vale-setup)
-	:config (flycheck-vale-setup))
-
-
-  ;; ;; textlint settings  sudo npm install -g textlint
-  ;; (use-package flycheck-textlint
-  ;;   :config
-  ;;   (flycheck-textlint-setup)
-  ;;   (setq flycheck-textlint-config "/path/to/.textlintrc"))
-  ;; {
-  ;; "rules": {
-  ;; "en-capitalization": true,
-  ;; "en-spelling": true,
-  ;; "en-maximum-sentence-length": { "max": 100 },
-  ;; "write-good": { "passive": false, "weasel": false }
-  ;; }
-  ;; }
-
-  ;; (global-set-key (kbd "<f7>") nil)
-  ;; (global-set-key (kbd "<f7> t") 'textlint-check-buffer)
-  ;; (global-set-key (kbd "<f7> a") 'affl-check-buffer)
-  ;; pip install proselint
-
-  ;; Verify that proselint is installed correctly by running:
-
-  ;; proselint --version
-
-  ;; Install flycheck-proselint, a Flycheck extension that integrates proselint with Emacs:
-
-  ;; M-x package-install flycheck-proselint
-
-  ;; Configure flycheck-proselint to use proselint by adding the following lines to your Emacs configuration file:
-
-  ;; (flycheck-proselint-setup)
-
-  ;; ;; Optional - Customize proselint path if it's not in $PATH.
-  ;; (setq flycheck-proselint-executable "/path/to/proselint")
-  ;; Note that you must replace "/path/to/proselint" with the actual path to the proselint executable on your system.
-
-  (use-package langtool
-	:commands (langtool-goto-previous-error
-               langtool-goto-next-error
-               langtool-check
-               langtool-correct-buffer
-               langtool-check-done
-			   langtool-switch-default-language)
-	:bind ("<f7> l" . hydra-LT/body)
-	:init
-	(which-key-add-key-based-replacements "<f7>" "Writing")
-	(defhydra hydra-LT (:color pink :hint nil)
-      "A hydra for Langtool."
-      ("p" langtool-goto-previous-error "previous")
-      ("n" langtool-goto-next-error "next")
-      ("c" langtool-check "check")
-      ("b" langtool-correct-buffer "correct buffer")
-      ("d" langtool-check-done "done")
-      ("l" langtool-switch-default-language "switch language")
-      ("q" nil "cancel" :color blue))
-	(setq langtool-java-classpath
-          "/usr/share/languagetool:/usr/share/java/languagetool/*"
-          langtool-java-bin "/usr/bin/java"
-          langtool-disabled-rules '("WHITESPACE_RULE"
-									"EN_UNPAIRED_BRACKETS"
-									"COMMA_PARENTHESIS_WHITESPACE"
-									"EN_QUOTES")
-          langtool-mother-tongue "it"
-          langtool-default-language "en-US"))
-  (use-package wordnut					;because offline
-	:bind
-	("<f7> w" . wordnut-lookup-current-word)
-	("<f7> W" . wordnut-search))
-  (use-package sdcv						;because offline and rich (overwhelming)
-	:bind
-	("<f7> s" . sdcv-search-pointer)
-	(:map sdcv-mode-map
-		  ("n" . sdcv-next-dictionary)
-		  ("p" . sdcv-previous-dictionary)))
-  (use-package powerthesaurus
-	:bind
-	("<f7> p 0" . powerthesaurus-lookup-dwim)
-	("<f7> p p" . powerthesaurus-lookup-synonyms-dwim)
-	("<f7> p a" . powerthesaurus-lookup-antonyms-dwim)
-	("<f7> p d" . powerthesaurus-lookup-definitions-dwim)
-	("<f7> p r" . powerthesaurus-lookup-related-dwim)
-	("<f7> p s" . powerthesaurus-lookup-sentences-dwim))
-  (use-package writegood-mode
-	:bind
-	("<f7> g" . writegood-mode)
-	("<f7> Gl" . writegood-grade-level)
-	("<f7> Gr" . writegood-reading-ease))
-  (use-package artbollocks-mode
-	:bind
-	("<f7> a" . artbollocks-mode)
-	("<f7> Ar" . artbollocks-reading-ease)
-	("<f7> AR" . artbollocks-readability-index)
-	("<f7> Al" . artbollocks-grade-level)
-	("<f7> Aw" . artbollocks-word-count)
-	("<f7> x As" . artbollocks-sentence-count)) ; XXX: maybe write-good is enough
-  (use-package academic-phrases
-	:bind
-	("<f7> i" . academic-phrases-by-section)
-	("<f7> I" . academic-phrases))
-  (use-package google-translate
-	:defines google-translate-translation-directions-alist
-	:commands (google-translate-at-point
-			   google-translate-at-point-reverse)
-	:bind
-	("<f7> t" . google-translate-smooth-translate)
-	:init
-	(setq google-translate-translation-directions-alist
-          '(("it" . "en") ("en" . "it") ("it" . "de") ("it" . "fr"))
-          google-translate-output-destination kill-ring
-          google-translate-enable-ido-completion t
-          google-translate-show-phonetic t
-		  ;; google-translate-listen-program
-          google-translate-pop-up-buffer-set-focus t)
-	(defun google-translate--search-tkk () "Search TKK." (list 430675 2721866130))
-	(defun my-google-translate-at-point()
-      "reverse translate if prefix"
-      (interactive)
-      (if current-prefix-arg
-          (google-translate-at-point)
-		(google-translate-at-point-reverse)))
-	(setq google-translate-backend-method 'curl)) ; API changed
-  (use-package cm-mode                  ;critic markup
-	;; :hook (text-mode . cm-mode)
-	:bind
-	("<f7> M" . cm-mode)
-	("<f7> m" . cm-prefix-map))
-  (use-package typo                     ; Complement `C-x 8`
-	:bind ("C-c t t" . typo-mode)
-	:hook (text-mode-hook . typo-mode))
-  )
-(progn									; org-roam
+(progn									; org-roam and notes
   (use-package org-roam
 	:after org
     :demand 2
@@ -2577,7 +2534,7 @@ completing-read prompter."
           org-roam-ui-update-on-save t
           org-roam-ui-open-on-start t))
 
-  (use-package deft                     ; Notes
+  (use-package deft
     :bind
     ("M-s C-n" . deft)
     :config
