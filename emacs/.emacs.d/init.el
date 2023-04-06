@@ -726,8 +726,10 @@ HEIGHT, if supplied, specifies height of letters to use."
 	(("C-;" . vertico-repeat)
 	 ("C-:" . vertico-repeat-select)
 	 :map vertico-map
-	 ("<next>" . vertico-scroll-up) ; minibuf history M-n M-p
-	 ("<prior>" . vertico-scroll-down)
+	 ("<next>" . vertico-last)
+	 ("<prior>" . vertico-first)
+     ("C-S-n" . vertico-next-group)
+	 ("C-S-p" . vertico-previous-group)
 	 ("<M-RET>" . minibuffer-force-complete-and-exit)
 	 ("M-<tab>" . minibuffer-complete)
 	 )
@@ -2384,13 +2386,6 @@ completing-read prompter."
 	:commands (flycheck-vale-setup)
 	:config (flycheck-vale-setup))
 
-  ;; ;; affl settings
-  ;; (use-package
-  ;;   :config
-  ;;   (setq affl-language-tool-jar-path "/path/to/languagetool.jar")
-  ;;   (setq affl-language "en-US")
-  ;;   (setq affl-rules '("TYPOS" "GRAMMAR" "STYLE" "MISC"))
-  ;;   (setq affl-language-model "/path/to/en-grammar.dict"))
 
   ;; ;; textlint settings  sudo npm install -g textlint
   ;; (use-package flycheck-textlint
