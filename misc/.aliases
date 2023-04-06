@@ -1,4 +1,4 @@
-alias e='emacsclient -c "$@"'
+alias e='emacsclient -a="" -c "$@"'
 alias wifiscan='sudo iw dev wlan0 scan | grep SSID'
 alias lg='git annex list --allrepos'
 alias du.='du -ksh .[!.]* * | sort -h'
