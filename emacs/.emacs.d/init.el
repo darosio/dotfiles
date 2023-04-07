@@ -983,7 +983,7 @@ completing-read prompter."
     ;; (corfu-doc-mode +1)
     )
   )
-(use-package yasnippet					; Yasnippet
+(use-package yasnippet ;; Yasnippet
   :bind
   ("M-g Y a" . yas-reload-all)
   ("M-g Y n" . yas-new-snippet)
@@ -999,14 +999,16 @@ completing-read prompter."
   (message-mode-hook . yas-minor-mode)
   (markdown-mode-hook . yas-minor-mode)
   :config
-  (add-to-list 'hippie-expand-try-functions-list 'yas-hippie-try-expand)
-  (setq yas-snippet-dirs '("~/.emacs.d/yasnippets"))
-  (setq yas-triggers-in-field t
+  (setq yas-snippet-dirs '("~/.emacs.d/yasnippets")
+        yas-triggers-in-field t
         yas-wrap-around-region t)     ;or [a-z] register
-  (use-package yasnippet-snippets)
-  (use-package consult-yasnippet
-	:bind ("M-s y" . consult-yasnippet))
-  )
+  (add-to-list 'hippie-expand-try-functions-list 'yas-hippie-try-expand))
+(use-package yasnippet-snippets
+  :after yasnippet)
+(use-package consult-yasnippet
+  :after yasnippet
+  :bind ("M-s y" . consult-yasnippet))
+
 (progn ;; Spell checking and writing
   (use-package ispell
     :hook ((text-mode-hook . flyspell-mode)
@@ -2965,13 +2967,12 @@ With a prefix ARG, remove start location."
   ;; (use-package rg)
   )
 (progn									; Additional modes
-  (use-package markdown-mode
+  (use-package markdown-mode            ;; ruby-mdl
 	:bind (:map markdown-mode-map
 				("<return>" . nil)
 				("M-n" . mk-transpose-line-down)
 				("M-p" . mk-transpose-line-up))
-	:init
-	(setq markdown-url-compose-char ?…)
+	:init (setq markdown-url-compose-char ?…)
 	:mode (("README\\.md\\'" . gfm-mode)
            ("\\.md\\'" . markdown-mode)
            ("\\.mkd\\'" . markdown-mode)
@@ -2981,19 +2982,17 @@ With a prefix ARG, remove start location."
 	:after (org)
     :defines org-plantuml-jar-path
     :init
-    (setq plantuml-default-exec-mode 'jar)
-    (setq plantuml-jar-path "/usr/share/java/plantuml/plantuml.jar")
-    (setq org-plantuml-jar-path "/usr/share/java/plantuml/plantuml.jar")
-	)
+    (setq plantuml-default-exec-mode 'jar
+          plantuml-jar-path "/usr/share/java/plantuml/plantuml.jar"
+          org-plantuml-jar-path "/usr/share/java/plantuml/plantuml.jar"))
   (use-package graphviz-dot-mode
-    :config
-	(setq graphviz-dot-indent-width 4)
-	)
+    :config (setq graphviz-dot-indent-width 4))
   (use-package gnuplot)
+  (use-package ess)
   (use-package json-mode)
   (use-package ssh-config-mode)
   (use-package pkgbuild-mode)
-  (use-package web-mode
+  (use-package web-mode                 ;XXX: FIXME:
 	;; Unfortunately `web-mode' does not come with `auto-mode-alist'
 	;; autoloads. We have to establish them manually. This list comes
 	;; from the official website at <http://web-mode.org/> as of
@@ -3039,12 +3038,10 @@ With a prefix ARG, remove start location."
   (use-package vimrc-mode
 	:hook (vimrc-mode-hook . (lambda ()
 							   (setq-local tab-width 2)
-							   (setq-local indent-line-function 'insert-tab)))
-	)
-  (use-package yaml-mode				; yay -S (yamllint) prettier with apheleia
-	:mode "\\.yml\\'"
+							   (setq-local indent-line-function 'insert-tab))))
+  (use-package yaml-mode ;; yay -S (yamllint) prettier with apheleia
 	:hook ((yaml-mode . turn-off-flyspell))
-	)
+	:mode "\\.yml\\'")
   (use-package toml-mode
 	:mode "\\.toml\\'")
   (use-package csv-mode
@@ -3163,14 +3160,12 @@ With a prefix ARG, remove start location."
 				("C-c S" . py-isort-region)))
   )
 
-(use-package ess)
 (use-package emojify
-  :bind ("C-c M-e" . emojify-insert-emoji)
-  :hook (after-init-hook . global-emojify-mode)
-  :custom (emojify-emoji-set "emojione-v2.2.6-22"))
+:bind ("C-c M-e" . emojify-insert-emoji)
+:hook (after-init-hook . global-emojify-mode)
+:custom (emojify-emoji-set "emojione-v2.2.6-22"))
 (use-package slack
-  :defer t                              ; avoid halting daemon startup
-                                        ; asking for passwords
+  :defer t ;; avoid halting daemon startup asking for passwords
   :commands (slack-channel-select
              slack-im-select
              slack-group-select
@@ -3232,10 +3227,9 @@ With a prefix ARG, remove start location."
          ("@" . slack-message-embed-mention)
          ("#" . slack-message-embed-channel))
   :init
-  (which-key-add-key-based-replacements
-    "M-g M-a s" "Slack")
-  (setq slack-buffer-emojify t) ;; if you want to enable emoji, default nil
-  (setq slack-prefer-current-team t)
+  (which-key-add-key-based-replacements "M-g M-a s" "Slack")
+  (setq slack-buffer-emojify t
+        slack-prefer-current-team t)
   :config
   (auth-source-pass-enable)
   (slack-register-team
@@ -3254,10 +3248,8 @@ With a prefix ARG, remove start location."
 (use-package nov
   :mode ("\\.epub\\'" . nov-mode)
   ;; :custom-face (variable-pitch ((t (:family "URW Bookman" :height 1.1))))
-  :config
-  (setq nov-text-width t)
   :hook (nov-mode-hook . visual-fill-column-mode)
-  )
+  :config (setq nov-text-width t))
 (use-package keyfreq
   :commands (keyfreq-mode
 			 keyfreq-autosave-mode)
@@ -3273,8 +3265,7 @@ With a prefix ARG, remove start location."
   :config
   (setq calibredb-root-dir "~/Sync/media/books/")
   (setq calibredb-db-dir (expand-file-name "metadata.db" calibredb-root-dir))
-  (setq calibredb-library-alist
-		'(("~/Sync/media/books/")))
+  (setq calibredb-library-alist '(("~/Sync/media/books/")))
   (setq calibredb-size-show nil)
   (setq calibredb-comment-width 0)
   ;; (setq calibredb-ref-default-bibliography (concat (file-name-as-directory calibredb-root-dir) "catalog.bib"))
@@ -3282,12 +3273,8 @@ With a prefix ARG, remove start location."
   ;; (add-to-list 'bibtex-completion-bibliography calibredb-ref-default-bibliography)
   )
 (use-package ox-hugo
-  :ensure t   ;Auto-install the package from Melpa
-  ;; :pin melpa  ;`package-archives' should already have ("melpa" . "https://melpa.org/packages/")
   :after ox
-  :init
-  (eval-after-load 'ox '(require 'ox-hugo))
-  )
+  :init (eval-after-load 'ox '(require 'ox-hugo)))
 
 (setq debug-on-error nil)
 (setq debug-on-quit nil)
