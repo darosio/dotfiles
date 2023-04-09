@@ -1096,6 +1096,25 @@ completing-read prompter."
     ;; #'guess-language-switch-function)
     )
 
+  (use-package apheleia
+    :demand t
+	:commands apheleia-global-mode
+	:preface
+	;; https://blog.chmouel.com/2016/09/07/dealing-with-yaml-in-emacs/
+	(defun aj-toggle-fold ()
+	  "Toggle fold all lines larger than indentation on current line"
+	  (interactive)
+	  (let ((col 1))
+		(save-excursion
+		  (back-to-indentation)
+		  (setq col (+ 1 (current-column)))
+		  (set-selective-display
+		   (if selective-display nil (or col 1))))))
+	:bind ("C-<tab>" . aj-toggle-fold)
+	:init (apheleia-global-mode +1)
+    :config
+    (add-to-list 'apheleia-mode-alist '(markdown-mode . prettier)))
+
   (use-package flycheck ;; Syntax checking
     :commands (flycheck-add-next-checker)
     :bind (("M-g e l" . flycheck-list-errors)
@@ -1131,11 +1150,12 @@ completing-read prompter."
                flycheck-vale-toggle-enabled)
     :init
     (flycheck-vale-toggle-enabled)
-    (add-to-list 'flycheck-checkers 'proselint t)
     :config
     (flycheck-vale-setup)
     (flycheck-add-next-checker 'vale 'proselint)
+    (flycheck-add-next-checker 'proselint 'markdown-mdl)
     (setq flycheck-checker-error-threshold 1000))
+
   (use-package langtool
     :commands (langtool-goto-previous-error
                langtool-goto-next-error
@@ -3129,41 +3149,27 @@ With a prefix ARG, remove start location."
 	:bind (:map python-mode-map
 				("C-c T" . python-pytest-dispatch)
 				("<f8>" . python-pytest-dispatch)))
-  (use-package apheleia
-	:commands apheleia-global-mode
-	:preface
-	;; https://blog.chmouel.com/2016/09/07/dealing-with-yaml-in-emacs/
-	(defun aj-toggle-fold ()
-	  "Toggle fold all lines larger than indentation on current line"
-	  (interactive)
-	  (let ((col 1))
-		(save-excursion
-		  (back-to-indentation)
-		  (setq col (+ 1 (current-column)))
-		  (set-selective-display
-		   (if selective-display nil (or col 1))))))
-	:bind ("C-<tab>" . aj-toggle-fold)
-	:init (apheleia-global-mode +1))
+
   (use-package eval-in-repl
-	:after (python)
-	:hook (python-mode-hook . (lambda () (require 'eval-in-repl-python) ))
-	:config
-	(setq eir-jump-after-eval nil)		; default t
-	:bind (:map python-mode-map
-				("<C-return>" . eir-eval-in-python))
-	)
+    :after (python)
+    :hook (python-mode-hook . (lambda () (require 'eval-in-repl-python) ))
+    :config
+    (setq eir-jump-after-eval nil)		; default t
+    :bind (:map python-mode-map
+			    ("<C-return>" . eir-eval-in-python))
+    )
   (use-package py-isort                 ;yay -S python-isort
-	:after (python)
-	:hook (before-save-hook . py-isort-before-save)
-	:bind (:map python-mode-map
-				("C-c s" . py-isort-buffer)
-				("C-c S" . py-isort-region)))
+    :after (python)
+    :hook (before-save-hook . py-isort-before-save)
+    :bind (:map python-mode-map
+			    ("C-c s" . py-isort-buffer)
+			    ("C-c S" . py-isort-region)))
   )
 
 (use-package emojify
-:bind ("C-c M-e" . emojify-insert-emoji)
-:hook (after-init-hook . global-emojify-mode)
-:custom (emojify-emoji-set "emojione-v2.2.6-22"))
+  :bind ("C-c M-e" . emojify-insert-emoji)
+  :hook (after-init-hook . global-emojify-mode)
+  :custom (emojify-emoji-set "emojione-v2.2.6-22"))
 (use-package slack
   :defer t ;; avoid halting daemon startup asking for passwords
   :commands (slack-channel-select
