@@ -1153,7 +1153,7 @@ completing-read prompter."
     :config
     (flycheck-vale-setup)
     (flycheck-add-next-checker 'vale 'proselint)
-    (flycheck-add-next-checker 'proselint 'markdown-mdl)
+    (flycheck-add-next-checker 'proselint 'markdown-markdownlint-cli)
     (setq flycheck-checker-error-threshold 1000))
 
   (use-package langtool
@@ -2987,14 +2987,14 @@ With a prefix ARG, remove start location."
   ;; (use-package rg)
   )
 (progn									; Additional modes
-  (use-package markdown-mode            ;; ruby-mdl
-	:bind (:map markdown-mode-map
+  (use-package markdown-mode            ;;markdownlint-cli ruby-mdl
+    :bind (:map markdown-mode-map
 				("<return>" . nil)
 				("M-n" . mk-transpose-line-down)
 				("M-p" . mk-transpose-line-up))
 	:init (setq markdown-url-compose-char ?…)
-	:mode (("README\\.md\\'" . gfm-mode)
-           ("\\.md\\'" . markdown-mode)
+	:mode (("\\.md\\'" . markdown-mode)
+           ("README\\.md\\'" . gfm-mode)
            ("\\.mkd\\'" . markdown-mode)
            ("\\.markdown\\'" . markdown-mode)))
   (use-package sphinx-mode)

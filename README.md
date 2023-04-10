@@ -71,7 +71,7 @@ Update using `mr`:
 ## submodule problem
 
 I had once and solved the detached head problem following:
-https://stackoverflow.com/questions/18770545/why-is-my-git-submodule-head-detached-from-master
+<https://stackoverflow.com/questions/18770545/why-is-my-git-submodule-head-detached-from-master>
 
     git branch -u refs/remotes/origin/master master
     git co master
@@ -83,7 +83,7 @@ check .gitmodule .git/config or:
     cd <parent-repo-path> # relative to parent repo root without starting path separator
     git config -f .gitmodules submodule.<submodule-path>.branch <branch>
 
-# Development
+## Development
 
 Commit following commitizen but consider this is a repository of configurations
 e.g. when updating emacs packages
@@ -92,20 +92,20 @@ e.g. when updating emacs packages
 
 what would normally called `build: Update dependencies`.
 
-# Applications [optional] requirements
+## Applications [optional] requirements
 
-## Ranger
+### Ranger
 
 - xls2csv
 - xlsx2csv
 - feh
-- …
+- reformime from mailcap
 
-# emacs
+## emacs
 
 TODO: [notes](/home/dan/Sync/notes/arch/emacs.org "emacs")
 
-Keybinding reserved to users are: C-c <letter> and F5 to F9.
+Keybinding reserved to users are: C-c \<letter\> and F5 to F9.
 
 Package management useful commands:
 
@@ -115,32 +115,26 @@ Package management useful commands:
     straight-check-all
     straight-freeze-versions
 
-## Configured packages include:
+### List of configured packages
 
-- use-package with async
-- which-key
-- modalka
-- ivy counsel swiper; overload `C-h f`, `C-h v`, `C-s` and `M-x`
-- avy (move around) and smex (remember places)
-- imenu with `F9` and `C-F9` overloading
-- mu4e and calendar https://jherrlin.github.io/posts/emacs-mu4e/
-- deft with native insert mode; can create new ./proj/file
-- open file in emacs with external application: `SPC f f` `M-o x`
-- completion with company and (ivy-)yasnippet `SPC i s` also for longer org easy
-  template; dropped: auto-yasnippet and yatemplate
-- projectile, magit, auto-completion, counsel recoll
-- org babel, graphviz, plantuml, markdown, criticmarkup
-- zeal-at-point
-- text scale increase/decrease `C-x C-0`
-- typo mode `F14 t T`
-- gtklp for printing using cups
-- expand-region `C-=`
-- dired
-- smartparens `C-backspace` `H-b` `H-f` `H-h` `H-d` `H-k` `H-t` `H-()` `H-{}`.
-- hideshow for folding.
-- electric and aggressive indent.
-- visual fill column also for distraction free behavior.
-- slack with a hydra.
+- Use-package, straight, async and which-key.
+- Imenu with `F9` and `C-F9` overloading.
+- Mu4e and calendar <https://jherrlin.github.io/posts/emacs-mu4e/>.
+- Deft with native insert mode; can create new ./proj/file.
+- Org-roam-note and consult-note e.g. `M-s M-n`.
+- Counsel recoll.
+- Completion with vertico and yasnippet `M-s y`.
+- Consult-project-extra, magit and magit-todos.
+- Org babel, graphviz, plantuml, markdown, criticmarkup and typo mode `F14 t T`.
+- Text scale increase/decrease `C-x C-0`.
+- Gtklp for printing using cups.
+- Expand-region `C-=`.
+- Smartparens `C-backspace` `H-b` `H-f` `H-h` `H-d` `H-k` `H-t` `H-()` `H-{}`
+  etc.
+- Hideshow for folding..
+- Electric and aggressive indent.
+- Visual fill column also for distraction free behavior.
+- Slack with a hydra.
 - nov.
 - Maximize window `H-m` . prot/window-single-toggle.
 - ace-win.
@@ -157,19 +151,16 @@ Package management useful commands:
     - plantuml graphviz ditaa Jupyter
 - org-mime for mu4e compose.
 - auctex cdlatex
-- proj todos can go with either org-projectile or magit-todos.
 - python
   - py-isort manually
   - numydoc
-  - poetry
-  - pyenv (pyvenv)?
-- ORB with org-noter with precise insertion
+  - envrc to support direnv
+- org-noter with precise insertion
 - csv-mode `C-c C-a`.
 - `C-c o a` mu4e-compose-attach-captured-message.
+- Apheleia in place of blacken support black and prettier.
 
-- apheleia in place of blacken support black and prettier.
-
-## Vanilla emacs
+#### Vanilla emacs
 
 Using emacs as editor serving also the following purposes:
 
