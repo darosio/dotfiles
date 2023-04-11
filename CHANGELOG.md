@@ -6,6 +6,41 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 Releases will start from 2022.1.
 
+## 3.5.0 (2023-04-11)
+
+### Feat
+
+- Add proselint and vale configurations
+- **emacs**: Fix (fly)check for prose
+- **emacs**: Clean writing session
+- **emacs**: Remove char-menu and avy (dep of ace-window eval-in-repl)
+- **emacs**: Add consult-flyspell `M-g s` and refactor
+- **emacs**: Buffer hydra and refactor themes
+
+### Fix
+
+- **emacs**: consult-notes
+- **emacs**: apheleia prettier for markdown
+- **emacs**: Alias `e`
+- **emacs**: org-noter-pdftools. Refactor writing session
+- **emacs**: keybinding
+
+### Docs
+
+- Lint README.md with markdownlint-cli
+
+### Refactor
+
+- **emacs**: Organize yasnippet and other packages
+- **emacs**: ace-window `C-’` `C-“`
+- **emacs**: dired -x wdired
+- **emacs**: `C-x b` consult-buffer
+- **emacs**: mu4e and bind `C-c C-o` org-msg
+
+### chore
+
+- **emacs**: Keybinding `C-N`and `C-P` to navigate vertico group
+
 ## 3.4.2 (2023-04-04)
 
 ### Fix
