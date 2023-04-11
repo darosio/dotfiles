@@ -1,3 +1,6 @@
+<!-- markdownlint-configure-file { "MD013": { "line_length": 90 } } -->
+<!-- markdownlint-configure-file { "MD024": { "allow_different_nesting": true } } -->
+
 # Changelog
 
 All notable changes to my dotfiles repo will be documented in this file.
@@ -35,7 +38,7 @@ Releases will start from 2022.1.
 - **emacs**: ace-window `C-’` `C-“`
 - **emacs**: dired -x wdired
 - **emacs**: `C-x b` consult-buffer
-- **emacs**: mu4e and bind `C-c C-o` org-msg
+- **emacs**: mu4e and bind `C-c \C-o` org-msg
 
 ### chore
 
@@ -88,7 +91,7 @@ Releases will start from 2022.1.
 
 - **emacs**: gcal oauth2 with captures
 - **ranger**: org file opening
-- **memory**: As alias see https://github.com/pixelb/scripts
+- **memory**: As alias see <https://github.com/pixelb/scripts>
 - **mr|bash**: mr config and bashrc
 - environment.d for rclone, emacs, etc.
 - **gh**: Auth with token
@@ -138,9 +141,9 @@ Releases will start from 2022.1.
 - links in ~/.emacs.d from ~/Sync/.emacs
 - emacs.stow.sh
 - consult-org-roam and consul-notes (I keep deft `M-s C-n`).
-- tzc binding with `C-x T `.
+- tzc binding with `C-x T`.
 - insert-emoji with `C-c E`.
-- dna-mode and pdb-mode `C-c t m `.
+- dna-mode and pdb-mode `C-c t m`.
 - abbrev-mode `C-c t a`.
 - ox-hugo.
 - comint dynamic-complete-filename with `C-c <tab>`.
@@ -198,14 +201,14 @@ Releases will start from 2022.1.
 
 #### emacs
 
-- early-init.el.
+- early\-init.el.
 - Completion with vertico, marginalia, embark (configured with which-key),
   consult, orderless and corfu.
 - Fuzzy search with affe.
 - citar.
 - wgrep.
 - rg with '--hidden' args.
-- additional (prog) modes.
+- extra (prog) modes.
 - consult-completion-in-region and corfu(-doc) manually triggered.
 - lsp-mode (hook lsp activation after poetry if pyproject.toml exists). Remember
   to install (using poetry) python-lsp-server and lsp-mypy.
