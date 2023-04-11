@@ -2575,54 +2575,23 @@ completing-read prompter."
                ;; if using org-roam
                consult-notes-org-roam-find-node
                consult-notes-org-roam-find-node-relation)
-    :bind
-    ("M-s n" . consult-notes-search-in-all-notes)
-    ("M-s M-n" . consult-notes)
-    ("M-s N" . consult-notes-org-roam-find-node)
+    :bind (("M-s n" . consult-notes-search-in-all-notes)
+           ("M-s M-n" . consult-notes)
+           ("M-s N" . consult-notes-org-roam-find-node))
     :config
-    (setq consult-notes-file-dir-sources
-		  '(
-		    ("Notes" ?n "~/Sync/notes")
-		    ("Proj" ?p "~/Sync/proj")
-		    ("Org" ?o "~/Sync/box/org")
-		    ))
-    (setq
-     consult-notes-ripgrep-args
-     "rg --multiline --null --line-buffered --color=never --max-columns=1000 --path-separator / --ignore-case --no-heading --line-number --hidden --glob=!.git/ -g *.org -g *.md -g *.txt -g *.rst--sortr=accessed"
-     ;; --smart-case --search-zip
-     )
-    ;; ;; Set org-roam integration, denote integration, or org-heading integration e.g.:
-    (setq consult-notes-org-headings-files '("~/Sync/proj/lab.org"
+    (setq consult-notes-file-dir-sources '(("Notes" ?n "~/Sync/notes/")
+		                                   ("Proj" ?p "~/Sync/proj/")
+		                                   ("Org" ?o "~/Sync/box/org/"))
+          consult-notes-org-headings-files '("~/Sync/proj/lab.org"
                                              "~/Sync/box/org/journal.org"
-										     "~/Sync/box/org/projects.org"))
-    (consult-notes-org-headings-mode)
-    (consult-notes-org-roam-mode)
-    ;; embark support
-    (defun consult-notes-open-dired (cand)
-	  "Open notes directory dired with point on file CAND."
-	  (interactive "fNote: ")
-	  ;; dired-jump is in dired-x.el but is moved to dired in Emacs 28
-	  (dired-jump nil cand))
-    (defun consult-notes-marked (cand)
-	  "Open a notes file CAND in Marked 2.
-Marked 2 is a mac app that renders markdown."
-	  (interactive "fNote: ")
-	  (call-process-shell-command (format "open -a \"Marked 2\" \"%s\"" (expand-file-name cand))))
-    (defun consult-notes-grep (cand)
-	  "Run grep in directory of notes file CAND."
-	  (interactive "fNote: ")
-	  (consult-grep (file-name-directory cand)))
-    (defvar-keymap consult-notes-map
-	  :doc "Keymap for Embark notes actions."
-	  :parent embark-file-map
-	  "d" #'consult-notes-dired
-	  "g" #'consult-notes-grep
-	  "m" #'consult-notes-marked)
-    (add-to-list 'embark-keymap-alist `(,consult-notes-category . consult-notes-map))
-    ;; make embark-export use dired for notes
-    (setf (alist-get consult-notes-category embark-exporters-alist) #'embark-export-dired)
-
-    ;; Search org-roam notes for citations (depends on citar)
+	                                         "~/Sync/box/org/projects.org")
+          )
+    (consult-notes-org-headings-mode)   ; org heading
+    (consult-notes-org-roam-mode)       ; org roam
+    ;; (setq consult-notes-ripgrep-args
+    ;;       ;; --smart-case --search-zip
+    ;;       "rg --multiline --null --line-buffered --color=never --max-columns=1000 --path-separator / --ignore-case --no-heading --line-number --hidden --glob=!.git/ -g *.org -g *.md -g *.txt -g *.rst--sortr=accessed")
+    ;; XXX: MAYBE: embark and citar support https://github.com/mclear-tools/consult-notes
     )
 
   (use-package consult-org-roam
