@@ -1704,7 +1704,7 @@ completing-read prompter."
 	(use-package org-lint :straight org
 	  :bind (:map
 			 org-mode-map
-			 ("C-c e o" . org-lint))
+			 ("M-g e o" . org-lint))
 	  )
 	;; (use-package org-compat :straight org
 	;;   :config
