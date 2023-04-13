@@ -2740,6 +2740,23 @@ completing-read prompter."
 	:init (setq org-cite-csl-styles-dir "~/Zotero/styles"))
   (use-package oc-natbib :straight org :after oc)
 
+  (use-package zotxt
+    :commands (zotxt-query-select)
+    :config
+    (setq zotxt-default-base-directory "~/Zotero/"
+          zotxt-default-file-extensions '("pdf" "docx" "odt")
+          zotxt-notes-template "#+TITLE:\n\n#+ROAM_KEY:\n\n\n%?"))
+
+  (use-package org-zotxt
+    :straight nil
+    :after org
+    :config
+    (setq org-zotxt-default-bibliography completion-bibliography
+          org-zotxt-pdf-dir completion-library-path
+          org-zotxt-notes-prefix "* Notes:"
+          org-zotxt-show-inserter t
+          org-zotxt-inserter-cite-key t))
+
   (use-package pdf-tools
     :demand t
     :functions pdf-loader-install
