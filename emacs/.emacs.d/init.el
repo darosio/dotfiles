@@ -84,11 +84,13 @@
 
   ;; Configure use-package
   (require 'server)
+  (defvar is-daemon nil)
   (if (daemonp)
       (progn
 		(setq use-package-always-demand nil
               process-connection-type nil
-              server-raise-frame t)
+              server-raise-frame t
+              is-daemon t)
 		(setenv "EDITOR" "emacsclient -c -a=''"))
 	(setq use-package-always-defer t))
 
@@ -419,8 +421,8 @@ HEIGHT, if supplied, specifies height of letters to use."
     ("M-u" . fix-word-upcase))
 
   (use-package which-key
-    :commands (which-key-add-key-based-replacements
-                which-key-mode)
+    :commands (which-key-mode
+               which-key-add-key-based-replacements)
     :bind ("H-<f1>" . which-key-show-top-level)
     :init
     (which-key-mode 1)
@@ -1131,15 +1133,16 @@ completing-read prompter."
 		   ("M-g e x" . flycheck-explain-error-at-point))
     :hook ((gitignore-mode-hook . flycheck-mode)
            (markdown-mode-hook . flycheck-mode)
-           (org-mode-hook . flycheck-mode)
-           (text-mode-hook . flycheck-mode)
+           ;; (org-mode-hook . flycheck-mode)
+           ;; (text-mode-hook . flycheck-mode)
            (prog-mode-hook . flycheck-mode)
 		   (yaml-mode-hook . flycheck-mode))
     :init
     (which-key-add-key-based-replacements "M-g e" "Errors(flycheck)")
     :config
     (setq flycheck-idle-change-delay nil) ; Disable idle checking to avoid performance problems
-    (setq-default flycheck-emacs-lisp-load-path 'inherit))
+    (setq-default flycheck-emacs-lisp-load-path 'inherit
+                  flycheck-temp-prefix ".flycheck"))
 
   (use-package consult-flycheck
     :bind ("M-g f" . consult-flycheck))
@@ -1240,6 +1243,7 @@ completing-read prompter."
     (setq google-translate-backend-method 'curl))
   )
 (use-package mu4e						; mu4e
+  :demand is-daemon
   :straight (:type built-in)			; in AUR/mu
   :commands (mu4e-compose-new
 			 mu4e-context-current)
