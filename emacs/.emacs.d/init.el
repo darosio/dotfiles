@@ -323,11 +323,81 @@ HEIGHT, if supplied, specifies height of letters to use."
     ;; python is excluded by aggressive indent because of not absolute indentation
     :hook (python-mode-hook . electric-indent-mode))
 
-  (use-package print-settings
+  ;; (setq lpr-command "gtklp")
+  ;; (setq ps-lpr-command "gtklp")
+
+  (use-package printing
+    :config
+    ;; Set the default printer name
+    (setq pr-txt-name "my-printer")
+
+    :preface
+    ;; Define a list of printers and their options
+    (setq pr-printer-alist
+          '(;(my-printer ("lp" nil "-dmy-printer"))
+            (work ("lpr" "-P" "HP_LaserJet_CM1415fn"))))
+
+    ;; Define a function to prompt the user for a printer selection
+    (defun my-print-buffer-to5 ()
+      "Print the current buffer using the specified printer."
+      (interactive)
+      (let ((printer (completing-read "Printer: " (mapcar 'car pr-printer-alist)))
+            (printer-name (cdr (assoc printer pr-printer-alist))))
+        (print-buffer (current-buffer) nil printer-name)))
+
+    :bind ("C-c C-M-p" . my-print-buffer-to5))
+
+  ;; (use-package printing
+  ;;   :config
+  ;;   ;; Set the default printer name
+  ;;   (setq pr-txt-name "my-printer")
+
+  ;;   ;; Define a list of printers and their options
+  ;;   ;; (defvar pr-printer-alist
+  ;;   ;;   '((my-printer ("lp" nil "-dmy-printer")) ))
+
+  ;;   ;; (defvar pr-printer-alist)
+  ;;   :preface
+  ;;   (defvar pr-printer-alist
+  ;;     '(
+  ;;       (my-printer ("lp" nil "-dmy-printer"))
+  ;;       (work ("lpr" "-P" "HP_LaserJet_CM1415fn"))
+  ;;       ))
+  ;;   ;; Define a function to prompt the user for a printer selection
+  ;;   (defun my-print-buffer-to5 ()
+  ;;     "Print the current buffer using the specified printer."
+  ;;     (interactive)
+  ;;     (let ((printer (completing-read "Printer: " (mapcar 'car pr-printer-alist))))
+  ;;       (let ((printer-name (cdr (assoc printer pr-printer-alist))))
+  ;;         (print-buffer (current-buffer) nil printer-name))))
+
+  ;;   :bind ("C-c C-M-p" . my-print-buffer-to5)
+  ;;   )
+
+  (use-package lpr
+    :preface
+    (defun my-print-buffer-to (printer)
+      "Print the current buffer using the specified printer."
+      (interactive "sPrinter: ")
+      (let ((lpr-command "lpr")
+            (printer-name printer))
+        (print-buffer)))
+    :bind ("C-c M-p" . my-print-buffer-to)
+    :config
+    (setq lpr-command "lpr"
+          lpr-switches '("-o fit-to-page"
+                         "-o scaling=100"
+                         "-o media=A4"
+                         "-o number-up=2")
+          printer-name "HP_LaserJet_CM1415fn"
+          ))
+  (use-package ps-print
     :straight (:type built-in)
+    :config
+    (setq ps-lpr-command "print_preview")
     :custom
-    (lpr-command "lpr")
-    (printer-name "HP_LaserJet_CM1415fn")
+    ;; (ps-lpr-command "lpr")
+    (ps-lpr-switches lpr-switches)
     (ps-print-header nil)
     (ps-print-footer nil)
     (ps-print-color-p t)
@@ -335,27 +405,6 @@ HEIGHT, if supplied, specifies height of letters to use."
     (ps-print-banner nil)
     (ps-print-scale 1.0)
     (ps-print-duplex nil))
-  ;; (setq lpr-command "gtklp")
-  ;; (setq ps-lpr-command "gtklp")
-  ;;            ; printing; need: gv, ghostscript
-  ;;   (require 'printing)      ; load printing package
-  ;;   ;; (setq pr-path-alist
-  ;;   ;;   '((unix      "." "~/bin" ghostview mpage PATH)
-  ;;   ;;     (ghostview "$HOME/bin/gsview-dir")
-  ;;   ;;     (mpage     "$HOME/bin/mpage-dir")
-  ;;   ;;     ))
-  ;;   (setq pr-txt-name      'prt_06a)
-  ;;   (setq pr-txt-printer-alist
-  ;;    '((cc "lpr" nil "cc")
-  ;;      (prt_07c nil   nil "prt_07c")
-  ;;      ))
-  ;;   (setq pr-ps-name       'cc)
-  ;;   (setq pr-ps-printer-alist
-  ;;    '((cc "lpr" nil "-P" "cc")
-  ;;      (lps_07c "lpr" nil nil  "lps_07c")
-  ;;      (lps_08c nil   nil nil  "lps_08c")
-  ;;      ))
-  ;;   (pr-update-menus t)      ; update now printer and utility menus
 
   ;; Themes and fonts
   (set-fontset-font "fontset-default" nil
@@ -2754,7 +2803,46 @@ completing-read prompter."
     (setq pdf-view-resize-factor 1.1)   ;; more fine-grained zooming
     (use-package pdf-misc
       :straight pdf-tools
-      :config (setq pdf-misc-print-program "/usr/bin/gtklp"))
+      :preface
+      ;; (defun my-print-file-with-lpr (file printer)
+      ;;   "Print the specified file using lpr and the specified printer."
+      ;;   (interactive
+      ;;    (list (completing-read "File to print: ")
+      ;;          (completing-read "Printer: " (split-string (shell-command-to-string "lpstat -p | awk '{print $2}'") "\n" t))))
+      ;;   (let ((default-directory "~/")) ; Set the default directory to your home directory
+      ;;     (shell-command (format "lpr -P %s %s" printer file))))
+
+      (defun my-pdf-view-print-region-with-lpr (&optional filename)
+        "Print the current page or selection in the PDF file using lpr.
+   If FILENAME is specified, print the specified file instead."
+        (interactive)
+        (let* ((buffer (current-buffer))
+               (pdf-buffer (pdf-view-buffer-p))
+               (file (if filename filename (buffer-file-name buffer)))
+               (printer (completing-read "Printer: " (split-string (shell-command-to-string "lpstat -p | awk '{print $2}'") "\n" t))))
+          (if (and pdf-buffer (buffer-live-p pdf-buffer))
+              (with-current-buffer pdf-buffer
+                (pdf-info-assertion (pdf-view-active-region-p))
+                (let* ((page (pdf-view-active-page))
+                       (begin (pdf-view-active-region-beginning))
+                       (end (pdf-view-active-region-end))
+                       (tmpbuf (generate-new-buffer " pdf-region")))
+                  (pdf-view-active-markup-annotations)
+                  (pdf-cache-render-page (not (pdf-view-display-image-mode)))
+                  (pop-to-buffer tmpbuf)
+                  (insert-buffer-substring buffer begin end)
+                  (my-print-file-with-lpr (buffer-file-name tmpbuf) printer)
+                  (kill-buffer tmpbuf)))
+            (my-print-file-with-lpr file printer))))
+
+      :bind (:map pdf-view-mode-map
+                  ("C-c C-l" . my-pdf-view-print-region-with-lpr))
+
+      :init (setq pdf-misc-print-program "/usr/bin/lpr")
+      ;; :config (setq pdf-misc-print-program "/usr/bin/gtklp")
+      )
+
+
     (use-package pdf-annot
       :straight pdf-tools
       :bind (:map pdf-view-mode-map
