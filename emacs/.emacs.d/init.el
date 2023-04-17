@@ -88,7 +88,6 @@
   (if (daemonp)
       (progn
         (setq use-package-always-demand nil
-              process-connection-type nil
               server-raise-frame t
               is-daemon t)
         (setenv "EDITOR" "emacsclient -c -a=''"))
