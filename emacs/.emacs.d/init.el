@@ -1772,77 +1772,48 @@ completing-read prompter."
       :config
       (setq org-ditaa-jar-path "/usr/share/java/ditaa/ditaa-0.11.jar")
       )
-    (use-package ox-latex :straight org
-      ;; XXX: https://orgmode.org/worg/org-contrib/babel/languages/ob-doc-LaTeX.html
+    (use-package ox-latex
+      :straight nil
+      :defer t ;; XXX: https://orgmode.org/worg/org-contrib/babel/languages/ob-doc-LaTeX.html
       :config
-      ;; (add-to-list 'org-latex-logfiles-extensions '("lof" "lot" "tex="
-      ;; "dvi" "fdb_latexmk" "brf" "entoc" "ps" "spl" "bbl"); FIXME:
       (setq org-latex-remove-logfiles t)
-      ;; (add-to-list 'org-latex-logfiles-extensions '("tex" "bbl"))
-      ;; (setq org-latex-pdf-process
-      ;;        '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
-      ;;          "bibtex %b"
-      ;;          "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+      (add-to-list 'org-latex-logfiles-extensions "_minted-")
+      (add-to-list 'org-latex-logfiles-extensions "bbl")
+      (add-to-list 'org-latex-logfiles-extensions "pyg")
       (setq org-latex-pdf-process
-            '("latexmk -pdflatex='pdflatex -shell-escape -interaction nonstopmode' -pdf -bibtex -f %f"
-              "latexmk -c"))
-      (setq org-latex-listings 'minted) ; 'listings
-      (setq org-latex-packages-alist '(("" "minted")))
+            '("latexmk -pdflatex='xelatex -shell-escape -interaction nonstopmode' -pdf -bibtex -f %f -outdir=%o -verbose"
+              "latexmk -c %b"))
+      ;; Use the 'minted' package instead of 'listings' for code blocks
+      (setq org-latex-listings 'minted)
+      (add-to-list 'org-latex-packages-alist '("" "minted"))
+      (add-to-list 'org-latex-packages-alist '("" "color"))
       (setq org-latex-minted-options
-            '(("breaklines" "true")
-              ("breakanywhere" "true")
-              ("tabsize" "4")
-              ("autogobble")
-              ("linenos")
-              ("numbersep" "0.5cm")
-              ("xleftmargin" "1cm")
-              ("frame" "single")))
-      (add-to-list 'org-latex-classes   ; letter
-                   '("letter"
-                     "\\documentclass{letter}"
-                     ("\\section{%s}" . "\\section*{%s}")
-                     ("\\subsection{%s}" . "\\subsection*{%s}")
-                     ("\\subsubsection{%s}" . "\\subsubsection*{%s}")))
-      (add-to-list 'org-latex-classes   ; mnras
-                   '("mnras" "\\documentclass{mnras}"
-                     ("\\section{%s}" . "\\section*{%s}")
-                     ("\\subsection{%s}" . "\\subsection*{%s}")
-                     ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                     ))
-      (add-to-list 'org-latex-classes   ; koma-article
-                   '("koma-article" "\\documentclass{scrartcl}
-                  \\usepackage{microtype}
-                  \\usepackage{tgtermes}
-                  \\usepackage[scale=.9]{tgheros}
-                  \\usepackage{tgcursor}
-                  \\usepackage{paralist}
-                  \\newcommand{\\rc}{$^{14}C$}"
-                     ("\\section{%s}" . "\\section*{%s}")
-                     ("\\subsection{%s}" . "\\subsection*{%s}")
-                     ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                     ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                     ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
-      (add-to-list 'org-latex-classes   ; IEEEtran
-                   '("IEEEtran" "\\documentclass[11pt]{IEEEtran}"
-                     ("\\section{%s}" . "\\section*{%s}")
-                     ("\\subsection{%s}" . "\\subsection*{%s}")
-                     ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                     ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                     ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+            '(("frame" "lines") ("autogobble") ("breaklines" "true")
+              ;; ("fontsize" "\\small") ("baselinestretch" "1.2") ("no-messge") ("mathescape") ("tabsize" "4")
+              ;; ("breakanywhere" "true") ("numbersep" "0.5cm") ("xleftmargin" "1cm") ("frame" "single")("linenos")
+              ("style" "colorful")))
       (add-to-list 'org-latex-classes
-                   '("apa6"
-                     "\\documentclass{apa6}"
-                     ("\\section{%s}" . "\\section*{%s}")
-                     ("\\subsection{%s}" . "\\subsection*{%s}")
-                     ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                     ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                     ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
-      (add-to-list 'org-latex-classes   ; extarticle without default packages
-                   '("org-plain-extarticle"
-                     "\\documentclass{extarticle}
-[NO-DEFAULT-PACKAGES]
-[PACKAGES]
-[EXTRA]"
+                   '("draft" "\\documentclass[12pt]{article}
+                     \\usepackage{setspace}
+                     \\usepackage{tocloft}
+                     \\usepackage{lineno}
+                     \\usepackage{mathptmx}
+                     \\tolerance=1000
+                     \\setlength{\\parskip}{4pt}
+                     \\setlength{\\parindent}{0pt}
+                     \\linespread{1.2}
+                     \\usepackage[left=1in, right=1in, top=1in, bottom=1in]{geometry}
+                     \\renewcommand{\\cftsecleader}{\\cftdotfill{\\cftdotsep}}
+                     \\usepackage{fancyhdr}
+                     \\date{}
+                     \\pagestyle{fancy}
+                     \\fancyhf{}
+                     \\rhead{Draft version: \\today}
+                     \\cfoot{\\thepage}
+                     [NO-DEFAULT-PACKAGES]
+                     [PACKAGES]
+                     [EXTRA]
+                     "
                      ("\\section{%s}" . "\\section*{%s}")
                      ("\\subsection{%s}" . "\\subsection*{%s}")
                      ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
