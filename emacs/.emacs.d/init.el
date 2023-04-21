@@ -1214,9 +1214,14 @@ completing-read prompter."
     ("<f7> g" . writegood-mode)
     ("<f7> Gl" . writegood-grade-level)
     ("<f7> Gr" . writegood-reading-ease))
-  (use-package typo ;; Complement `C-x 8`
+  (use-package typo
     :bind ("C-c t t" . typo-mode)
-    :hook (text-mode-hook . typo-mode))
+    :commands typo-global-mode
+    :config (typo-global-mode)          ; Complement `C-x 8`
+    :hook
+    (org-mode-hook . (lambda () (typo-mode -1)))
+    (text-mode-hook . typo-mode))
+
 
   (use-package google-translate
     :defines google-translate-translation-directions-alist
@@ -1839,7 +1844,9 @@ completing-read prompter."
     (use-package ox-twbs :init (eval-after-load 'ox '(require 'ox-twbs)))
     (use-package auctex
       :defer t
-      :mode ("\\.tex\\'" . TeX-latex-mode)
+      :mode
+      ("\\.tex\\'" . TeX-latex-mode)
+      ("\\.latex\\'" . TeX-latex-mode)
       :config
       (use-package tex
         :straight auctex
