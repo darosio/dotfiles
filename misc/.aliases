@@ -50,6 +50,7 @@ paclist-size() {
 }
 
 alias t='tree'
+alias xmm='xmodmap ~/.Xmodmap'
 alias xr2='xrandr --output HDMI1 --left-of HDMI3 --rotate left'
 alias xrr=' xrandr --output eDP-1 --scale 1.24x1.24 --auto'
 alias stow='stow -t ~/'
