@@ -849,11 +849,10 @@ HEIGHT, if supplied, specifies height of letters to use."
      consult-bookmark consult-recent-file consult-xref
      consult--source-recent-file consult--source-project-recent-file consult--source-bookmark
      :preview-key "<right>")
-    (setq consult-ripgrep-args
-          "rg --hidden --null --line-buffered --color=never --max-columns=1000 --path-separator /  --smart-case --no-heading --line-number .")
-    ;; Optionally configure the narrowing key.
-    ;; Both < and C-+ work reasonably well.
-    (setq consult-narrow-key "<") ;; (kbd "C-+")
+    ;; (setq consult-ripgrep-args
+    ;; "rg --hidden --null --line-buffered --color=never --max-columns=1000 --path-separator /  --smart-case --no-heading --line-number .")
+    ;; Narrowing key. Both < and C-+ work reasonably well.
+    (setq consult-narrow-key "C-+")
     )
 
   (use-package embark-consult
