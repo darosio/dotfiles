@@ -1573,6 +1573,7 @@ completing-read prompter."
 (use-package mu4e-jump-to-list
   :after mu4e)
 (progn                                  ; org
+  (setenv "PYDEVD_DISABLE_FILE_VALIDATION" "1") ; https://github.com/nnicandro/emacs-jupyter/issues/439
   (use-package jupyter
     :straight (:no-native-compile t :no-byte-compile t)
     :after (org)
