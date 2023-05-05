@@ -96,7 +96,6 @@ dependencies = [
   "pre-commit",
   "python-lsp-ruff"
 ]
-python = "3.10"
 
 [tool.hatch.envs.default.scripts]
 bump = "cz bump -ch {args}"  # e.g. "--increment PATCH", "--files-only", "--no-verify" to bypass pre-commit and commit-msg hooks
