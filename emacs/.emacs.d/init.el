@@ -3233,6 +3233,16 @@ With a prefix ARG, remove start location."
 (use-package ox-hugo
   :after ox
   :init (eval-after-load 'ox '(require 'ox-hugo)))
+(use-package shell-maker
+  :straight (:host github :repo "xenodium/chatgpt-shell" :files ("shell-maker.el")))
+(use-package chatgpt-shell
+  :requires shell-maker
+  :straight (:host github :repo "xenodium/chatgpt-shell" :files ("chatgpt-shell.el"))
+  :config
+  (setq chatgpt-shell-openai-key
+        (lambda ()
+          (nth 0 (process-lines "pass" "show" "home/openai-dpa"))))
+  )
 
 (setq debug-on-error nil)
 (setq debug-on-quit nil)
