@@ -1267,6 +1267,7 @@ completing-read prompter."
                               (set-fill-column 80)
                               (visual-fill-column-mode)
                               (guess-language-mode)))
+  (mu4e-update-pre-hook . mu4e-update-index-nonlazy)
   :bind
   (("M-g M-a m" . mu4e)
    ("C-x m" . mu4e)
@@ -1300,7 +1301,7 @@ completing-read prompter."
         mu4e-maildir (expand-file-name "~/Maildir")
         mu4e-get-mail-command "mbsync -a"
         mu4e-update-interval 30
-        mu4e-index-cleanup nil      ;; don't do a full cleanup check
+        mu4e-index-cleanup t      ;; do a full cleanup check
         mu4e-index-lazy-check t)    ;; don't consider up-to-date dirs
   (auth-source-pass-enable)
   (setq auth-source-debug t
