@@ -130,6 +130,10 @@ Channel gmail-draft
 Far ":gmail-remote:[Gmail]/Drafts"
 Near :gmail-local:draft
 
+Channel gmail-rer
+Far ":gmail-remote:[Gmail]/Rer"
+Near :gmail-local:rer
+
 Channel gmail-sent
 Far ":gmail-remote:[Gmail]/Sent Mail"
 Near :gmail-local:sent
@@ -150,13 +154,14 @@ Far :gmail-remote:
 Near :gmail-local:
 # Exclude everything under the internal [Gmail] folder, except the interesting folders
 #Patterns * ![Gmail]* "[Gmail]/Sent Mail" "[Gmail]/Starred" "[Gmail]/All Mail"
-Patterns * ![Gmail]* !Inbox !archive !draft !sent !spam !trash
+Patterns * ![Gmail]* !Inbox !archive !draft !sent !spam !trash !rer
 # Patterns "*" "!Drafts" "!Sent" "!Trash" "![Gmail]*" "!INBOX" "!Lists*" "!Cron*"
 
 Group gmail
 Channel gmail-trash
 Channel gmail-inbox
 Channel gmail-draft
+Channel gmail-rer
 Channel gmail-sent
 Channel gmail-spam
 Channel gmail-rest
