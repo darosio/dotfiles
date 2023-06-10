@@ -1257,8 +1257,6 @@ completing-read prompter."
            (name (mu4e-context-name ctx)))
       (when name
         (cond
-         ((string= name "cnr")
-          (save-excursion (message-add-header "Bcc: daniele.arosio@cnr.it\n")))
          ((string= name "pec")
           (save-excursion (message-remove-header "Bcc:*"))))))
     (set-fill-column 80)
@@ -1267,6 +1265,7 @@ completing-read prompter."
   :hook
   ;; (mu4e-view-mode-hook . variable-pitch-mode)
   (mu4e-compose-mode-hook . my-mu4e-compose-mode-hook)
+  ;; (mu4e-compose-pre-hook . my-mu4e-substitute-email-addresses)
   (mu4e-update-pre-hook . mu4e-update-index-nonlazy)
   :bind
   (("M-g M-a m" . mu4e)
@@ -1328,16 +1327,16 @@ completing-read prompter."
         smtpmail-queue-dir   "~/Maildir/queue/cur") ; Remember to "mu mkdir" and "touch /queue/.noindex"
   ;; (setq smtpmail-debug-info t)
   (setq mu4e-maildir-shortcuts
-        '(("/cnr/INBOX"         . ?i)
-          ("/gmail/Inbox"       . ?j)
-          ("/gmail/archive"     . ?g)
-          ("/cnr/Sent"          . ?s)
-          ("/cnr/Templates"     . ?t)
-          ("/archive"           . ?a)
-          ("/archives/personal" . ?p)
-          ("/cnr/refs"          . ?r)
-          ("/cnr/keepup"        . ?k)
-          ("/cnr/Drafts"        . ?d)))
+        '(("/gmail/[Gmail]/Spam"      . ?m)
+          ("/gmail/[Gmail]/Starred"   . ?S)
+          ("/gmail/Inbox"             . ?j)
+          ("/gmail/[Gmail]/Sent Mail" . ?s)
+          ("/gmail/templates"         . ?t)
+          ("/archive"                 . ?a)
+          ("/archives/personal"       . ?p)
+          ("/gmail/refs"              . ?r)
+          ("/gmail/keepup"            . ?k)
+          ("/gmail/[Gmail]/Drafts"    . ?d)))
 
   (setq mu4e-bookmarks
         '((:key ?u
@@ -1374,9 +1373,9 @@ completing-read prompter."
                                (string-prefix-p "/cnr" (mu4e-message-field msg :maildir))))
                :vars '( ( user-mail-address      . "daniele.arosio@cnr.it"  )
                         ( user-full-name         . "Daniele Arosio" )
-                        ( mu4e-sent-folder   . "/cnr/Sent" )
-                        ( mu4e-drafts-folder . "/cnr/Drafts" )
-                        ( mu4e-trash-folder  . "/cnr/Trash" )
+                        ( mu4e-sent-folder   . "/gmail/[Gmail]/Sent Mail" )
+                        ( mu4e-drafts-folder . "/gmail/[Gmail]/Drafts" )
+                        ( mu4e-trash-folder  . "/gmail/[Gmail]/Trash" )
                         ( mu4e-refile-folder . "/archive" )
                         ( mu4e-compose-signature . (concat
                                                     "Daniele Arosio\n"
@@ -1391,8 +1390,8 @@ completing-read prompter."
                              (when msg
                                (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
                :vars '( ( user-mail-address       . "danielepietroarosio@gmail.com" )
-                        (mu4e-drafts-folder . "/gmail/draft")
-                        (mu4e-trash-folder . "/gmail/trash")
+                        (mu4e-drafts-folder . "/gmail/[Gmaidraftsfts")
+                        (mu4e-trash-folder . "/gmail/[Gmail]/Trash")
                         ( mu4e-compose-signature  . "daniele arosio\n38123 Trento\n")))
              ,(make-mu4e-context
                :name "pec"
