@@ -27,34 +27,13 @@ MaildirStore pec-local
 # The trailing "/" is important
 Path ~/Maildir/pec/
 Inbox ~/Maildir/pec/INBOX
-Flatten .
+# Flatten .
 
 Channel pec
 Far :pec-remote:
 Near :pec-local:
-Patterns INBOX *
+Patterns INBOX * !"Sent"
 Sync Push New ReNew Delete Pull All
-
-# #
-# # Cnr
-# #
-# IMAPAccount cnr
-# Host smtp.cnr.it
-# User daniele.arosio
-# PassCmd "pass email/cnr"
-# # Use SSL
-# SSLType IMAPS
-# CertificateFile /etc/ssl/certs/ca-certificates.crt
-
-# IMAPStore cnr-remote
-# Account cnr
-
-# MaildirStore cnr-local
-# # The trailing "/" is important
-# Path ~/Maildir/cnr/
-# Inbox ~/Maildir/cnr/INBOX
-# Flatten .
-
 
 #
 # Gmail for dpa
@@ -71,10 +50,8 @@ Account gmail
 
 MaildirStore gmail-local
 SubFolders Verbatim
-# The trailing "/" is important
 Path ~/Maildir/gmail/
 Inbox ~/Maildir/gmail/Inbox
-#Flatten .
 
 Channel gmail
 Far :gmail-remote:
