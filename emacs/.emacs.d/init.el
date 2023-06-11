@@ -1378,9 +1378,6 @@ completing-read prompter."
                :name "cnr"
                ;; we match based on the maildir folder
                ;; http://cachestocaches.com/2017/3/complete-guide-email-emacs-using-mu-and-/
-               :match-func (lambda (msg)
-                             (when msg
-                               (string-prefix-p "/cnr" (mu4e-message-field msg :maildir))))
                :vars '( ( user-mail-address      . "daniele.arosio@cnr.it"  )
                         ( user-full-name         . "Daniele Arosio" )
                         ( mu4e-sent-folder   . "/gmail/[Gmail]/Sent Mail" )
@@ -1396,9 +1393,6 @@ completing-read prompter."
                                                     "tel +39 0461 314607\n"))))
              ,(make-mu4e-context
                :name "gmail"
-               :match-func (lambda (msg)
-                             (when msg
-                               (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
                :vars '( ( user-mail-address       . "danielepietroarosio@gmail.com" )
                         (mu4e-drafts-folder . "/gmail/[Gmail]/Drafts")
                         (mu4e-trash-folder . "/gmail/[Gmail]/Trash")
