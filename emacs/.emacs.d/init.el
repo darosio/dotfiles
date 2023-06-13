@@ -1359,7 +1359,7 @@ completing-read prompter."
                 :query "flag:unread AND NOT flag:trashed")
           (:key ?f
                 :name "CNRtmp"
-                :query "maildir:/Tmpcnr")
+                :query "maildir:/gmail/Tmpcnr")
           (:key ?t
                 :name "Today's messages"
                 :query "date:today..now")
@@ -1372,6 +1372,9 @@ completing-read prompter."
           (:key ?b
                 :name "Big messages"
                 :query "size:2M..500M")
+          (:key ?a
+                :name "Old Aruba Pec"
+                :query "tags:arubapec")
           (:key ?l
                 :name "Unread bulk messages"
                 :query "flag:unread NOT flag:trashed AND (flag:list OR from:trac@sagemath.org)")
@@ -1453,20 +1456,30 @@ completing-read prompter."
     :bind (:map
            mu4e-headers-mode-map
            ("M-z" . mu4e-headers-mark-for-tag)
+           ("M-u" . mu4e-headers-mark-for-untag)
            ("M-p" . mu4e-headers-mark-for-personal)
            :map
            mu4e-view-mode-map
            ("M-z" . mu4e-view-mark-for-tag)
+           ("M-u" . mu4e-headers-mark-for-untag)
            ("M-p" . mu4e-view-mark-for-personal))
     :config
     (add-to-list 'mu4e-marks
-                 ;; https://gist.github.com/lgatto/7091552
+                 ;; Add tag                 ;; https://gist.github.com/lgatto/7091552
                  '(tag
                    :char       "M-z"
                    :prompt     "gtag"
                    :ask-target (lambda () (read-string "What tag do you want to add?"))
                    :action      (lambda (docid msg target)
                                   (mu4e-action-retag-message msg (concat "+" target)))))
+    (add-to-list 'mu4e-marks
+                 ;; Remove tag
+                 '(untag
+                   :char       "M-u"
+                   :prompt     "rmtag"
+                   :ask-target (lambda () (read-string "What tag do you want to remove?"))
+                   :action      (lambda (docid msg target)
+                                  (mu4e-action-retag-message msg (concat "-" target)))))
     (add-to-list 'mu4e-marks
                  '(personal
                    :char       "M-p"
