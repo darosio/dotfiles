@@ -1343,7 +1343,7 @@ completing-read prompter."
           ("/gmail/[Gmail]/Sent Mail" . ?s)
           ("/gmail/templates"         . ?t)
           ("/archive"                 . ?a)
-          ("/archives/personal"       . ?p)
+          ("/personal"       . ?p)
           ("/gmail/refs"              . ?r)
           ("/gmail/keepup"            . ?k)
           ("/gmail/[Gmail]/Drafts"    . ?d)))
@@ -1489,7 +1489,7 @@ completing-read prompter."
                                   ;; must come before proc-move since retag runs
                                   ;; 'sed' on the file
                                   (mu4e-action-retag-message msg "-\\Inbox")
-                                  (mu4e--server-move docid "/archives/personal" "+S-u-N"))))
+                                  (mu4e--server-move docid "/personal" "+S-u-N"))))
     (mu4e~headers-defun-mark-for tag)
     (mu4e~headers-defun-mark-for personal)
     ;; FIXME

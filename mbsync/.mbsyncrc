@@ -56,7 +56,7 @@ Inbox ~/Maildir/gmail/Inbox
 Channel gmail
 Far :gmail-remote:
 Near :gmail-local:
-Patterns INBOX "[Gmail]/*" !"[Gmail]/All Mail" "refs" "keepup" "templates" "TmpCNR" "pubchase"
+Patterns INBOX "[Gmail]/*" !"[Gmail]/All Mail" "refs" "keepup" "templates" "TmpCNR" "pubchase" "fbk"
 
 Group gmail
 Channel gmail
