@@ -9,6 +9,47 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 Releases will start from 2022.1.
 
+## 3.6.0 (2023-06-14)
+
+### Feat
+
+- Add delta to gitconfig and (e)diff
+- **emacs**: Add gptchat-shell
+- **emacs**: Accommodate update of python from 3.10 to 3.11
+- **emacs**: Disable typo-mode but have it global with C-c 8
+- **emacs**: Review ox-latex
+
+### Fix
+
+- **emacs**: mu4e missing msg because not updating index
+- Update to default python 3.11
+- **emacs**: ESS by restoring process-connection-type t
+- **emacs**: flycheck and is-daemon for mu4e
+- mimeapps.list
+
+### Docs
+
+- Lint CHANGELOG.md with the correct exceptions for markdownlint
+
+### Style
+
+- **emacs**: untabify
+
+### Build
+
+- Upgrade pre-commit removing black for docs
+- **emacs**: Update vertico consult-notes org-noter and deps
+
+### Refactor
+
+- **emacs**: mu4e after CNR2office365
+
+### chore
+
+- **emacs**: consult ripgrep-args
+- **alias**: xmm for xmodmap
+- **emacs**: Bind org-lint to `M-g e o`
+
 ## 3.5.0 (2023-04-11)
 
 ### Feat

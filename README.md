@@ -1,6 +1,6 @@
 # Repository for $HOME/.dotfiles
 
-Version: "3.5.0"
+Version: "3.6.0"
 
 ## Requirements
 
