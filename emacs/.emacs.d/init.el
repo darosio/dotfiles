@@ -1251,14 +1251,20 @@ completing-read prompter."
   :straight (:type built-in)            ; in AUR/mu
   :commands (mu4e mu4e-compose-new)
   :preface
+  (defun replace-emails-in-buffer ()
+    "Replace 'name_at_domain_2zf3gq8j@duck.com' with 'name@domain'."
+    (interactive)
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward "\\(\\w+\\)_at_\\(\\w+\\)\\(\\.[a-zA-Z\\.]+\\)_\\w+@duck.com" nil t)
+        (replace-match "\\1@\\2\\3" nil nil))))
+
   (defun my-mu4e-compose-mode-hook ()
     "My settings for message composition."
     (let* ((ctx (mu4e-context-current))
            (name (mu4e-context-name ctx)))
       (when name
         (cond
-         ((string= name "cnr")
-          (save-excursion (message-add-header "Bcc: daniele.arosio@cnr.it\n")))
          ((string= name "pec")
           (save-excursion (message-remove-header "Bcc:*"))))))
     (set-fill-column 80)
@@ -1296,6 +1302,9 @@ completing-read prompter."
   ;; New feature as of mu=1.10.0
   ;; (setq mu4e-read-option-use-builtin nil
   ;;        mu4e-completing-read-function 'completing-read)
+  (defadvice mu4e~compose-handler (after replace-emails-in-buffer-after-reply activate)
+    "After replying to an email, replace the emails in the buffer."
+    (replace-emails-in-buffer))
   (set-variable 'read-mail-command 'mu4e) ;; use mu4e as Default
   (setq mail-user-agent 'mu4e-user-agent
         mu4e-maildir (expand-file-name "~/Maildir")
@@ -1328,24 +1337,29 @@ completing-read prompter."
         smtpmail-queue-dir   "~/Maildir/queue/cur") ; Remember to "mu mkdir" and "touch /queue/.noindex"
   ;; (setq smtpmail-debug-info t)
   (setq mu4e-maildir-shortcuts
-        '(("/cnr/INBOX"         . ?i)
-          ("/gmail/Inbox"       . ?j)
-          ("/gmail/archive"     . ?g)
-          ("/cnr/Sent"          . ?s)
-          ("/cnr/Templates"     . ?t)
-          ("/archive"           . ?a)
-          ("/archives/personal" . ?p)
-          ("/cnr/refs"          . ?r)
-          ("/cnr/keepup"        . ?k)
-          ("/cnr/Drafts"        . ?d)))
+        '(("/gmail/[Gmail]/Spam"      . ?m)
+          ("/gmail/[Gmail]/Starred"   . ?S)
+          ("/gmail/Inbox"             . ?j)
+          ("/gmail/[Gmail]/Sent Mail" . ?s)
+          ("/gmail/templates"         . ?t)
+          ("/archive"                 . ?a)
+          ("/personal"       . ?p)
+          ("/gmail/refs"              . ?r)
+          ("/gmail/keepup"            . ?k)
+          ("/gmail/[Gmail]/Drafts"    . ?d)))
+
+  (setq mu4e-compose-format-flowed t  ; Set format=flowed
+        mu4e-compose-context-policy 'ask-if-none)
+  (setq mu4e-compose-signature-auto-include nil ; draft
+        mu4e-compose-in-new-frame t) ; every new email composition gets its own frame
 
   (setq mu4e-bookmarks
-        '((:key ?u
+        `((:key ?u
                 :name "Unread messages"
-                :query "flag:unread AND NOT flag:trashed AND NOT maildir:/feeds")
+                :query "flag:unread AND NOT flag:trashed")
           (:key ?f
-                :name "Feeds"
-                :query "maildir:/feeds")
+                :name "CNRtmp"
+                :query "maildir:/gmail/Tmpcnr")
           (:key ?t
                 :name "Today's messages"
                 :query "date:today..now")
@@ -1357,74 +1371,51 @@ completing-read prompter."
                 :query "mime:image/*")
           (:key ?b
                 :name "Big messages"
-                :query "size:5M..500M")
+                :query "size:2M..500M")
+          (:key ?a
+                :name "Old Aruba Pec"
+                :query "tags:arubapec")
           (:key ?l
                 :name "Unread bulk messages"
-                :query "flag:unread NOT flag:trashed AND (flag:list OR from:trac@sagemath.org)")))
+                :query "flag:unread NOT flag:trashed AND (flag:list OR from:trac@sagemath.org)")
+          ))
 
   (use-package mu4e-context :straight mu4e
     :config
     (setq mu4e-contexts
           `( ,(make-mu4e-context
                :name "cnr"
-               ;; we match based on the maildir folder
-               ;; http://cachestocaches.com/2017/3/complete-guide-email-emacs-using-mu-and-/
-               :match-func (lambda (msg)
-                             (when msg
-                               (string-prefix-p "/cnr" (mu4e-message-field msg :maildir))))
-               :vars '( ( user-mail-address      . "daniele.arosio@cnr.it"  )
-                        ( user-full-name         . "Daniele Arosio" )
-                        ( mu4e-sent-folder   . "/cnr/Sent" )
-                        ( mu4e-drafts-folder . "/cnr/Drafts" )
-                        ( mu4e-trash-folder  . "/cnr/Trash" )
-                        ( mu4e-refile-folder . "/archive" )
-                        ( mu4e-compose-signature . (concat
-                                                    "Daniele Arosio\n"
-                                                    "Consiglio Nazionale delle Ricerche (CNR)\n"
-                                                    "Istituto di Biofisica\n"
-                                                    "Via Sommarive 18\n"
-                                                    "38123 Trento, Italy\n"
-                                                    "tel +39 0461 314607\n"))))
+               :vars '((user-mail-address . "daniele.arosio@cnr.it"  )
+                       (user-full-name . "Daniele Arosio" )
+                       (mu4e-sent-folder . "/gmail/[Gmail]/Sent Mail" )
+                       (mu4e-drafts-folder . "/gmail/[Gmail]/Drafts" )
+                       (mu4e-refile-folder . "/archive" )
+                       (mu4e-trash-folder . "/gmail/[Gmail]/Trash" )
+                       (mu4e-compose-signature
+                        . (concat "Daniele Arosio\nConsiglio Nazionale delle Ricerche (CNR)\nIstituto di Biofisica\n"
+                                  "Via Sommarive 18\n38123 Trento, Italy\ntel +39 0461 314607\n"))))
              ,(make-mu4e-context
                :name "gmail"
-               :match-func (lambda (msg)
-                             (when msg
-                               (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
-               :vars '( ( user-mail-address       . "danielepietroarosio@gmail.com" )
-                        (mu4e-drafts-folder . "/gmail/draft")
-                        (mu4e-trash-folder . "/gmail/trash")
-                        ( mu4e-compose-signature  . "daniele arosio\n38123 Trento\n")))
+               :vars '( (user-mail-address . "danielepietroarosio@gmail.com" )
+                        (mu4e-drafts-folder . "/gmail/[Gmail]/Drafts")
+                        (mu4e-refile-folder . "/archive" )
+                        (mu4e-trash-folder . "/gmail/[Gmail]/Trash")
+                        ;; (mu4e-sent-messages-behavior . delete) ; Not needed anymore IMO
+                        (mu4e-compose-signature  . "daniele arosio\n38123 Trento\n")))
              ,(make-mu4e-context
                :name "pec"
                :match-func (lambda (msg)
                              (when msg
                                (string-prefix-p "/pec" (mu4e-message-field msg :maildir))))
-               :vars '( (user-mail-address  . "daniele.arosio@postecert.it" )
-                        (user-full-name     . "Daniele Arosio" )
+               :vars '( (user-mail-address . "daniele.arosio@postecert.it" )
+                        (user-full-name . "Daniele Arosio" )
                         (mu4e-drafts-folder . "/pec/Drafts")
-                        (mu4e-trash-folder  . "/pec/trash")
-                        (mu4e-sent-folder   . "/pec/Sent Items")
+                        (mu4e-trash-folder . "/pec/trash")
+                        (mu4e-sent-folder . "/pec/Sent Items")
                         (mu4e-compose-signature . "daniele arosio\n38123 Trento\n")))
              ))
     )
 
-  ;; (
-  (use-package mu4e-compose :straight mu4e
-    :config
-    (setq ;; Save msg into sent folder only for pec
-     mu4e-sent-messages-behavior
-     (lambda ()
-       (if (string= (message-sendmail-envelope-from) "daniele.arosio@postecert.it")
-           'sent
-         'delete)))
-    (setq mu4e-compose-context-policy 'ask-if-none)
-    (setq mu4e-compose-format-flowed t)  ; Set format=flowed
-    )
-  (use-package mu4e-draft :straight mu4e
-    :config
-    (setq mu4e-compose-signature-auto-include nil)
-    (setq mu4e-compose-in-new-frame t) ; every new email composition gets its own frame
-    )
   (use-package mu4e-headers :straight mu4e
     :functions (mu4e-headers-mark-and-next
                 mu4e~headers-goto-docid)
@@ -1440,7 +1431,6 @@ completing-read prompter."
     (setq mu4e-headers-auto-update t)   ; default
     (setq mu4e-headers-visible-lines 10)
     )
-
   (use-package message
     :straight (:type built-in)
     :functions (message-sendmail-envelope-from
@@ -1454,34 +1444,42 @@ completing-read prompter."
           message-sendmail-f-is-evil nil
           message-citation-line-format "On %a %d %b %Y at %R, %f wrote:\n"
           message-citation-line-function 'message-insert-formatted-citation-line))
-
   (use-package sendmail
     :straight (:type built-in)
     :config
     (setq mail-specify-envelope-from t
           mail-envelope-from 'header
           mail-interactive t))
-
   (use-package mu4e-mark ; Tags and personal archive
     :straight mu4e
     :after mu4e
     :bind (:map
            mu4e-headers-mode-map
            ("M-z" . mu4e-headers-mark-for-tag)
+           ("M-u" . mu4e-headers-mark-for-untag)
            ("M-p" . mu4e-headers-mark-for-personal)
            :map
            mu4e-view-mode-map
            ("M-z" . mu4e-view-mark-for-tag)
+           ("M-u" . mu4e-headers-mark-for-untag)
            ("M-p" . mu4e-view-mark-for-personal))
     :config
     (add-to-list 'mu4e-marks
-                 ;; https://gist.github.com/lgatto/7091552
+                 ;; Add tag                 ;; https://gist.github.com/lgatto/7091552
                  '(tag
                    :char       "M-z"
                    :prompt     "gtag"
                    :ask-target (lambda () (read-string "What tag do you want to add?"))
                    :action      (lambda (docid msg target)
                                   (mu4e-action-retag-message msg (concat "+" target)))))
+    (add-to-list 'mu4e-marks
+                 ;; Remove tag
+                 '(untag
+                   :char       "M-u"
+                   :prompt     "rmtag"
+                   :ask-target (lambda () (read-string "What tag do you want to remove?"))
+                   :action      (lambda (docid msg target)
+                                  (mu4e-action-retag-message msg (concat "-" target)))))
     (add-to-list 'mu4e-marks
                  '(personal
                    :char       "M-p"
@@ -1491,14 +1489,13 @@ completing-read prompter."
                                   ;; must come before proc-move since retag runs
                                   ;; 'sed' on the file
                                   (mu4e-action-retag-message msg "-\\Inbox")
-                                  (mu4e--server-move docid "/archives/personal" "+S-u-N"))))
+                                  (mu4e--server-move docid "/personal" "+S-u-N"))))
     (mu4e~headers-defun-mark-for tag)
     (mu4e~headers-defun-mark-for personal)
     ;; FIXME
     ;; (mu4e~view-defun-mark-for tag)
     ;; (mu4e~view-defun-mark-for personal)
     )
-
   (use-package org-msg
     ;; :demand t
     :after (mu4e)
@@ -1523,12 +1520,10 @@ completing-read prompter."
 #+begin_signature
   --  daniele \\\\
 #+end_signature"))
-
   (use-package mu4e-org :straight mu4e
     :config
     (setq mu4e-org-link-query-in-headers-mode t ; `C-c l` store query
           org-mu4e-convert-to-html t))
-
   (use-package org-mime
     :bind (
            :map mu4e-compose-mode-map

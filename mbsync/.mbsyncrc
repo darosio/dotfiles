@@ -4,8 +4,8 @@ SyncState *
 # Automatically create missing mailboxes, both locally and on the server
 Create Both  # default None
 Remove Both
-#https://mail.google.com/mail/u/0/?tab=cm#settings/fwdandpop
-# IMAP server does not auto-expunge OFF
+# Set off auto-expunge deleted messages on gmail IMAP server configuration:
+# https://mail.google.com/mail/u/0/?tab=cm#settings/fwdandpop
 Expunge Both
 CopyArrivalDate yes
 
@@ -27,71 +27,13 @@ MaildirStore pec-local
 # The trailing "/" is important
 Path ~/Maildir/pec/
 Inbox ~/Maildir/pec/INBOX
-Flatten .
+# Flatten .
 
 Channel pec
 Far :pec-remote:
 Near :pec-local:
-Patterns INBOX *
+Patterns INBOX * !"Sent"
 Sync Push New ReNew Delete Pull All
-
-#
-# Cnr
-#
-IMAPAccount cnr
-Host smtp.cnr.it
-User daniele.arosio
-PassCmd "pass email/cnr"
-# Use SSL
-SSLType IMAPS
-CertificateFile /etc/ssl/certs/ca-certificates.crt
-
-IMAPStore cnr-remote
-Account cnr
-
-MaildirStore cnr-local
-# The trailing "/" is important
-Path ~/Maildir/cnr/
-Inbox ~/Maildir/cnr/INBOX
-Flatten .
-
-Channel cnr-io
-Far :cnr-remote:
-Near :cnr-local:
-Patterns INBOX * !INBOX/Drafts !INBOX/Sent !INBOX/Trash !Drafts !Sent !Trash  !INBOX/Templates !Templates !INBOX/keepup !keepup !INBOX/refs !refs
-
-Channel cnr-drafts
-Far ":cnr-remote:INBOX/Drafts"
-Near :cnr-local:Drafts
-
-Channel cnr-sent
-Far ":cnr-remote:INBOX/Sent"
-Near :cnr-local:Sent
-
-Channel cnr-trash
-Far ":cnr-remote:INBOX/Trash"
-Near :cnr-local:Trash
-
-Channel cnr-templates
-Far ":cnr-remote:INBOX/Templates"
-Near :cnr-local:Templates
-
-Channel cnr-keepup
-Far ":cnr-remote:INBOX/keepup"
-Near :cnr-local:keepup
-
-Channel cnr-refs
-Far ":cnr-remote:INBOX/refs"
-Near :cnr-local:refs
-
-Group cnr
-Channel cnr-io
-Channel cnr-drafts
-Channel cnr-sent
-Channel cnr-trash
-Channel cnr-templates
-Channel cnr-keepup
-Channel cnr-refs
 
 #
 # Gmail for dpa
@@ -99,7 +41,6 @@ Channel cnr-refs
 IMAPAccount gmail
 Host imap.gmail.com
 User danielepietroarosio@gmail.com
-#PassCmd "pass email/gmail"
 PassCmd "pass email/gmail-isync"
 SSLType IMAPS
 CertificateFile /etc/ssl/certs/ca-certificates.crt
@@ -109,68 +50,20 @@ Account gmail
 
 MaildirStore gmail-local
 SubFolders Verbatim
-# The trailing "/" is important
 Path ~/Maildir/gmail/
 Inbox ~/Maildir/gmail/Inbox
-#Flatten .
 
-Channel gmail-inbox
-Far :gmail-remote:INBOX
-Near :gmail-local:Inbox
-
-Channel gmail-archive
-Far ":gmail-remote:[Gmail]/All Mail"
-Near :gmail-local:archive
-Expunge Both
-#Sync Push Flags
-# se archivio (or "D") da Sent resta copia in All Mail che devo ricancellare
-# in local gmail/archive
-
-Channel gmail-draft
-Far ":gmail-remote:[Gmail]/Drafts"
-Near :gmail-local:draft
-
-Channel gmail-rer
-Far ":gmail-remote:[Gmail]/Rer"
-Near :gmail-local:rer
-
-Channel gmail-sent
-Far ":gmail-remote:[Gmail]/Sent Mail"
-Near :gmail-local:sent
-
-Channel gmail-spam
-Far :gmail-remote:[Gmail]/Spam
-Near :gmail-local:spam
-
-Channel gmail-trash
-Far :gmail-remote:[Gmail]/Trash
-Near :gmail-local:trash
-#Expunge None
-Expunge Both
-
-# Labels
-Channel gmail-rest
+Channel gmail
 Far :gmail-remote:
 Near :gmail-local:
-# Exclude everything under the internal [Gmail] folder, except the interesting folders
-#Patterns * ![Gmail]* "[Gmail]/Sent Mail" "[Gmail]/Starred" "[Gmail]/All Mail"
-Patterns * ![Gmail]* !Inbox !archive !draft !sent !spam !trash !rer
-# Patterns "*" "!Drafts" "!Sent" "!Trash" "![Gmail]*" "!INBOX" "!Lists*" "!Cron*"
+Patterns INBOX "[Gmail]/*" !"[Gmail]/All Mail" "refs" "keepup" "templates" "TmpCNR" "pubchase" "fbk"
 
 Group gmail
-Channel gmail-trash
-Channel gmail-inbox
-Channel gmail-draft
-Channel gmail-rer
-Channel gmail-sent
-Channel gmail-spam
-Channel gmail-rest
-Channel gmail-archive
+Channel gmail
 
 #############################################################################
 #		INBOXES
 #############################################################################
-Group INBOXES
-Channel cnr:INBOX
+Group inboxes
 Channel gmail-inbox
 Channel pec:INBOX
