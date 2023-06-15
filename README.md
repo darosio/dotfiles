@@ -92,6 +92,10 @@ e.g. when updating emacs packages
 
 what would normally called `build: Update dependencies`.
 
+Remember:
+
+    gh pr merge --squash --delete-branch -t “feat(emacs): …”
+
 ## Applications [optional] requirements
 
 ### Ranger
