@@ -394,11 +394,6 @@ HEIGHT, if supplied, specifies height of letters to use."
         (load-theme 'solarized-selenized-dark t)))
   )
 (progn ;; single packages
-  (use-package all-the-icons
-    :if (display-graphic-p)
-    :commands (all-the-icons-material
-               all-the-icons-faicon
-               all-the-icons-octicon))
 
   (use-package unfill
     :bind ("C-c M-q" . unfill-toggle))
@@ -2499,7 +2494,9 @@ completing-read prompter."
     (org-roam-db-autosync-mode)
     (use-package org-roam-protocol
       :straight org-roam
-      ;;# xdg-mime default org-protocol.desktop x-scheme-handler/org-protocol
+      ;; as possible alternative consider https://github.com/alphapapa/org-protocol-capture-html
+      ;; REMEMBER to execute:
+      ;; xdg-mime default org-protocol.desktop x-scheme-handler/org-protocol
       :config
       (setq org-roam-capture-ref-templates
             '(("r" "ref" plain "%?"
@@ -2670,10 +2667,6 @@ completing-read prompter."
     (markdown-mode-hook . citar-capf-setup)
     :config
     (setq citar-notes-source 'citar-file)
-    (setq citar-symbols
-          `((file ,(all-the-icons-faicon "file-o" :face 'all-the-icons-green :v-adjust -0.1) . " ") ;"file-pdf"
-            (note ,(all-the-icons-material "speaker_notes" :face 'all-the-icons-blue :v-adjust -0.3) . " ") ;"file-text"
-            (link ,(all-the-icons-octicon "link" :face 'all-the-icons-orange :v-adjust 0.01) . " "))) ;"link-external"
     (setq citar-symbol-separator "  ")
     )
   ;; https://github.com/bdarcus/citar/wiki/Notes-configuration

@@ -115,6 +115,17 @@ Package management useful commands:
     straight-check-all
     straight-freeze-versions
 
+### To check
+
+- mu4e
+  - send and get email using mbsync
+  - Reply to all with duck hack
+- org-roam-protocol
+- consult-notes
+- lsp
+  - go to definition
+  - hatch direnv …
+
 ### List of configured packages
 
 - Use-package, straight, async and which-key.
