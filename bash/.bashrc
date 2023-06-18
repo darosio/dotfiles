@@ -1,45 +1,57 @@
 # shellcheck shell=bash
 
-# If not running interactively, don't do anything
-[[ $- != *i* ]] && return
-
 # Source global definitions
 if [ -f /etc/bash.bashrc ]; then
-	. /etc/bash.bashrc
+  source /etc/bash.bashrc
 fi
 
 # Uncomment the following line if you don't like systemctl's auto-paging feature:
 # export SYSTEMD_PAGER=
 
-# User specific aliases and functions
-alias memory='sudo ps_mem -p $(pgrep -d, -u $USER)' # pipx install ps_mem
-memory_users () {
-	for i in $(ps -e -o user= | sort | uniq); do
-		printf '%-20s%10s\n' "$i" "$(sudo ps_mem --total -p "$(pgrep -d, -u "$i")")"
-	done
-}
+# Source additional files from .bashrc.d including user aliases and functions
+for file in ~/.bashrc.d/*.sh; do
+    if [ -r "$file" ] && [ -f "$file" ]; then
+         # shellcheck source=/dev/null
+        source "$file"
+    fi
+done
 
-##DD SSH_AUTH_SOCK=`ss -xl | grep -o '/run/user/1000/keyring-.*/ssh'`
-##DD [ -z "$SSH_AUTH_SOCK" ] || export SSH_AUTH_SOCK
-# To bind \C-s in ranger as forward search in readline is less useful
-stty stop undef
-alias ls='ls --color=auto'
-# shellcheck source=/dev/null
-source "$HOME/.functions"
-# shellcheck source=/dev/null
-source "$HOME/.aliases"
+# Host-specific configuration
+if [ -r ~/.bashrc."$HOSTNAME" ]; then
+  # shellcheck source=/dev/null
+  . ~/.bashrc."$HOSTNAME"
+fi
+
+# Set up color configurations for ls command
+eval "$(dircolors -b)"
+bind -x '"\C-l": ls -lh'
 # shellcheck source=/dev/null
 source "$HOME/.progs/bash_aliases"
 # shellcheck source=/dev/null
 [[ -r ~/.hatch-complete.bash ]] && source "$HOME/.hatch-complete.bash"
 
-# shellcheck source=/dev/null
-# host specific bash_profile
-[[ -r .bashrc.$HOSTNAME ]] && . ".bashrc.$HOSTNAME"
-
 [ -n "$RANGER_LEVEL" ] && PS1="$PS1"'(in ranger) '
 cd "$AUTOCD" || return
 [ -z "$PS1" ] && return
+
+export EDITOR='emacsclient -c -a=""'
+export TERMINAL=urxvt
+export HISTCONTROL=ignoredups
+#export WINEPREFIX=/home/dan/.bin/.win32
+export WINEARCH=win32
+export R_LIBS_USER=~/.Renviron/
+#export CDPATH='.:/Data/0dan'
+export IGNOREEOF=1
+#echo -e "$RED Attenzione \e[0m"
+export RED="\e[01;31m"
+export MAKEFLAGS='-j4'
+
+source /usr/share/bash-completion/completions/git
+source /usr/share/bash-completion/completions/hg
+
+shopt -s autocd					# Auto "cd" when entering just a path
+shopt -s checkwinsize			# Line wrap on window resize
+
 
 eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
@@ -99,11 +111,6 @@ if [ -f /usr/share/git/completion/git-prompt.sh ]; then
   # shellcheck source=/dev/null
   source /usr/share/git/completion/git-prompt.sh
 fi
-
-#powerline-daemon -q
-#POWERLINE_BASH_CONTINUATION=1
-#POWERLINE_BASH_SELECT=1
-#. /usr/lib/python3.5/site-packages/powerline/bindings/bash/powerline.sh
 
 # direnv
 eval "$(direnv hook bash)"
