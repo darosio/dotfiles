@@ -844,8 +844,8 @@ HEIGHT, if supplied, specifies height of letters to use."
      consult-bookmark consult-recent-file consult-xref
      consult--source-recent-file consult--source-project-recent-file consult--source-bookmark
      :preview-key "<right>")
-    ;; (setq consult-ripgrep-args
-    ;; "rg --hidden --null --line-buffered --color=never --max-columns=1000 --path-separator /  --smart-case --no-heading --line-number .")
+    (setq consult-ripgrep-args          ; --multiline-dotall
+          "rg --null --line-buffered --color=never --max-columns=1000 --path-separator / --smart-case --search-zip --no-heading --with-filename --line-number --hidden --glob=!.git/ --sortr=accessed")
     ;; Narrowing key. Both < and C-+ work reasonably well.
     (setq consult-narrow-key "C-+")
     )
@@ -2534,7 +2534,6 @@ completing-read prompter."
     :straight (:type git :host github :repo "mclear-tools/consult-notes")
     :commands (consult-notes
                consult-notes-search-in-all-notes
-               ;; if using org-roam
                consult-notes-org-roam-find-node
                consult-notes-org-roam-find-node-relation)
     :bind (("M-s n" . consult-notes-search-in-all-notes)
@@ -2550,9 +2549,6 @@ completing-read prompter."
           )
     (consult-notes-org-headings-mode)   ; org heading
     (consult-notes-org-roam-mode)       ; org roam
-    ;; (setq consult-notes-ripgrep-args
-    ;;       ;; --smart-case --search-zip
-    ;;       "rg --multiline --null --line-buffered --color=never --max-columns=1000 --path-separator / --ignore-case --no-heading --line-number --hidden --glob=!.git/ -g *.org -g *.md -g *.txt -g *.rst--sortr=accessed")
     ;; XXX: MAYBE: embark and citar support https://github.com/mclear-tools/consult-notes
     )
 
@@ -2787,6 +2783,7 @@ With a prefix ARG, remove start location."
     (with-eval-after-load 'pdf-annot
       (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note)))
 
+  (declare-function keymap-set "compat-29")
   (use-package engine-mode
     :commands (engine/set-keymap-prefix
                engine/get-query
