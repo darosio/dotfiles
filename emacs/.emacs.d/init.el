@@ -1338,7 +1338,7 @@ completing-read prompter."
           ("/gmail/[Gmail]/Sent Mail" . ?s)
           ("/gmail/templates"         . ?t)
           ("/archive"                 . ?a)
-          ("/personal"       . ?p)
+          ("/personal"                . ?p)
           ("/gmail/refs"              . ?r)
           ("/gmail/keepup"            . ?k)
           ("/gmail/[Gmail]/Drafts"    . ?d)))
@@ -1415,12 +1415,12 @@ completing-read prompter."
     :functions (mu4e-headers-mark-and-next
                 mu4e~headers-goto-docid)
     :config
-    (setq mu4e-headers-date-format "%y/%m/%d")
-    (setq mu4e-headers-fields   '((:human-date     .  12)
-                                  (:flags          .   6)
-                                  (:size           .   7)
+    (setq mu4e-headers-date-format "%d/%m/%y")
+    (setq mu4e-headers-fields   '((:human-date   .  12)
+                                  (:flags        .   6)
+                                  (:size         .   7)
                                   (:mailing-list . 10)
-                                  (:from           .  20)
+                                  (:from         .  20)
                                   (:thread-subject)
                                   ))
     (setq mu4e-headers-auto-update t)   ; default
@@ -1463,7 +1463,7 @@ completing-read prompter."
                  ;; Add tag                 ;; https://gist.github.com/lgatto/7091552
                  '(tag
                    :char       "M-z"
-                   :prompt     "gtag"
+                   :prompt     "tag"
                    :ask-target (lambda () (read-string "What tag do you want to add?"))
                    :action      (lambda (docid msg target)
                                   (mu4e-action-retag-message msg (concat "+" target)))))
@@ -1471,7 +1471,7 @@ completing-read prompter."
                  ;; Remove tag
                  '(untag
                    :char       "M-u"
-                   :prompt     "rmtag"
+                   :prompt     "untag"
                    :ask-target (lambda () (read-string "What tag do you want to remove?"))
                    :action      (lambda (docid msg target)
                                   (mu4e-action-retag-message msg (concat "-" target)))))
