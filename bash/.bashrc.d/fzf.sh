@@ -52,5 +52,8 @@ fkill() {
 
 # Search files using recoll
 sf() {
-    recoll -t -b -a "$@" | fzf -m
+    selected_file=$(recoll -t -b -a "$@" | fzf -m)
+    if [ -n "$selected_file" ]; then
+        xdg-open "$selected_file"
+    fi
 }
