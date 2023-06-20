@@ -771,7 +771,6 @@ HEIGHT, if supplied, specifies height of letters to use."
            ("C-c f F" . consult-locate)
            ("C-c f z" . (lambda () (interactive)(cd "~/")(consult-find)))
            ("C-c f r" . consult-recent-file)
-           ("C-c f e" . consult-file-externally)
            ("M-g T" . consult-theme)
            ("M-g M" . consult-minor-mode-menu)
            ("C-c m" . consult-mode-command)
@@ -788,7 +787,6 @@ HEIGHT, if supplied, specifies height of letters to use."
            ("H-M-'" . consult-register)
            ;; Other custom bindings
            ("M-y" . consult-yank-pop)                ;; orig. yank-pop
-           ("<help> a" . consult-apropos)            ;; orig. apropos-command
            ;; M-g bindings (goto-map)
            ("M-g E" . consult-compile-error)
            ("M-g M-g" . consult-goto-line)           ;; orig. goto-line
