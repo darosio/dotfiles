@@ -57,3 +57,14 @@ pdf_myReduce() {
 pdf_myReduce2() {
     gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.5 -dFILTERIMAGE -dNOPAUSE -dQUIET -dBATCH -dPDFSETTINGS=/screen -sOutputFile="$2" "$1"
 }
+
+tree_size() {
+    if [ -z "$1" ]; then
+        echo "Usage: tree-size <level>"
+        echo "       level: The maximum depth to display folder sizes."
+        return 1
+    fi
+
+    level="$1"
+    find . -maxdepth "$level" -type d -exec bash -c 'depth=$(echo "$1" | awk -F/ "{print NF-1}"); indent=$(printf "%$((depth*4))s" ""); size=$(du -sh "$1" 2>/dev/null | awk "{print \$1}"); name=$(basename "$1"); echo -e "${indent}├── [ ${size:-    }]  ${name}";' _ {} \; | sed 's/├/│/g; s/└/├/g; $!N;s/│   /│   /; s/├/└/; s/\[ \]/[    ]/'
+}
