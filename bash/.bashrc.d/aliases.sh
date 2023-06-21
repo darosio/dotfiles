@@ -48,7 +48,8 @@ alias tj='trans -j'
 alias tji='trans -j :it'
 
 # Miscellaneous
-alias tags="ag --nobreak --noheading --nofilename X-Key ~/Sync/Maildir/ | sed -e 's/X-Keywords: //; s/, /\n/g' | sort | uniq"
+alias mu_tags_localTB='rg --no-line-number "X-Keywords: \S+" ~/Sync/Maildir/Local\ Folders/'
+alias mu_tags='mu find "" --format=json | rg ":tags" | tr -d "\n" | rg -oP ":tags\":\[\K[^\]]*" | tr -d "\"" | tr "," "\n" | tr -s " " "\n" | sort | uniq'
 alias xev_arch="xev | grep -A2 --line-buffered '^KeyRelease' | sed -n '/keycode /s/^.*keycode \([0-9]*\).* (.*, \(.*\)).*$/\1 \2/p'"
 alias xmm='xmodmap ~/.Xmodmap'
 
