@@ -640,6 +640,7 @@ HEIGHT, if supplied, specifies height of letters to use."
       ("o" hl-todo-occur "occur")
       ("i" hl-todo-insert "insert")
       ("q" nil "cancel" :color blue))
+    (add-to-list 'hl-todo-keyword-faces '("MAYBE:" . "#80CCCC"))
     (add-to-list 'hl-todo-keyword-faces '("XXX:" . "#ff8c00"))
     (add-to-list 'hl-todo-keyword-faces '("TODO:" . "#dc143c"))
     (add-to-list 'hl-todo-keyword-faces '("FIXME:" . "#4e9393")))
@@ -2869,7 +2870,14 @@ With a prefix ARG, remove start location."
     (setq magit-display-buffer-function 'magit-display-buffer-fullframe-status-v1))
   (use-package magit-todos
     :after (magit)
-    :bind ("C-c g 2" . magit-todos-list))
+    :bind
+    ("C-c g 2" . magit-todos-list)
+    ("C-c g 3" . magit-todos-mode)
+    :init
+    (magit-todos-mode)
+    :config
+    (add-to-list 'magit-todos-keywords-list "MAYBE")
+    (add-to-list 'magit-todos-keywords-list "XXX"))
   (use-package magit-annex)
   (use-package git-modes)
   (use-package gitignore-templates)
