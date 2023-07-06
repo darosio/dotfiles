@@ -3014,8 +3014,7 @@ With a prefix ARG, remove start location."
     :bind   (("C-c t m p" . python-mode)
              (:map python-mode-map
                    ("<backtab>" . hs-toggle-hiding) ; orig. python-indent-dedent-line
-                   ("C-c C-P" . jupyter-run-repl)
-                   ("H-<tab>" . hydra-for-py/body)))
+                   ("C-c C-P" . jupyter-run-repl)))
     :config
     (setq-default python-fill-docstring-style 'pep-257-nn
                   python-indent 4)
@@ -3069,6 +3068,16 @@ With a prefix ARG, remove start location."
     (setq lsp-ui-sideline-enable nil)
     (setq lsp-ui-flycheck-list-position 'right)
     )
+
+  (use-package treemacs
+    :bind
+    ("H-<tab>" . treemacs-select-window))
+  (use-package lsp-treemacs
+    :commands (lsp-treemacs-sync-mode
+               lsp-treemacs-errors-list)
+    :bind ("H-e" . lsp-treemacs-errors-list)
+    :init (lsp-treemacs-sync-mode 1))
+
   (use-package envrc
     :commands envrc-global-mode
     :after python
