@@ -50,12 +50,16 @@ layout_hatch() {
         hatch new --init
     fi
 
+    PY_VER=$(pyenv local | head -1)
+    HATCH_PYTHON="${PYENV_ROOT}/versions/${PY_VER}/bin/python"
+    export HATCH_PYTHON
+    echo $HATCH_PYTHON
+
     VIRTUAL_ENV=$(hatch env find)
 
     if [[ -z $VIRTUAL_ENV || ! -d $VIRTUAL_ENV ]]; then
         log_status "No virtual environment folder yet. Executing \`hatch env create\` to create it."
-        hatch env create
-    #     VIRTUAL_ENV=$(poetry env info --path)
+        HATCH_PYTHON="${PYENV_ROOT}/versions/${PY_VER}/bin/python" hatch env create
     fi
 
     PATH_add "$VIRTUAL_ENV/bin"

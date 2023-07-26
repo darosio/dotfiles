@@ -36,6 +36,7 @@ alias git-ever-existed='git log --pretty=format: --name-status | cut -f2- | sort
 # Display Management
 alias xr2='xrandr --output HDMI1 --left-of HDMI3 --rotate left'
 alias xrr='xrandr --output eDP-1 --scale 1.24x1.24 --auto'
+alias xrr2='xrandr --output DP-1 --left-of eDP-1 --auto'
 alias vga_ont='xrandr --output VGA1 --auto --above LVDS1'
 alias vga='xrandr --output VGA1 --auto --same-as LVDS1'
 alias vga_onr='xrandr --output VGA1 --auto --right-of LVDS1'
