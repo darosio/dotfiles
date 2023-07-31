@@ -322,18 +322,22 @@ HEIGHT, if supplied, specifies height of letters to use."
     ;; python is excluded by aggressive indent because of not absolute indentation
     :hook (python-mode-hook . electric-indent-mode))
 
-  (use-package print-settings
+  (use-package lpr
     :straight (:type built-in)
     :custom
     (lpr-command "lpr")
-    (printer-name "HP_LaserJet_CM1415fn")
+    (printer-name "HP_LaserJet_CM1415fn"))
+  (use-package ps-print
+    :straight (:type built-in)
+    :custom
     (ps-print-header nil)
     (ps-print-footer nil)
     (ps-print-color-p t)
     (ps-print-header-frame nil)
     (ps-print-banner nil)
     (ps-print-scale 1.0)
-    (ps-print-duplex nil))
+    (ps-print-duplex nil)
+    )
   ;; (setq lpr-command "gtklp")
   ;; (setq ps-lpr-command "gtklp")
   ;;            ; printing; need: gv, ghostscript
