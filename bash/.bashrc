@@ -17,18 +17,18 @@ for file in ~/.bashrc.d/*.sh; do
 done
 
 # Host-specific configuration
-if [ -r ~/.bashrc."$HOSTNAME" ]; then
-  # shellcheck source=/dev/null
-  . ~/.bashrc."$HOSTNAME"
-fi
+# shellcheck source=/dev/null
+[[ -r ~/.bashrc."$HOSTNAME" ]] && source "$HOME/.bashrc.$HOSTNAME"
+
+# shellcheck source=/dev/null
+[[ -r ~/.progs/bash_aliases ]] && source "$HOME/.progs/bash_aliases"
+
+# shellcheck source=/dev/null
+[[ -r ~/.hatch-complete.bash ]] && source "$HOME/.hatch-complete.bash"
 
 # Set up color configurations for ls command
 eval "$(dircolors -b)"
 bind -x '"\C-l": ls -lh'
-# shellcheck source=/dev/null
-source "$HOME/.progs/bash_aliases"
-# shellcheck source=/dev/null
-[[ -r ~/.hatch-complete.bash ]] && source "$HOME/.hatch-complete.bash"
 
 [ -n "$RANGER_LEVEL" ] && PS1="$PS1"'(in ranger) '
 cd "$AUTOCD" || return

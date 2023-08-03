@@ -10,17 +10,12 @@
 # Please see http://i3wm.org/docs/userguide.html for a complete reference!
 
 set $mod Mod4
-#set $alt Mod1
-#set $sup Control
-
-#exec --no-startup-id xfce4-panel --disable-wm-check
-#exec --no-startup-id xfce4-power-manager
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
-font pango:FontAwesome, Source Code Pro, URW Gothic, Palladio URW, Fira Sans, Fira Mono, Alegreya SC, Monaco, DejaVu Sans Mono 10
+font pango:IBM Plex, Icons, FontAwesome, Source Code Pro, URW Gothic, Palladio URW, Fira Sans, Fira Mono, Alegreya SC, Monaco, DejaVu Sans Mono 12
 # Before i3 v4.8, we used to recommend this one as the default:
 # font -misc-fixed-medium-r-normal--13-120-75-75-C-70-iso10646-1
 # The font above is very space-efficient, that is, it looks good, sharp and
@@ -185,7 +180,7 @@ bar {
     workspace_buttons yes
     #tray_output       none
 
-    font pango:FontAwesome 11
+    font pango:IBM Plex, Icons 10.5
 
     colors {
         # solarized
@@ -266,22 +261,13 @@ bindsym $mod+F5 workspace 5; exec zotero
 
 # turn bell off
 exec xset -b
-#autostart
-#exec --no-startup-id dropbox
-# exec --no-startup-id CopyAgent
-#exec --no-startup-id git annex assistant --autostart
-##DDD##exec --no-startup-id artha
-##DDD##exec --no-startup-id goldendict
-exec --no-startup-id autokey-gtk
-##DDD##exec --no-startup-id kupfer
-#exec --no-startup-id zim
-#exec --no-startup-id nm-applet
 
-#exec xsetroot -solid '#101010'
-#exec xsetroot -solid "#e1dce0"
-exec xsetroot -solid "#002b36"
-#exec xsetroot -solid "#fdf6e3" # Light
-exec /home/dan/.progs/bin/sendmail.sh
+# Root color
+# # exec xsetroot -solid '#101010'
+# # exec xsetroot -solid "#e1dce0"
+# exec xsetroot -solid "#002b36"
+exec xsetroot -solid "#5C001E"
+# exec xsetroot -solid "#fdf6e3" # Light
 #
 
 # with the help of xorg-xprop
