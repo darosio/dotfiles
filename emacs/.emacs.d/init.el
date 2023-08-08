@@ -1595,11 +1595,14 @@ completing-read prompter."
                             "~/Sync/box/org/projects.org")))
     ;; "~/Sync/box/org/TODOs.org" ;; target for org-projectile REVIEW:
     ;; "~/Sync/box/org/shopping.org")
-    (setq-default da-refile-files
-                  (append (directory-files "~/Sync/proj/" t "\\.org$")
-                          (directory-files "~/Sync/notes/home/" t "\\.org$")
-                          (directory-files-recursively "~/Sync/notes/arch/" "\\.org$") ; org files in all sub folders
-                          (directory-files-recursively "~/Sync/notes/org-roam/" "\\.org$")))
+    (let ((proj-dir "~/Sync/proj/"))
+      (condition-case err
+          (set-default 'da-refile-files (append (directory-files proj-dir t "\\.org$")
+                                                (directory-files "~/Sync/notes/home/" t "\\.org$")
+                                                (directory-files-recursively "~/Sync/notes/arch/" "\\.org$")
+                                                (directory-files-recursively "~/Sync/notes/org-roam/" "\\.org$")))
+        (file-missing
+         (message "The directory %s does not exist or is not accessible." proj-dir))))
     :preface
     (defun da-consult-org ()
       (interactive)
@@ -3073,14 +3076,14 @@ With a prefix ARG, remove start location."
     (setq lsp-ui-flycheck-list-position 'right)
     )
 
-  (use-package treemacs
-    :bind
-    ("H-<tab>" . treemacs-select-window))
-  (use-package lsp-treemacs
-    :commands (lsp-treemacs-sync-mode
-               lsp-treemacs-errors-list)
-    :bind ("H-e" . lsp-treemacs-errors-list)
-    :init (lsp-treemacs-sync-mode 1))
+  ;; (use-package treemacs
+  ;;   :bind
+  ;;   ("H-<tab>" . treemacs-select-window))
+  ;; (use-package lsp-treemacs
+  ;;   :commands (lsp-treemacs-sync-mode
+  ;;              lsp-treemacs-errors-list)
+  ;;   :bind ("H-e" . lsp-treemacs-errors-list)
+  ;;   :init (lsp-treemacs-sync-mode 1))
 
   (use-package envrc
     :commands envrc-global-mode
