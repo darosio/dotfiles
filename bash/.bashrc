@@ -28,7 +28,7 @@ done
 
 # Set up color configurations for ls command
 eval "$(dircolors -b)"
-bind -x '"\C-l": ls -lh'
+[[ $- == *i* ]] && bind -x '"\C-l": ls -lh'
 
 [ -n "$RANGER_LEVEL" ] && PS1="$PS1"'(in ranger) '
 cd "$AUTOCD" || return
