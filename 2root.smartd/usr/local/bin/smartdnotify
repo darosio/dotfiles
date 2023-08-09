@@ -7,46 +7,13 @@ fi
 #echo "$SMARTD_MESSAGE" | mail -s "$SMARTD_FAILTYPE $HOSTNAME" "$SMARTD_ADDRESS"
 #Device:$SMARTD_DEVICE Device node:$SMARTD_DEVICESTRING
 #$HOSTNAME smartd has detected $SMARTD_FAILTYPE error on $SMARTD_DEVICE
-sudo -E -u sendmail -t << EOF
+sendmail -t << EOF
 To: danielepietroarosio@gmail.com
 Subject: SMART error ($SMARTD_FAILTYPE) detected on host: $(hostname)
 
 $SMARTD_MESSAGE
 
 Date occurred:	$SMARTD_TFIRST
-
-# Full message
-$SMARTD_FULLMESSAGE
-EOF
-
-# Notify user
-if [ -f /usr/bin/notify-send ]
-then
-  sudo -u dan DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus notify-send "S.M.A.R.T Error ($SMARTD_FAILTYPE)" "$SMARTD_MESSAGE" --icon=dialog-warning
-fi
-
-#!/bin/sh
-# Send email as the 'dan' user
-echo "$SMARTD_MESSAGE" | sudo -u dan msmtp -a default -t darosio@fbk.eu
-# Notify user
-wall "$SMARTD_MESSAGE"
-
-#! /usr/bin/env sh
-#
-if ! ping -c1 www.google.com > /dev/null 2>&1; then
-        sleep 30
-fi
-# Send mail
-#echo "$SMARTD_MESSAGE" | mail -s "$SMARTD_FAILTYPE $HOSTNAME" "$SMARTD_ADDRESS"
-#Device:$SMARTD_DEVICE Device node:$SMARTD_DEVICESTRING
-#$HOSTNAME smartd has detected $SMARTD_FAILTYPE error on $SMARTD_DEVICE
-sudo -E -u dan sendmail -t << EOF
-To: danielepietroarosio@gmail.com
-Subject: SMART error ($SMARTD_FAILTYPE) detected on host: $(hostname)
-
-$SMARTD_MESSAGE
-
-Date occurred:  $SMARTD_TFIRST
 
 # Full message
 $SMARTD_FULLMESSAGE
