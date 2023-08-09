@@ -1,5 +1,5 @@
 ! URxvt*termName:                       string
-! URxvt*geometry:                       geometry
+URxvt*geometry:                       100x60
 ! URxvt*chdir:                          string
 ! URxvt*reverseVideo:                   boolean
 ! URxvt*loginShell:                     boolean
@@ -33,26 +33,6 @@ URxvt*scrollBar:        false
 ! URxvt*cursorUnderline:                boolean
 ! URxvt*cursorBlink:                    boolean
 ! URxvt*pointerBlank:                   boolean
-! URxvt*background:                     color
-! URxvt*foreground:                     color
-! URxvt*color0:                         color
-! URxvt*color1:                         color
-! URxvt*color2:                         color
-! URxvt*color3:                         color
-! URxvt*color4:                         color
-! URxvt*color5:                         color
-! URxvt*color6:                         color
-! URxvt*color7:                         color
-! URxvt*color8:                         color
-! URxvt*color9:                         color
-! URxvt*color10:                        color
-! URxvt*color11:                        color
-! URxvt*color12:                        color
-! URxvt*color13:                        color
-! URxvt*color14:                        color
-! URxvt*color15:                        color
-! URxvt*colorBD:                        color
-! URxvt*colorIT:                        color
 URxvt*colorUL:      #4682B4
 ! URxvt*colorRV:                        color
 ! URxvt*underlineColor:                 color
@@ -66,17 +46,7 @@ URxvt*colorUL:      #4682B4
 ! URxvt*pointerColor2:                  color
 ! URxvt*borderColor:                    color
 ! URxvt*iconFile:                       file
-! URxvt*font:     xft:Monaco:size=11:antialias=true:hinting=true
-! URxvt*font:     xft:Monaco:size=11:hinting=false
-! Source Code Pro; Consolas; Inconsolata-g; Dejavu Sans Mono; Droid Sans Mono; Ubuntu
-! Mono  12
-!URxvt*font:     xft:Source Code Pro:size=12
-!URxvt*font:     xft:Fira Code:size=12
-!URxvt*font:     xft:Input Mono:size=12
-!URxvt*font:     xft:Iosevka:size=12
-!URxvt*font:     xft:Inconsolata-g:size=12
 URxvt*font:     xft:Hack:size=12
-! URxvt*boldFont: xft:Monaco:bold:size=11
 ! URxvt*italicFont:                     fontname
 ! URxvt*boldItalicFont:                 fontname
 URxvt*intensityStyles:  false
@@ -96,8 +66,7 @@ URxvt*intensityStyles:  false
 ! URxvt*externalBorder:                 number
 ! URxvt*internalBorder:                 number
 ! URxvt*borderLess:                     boolean
-! URxvt*lineSpace:                      number
-URxvt*letterSpace:      -1
+URxvt*letterSpace:      0
 ! URxvt*skipBuiltinGlyphs:              boolean
 ! URxvt*pointerBlankDelay:              number
 ! URxvt*backspacekey:                   string
@@ -154,8 +123,6 @@ Xft.lcdfilter:  lcddefault
 Xft.antialias:  true
 Xft.rgba:       rgb
 Xft.hinting:    true
-!Xft.hintstyle:  hintslight
-!Xft.hintstyle:  hintfull
 Xft.hintstyle:  hintslight
 xterm*faceName: Source Code Pro
 xterm*faceSize: 12
