@@ -1,0 +1,1 @@
+SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="08:bf:b8:3e:2f:d1", NAME="enp6s0"
