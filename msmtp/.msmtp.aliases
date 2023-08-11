@@ -1,10 +1,10 @@
 # Example aliases file
 
-# Send root to Joe and Jane
-root: daniele.arosio@cnr.it, daniele.arosio@cnr.it
+# Send root to duck and cnr
+root: darosio@duck.com, daniele.arosio@cnr.it
 
-# Send cron to Mark
-cron: daniele.arosio@cnr.it
+# Send cron to
+cron: darosio@duck.com
 
 # Send everything else to admin
-default: daniele.arosio@cnr.it
+default: darosio@duck.com

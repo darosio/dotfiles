@@ -6,8 +6,10 @@ if ! ping -c1 www.google.com > /dev/null 2>&1; then
 fi
 
 # Prepare email content
-EMAIL_BODY="To: danielepietroarosio@gmail.com
+EMAIL_BODY="To: darosio@duck.com
 Subject: SMART error ($SMARTD_FAILTYPE) detected on host: $HOSTNAME
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 
 $SMARTD_MESSAGE
 
@@ -18,7 +20,7 @@ $SMARTD_FULLMESSAGE
 "
 
 # Send mail
-if ! echo "$EMAIL_BODY" | sudo -u dan DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus -i sendmail -t; then
+if ! echo "$EMAIL_BODY" | sendmail -t; then
 	echo "Failed to send email"
 	exit 1
 fi

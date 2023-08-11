@@ -1438,6 +1438,7 @@ completing-read prompter."
     (setq message-kill-buffer-on-exit t ; don't keep message buffers around
           ;; message-send-mail-function 'smtpmail-send-it ; when using queue
           message-send-mail-function 'message-send-mail-with-sendmail
+          sendmail-program "/usr/bin/msmtp"
           message-sendmail-envelope-from 'header
           message-sendmail-f-is-evil nil
           message-citation-line-format "On %a %d %b %Y at %R, %f wrote:\n"

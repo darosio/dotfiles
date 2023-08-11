@@ -14,5 +14,12 @@ RECIPIENT="darosio@duck.com"
 SUBJECT="Service Failure Notification"
 MESSAGE="Service unit '$SERVICE_UNIT' has failed."
 
-# Send email using msmtp
-echo "$MESSAGE" | msmtp -a default -t "$RECIPIENT" -s "$SUBJECT"
+# Send email using sendmail
+(
+echo "From: systemd@$HOSTNAME"
+echo "To: $RECIPIENT"
+echo "Subject: $SUBJECT"
+echo "Content-Transfer-Encoding: 8bit"
+echo ""
+echo "$MESSAGE"
+) | sendmail -t
