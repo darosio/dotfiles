@@ -1244,6 +1244,9 @@ completing-read prompter."
     ;; API changed
     (setq google-translate-backend-method 'curl))
   )
+
+(use-package notmuch)
+
 (use-package mu4e                       ; mu4e
   :demand is-daemon
   :straight (:type built-in)            ; in AUR/mu
@@ -3238,7 +3241,6 @@ With a prefix ARG, remove start location."
         (lambda ()
           (nth 0 (process-lines "pass" "show" "home/openai-dpa"))))
   )
-
 (setq debug-on-error nil)
 (setq debug-on-quit nil)
 (let ((elapsed (float-time (time-subtract (current-time) emacs-start-time))))

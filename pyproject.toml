@@ -26,10 +26,36 @@ readme = "README.md"
 requires-python = ">=3.7"
 version = "3.6.0"
 
+[project.optional-dependencies]
+dev = [
+  "commitizen == 3.6.0",
+  "pre-commit == 3.3.3",
+  "ruff == 0.0.282",
+  "pylsp-mypy",
+  "python-lsp-ruff"
+]
+
 [project.urls]
 Documentation = "https://github.com/unknown/dotfiles#readme"
 Issues = "https://github.com/unknown/dotfiles/issues"
 Source = "https://github.com/unknown/dotfiles"
+
+[tool.black]
+exclude = '''
+/(
+    \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+)/
+'''
+line-length = 88
+skip-string-normalization = false
 
 [tool.commitizen]
 name = "cz_customize"
@@ -91,18 +117,24 @@ name = "show_message"
 type = "confirm"
 
 [tool.hatch.envs.default]
-dependencies = [
-  "commitizen",
-  "pre-commit",
-  "python-lsp-ruff"
-]
+features = ["dev"]
 
 [tool.hatch.envs.default.scripts]
-bump = "cz bump -ch {args}"  # e.g. "--increment PATCH", "--files-only", "--no-verify" to bypass pre-commit and commit-msg hooks
+bump = [
+  "cz bump --major-version-zero -ch {args}",  # e.g. "--increment PATCH"
+  "hatch build",
+  "hatch publish -r test"
+]
 ch = "cz ch --incremental --unreleased-version HEAD"
+clean = "rm -rf ./build .coverage ./__pycache__ ./.mypy_cache ./.pytest_cache ./docs/_build ./tests/__pycache__ ./dist ./src/nima/__pycache__"
 init = [
+  "pre-commit --version",
   "pre-commit install",
   "pre-commit install --hook-type commit-msg --hook-type pre-push"
+]
+lint = [
+  "pre-commit --version",
+  "pre-commit run --all-files --hook-stage=manual --show-diff-on-failure {args}"
 ]
 
 [tool.ruff]

@@ -19,7 +19,7 @@ def linearfit(days, val):  # noqa: ANN001
 
 
 # data input
-df = pd.read_table("~/Sync/4home/Dan/npeso.tsv")  # noqa: PD012, PD901
+df = pd.read_csv("~/Sync/4home/Dan/npeso.tsv", sep="\t")  # noqa: PD901
 df.data = pd.to_datetime(df.data, format="%d/%m/%Y")
 df["days"] = [d.days for d in df.data - df.data.loc[0] + timedelta(days=1)]
 
