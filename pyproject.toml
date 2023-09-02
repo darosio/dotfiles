@@ -28,7 +28,7 @@ version = "3.6.0"
 
 [project.optional-dependencies]
 dev = [
-  "commitizen == 3.6.0",
+  "commitizen == 3.7.0",
   "pre-commit == 3.3.3",
   "ruff == 0.0.286",
   "pylsp-mypy",
