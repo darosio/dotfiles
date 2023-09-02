@@ -66,11 +66,6 @@
 
   ;; (declare-function straight-use-package "straight")
   (require 'straight)
-  ;; Load use-package
-  (straight-use-package 'use-package)
-  (eval-when-compile (require 'use-package))
-
-  (declare-function use-package-autoload-keymap "use-package")
 
   ;; list-load-path-shadows built-in org
   (straight-use-package 'org)
@@ -87,15 +82,18 @@
   (defvar is-daemon nil)
   (if (daemonp)
       (progn
-        (setq use-package-always-demand nil
-              server-raise-frame t
+        (setq server-raise-frame t
               is-daemon t)
         (setenv "EDITOR" "emacsclient -c -a=''"))
-    (setq use-package-always-defer t))
+    )
 
   (use-package use-package
     :straight use-package
     :config
+    (if is-daemon
+        (setq use-package-always-demand nil)
+      (setq use-package-always-defer t))
+
     (setq use-package-compute-statistics t)
     (setq use-package-verbose t)
     (setq use-package-hook-name-suffix nil)
@@ -1669,9 +1667,10 @@ completing-read prompter."
      ("<C-S-left>" . nil)
      ("<C-S-right>" . nil)
      ("M-g ; ;" . org-capture-goto-last-stored) ; `C-x r b` for bookmarks
-     ("M-g ; :" . org-refile-goto-last-stored)
      ("C-c t o i" . org-indent-mode))
     :config
+    (use-package org-refile :straight org
+      :bind (:map org-mode-map ("M-g ; :" . org-refile-goto-last-stored)))
     (set-face-attribute 'org-table nil :inherit 'fixed-pitch);; :background "burlywood")
     (set-face-attribute 'org-block nil :inherit '(fixed-pitch shadow))
     (set-face-attribute 'org-block-begin-line nil :inherit 'fixed-pitch
