@@ -32,8 +32,17 @@ checkout = git clone 'https://github.com/rougier/dotemacs.git' 'dotemacs'
 [impy]
 checkout = git clone 'https://github.com/hanjinliu/impy.git' 'impy'
 
+[maildir2mbox]
+checkout = git clone 'https://github.com/bluebird75/maildir2mbox.git' 'maildir2mbox'
+
+[Managing_bck_python-for-biologists]
+checkout = git clone 'https://github.com/darosio/Managing_bck_python-for-biologists.git' 'Managing_bck_python-for-biologists'
+
 [Managing_Your_Biological_Data_with_Python_3]
 checkout = git clone 'https://github.com/raymonwu/Managing_Your_Biological_Data_with_Python_3.git' 'Managing_Your_Biological_Data_with_Python_3'
+
+[manuscriptInOrg]
+checkout = git clone 'https://github.com/MooersLab/manuscriptInOrg.git' 'manuscriptInOrg'
 
 [Markdown-for-Manuscripts]
 checkout = git clone 'https://github.com/djhocking/Markdown-for-Manuscripts' 'Markdown-for-Manuscripts'
@@ -52,6 +61,9 @@ checkout = git clone 'https://github.com/jakevdp/PythonicPerambulations.git' 'Py
 
 [sima]
 checkout = git clone 'https://github.com/losonczylab/sima' 'sima'
+
+[slides]
+checkout = git clone 'https://github.com/dorneanu/slides.git' 'slides'
 
 [SpekCheck]
 checkout = git clone 'https://github.com/MicronOxford/SpekCheck.git' 'SpekCheck'
