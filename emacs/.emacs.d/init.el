@@ -359,8 +359,6 @@ HEIGHT, if supplied, specifies height of letters to use."
   ;;   (pr-update-menus t)      ; update now printer and utility menus
 
   ;; Themes and fonts
-  (set-fontset-font "fontset-default" nil
-                    (font-spec :size 20 :name "Symbola"))
   (use-package faces
     :straight (:type built-in)
     :config
