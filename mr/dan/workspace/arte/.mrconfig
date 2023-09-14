@@ -41,3 +41,6 @@ checkout = git clone 'git@bitbucket.org:darosio/tk-wip2015.git' 'tk-wip2015'
 
 [emcp]
 checkout = git clone 'https://github.com/darosio/emcp.git' 'emcp'
+
+[ms-aiello]
+checkout = git clone 'https://github.com/darosio/ms-aiello.git' 'ms-aiello'

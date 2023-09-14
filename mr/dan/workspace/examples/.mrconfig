@@ -11,6 +11,9 @@ checkout = git clone 'https://github.com/HanLab-OSU/Beat.git' 'Beat'
 [Blog]
 checkout = git clone 'https://github.com/petrkeil/Blog' 'Blog'
 
+[CaImAn]
+checkout = git clone 'https://github.com/flatironinstitute/CaImAn.git' 'CaImAn'
+
 [CalciumSignalExtract]
 checkout = git clone 'https://github.com/ninehundred1/CalciumSignalExtract.git' 'CalciumSignalExtract'
 
@@ -96,3 +99,9 @@ checkout = hg clone 'https://hg.sr.ht/~jasonwryan/shiv' 'shiv'
 
 [1_dotfiles/xero]
 checkout = git clone 'https://github.com/xero/dotfiles' 'xero'
+
+[4bioformat/jpype]
+checkout = git clone 'https://github.com/jpype-project/jpype.git' 'jpype'
+
+[4bioformat/pims]
+checkout = git clone 'https://github.com/soft-matter/pims.git' 'pims'
