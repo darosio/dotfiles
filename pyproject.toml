@@ -121,9 +121,7 @@ features = ["dev"]
 
 [tool.hatch.envs.default.scripts]
 bump = [
-  "cz bump --major-version-zero -ch {args}",  # e.g. "--increment PATCH"
-  "hatch build",
-  "hatch publish -r test"
+  "cz bump -ch {args}"  # e.g. "--increment PATCH"
 ]
 ch = "cz ch --incremental --unreleased-version HEAD"
 clean = "rm -rf ./build .coverage ./__pycache__ ./.mypy_cache ./.pytest_cache ./docs/_build ./tests/__pycache__ ./dist ./src/nima/__pycache__"
