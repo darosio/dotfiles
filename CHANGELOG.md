@@ -9,6 +9,86 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 Releases will start from 2022.1.
 
+## 3.7.0 (2023-09-18)
+
+### Feat
+
+- **emacs**: Update straight all packages
+- Add `ee` `ea` `rmlintt` aliases
+- **ranger**: Enable pdf preview as image
+- **rclone**: Add Onedrive of CNR
+- **emacs**: Update to 29.1 pin org to 9.5.5 to fix org-roam issue
+- Add md2mb mu_tags2notmuch and notmuch in emacs
+- Drop courier-maildrop reformime in favor of mu or python scripts
+- separate system and user sendmail with OpenSMTPD and msmtp
+- Fix recoll.stow
+- gvim.stow
+- smartd without root .msmtprc
+- New emacs and ranger stow.sh
+- **systemd**: failure notification
+- add python-version=system
+- **emacs**: Update emacs from 28.2 to 29.1
+- **git**: pull.rebase false
+- **emacs**: Add lsp-treemacs
+- **emacs**: Bind magit-todos to `C-c g 2` `C-c 2 3`
+- Add mu_tags_all_rg because faster than mu_tags with SSD
+- Add tree_size function
+- **emacs**: Update consul-notes and config consult-ripgrep
+- **ranger**: A-f fzf_select Refactor bashrc functions and aliases
+- **emacs**: update packages
+
+### Fix
+
+- gh and direnv
+- 2root.smartd.sh
+- gvim.stow
+- emacs.stow
+- urxvt
+- smartdnotify
+- direnvrc for hatch
+- box.com in rclone
+- **emacs**: mu4e tag untag
+
+### Perf
+
+- further improvements
+- update initial installation
+- **mu_tags**: Use mu find "" to speedup tags lists
+
+### Build
+
+- Fix `hatch run bump`
+- **deps-dev**: bump ruff from 0.0.288 to 0.0.289 (#11)
+- **deps-dev**: bump ruff from 0.0.287 to 0.0.288 (#10)
+- **deps-dev**: bump commitizen from 3.8.0 to 3.8.2 (#9)
+- **deps-dev**: bump commitizen from 3.7.0 to 3.8.0 (#8)
+- **deps-dev**: bump ruff from 0.0.286 to 0.0.287 (#7)
+- **deps-dev**: bump pre-commit from 3.3.3 to 3.4.0 (#6)
+- **deps-dev**: bump commitizen from 3.6.0 to 3.7.0 (#5)
+- **deps-dev**: bump ruff from 0.0.285 to 0.0.286 (#4)
+- **deps-dev**: bump ruff from 0.0.284 to 0.0.285 (#3)
+- **deps-dev**: bump ruff from 0.0.282 to 0.0.284 (#2)
+- **emacs**: Update some packages and ps-print
+
+### Refactor
+
+- **emacs**: aur/ttf-symbola is not needed
+- mr.stow
+- sshd
+- smartd
+- cleanup
+
+### chore
+
+- **mr**: Add caiman example
+- More `examples`
+- init scripts bash misc
+- remove old systemd-email
+- **emacs**: removed few commands after consult dropped them
+- Open file after sf recoll search
+- **ranger**: change some rifle default
+- **emacs**: Drop all-the-icons for nerd-icons in doom-modeline
+
 ## 3.6.0 (2023-06-14)
 
 ### Feat
