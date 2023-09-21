@@ -118,7 +118,6 @@
  ("orderless" . "6936fe46ef07df168a423f04efeda130b4e69753")
  ("org" . "72bbf89282612ff06860420037bd4c77777fe037")
  ("org-autolist" . "0f5dc4e00cb050b94289504925b36c7650552a1a")
- ("org-bullets" . "767f55feb58b840a5a04eabfc3fbbf0d257c4792")
  ("org-cliplink" . "13e0940b65d22bec34e2de4bc8cba1412a7abfbc")
  ("org-download" . "19e166f0a8c539b4144cfbc614309d47a9b2a9b7")
  ("org-gcal.el" . "a2d16b372e5a5972d8cc343cf999ee5f0ba1eea7")

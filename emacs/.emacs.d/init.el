@@ -1667,6 +1667,7 @@ completing-read prompter."
      ("M-g ; ;" . org-capture-goto-last-stored) ; `C-x r b` for bookmarks
      ("C-c t o i" . org-indent-mode))
     :config
+    (setq org-adapt-indentation nil)
     (use-package org-refile :straight org
       :bind (:map org-mode-map ("M-g ; :" . org-refile-goto-last-stored)))
     (set-face-attribute 'org-table nil :inherit 'fixed-pitch);; :background "burlywood")
@@ -2358,22 +2359,6 @@ completing-read prompter."
   (use-package org-autolist
     :after (org)
     :hook (org-mode-hook . org-autolist-mode)
-    )
-  (use-package org-bullets
-    :after (org)
-    :commands org-cycle-list-bullet
-    :custom
-    (org-bullets-bullet-list '("◉" "○" "▶" "☯" "✿" "☯" "✜" "☯" "◆" "☯" "✸"))
-    (org-ellipsis "⤵")
-    :preface
-    (defhydra hydra-bullets (:color pink :hint nil :exit nil)
-      "A hydra for org-bullets."
-      ("b" org-cycle-list-bullet "cycle list bullets")
-      ("B" org-bullets-mode "toggle" :color blue)
-      ("q" nil "cancel" :color blue))
-    :bind (:map org-mode-map
-                ("C-c t b" . hydra-bullets/body))
-    :hook (org-mode-hook . org-bullets-mode)
     )
   (use-package org-download
     :after (org)
