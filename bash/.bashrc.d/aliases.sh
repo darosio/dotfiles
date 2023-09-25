@@ -18,7 +18,7 @@ alias la='ls -Fah'
 alias lla='ls -Flah'
 alias bigcp='rsync -Phrltz --info=progress2'
 # alias rm='trash-put'
-alias rmlintt='rmlint --keep-all-tagged --must-match-tagged -f -T "defaults -bl"'
+alias rmlintt='rmlint --keep-all-tagged --must-match-tagged -r -f -T "defaults -bl"'
 
 # System Commands
 alias du.='du -ksh .[!.]* * | sort -h'
