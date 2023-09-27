@@ -3227,6 +3227,17 @@ With a prefix ARG, remove start location."
 (setq debug-on-quit nil)
 (let ((elapsed (float-time (time-subtract (current-time) emacs-start-time))))
   (message "Loading settings...done (%.3fs)" elapsed))
+(use-package mastodon
+  :config
+  (setq mastodon-instance-url "https://mastodon.social"
+        mastodon-active-user "darosio"))
+(use-package twittering-mode
+  :config
+  (setq twittering-allow-insecure-server-cert t)
+  (setq twittering-use-icon-storage t)
+  (setq twittering-reverse-mode t)
+  (setq twittering-icon-mode t)
+  )
 
 (provide 'init)
 ;;; init.el ends here
