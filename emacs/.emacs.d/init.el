@@ -3213,16 +3213,13 @@ With a prefix ARG, remove start location."
 (use-package ox-hugo
   :after ox
   :init (eval-after-load 'ox '(require 'ox-hugo)))
-(use-package shell-maker
-  :straight (:host github :repo "xenodium/chatgpt-shell" :files ("shell-maker.el")))
+
 (use-package chatgpt-shell
-  :requires shell-maker
-  :straight (:host github :repo "xenodium/chatgpt-shell" :files ("chatgpt-shell.el"))
-  :config
-  (setq chatgpt-shell-openai-key
-        (lambda ()
-          (nth 0 (process-lines "pass" "show" "home/openai-dpa"))))
+  :config (setq chatgpt-shell-openai-key
+                (lambda ()
+                  (nth 0 (process-lines "pass" "show" "home/openai-dpa"))))
   )
+
 (setq debug-on-error nil)
 (setq debug-on-quit nil)
 (let ((elapsed (float-time (time-subtract (current-time) emacs-start-time))))
@@ -3238,6 +3235,11 @@ With a prefix ARG, remove start location."
   (setq twittering-reverse-mode t)
   (setq twittering-icon-mode t)
   )
+(use-package aide
+  :straight (aide :type git
+                  :host github
+                  :repo "junjizhi/aide.el")
+  :config (setq aide-openai-api-key-getter (lambda () "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")))
 
 (provide 'init)
 ;;; init.el ends here
