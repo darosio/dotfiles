@@ -9,6 +9,37 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 Releases will start from 2022.1.
 
+## 3.8.0 (2023-10-12)
+
+### Feat
+
+- **emacs**: Update straight all packages
+- **emacs**: mastodon and twitter
+- rmlintt searches include (-r) hidden files
+
+### Fix
+
+- Add chatgpt-shell
+
+### Build
+
+- **deps-dev**: bump ruff from 0.0.291 to 0.0.292 (#17)
+- **deps-dev**: bump ruff from 0.0.290 to 0.0.291 (#16)
+- **deps-dev**: bump commitizen from 3.9.1 to 3.10.0 (#15)
+- **deps-dev**: bump commitizen from 3.9.0 to 3.9.1 (#14)
+- **deps-dev**: bump commitizen from 3.8.2 to 3.9.0 (#13)
+- **deps-dev**: bump ruff from 0.0.289 to 0.0.290 (#12)
+- Fix `hatch run bump`
+
+### Refactor
+
+- Add script also for RAID essential into root
+- **emacs**: Remove org-bullets; don’t indent after heading
+
+### chore
+
+- **vale**: Add joblint and alex to install (`vale sync`)
+
 ## 3.7.0 (2023-09-18)
 
 ### Feat
