@@ -105,6 +105,7 @@
   (use-package bookmark
     :straight (:type built-in)
     :custom
+    (bookmark-default-file "~/.emacs.d/bookmarks")
     (bookmark-save-flag 2))
   (use-package browse-url
     :straight (:type built-in)
@@ -3224,22 +3225,6 @@ With a prefix ARG, remove start location."
 (setq debug-on-quit nil)
 (let ((elapsed (float-time (time-subtract (current-time) emacs-start-time))))
   (message "Loading settings...done (%.3fs)" elapsed))
-(use-package mastodon
-  :config
-  (setq mastodon-instance-url "https://mastodon.social"
-        mastodon-active-user "darosio"))
-(use-package twittering-mode
-  :config
-  (setq twittering-allow-insecure-server-cert t)
-  (setq twittering-use-icon-storage t)
-  (setq twittering-reverse-mode t)
-  (setq twittering-icon-mode t)
-  )
-(use-package aide
-  :straight (aide :type git
-                  :host github
-                  :repo "junjizhi/aide.el")
-  :config (setq aide-openai-api-key-getter (lambda () "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")))
 
 (provide 'init)
 ;;; init.el ends here
