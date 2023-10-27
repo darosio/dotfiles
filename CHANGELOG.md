@@ -9,6 +9,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 Releases will start from 2022.1.
 
+## 3.9.0 (2023-10-27)
+
+### Feat
+
+- **emacs**: Update packages
+
+### Build
+
+- **deps-dev**: bump commitizen from 3.10.0 to 3.10.1 (#19)
+- **deps-dev**: bump pre-commit from 3.4.0 to 3.5.0 (#18)
+
 ## 3.8.0 (2023-10-12)
 
 ### Feat
