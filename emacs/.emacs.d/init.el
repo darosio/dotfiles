@@ -3216,9 +3216,21 @@ With a prefix ARG, remove start location."
   :init (eval-after-load 'ox '(require 'ox-hugo)))
 
 (use-package chatgpt-shell
+  :straight (:host github :repo "xenodium/chatgpt-shell"
+                   :files ("chatgpt-shell.el"
+                           "dall-e-shell.el"
+                           "ob-chatgpt-shell.el"
+                           "ob-dall-e-shell.el"
+                           "shell-maker.el"))
+  :hook
+  (org-mode-hook . (lambda () (require 'ob-chatgpt-shell)))
+  (org-mode-hook . (lambda () (require 'ob-dall-e-shell)))
   :config (setq chatgpt-shell-openai-key
                 (lambda ()
                   (nth 0 (process-lines "pass" "show" "home/openai-dpa"))))
+  (setq dall-e-shell-openai-key
+        (lambda ()
+          (nth 0 (process-lines "pass" "show" "home/openai-dpa"))))
   )
 
 (setq debug-on-error nil)
