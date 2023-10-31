@@ -54,7 +54,7 @@
   ;; Bootstrap straight.el
   (defvar bootstrap-version)
   (let ((bootstrap-file (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-        (bootstrap-version 5))
+        (bootstrap-version 6))
     (unless (file-exists-p bootstrap-file)
       (with-current-buffer
           (url-retrieve-synchronously
@@ -64,17 +64,15 @@
         (eval-print-last-sexp)))
     (load bootstrap-file nil 'nomessage))
 
-  ;; (declare-function straight-use-package "straight")
   (require 'straight)
-
   ;; list-load-path-shadows built-in org
   (straight-use-package 'org)
-
   ;; Install packages using straight.el by default
-  (setq-local straight-use-package-by-default t)
+  ;; (setq-local straight-use-package-by-default t)
+  (setq straight-use-package-by-default t)
 
   ;; Enable autoload caching and check for modifications
-  (setq straight-cache-autoloads t)
+  (setq straight-cache-autoloads t)     ;remember to prune then
   (setq straight-check-for-modifications '(watch-files find-when-checking))
 
   ;; Configure use-package
@@ -86,9 +84,8 @@
               is-daemon t)
         (setenv "EDITOR" "emacsclient -c -a=''"))
     )
-
+  (straight-use-package 'use-package)
   (use-package use-package
-    :straight use-package
     :config
     (if is-daemon
         (setq use-package-always-demand nil)
@@ -98,6 +95,8 @@
     (setq use-package-verbose t)
     (setq use-package-hook-name-suffix nil)
     (setq use-package-enable-imenu-support t))
+  (use-package magit)                    ;XXX Fix https://github.com/magit/magit/discussions/4997
+  ;;   :demand t)
   (use-package use-package-ensure-system-package)
   (use-package async)
   )
@@ -389,7 +388,6 @@ HEIGHT, if supplied, specifies height of letters to use."
         (load-theme 'spacemacs-light t)))
   (use-package poet-theme)
   (use-package solarized-theme
-    :ensure t
     :init
     (if (daemonp)
         (load-theme 'solarized-selenized-dark t)))
@@ -1025,7 +1023,6 @@ completing-read prompter."
     )
 
   (use-package flyspell
-    :ensure nil
     :after ispell
     :hook ((text-mode-hook . flyspell-mode)
            (org-mode-hook . flyspell-mode)
