@@ -9,6 +9,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 Releases will start from 2022.1.
 
+## 3.10.0 (2023-10-31)
+
+### Feat
+
+- **emacs**: Update packages and fix a magit/straight issue
+
+### Fix
+
+- **emacs**: chatgpt and dall-e org-mode babel
+- msmtp and sendmail
+
+### Build
+
+- **deps-dev**: bump ruff from 0.1.2 to 0.1.3 (#24)
+
 ## 3.9.0 (2023-10-27)
 
 ### Feat

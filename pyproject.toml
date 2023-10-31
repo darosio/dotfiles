@@ -24,7 +24,7 @@ license = "BSD-3-Clause"
 name = "dotfiles"
 readme = "README.md"
 requires-python = ">=3.7"
-version = "3.9.0"
+version = "3.10.0"
 
 [project.optional-dependencies]
 dev = [
@@ -60,7 +60,7 @@ skip-string-normalization = false
 [tool.commitizen]
 name = "cz_customize"
 tag_format = "$version"
-version = "3.9.0"
+version = "3.10.0"
 version_files = [
   "pyproject.toml:version",
   "README.md:Version",
