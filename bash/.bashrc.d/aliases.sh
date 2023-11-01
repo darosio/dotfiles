@@ -86,6 +86,7 @@ alias qfn='firefox -qfn'
 # System Utilities
 alias hide='export HISTSIZE=0'
 alias windowsXP='VBoxManage startvm "winXPvb"'
+alias lsfonts="fc-list | cut -d: -f2|  sed 's/.*,//' | sed 's/^ //' | sort -u | less"
 
 # SSH and Remote Access
 alias omero='sshpass -p CEaMW2oSQY2 ssh darosio%omero@gate.fbk.eu'
