@@ -85,6 +85,10 @@
         (setenv "EDITOR" "emacsclient -c -a=''"))
     )
   (straight-use-package 'use-package)
+  ;; Configure use-package to use straight.el by default
+  (use-package straight
+    :custom
+    (straight-use-package-by-default t))
   (use-package use-package
     :config
     (if is-daemon
