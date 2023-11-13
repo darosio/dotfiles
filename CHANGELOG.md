@@ -9,6 +9,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 Releases will start from 2022.1.
 
+## 3.11.0 (2023-11-13)
+
+### Feat
+
+- **emacs**: Update packages
+- **emacs**: Update packages
+- Add lsfonts
+
+### Build
+
+- **deps-dev**: bump ruff from 0.1.4 to 0.1.5 (#26)
+- **deps-dev**: bump ruff from 0.1.3 to 0.1.4 (#25)
+
+### chore
+
+- **emacs**: Always use straight.el not package.el with use-package
+
 ## 3.10.0 (2023-10-31)
 
 ### Feat
