@@ -543,7 +543,7 @@ HEIGHT, if supplied, specifies height of letters to use."
   (use-package expand-region
     :bind ("C-=" . er/expand-region))
 
-  (use-package hideshow ;; XXX: for folding
+  (use-package hideshow ;; for folding
     :bind (("C-c t f" . hs-minor-mode)
            (:map
             prog-mode-map
@@ -1670,8 +1670,6 @@ completing-read prompter."
      ("C-c t o i" . org-indent-mode))
     :config
     (setq org-adapt-indentation nil)
-    (use-package org-refile :straight org
-      :bind (:map org-mode-map ("M-g ; :" . org-refile-goto-last-stored)))
     (set-face-attribute 'org-table nil :inherit 'fixed-pitch);; :background "burlywood")
     (set-face-attribute 'org-block nil :inherit '(fixed-pitch shadow))
     (set-face-attribute 'org-block-begin-line nil :inherit 'fixed-pitch
@@ -1892,15 +1890,18 @@ completing-read prompter."
       (setq org-archive-file-header-format "#+FILETAGS: ARCHIVE\nArchived entries from file %s\n"))
     ;; (3) Refile
     (use-package org-refile :straight org
+      :bind
+      (:map org-mode-map ("M-g ; :" . org-refile-goto-last-stored))
       :config
       (setq org-refile-use-outline-path 'file) ; Full path preceded by filename
       (setq org-outline-path-complete-in-steps nil) ; Complete directly with consult
       (setq org-refile-allow-creating-parent-nodes 'confirm) ; Ask confirmation when creating parent tasks
       (setq org-refile-targets
             '(
-              ;; ("~/Sync/box/org/shopping.org" :maxlevel . 5)
+              ("~/Sync/box/org/shopping.org" :maxlevel . 3)
               (da-refile-files :maxlevel . 5)
               (da-agenda-files :maxlevel . 5)))
+      (advice-add 'org-refile :after 'org-save-all-org-buffers)
       )
     ;; (setq                               ; (4) Stuck project
     ;;  org-stuck-projects '("+proj/-DONE-HOLD-MAYB-PASS-WAIT" ("NEXT") nil ""))
@@ -1957,101 +1958,133 @@ completing-read prompter."
               ("PERSONAL" :foreground "orange")
               ("proj" :weight bold)
               ("@fbk" :weight italic))))
-    ;; Captures
+    ;; Org Captures
     (setq org-default-notes-file "~/Sync/box/org/inbox.org")
     (use-package org-capture :straight org
       :preface
-      (defun nemacs-org-capture-review-daily ()
+      (defun my-daily-review ()
+        "Capture and review for daily tasks."
         (interactive)
-        (progn
-          (org-capture nil "rd")
-          (org-capture-finalize t)
-          (org-speed-move-safe 'outline-up-heading)
-          (org-narrow-to-subtree)
-          (fetch-calendar)
-          (org-clock-in)))
-      (defun my-new-weekly-review ()
+        (org-capture nil "rd")
+        (common-review-actions))
+
+      (defun my-weekly-review ()
+        "Capture and review for weekly tasks."
         (interactive)
-        (progn
-          (org-capture nil "rw")
-          (org-capture-finalize t)
-          (org-speed-move-safe 'outline-up-heading)
-          (org-narrow-to-subtree)
-          (fetch-calendar)
-          (org-clock-in)))
-      ;; (defun nemacs-org-capture-add-basic-properties ()
-      ;;   (interactive)
-      ;;   (org-id-get-create))
-      ;; :hook (org-capture-before-finalize . nemacs-org-capture-add-basic-properties)
+        (org-capture nil "rw")
+        (common-review-actions))
+
+      (defun common-review-actions ()
+        "Common actions for daily and weekly reviews."
+        (org-capture-finalize t)
+        (org-speed-move-safe 'outline-up-heading)
+        (org-narrow-to-subtree)
+        (fetch-calendar)
+        (org-clock-in))
+
+      (defun my/org-capture-and-gcal-sync (template-key)
+        "Capture and sync with org-gcal."
+        (interactive "sTemplate key: ")
+        (org-capture nil template-key)
+        (org-gcal-post-at-point))
+
+      (defun my/org-capture-and-gcal-sync-dpa ()
+        "Capture and sync with org-gcal for Gcal dpa."
+        (interactive)
+        (my/org-capture-and-gcal-sync "gc"))
+
+      (defun my/org-capture-and-gcal-sync-figli ()
+        "Capture and sync with org-gcal for Gcal figli."
+        (interactive)
+        (my/org-capture-and-gcal-sync "gf"))
+
+      (defun clean-shopping-list ()
+        (interactive)
+        (with-current-buffer (find-file-noselect "~/Sync/box/org/shopping.org")
+          (org-map-entries (lambda () (org-cut-subtree)) "/+DONE" 'file)
+          (org-map-entries (lambda () (org-cut-subtree)) "/+CANCELLED" 'file)
+          (save-buffer)))
+
       :hook
       (org-after-refile-insert-hook . save-buffer)
       :config
       (setq org-capture-templates
             '(
-              ("t" "Todo simple entry" entry (file org-default-notes-file)
-               "* TODO %?\n%[~/.emacs.d/templates/da-property-string]\n")
-              ("f" "Fast capture and exit" entry (file org-default-notes-file)
-               "* TODO %^{Title}\n%[~/.emacs.d/templates/da-property-string]\n" :immediate-finish t)
-              ("T" "Tasks in gtd" entry (file+headline da-gtd "Tasks")
-               "* %^{State|TODO|NEXT|WAIT|PASS|MAYB} %? \t%^{Tag|:WORK:|:PERSONAL:}\n%[~/.emacs.d/templates/da-property-string]\n" :empty-lines 1)
-              ("e" "File email" entry (file org-default-notes-file)
-               "* \"%:subject\"\n%[~/.emacs.d/templates/da-property-string-email]%i%?\n")
-              ("W" "Wait for Reply" entry (file+headline da-gtd "E-mail")
-               "* WAIT for reply \"%:subject\"\n%[~/.emacs.d/templates/da-property-string-email]%i%?\n")
-              ("P" "new Project" entry (file "~/Sync/box/org/projects.org")
-               "* %? \t%^{Tag|:WORK:proj:|:PERSONAL:proj:}\n%[~/.emacs.d/templates/da-property-string]\n%^{CATEGORY}p" :empty-lines 1 :prepend t)
-              ("n" "Next urgent task" entry (file+headline da-gtd "Tasks")
-               "* NEXT [#A] %? \t%^{Tag|:WORK:|:PERSONAL:}\nDEADLINE: %t\n%[~/.emacs.d/templates/da-property-string]\n")
-              ("s" "Study item" entry (file+headline da-gtd "Study")
+              ("t" "Todo simple entry"
+               entry (file org-default-notes-file)
                "* TODO %?\n%[~/.emacs.d/templates/da-property-string]\n")
 
-              ("w" "Weight" table-line (file+headline da-gtd "Weight")
+              ("T" "Tasks in gtd"
+               entry (file+headline da-gtd "Tasks")
+               "* %^{State|TODO|NEXT|WAIT|PASS|MAYB} %? \t%^{Tag|:WORK:|:PERSONAL:}\n%[~/.emacs.d/templates/da-property-string]\n" :empty-lines 1)
+
+              ("n" "Next urgent task"
+               entry (file+headline da-gtd "Tasks")
+               "* NEXT [#A] %? \t%^{Tag|:WORK:|:PERSONAL:}\nDEADLINE: %t\n%[~/.emacs.d/templates/da-property-string]\n")
+
+              ("P" "new Project"
+               entry (file "~/Sync/box/org/projects.org")
+               "* %? \t%^{Tag|:WORK:proj:|:PERSONAL:proj:}\n%[~/.emacs.d/templates/da-property-string]\n%^{CATEGORY}p" :empty-lines 1 :prepend t)
+
+              ("s" "Study item"
+               entry (file+headline da-gtd "Study")
+               "* TODO %?\n%[~/.emacs.d/templates/da-property-string]\n")
+
+              ("w" "Weight"
+               table-line (file+headline da-gtd "Weight")
                "|%t|%?|")
 
-              ("h" "new Habit" entry (file+headline da-gtd "Habits")
+              ("h" "new Habit"
+               entry (file+headline da-gtd "Habits")
                "* TODO %? \nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:REPEAT_TO_STATE: TODO\n:END:\n%a")
-              ("i" "Idea" entry (file "~/Sync/box/org/ideas.org") "* %^{Idea} \n%u\n%a\n%?" :empty-lines 1)
-              ;; backward will archive past event or trigger further actions
+
+              ("i" "Idea"
+               entry (file "~/Sync/box/org/ideas.org")
+               "* %^{Idea} \n%u\n%a\n%i\n%?" :empty-lines 1)
+
               ;; do I need :cal: it could be used in the view to archive refile
-              ("c" "Calendar in Journal" entry (file+olp+datetree "~/Sync/box/org/journal.org")
+              ;; prefix C-1 alternative to time-prompt t
+              ("e" "Event in journal"
+               entry (file+olp+datetree "~/Sync/box/org/journal.org")
                "* %? %:subject\t:cal:\n%^T\n%a\n%i\n" :jump-to-captured t :time-prompt t)
-              ;; "* %? %^g\n%t\n%a\n%i" ) ; prefix C-1 alternative to time-prompt t
-              ("j" "Journal" entry (file+olp+datetree "~/Sync/box/org/journal.org")
+
+              ("j" "Journal"
+               entry (file+olp+datetree "~/Sync/box/org/journal.org")
                "* %? %:subject %^G\n%T\n%a\n%i\n" :jump-to-captured t :time-prompt t)
-              ;; ("m" "Meeting" entry (file+olp+datetree "~/Sync/box/org/journal.org") "* MEETING %? :MEETING:\n%T" :clock-in t :clock-resume t)
-              ("k" "supermarKet" entry (file+headline "~/Sync/box/org/shopping.org" "Supermarket") "* %? \t:buy:\n" :unnarrowed t :kill-buffer t)
-              ;; XXX: captures for: (1) project [entry and file template],
-              ;; (2) peso [table-line]
-              ("g" "Gcals")              ; gcals
-              ("gG" "Gcal dpa" entry (file  "~/Sync/box/org/gcal/dpa.org")
-               "* %? %:subject\n :PROPERTIES:\n :calendar-id: danielepietroarosio@gmail.com\n :END:\n:org-gcal:\n%^T--%^T\n%a\n:END:" :empty-lines 1)
-              ("gF" "Gcal figli" entry (file  "~/Sync/box/org/gcal/figli.org")
-               "* %? %:subject\n :PROPERTIES:\n :calendar-id: c87gevr5pc3191on8c7nh8b4nc@group.calendar.google.com\n :END:\n:org-gcal:\n%^T--%^T\n%a\n:END:" :empty-lines 1)
-              ("gg" "Appointment" entry (file "~/Sync/box/org/gcal/dpa.org")
-               "* %? %:subject\n:PROPERTIES:\n:calendar-id:\tdanielepietroarosio@gmail.com\n:END:\n:org-gcal:\n%^T--%^T\n:END:\n%a\n%i\n" :jump-to-captured t)
-              ("gf" "Gcal figli" entry (file  "~/Sync/box/org/gcal/figli.org")
-               "* %? %:subject\n:PROPERTIES:\n:calendar-id:\tc87gevr5pc3191on8c7nh8b4nc@group.calendar.google.com\n:END:\n:org-gcal:\n%^T--%^T\n:END:\n%a\n%i\n" :jump-to-captured t)
 
-              ;; ("a" "Calendar" entry (file+olp+datetree "~/Sync/box/org/calendar.org")
-              ;;  "* %? %:subject\n%^T--%^T\n%a\n%i\n" :jump-to-captured t :time-prompt t)
-              ;; ("c" "Calendar" entry (file+olp+datetree "~/Sync/box/org/calendar.org")
-              ;;  "* %? %:subject\n%T\n%a\n%i\n" :jump-to-captured t :time-prompt t)
+              ("k" "supermarKet"
+               entry (file+headline "~/Sync/box/org/shopping.org" "Supermarket")
+               "* %? \t:SMT:\n" :unnarrowed t :kill-buffer t)
 
-              ("r" "Review")              ;reviews
-              ("rd" "Review: Daily" entry (file+olp+datetree "/tmp/daily-reviews.org")
-               (file "~/.emacs.d/templates/my_dailyreviewtemplate.org"))
-              ("rw" "Review: Weekly Review" entry (file+olp+datetree "/tmp/weekly-reviews.org")
-               (file "~/.emacs.d/templates/my_weeklyreviewtemplate.org"))
+              ;; "Gcal" use `C-c G`
+              ("gc" "Gcal dpa"
+               entry (file  "~/Sync/box/org/gcal/dpa.org")
+               "* %? %:subject\n :PROPERTIES:\n :calendar-id: danielepietroarosio@gmail.com\n :LOCATION: %^{Place}\n :END:\n:org-gcal:\n%^T\n%i\n:END:\n%a\n"
+               :jump-to-captured t :immediate-finish t)
+
+              ("gf" "Gcal figli"
+               entry (file  "~/Sync/box/org/gcal/figli.org")
+               "* %? %:subject\n :PROPERTIES:\n :calendar-id: c87gevr5pc3191on8c7nh8b4nc@group.calendar.google.com\n :LOCATION: %^{Place}\n :END:\n:org-gcal:\n%^T\n%1\n:END:\n%a\n"
+               :jump-to-captured t :immediate-finish t)
+
+              ;; "Review" use `C-c R`
+              ("rd" "Review: Daily"
+               entry (file+olp+datetree "/tmp/daily-reviews.org")
+               (expand-file-name "templates/my_dailyreviewtemplate.org" user-emacs-directory))
+
+              ("rw" "Review: Weekly"
+               entry (file+olp+datetree "/tmp/weekly-reviews.org")
+               (expand-file-name "templates/my_weeklyreviewtemplate.org" user-emacs-directory))
+
               ;; Only in mu4e
-              ("R" "Reply to" entry
-               (file+headline da-gtd "E-mail")
+              ("R" "Reply to"
+               entry (file+headline da-gtd "E-mail")
                "* TODO Reply \"%:subject\"\nDEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+2d\"))\n%[~/.emacs.d/templates/da-property-string-email]%i%?\n")
+
+              ("W" "Wait for Reply"
+               entry (file+headline da-gtd "E-mail")
+               "* WAIT for reply \"%:subject\"\n%[~/.emacs.d/templates/da-property-string-email]%i%?\n")
               ))
-      ;; (add-to-list 'org-capture-templates  ;; comma ,(format) needs to be
-      ;; added later
-      ;;              `("X" "Wait for Reply" entry
-      ;;                (file+headline da-gtd "E-mail")
-      ;;                ,(format "%s\n%s\n%s" "* WAIT for reply %:subject" da-property-string "%i%?")))
       (setq org-capture-templates-contexts '(("R" ((in-mode . "mu4e-view-mode")))
                                              ("W" ((in-mode . "mu4e-view-mode")))
                                              ("R" ((in-mode . "mu4e-headers-mode")))
@@ -2059,8 +2092,10 @@ completing-read prompter."
       :bind
       (("C-c c" . org-capture)
        ("C-c T" . (lambda () (interactive "") (org-capture nil "T")))
-       ("C-c R d" . nemacs-org-capture-review-daily)
-       ("C-c R w" . my-new-weekly-review))
+       ("C-c G c" . my/org-capture-and-gcal-sync-dpa)
+       ("C-c G f" . my/org-capture-and-gcal-sync-figli)
+       ("C-c R d" . my-daily-review)
+       ("C-c R w" . my-weekly-review))
       )
     (setq org-use-property-inheritance nil) ; default
     (use-package org-agenda :straight org
