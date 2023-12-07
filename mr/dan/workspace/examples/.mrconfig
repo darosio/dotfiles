@@ -105,3 +105,18 @@ checkout = git clone 'https://github.com/jpype-project/jpype.git' 'jpype'
 
 [4bioformat/pims]
 checkout = git clone 'https://github.com/soft-matter/pims.git' 'pims'
+
+[bioio]
+checkout = git clone 'https://github.com/bioio-devs/bioio.git' 'bioio'
+
+[bioio-bioformats]
+checkout = git clone 'https://github.com/bioio-devs/bioio-bioformats.git' 'bioio-bioformats'
+
+[bioio-ome-tiled-tiff]
+checkout = git clone 'https://github.com/bioio-devs/bioio-ome-tiled-tiff.git' 'bioio-ome-tiled-tiff'
+
+[pyimagej]
+checkout = git clone 'https://github.com/imagej/pyimagej.git' 'pyimagej'
+
+[bfio]
+checkout = git clone 'https://github.com/PolusAI/bfio.git' 'bfio'
