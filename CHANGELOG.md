@@ -9,6 +9,339 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 Releases will start from 2022.1.
 
+## 3.12.0 (2024-01-02)
+
+### Feat
+
+- **emacs**: Update packages
+- **git**: Add `remove-ipynb-output` filter
+- Add xr and xr1 for 2 monitor @fbk
+- **emacs**: Update packages
+- **emacs**: Update packages
+- Add lsfonts
+
+### Fix
+
+- **emacs**: Folding of python with hideshow
+- **emacs**: org captures
+
+### Build
+
+- **deps-dev**: bump ruff from 0.1.8 to 0.1.9 (#32)
+- **deps-dev**: bump ruff from 0.1.7 to 0.1.8 (#31)
+- **deps-dev**: bump pre-commit from 3.5.0 to 3.6.0 (#30)
+- **deps-dev**: bump ruff from 0.1.6 to 0.1.7 (#29)
+- **deps-dev**: bump commitizen from 3.12.0 to 3.13.0 (#28)
+- **deps-dev**: bump ruff from 0.1.5 to 0.1.6 (#27)
+- **deps-dev**: bump ruff from 0.1.4 to 0.1.5 (#26)
+- **deps-dev**: bump ruff from 0.1.3 to 0.1.4 (#25)
+
+### chore
+
+- Adopt jupyter-lab
+- **emacs**: Always use straight.el not package.el with use-package
+
+## 3.10.0 (2023-10-31)
+
+### Feat
+
+- **emacs**: Update packages and fix a magit/straight issue
+
+### Fix
+
+- **emacs**: chatgpt and dall-e org-mode babel
+- msmtp and sendmail
+
+### Build
+
+- **deps-dev**: bump ruff from 0.1.2 to 0.1.3 (#24)
+
+## 3.9.0 (2023-10-27)
+
+### Feat
+
+- **emacs**: Update packages
+
+### Build
+
+- **deps-dev**: bump ruff from 0.1.1 to 0.1.2 (#23)
+- **deps-dev**: bump ruff from 0.1.0 to 0.1.1 (#22)
+- **deps-dev**: bump commitizen from 3.10.1 to 3.12.0 (#21)
+- **deps-dev**: bump ruff from 0.0.292 to 0.1.0 (#20)
+- **deps-dev**: bump commitizen from 3.10.0 to 3.10.1 (#19)
+- **deps-dev**: bump pre-commit from 3.4.0 to 3.5.0 (#18)
+
+## 3.8.0 (2023-10-12)
+
+### Feat
+
+- **emacs**: Update straight all packages
+- **emacs**: mastodon and twitter
+- rmlintt searches include (-r) hidden files
+
+### Fix
+
+- Add chatgpt-shell
+
+### Build
+
+- **deps-dev**: bump ruff from 0.0.291 to 0.0.292 (#17)
+- **deps-dev**: bump ruff from 0.0.290 to 0.0.291 (#16)
+- **deps-dev**: bump commitizen from 3.9.1 to 3.10.0 (#15)
+- **deps-dev**: bump commitizen from 3.9.0 to 3.9.1 (#14)
+- **deps-dev**: bump commitizen from 3.8.2 to 3.9.0 (#13)
+- **deps-dev**: bump ruff from 0.0.289 to 0.0.290 (#12)
+
+### Refactor
+
+- Add script also for RAID essential into root
+- **emacs**: Remove org-bullets; don’t indent after heading
+
+### chore
+
+- **vale**: Add joblint and alex to install (`vale sync`)
+
+## 3.7.0 (2023-09-18)
+
+### Feat
+
+- **emacs**: Update straight all packages
+- Add `ee` `ea` `rmlintt` aliases
+- **ranger**: Enable pdf preview as image
+- **rclone**: Add Onedrive of CNR
+- **emacs**: Update to 29.1 pin org to 9.5.5 to fix org-roam issue
+- Add md2mb mu_tags2notmuch and notmuch in emacs
+- Drop courier-maildrop reformime in favor of mu or python scripts
+- separate system and user sendmail with OpenSMTPD and msmtp
+- Fix recoll.stow
+- gvim.stow
+- smartd without root .msmtprc
+- New emacs and ranger stow.sh
+- **systemd**: failure notification
+- add python-version=system
+- **emacs**: Update emacs from 28.2 to 29.1
+- **git**: pull.rebase false
+- **emacs**: Add lsp-treemacs
+- **emacs**: Bind magit-todos to `C-c g 2` `C-c 2 3`
+- Add mu_tags_all_rg because faster than mu_tags with SSD
+- Add tree_size function
+- **emacs**: Update consul-notes and config consult-ripgrep
+- **ranger**: A-f fzf_select Refactor bashrc functions and aliases
+- **emacs**: update packages
+
+### Fix
+
+- gh and direnv
+- 2root.smartd.sh
+- gvim.stow
+- emacs.stow
+- urxvt
+- smartdnotify
+- direnvrc for hatch
+- box.com in rclone
+- **emacs**: mu4e tag untag
+
+### Perf
+
+- further improvements
+- update initial installation
+- **mu_tags**: Use mu find "" to speedup tags lists
+
+### Build
+
+- Fix `hatch run bump`
+- **deps-dev**: bump ruff from 0.0.288 to 0.0.289 (#11)
+- **deps-dev**: bump ruff from 0.0.287 to 0.0.288 (#10)
+- **deps-dev**: bump commitizen from 3.8.0 to 3.8.2 (#9)
+- **deps-dev**: bump commitizen from 3.7.0 to 3.8.0 (#8)
+- **deps-dev**: bump ruff from 0.0.286 to 0.0.287 (#7)
+- **deps-dev**: bump pre-commit from 3.3.3 to 3.4.0 (#6)
+- **deps-dev**: bump commitizen from 3.6.0 to 3.7.0 (#5)
+- **deps-dev**: bump ruff from 0.0.285 to 0.0.286 (#4)
+- **deps-dev**: bump ruff from 0.0.284 to 0.0.285 (#3)
+- **deps-dev**: bump ruff from 0.0.282 to 0.0.284 (#2)
+- **emacs**: Update some packages and ps-print
+
+### Refactor
+
+- **emacs**: aur/ttf-symbola is not needed
+- mr.stow
+- sshd
+- smartd
+- cleanup
+
+### chore
+
+- **mr**: Add caiman example
+- More `examples`
+- init scripts bash misc
+- remove old systemd-email
+- **emacs**: removed few commands after consult dropped them
+- Open file after sf recoll search
+- **ranger**: change some rifle default
+- **emacs**: Drop all-the-icons for nerd-icons in doom-modeline
+
+## 3.6.0 (2023-06-14)
+
+### Feat
+
+- Add delta to gitconfig and (e)diff
+- **emacs**: Add gptchat-shell
+- **emacs**: Accommodate update of python from 3.10 to 3.11
+- **emacs**: Disable typo-mode but have it global with C-c 8
+- **emacs**: Review ox-latex
+
+### Fix
+
+- **emacs**: mu4e missing msg because not updating index
+- Update to default python 3.11
+- **emacs**: ESS by restoring process-connection-type t
+- **emacs**: flycheck and is-daemon for mu4e
+- mimeapps.list
+
+### Docs
+
+- Lint CHANGELOG.md with the correct exceptions for markdownlint
+
+### Style
+
+- **emacs**: untabify
+
+### Build
+
+- Upgrade pre-commit removing black for docs
+- **emacs**: Update vertico consult-notes org-noter and deps
+
+### Refactor
+
+- **emacs**: mu4e after CNR2office365
+
+### chore
+
+- **emacs**: consult ripgrep-args
+- **alias**: xmm for xmodmap
+- **emacs**: Bind org-lint to `M-g e o`
+
+## 3.5.0 (2023-04-11)
+
+### Feat
+
+- Add proselint and vale configurations
+- **emacs**: Fix (fly)check for prose
+- **emacs**: Clean writing session
+- **emacs**: Remove char-menu and avy (dep of ace-window eval-in-repl)
+- **emacs**: Add consult-flyspell `M-g s` and refactor
+- **emacs**: Buffer hydra and refactor themes
+
+### Fix
+
+- **emacs**: consult-notes
+- **emacs**: apheleia prettier for markdown
+- **emacs**: Alias `e`
+- **emacs**: org-noter-pdftools. Refactor writing session
+- **emacs**: keybinding
+
+### Docs
+
+- Lint README.md with markdownlint-cli
+
+### Refactor
+
+- **emacs**: Organize yasnippet and other packages
+- **emacs**: ace-window `C-’` `C-“`
+- **emacs**: dired -x wdired
+- **emacs**: `C-x b` consult-buffer
+- **emacs**: mu4e and bind `C-c C-o` org-msg
+
+### chore
+
+- **emacs**: Keybinding `C-N`and `C-P` to navigate vertico group
+
+## 3.4.2 (2023-04-04)
+
+### Fix
+
+- **emacs**: org -roam -protocol
+- **emacs**: use-package-autoload-keymap might not be defined at runtime
+- **emacs**: pdf-tools demand
+
+### chore
+
+- **emacs**: gscholar-bibtex `M-s C-b`
+
+## 3.4.1 (2023-04-03)
+
+### Fix
+
+- **emacs**: Update packages init.el and readme
+
+## 3.4.0 (2023-04-03)
+
+### Feat
+
+- **emacs**: removed modalka refactor keybinding
+
+### Fix
+
+- **emacs**: daemon demanding packages
+
+## 3.3.0 (2023-04-02)
+
+### Feat
+
+- **emacs**: Drop ranger Fix windows Add lpr Refactor init.el
+- **emacs**: Update mu Adjust consult preview Hook citar-capf
+- **emacs**: Drop org-super-agenda and org-ql
+- **emacs**: Reorganize agendas and include org-roam in refile targets
+- **emacs**: consult notes keybindings like `M-s n` and fix and cleanup
+- **emacs**: drop sphinx-doc python-docstring-mode (hyperscheduler)
+- **ranger**: Preview eml using maildrop `reformime`
+- Add syncthing, refactor mrconfigs and cleanup
+- **ranger**: Update config files
+- **emacs**: apheleia in place of black, pretty-js etc.
+
+### Fix
+
+- **emacs**: gcal oauth2 with captures
+- **ranger**: org file opening
+- **memory**: As alias see https://github.com/pixelb/scripts
+- **mr|bash**: mr config and bashrc
+- environment.d for rclone, emacs, etc.
+- **gh**: Auth with token
+
+### Docs
+
+- Update readme
+
+### Style
+
+- Drop yamllint in favor of prettier
+
+### Refactor
+
+- **emacs**: init files with ChatGPT; `M-s c` to open ref notes
+- Adopt ruff black blacken-docs in all scripts
+
+## 3.2.1 (2023-02-09)
+
+### Fix
+
+- detect secrets
+
+### Style
+
+- some linting
+
+### Refactor
+
+- many shell scripts
+
+## 3.2.0 (2023-02-08)
+
+### Feat
+
+- cz section and pre-commit deps
+
 ## 3.11.0 (2023-11-13)
 
 ### Feat
