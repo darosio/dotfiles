@@ -544,12 +544,15 @@ HEIGHT, if supplied, specifies height of letters to use."
     :bind ("C-=" . er/expand-region))
 
   (use-package hideshow ;; for folding
+    :straight (:type built-in)
     :bind (("C-c t f" . hs-minor-mode)
            (:map
             prog-mode-map
             ("<backtab>" . hs-toggle-hiding)
             ("H-z" . hs-hide-all)
             ("H-Z" . hs-show-all)))
+    :config
+    (setq hs-hide-comments-when-hiding-all nil)
     :hook (prog-mode-hook . hs-minor-mode))
 
   (use-package calc
