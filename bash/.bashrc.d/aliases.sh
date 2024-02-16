@@ -37,9 +37,10 @@ alias g='git st; git in; git out'
 alias git-ever-existed='git log --pretty=format: --name-status | cut -f2- | sort -u'
 
 # Display Management
-alias xr1='xrandr --output HDMI3 --rotate inverted'
-alias xr2='xrandr --output HDMI1 --left-of HDMI3 --rotate left'
-alias xr='xrandr --output HDMI3 --rotate inverted --output HDMI1 --left-of HDMI3 --rotate left'
+alias xr0='xrandr --output HDMI-1 --rotate normal'
+alias xr1='xrandr --output HDMI-1 --rotate inverted'
+alias xr2='xrandr --output HDMI-2 --left-of HDMI-1 --rotate left'
+alias xr='xrandr --output HDMI-1 --rotate inverted --output HDMI-2 --left-of HDMI-1 --rotate left'
 alias xrr='xrandr --output eDP-1 --scale 1.24x1.24 --auto'
 alias xrr2='xrandr --output DP-1 --left-of eDP-1 --auto'
 alias vga_ont='xrandr --output VGA1 --auto --above LVDS1'
@@ -48,6 +49,8 @@ alias vga_onr='xrandr --output VGA1 --auto --right-of LVDS1'
 alias 1left='xrandr --output DP-1 --auto --left-of eDP-1'
 alias vga_off='xrandr --output VGA1 --off'
 alias 1off='xrandr --output DP-1 --off'
+
+alias xrv='ffmpeg -f v4l2 -video_size   1280x720 -pixel_format yuyv422 -i /dev/video1 -vf "transpose=2" -pix_fmt yuyv422 -f v4l2 /dev/video0'
 
 # Translation Helper
 alias tj='trans -j'
