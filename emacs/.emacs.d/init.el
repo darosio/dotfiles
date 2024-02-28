@@ -1415,6 +1415,14 @@ completing-read prompter."
              ))
     )
 
+  (use-package mu4e-icalendar :straight mu4e
+    :init
+    (setq gnus-icalendar-org-capture-file "~/Sync/box/org/gtd.org")
+    (setq gnus-icalendar-org-capture-headline '("Calendar"))
+    :config
+    (mu4e-icalendar-setup)
+    (gnus-icalendar-org-setup))
+
   (use-package mu4e-headers :straight mu4e
     :functions (mu4e-headers-mark-and-next
                 mu4e~headers-goto-docid)
