@@ -1253,13 +1253,17 @@ completing-read prompter."
   :straight (:type built-in)            ; in AUR/mu
   :commands (mu4e mu4e-compose-new)
   :preface
-  (defun replace-emails-in-buffer ()
-    "Replace 'name_at_domain_2zf3gq8j@duck.com' with 'name@domain'."
+  (defun replace-duck-emails-in-buffer ()
+    "Replace duck.com email addresses with their original format."
     (interactive)
     (save-excursion
       (goto-char (point-min))
       (while (re-search-forward "\\(\\w+\\)_at_\\(\\w+\\)\\(\\.[a-zA-Z\\.]+\\)_\\w+@duck.com" nil t)
         (replace-match "\\1@\\2\\3" nil nil))))
+  
+  (defun schedule-replace-duck-emails ()
+    "Schedule the replacement of Duck.com email addresses after a delay."
+    (run-with-idle-timer 0.5 nil #'replace-duck-emails-in-buffer))
 
   (defun my-mu4e-compose-mode-hook ()
     "My settings for message composition."
@@ -1276,6 +1280,7 @@ completing-read prompter."
   ;; (mu4e-view-mode-hook . variable-pitch-mode)
   (mu4e-compose-mode-hook . my-mu4e-compose-mode-hook)
   (mu4e-update-pre-hook . mu4e-update-index-nonlazy)
+  (mu4e-compose-pre-hook . schedule-replace-duck-emails)
   :bind
   (("M-g M-a m" . mu4e)
    ("C-x m" . mu4e)
@@ -1304,9 +1309,7 @@ completing-read prompter."
   ;; New feature as of mu=1.10.0
   ;; (setq mu4e-read-option-use-builtin nil
   ;;        mu4e-completing-read-function 'completing-read)
-  (defadvice mu4e~compose-handler (after replace-emails-in-buffer-after-reply activate)
-    "After replying to an email, replace the emails in the buffer."
-    (replace-emails-in-buffer))
+  
   (set-variable 'read-mail-command 'mu4e) ;; use mu4e as Default
   (setq mail-user-agent 'mu4e-user-agent
         mu4e-maildir (expand-file-name "~/Maildir")
