@@ -559,10 +559,7 @@ HEIGHT, if supplied, specifies height of letters to use."
     :bind ("M-g M-a c" . calc))
 
   (use-package dired
-    :straight nil
-    :hook (dired-mode-hook . (lambda ()
-                               (toggle-truncate-lines)
-                               (turn-on-gnus-dired-mode)))
+    :straight (:type built-in)
     :functions (dired-get-filename
                 dired-next-line
                 dired-previous-line)
@@ -1261,26 +1258,28 @@ completing-read prompter."
       (while (re-search-forward "\\(\\w+\\)_at_\\(\\w+\\)\\(\\.[a-zA-Z\\.]+\\)_\\w+@duck.com" nil t)
         (replace-match "\\1@\\2\\3" nil nil))))
   
-  (defun schedule-replace-duck-emails ()
-    "Schedule the replacement of Duck.com email addresses after a delay."
-    (run-with-idle-timer 0.5 nil #'replace-duck-emails-in-buffer))
-
   (defun my-mu4e-compose-mode-hook ()
     "My settings for message composition."
+    (set-fill-column 80)
+    (visual-fill-column-mode)
+    (guess-language-mode)
     (let* ((ctx (mu4e-context-current))
            (name (mu4e-context-name ctx)))
       (when name
         (cond
          ((string= name "pec")
-          (save-excursion (message-remove-header "Bcc:*"))))))
-    (set-fill-column 80)
-    (visual-fill-column-mode)
-    (guess-language-mode))
+          (save-excursion (message-remove-header "Bcc:*")))
+         ((string= name "cnr")
+          (save-excursion
+            (goto-char (point-max))
+            (mml-attach-file "~/Sync/Maildir/firma-istituzionale.html")))))))
   :hook
-  ;; (mu4e-view-mode-hook . variable-pitch-mode)
-  (mu4e-compose-mode-hook . my-mu4e-compose-mode-hook)
+  (dired-mode-hook . turn-on-gnus-dired-mode)
+  (mu4e-view-mode-hook . variable-pitch-mode)
+  (mu4e-compose-mode-hook . (lambda ()
+                              (my-mu4e-compose-mode-hook)
+                              (replace-duck-emails-in-buffer)))
   (mu4e-update-pre-hook . mu4e-update-index-nonlazy)
-  (mu4e-compose-pre-hook . schedule-replace-duck-emails)
   :bind
   (("M-g M-a m" . mu4e)
    ("C-x m" . mu4e)
@@ -1305,11 +1304,9 @@ completing-read prompter."
    ("f"         . mu4e-headers-mark-for-flag)
    )
   :config
-  ;; (when (fboundp 'imagemagick-register-types) (imagemagick-register-types))
-  ;; New feature as of mu=1.10.0
-  ;; (setq mu4e-read-option-use-builtin nil
-  ;;        mu4e-completing-read-function 'completing-read)
-  
+  (setq mu4e-read-option-use-builtin nil ;; Use Vertico
+        mu4e-completing-read-function 'completing-read)
+
   (set-variable 'read-mail-command 'mu4e) ;; use mu4e as Default
   (setq mail-user-agent 'mu4e-user-agent
         mu4e-maildir (expand-file-name "~/Maildir")
@@ -1355,9 +1352,8 @@ completing-read prompter."
 
   (setq mu4e-compose-format-flowed t  ; Set format=flowed
         mu4e-compose-context-policy 'ask-if-none)
-  (setq mu4e-compose-signature-auto-include nil ; draft
-        mu4e-compose-in-new-frame t) ; every new email composition gets its own frame
-
+  (setq message-signature nil)
+  (setq mu4e-compose-switch 'frame); every new email composition gets its own frame
   (setq mu4e-bookmarks
         `((:key ?u
                 :name "Unread messages"
@@ -1396,9 +1392,7 @@ completing-read prompter."
                        (mu4e-drafts-folder . "/gmail/[Gmail]/Drafts" )
                        (mu4e-refile-folder . "/archive" )
                        (mu4e-trash-folder . "/gmail/[Gmail]/Trash" )
-                       (mu4e-compose-signature
-                        . (concat "Daniele Arosio\nConsiglio Nazionale delle Ricerche (CNR)\nIstituto di Biofisica\n"
-                                  "Via Sommarive 18\n38123 Trento, Italy\ntel +39 0461 314607\n"))))
+                       (message-signature . "")))
              ,(make-mu4e-context
                :name "gmail"
                :vars '( (user-mail-address . "danielepietroarosio@gmail.com" )
@@ -1406,7 +1400,7 @@ completing-read prompter."
                         (mu4e-refile-folder . "/archive" )
                         (mu4e-trash-folder . "/gmail/[Gmail]/Trash")
                         ;; (mu4e-sent-messages-behavior . delete) ; Not needed anymore IMO
-                        (mu4e-compose-signature  . "daniele arosio\n38123 Trento\n")))
+                        (message-signature  . "daniele arosio\n38123 Trento\n")))
              ,(make-mu4e-context
                :name "pec"
                :match-func (lambda (msg)
@@ -1417,7 +1411,7 @@ completing-read prompter."
                         (mu4e-drafts-folder . "/pec/Drafts")
                         (mu4e-trash-folder . "/pec/trash")
                         (mu4e-sent-folder . "/pec/Sent Items")
-                        (mu4e-compose-signature . "daniele arosio\n38123 Trento\n")))
+                        (message-signature . "daniele arosio\n38123 Trento\n")))
              ))
     )
 
