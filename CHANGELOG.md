@@ -9,6 +9,36 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 Releases will start from 2022.1.
 
+## 3.13.0 (2024-02-29)
+
+### Feat
+
+- **emacs**: Update packages
+- **emacs**: Update mu4e 1.12
+
+### Fix
+
+- **emacs**: Update to mu-1.12 replace-duck-emails
+
+### Build
+
+- **deps-dev**: bump commitizen from 3.14.1 to 3.16.0 (#46)
+- **deps-dev**: bump ruff from 0.2.1 to 0.2.2 (#44)
+- **deps-dev**: bump pre-commit from 3.6.1 to 3.6.2 (#43)
+- **deps-dev**: bump pre-commit from 3.6.0 to 3.6.1 (#42)
+- **deps-dev**: bump ruff from 0.2.0 to 0.2.1 (#41)
+- **deps-dev**: bump commitizen from 3.14.0 to 3.14.1 (#40)
+- **deps-dev**: bump ruff from 0.1.14 to 0.2.0 (#39)
+- **deps-dev**: bump commitizen from 3.13.0 to 3.14.0 (#38)
+- **deps-dev**: bump ruff from 0.1.13 to 0.1.14 (#36)
+- **deps-dev**: bump ruff from 0.1.12 to 0.1.13 (#35)
+- **deps-dev**: bump ruff from 0.1.11 to 0.1.12 (#34)
+- **deps-dev**: bump ruff from 0.1.9 to 0.1.11 (#33)
+
+### chore
+
+- Update xrandr cmd for sterzing
+
 ## 3.12.0 (2024-01-02)
 
 ### Feat
