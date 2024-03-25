@@ -9,6 +9,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 Releases will start from 2022.1.
 
+## 3.14.0 (2024-03-25)
+
+### Feat
+
+- **emacs**: Update packages
+
+### Build
+
+- **deps-dev**: bump ruff from 0.3.3 to 0.3.4 (#57)
+- **deps-dev**: bump commitizen from 3.18.4 to 3.20.0 (#56)
+- **deps-dev**: bump ruff from 0.3.2 to 0.3.3 (#55)
+- **deps-dev**: bump commitizen from 3.18.3 to 3.18.4 (#54)
+- **deps-dev**: bump commitizen from 3.18.2 to 3.18.3 (#53)
+- **deps-dev**: bump ruff from 0.3.1 to 0.3.2 (#52)
+- **deps-dev**: bump commitizen from 3.17.0 to 3.18.2 (#51)
+- **deps-dev**: bump ruff from 0.3.0 to 0.3.1 (#49)
+- **deps-dev**: bump commitizen from 3.16.0 to 3.17.0 (#48)
+- **deps-dev**: bump ruff from 0.2.2 to 0.3.0 (#47)
+
 ## 3.13.0 (2024-02-29)
 
 ### Feat
