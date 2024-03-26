@@ -1257,7 +1257,7 @@ completing-read prompter."
       (goto-char (point-min))
       (while (re-search-forward "\\(\\w+\\)_at_\\(\\w+\\)\\(\\.[a-zA-Z\\.]+\\)_\\w+@duck.com" nil t)
         (replace-match "\\1@\\2\\3" nil nil))))
-  
+
   (defun my-mu4e-compose-mode-hook ()
     "My settings for message composition."
     (set-fill-column 80)
