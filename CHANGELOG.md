@@ -9,6 +9,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 Releases will start from 2022.1.
 
+## 3.14.1 (2024-03-26)
+
+### Fix
+
+- lsp-mode by reverting previous update
+
+### Build
+
+- Update deps
+- **deps-dev**: bump pre-commit from 3.6.2 to 3.7.0 (#58)
+
 ## 3.14.0 (2024-03-25)
 
 ### Feat
