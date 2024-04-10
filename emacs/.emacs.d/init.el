@@ -1111,8 +1111,8 @@ completing-read prompter."
     :init (apheleia-global-mode +1)
     :config
     (add-to-list 'apheleia-mode-alist '(markdown-mode . prettier))
-    ;; (add-to-list 'apheleia-mode-alist '(python-mode . ruff))
-    ;; (add-to-list 'apheleia-mode-alist '(python-ts-mode . ruff))
+    (add-to-list 'apheleia-mode-alist '(python-mode . ruff))
+    (add-to-list 'apheleia-mode-alist '(python-ts-mode . ruff))
     )
 
   (use-package flycheck ;; Syntax checking
