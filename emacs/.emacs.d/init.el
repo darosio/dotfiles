@@ -1246,8 +1246,6 @@ completing-read prompter."
     (setq google-translate-backend-method 'curl))
   )
 
-(use-package notmuch)
-
 (use-package mu4e                       ; mu4e
   :demand is-daemon
   :straight (:type built-in)            ; in AUR/mu
