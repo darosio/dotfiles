@@ -9,6 +9,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 Releases will start from 2022.1.
 
+## 3.15.0 (2024-04-10)
+
+### Feat
+
+- Drop notmuch
+- Apheleia adopt ruff-lsp
+
+### Build
+
+- Update deps
+- **deps-dev**: bump ruff from 0.3.4 to 0.3.5 (#60)
+- **deps-dev**: bump commitizen from 3.20.0 to 3.21.3 (#59)
+
 ## 3.14.1 (2024-03-26)
 
 ### Fix
