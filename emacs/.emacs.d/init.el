@@ -1110,7 +1110,10 @@ completing-read prompter."
     :bind ("C-<tab>" . aj-toggle-fold)
     :init (apheleia-global-mode +1)
     :config
-    (add-to-list 'apheleia-mode-alist '(markdown-mode . prettier)))
+    (add-to-list 'apheleia-mode-alist '(markdown-mode . prettier))
+    ;; (add-to-list 'apheleia-mode-alist '(python-mode . ruff))
+    ;; (add-to-list 'apheleia-mode-alist '(python-ts-mode . ruff))
+    )
 
   (use-package flycheck ;; Syntax checking
     :commands (flycheck-add-next-checker)
@@ -3030,7 +3033,7 @@ With a prefix ARG, remove start location."
   (use-package yaml-mode ;; yay -S (yamllint) prettier with apheleia
     :hook ((yaml-mode . turn-off-flyspell))
     :mode "\\.yml\\'")
-  (use-package toml-mode
+  (use-package toml-mode                ;; For lsp: yay -S taplo
     :mode "\\.toml\\'")
   (use-package csv-mode
     :mode (("\\.csv\\'" . csv-mode)))
