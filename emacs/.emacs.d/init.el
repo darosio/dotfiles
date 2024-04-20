@@ -3061,44 +3061,23 @@ With a prefix ARG, remove start location."
           python-shell-interpreter-args "console --simple-prompt"
           python-shell-prompt-detect-failure-warning nil)
     (add-to-list 'python-shell-completion-native-disabled-interpreters "jupyter"))
+
   (use-package lsp-mode
     :commands (lsp-deferred
                lsp-enable-which-key-integration)
     :custom
     (lsp-completion-provider :none) ;; we use Corfu!
+    (lsp-diagnostics-provider :flymake)
+    (lsp-keymap-prefix "C-S-l")
     :init
-    (setq lsp-keymap-prefix "C-S-l")
-    ;; (setq read-process-output-max (* 1024 1024)) ;; 1mb
+    (setq read-process-output-max (* 1024 1024)) ;; 1mb
     :hook
     (python-mode-hook . lsp-deferred)
     (lsp-mode-hook . lsp-enable-which-key-integration)
-    ;; (lsp-mode-hook . (lambda ()
-    ;;                 (let ((lsp-keymap-prefix "S-SPC"))
-    ;;                   (lsp-enable-which-key-integration))))
-    :defines
-    (lsp-pylsp-plugins-flake8-enabled
-     lsp-pylsp-plugins-autopep8-enabled
-     lsp-pylsp-plugins-mccabe-enabled
-     lsp-pylsp-plugins-pycodestyle-enabled
-     lsp-pylsp-plugins-pydocstyle-enabled
-     lsp-pylsp-plugins-pylint-enabled
-     lsp-pylsp-plugins-pyflakes-enabled
-     lsp-pylsp-plugins-yapf-enabled
-     lsp-pylsp-plugins-flake8-config)
-    :config
-    (setq lsp-pylsp-plugins-flake8-enabled t) ;; (setq pylsp.plugins.flake8.enabled t)
-    (setq lsp-pylsp-plugins-autopep8-enabled nil)
-    (setq lsp-pylsp-plugins-mccabe-enabled nil)
-    (setq lsp-pylsp-plugins-pycodestyle-enabled nil)
-    (setq lsp-pylsp-plugins-pydocstyle-enabled nil)
-    (setq lsp-pylsp-plugins-pylint-enabled nil)
-    (setq lsp-pylsp-plugins-pyflakes-enabled nil)
-    (setq lsp-pylsp-plugins-yapf-enabled nil)
-    (setq lsp-pylsp-plugins-flake8-config ".flake8")
+    (lsp-mode-hook . lsp-diagnostics-mode)
+    (lsp-mode-hook . lsp-completion-mode-maybe)
     )
   (use-package lsp-ui
-    :requires
-    (lsp-mode flycheck)
     :hook
     (lsp-mode-hook . lsp-ui-mode)
     :config
@@ -3107,15 +3086,6 @@ With a prefix ARG, remove start location."
     (setq lsp-ui-sideline-enable nil)
     (setq lsp-ui-flycheck-list-position 'right)
     )
-
-  ;; (use-package treemacs
-  ;;   :bind
-  ;;   ("H-<tab>" . treemacs-select-window))
-  ;; (use-package lsp-treemacs
-  ;;   :commands (lsp-treemacs-sync-mode
-  ;;              lsp-treemacs-errors-list)
-  ;;   :bind ("H-e" . lsp-treemacs-errors-list)
-  ;;   :init (lsp-treemacs-sync-mode 1))
 
   (use-package envrc
     :commands envrc-global-mode
