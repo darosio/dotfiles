@@ -3062,6 +3062,10 @@ With a prefix ARG, remove start location."
           python-shell-prompt-detect-failure-warning nil)
     (add-to-list 'python-shell-completion-native-disabled-interpreters "jupyter"))
 
+  ;; For toml files using taplo-cli
+  ;; (require 'eglot)
+  ;; (add-to-list 'eglot-server-programs '((toml-mode) "taplo" "lsp"))
+  ;; (add-hook 'toml-mode-hook 'eglot-ensure)
   (use-package lsp-mode
     :commands (lsp-deferred
                lsp-enable-which-key-integration)
