@@ -9,6 +9,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 Releases will start from 2022.1.
 
+## 3.15.1 (2024-04-20)
+
+### Fix
+
+- **emacs**: lsp with pylsp-mypy and ruff-lsp
+- **emacs**: jsom-mode reformatting .ipynb files
+- apheleia
+
+### Build
+
+- Update deps
+- **deps**: bump ruff from 0.3.7 to 0.4.0 (#64)
+- **deps**: bump commitizen from 3.22.0 to 3.24.0 (#63)
+- **deps**: bump commitizen from 3.21.3 to 3.22.0 (#61)
+- **deps**: bump ruff from 0.3.5 to 0.3.7 (#62)
+
 ## 3.15.0 (2024-04-10)
 
 ### Feat
