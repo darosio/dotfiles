@@ -3062,17 +3062,26 @@ With a prefix ARG, remove start location."
           python-shell-prompt-detect-failure-warning nil)
     (add-to-list 'python-shell-completion-native-disabled-interpreters "jupyter"))
 
-  ;; For toml files using taplo-cli
-  ;; (require 'eglot)
-  ;; (add-to-list 'eglot-server-programs '((toml-mode) "taplo" "lsp"))
-  ;; (add-hook 'toml-mode-hook 'eglot-ensure)
+  ;; ;; For toml files using taplo-cli
+  ;; (use-package eglot
+  ;;   :config
+  ;;   (add-to-list 'eglot-server-programs '((toml-mode) "taplo" "lsp"))
+  ;;   :hook
+  ;;   (toml-mode-hook . eglot-ensure))
+
   (use-package lsp-mode
     :commands (lsp-deferred
                lsp-enable-which-key-integration)
     :custom
     (lsp-completion-provider :none) ;; we use Corfu!
-    (lsp-diagnostics-provider :flymake)
+    (lsp-diagnostics-provider :flycheck)
     (lsp-keymap-prefix "C-S-l")
+    (lsp-pylsp-plugins-flake8-enabled nil)
+    (lsp-pylsp-plugins-mccabe-enabled nil)
+    (lsp-pylsp-plugins-preload-enabled nil)
+    (lsp-pylsp-plugins-pydocstyle-enabled nil)
+    (lsp-pylsp-plugins-mypy-enabled t)
+    (lsp-pylsp-plugins-ruff-enabled t)
     :init
     (setq read-process-output-max (* 1024 1024)) ;; 1mb
     :hook
