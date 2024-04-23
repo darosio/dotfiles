@@ -3242,7 +3242,25 @@ With a prefix ARG, remove start location."
 (use-package ox-hugo
   :after ox
   :init (eval-after-load 'ox '(require 'ox-hugo)))
+(use-package ellama)
 
+(use-package gptel
+  :config
+  (setq gptel-api-key (lambda ()
+                        (nth 0 (process-lines "pass" "show" "home/openai-dpa"))))
+  (setq
+   gptel-model   "test"
+   gptel-backend (gptel-make-openai "llama-cpp"
+                                    :stream t
+                                    :protocol "http"
+                                    :host "localhost:9990"
+                                    :models '("test")))
+  (gptel-make-ollama "Ollama"             ;Any name of your choosing
+                     :host "localhost:41542"               ;Where it's running
+                     :stream t                             ;Stream responses
+                     :models '("mistral:latest"))          ;List of models
+  
+  )
 (use-package chatgpt-shell
   :straight (:host github :repo "xenodium/chatgpt-shell"
                    :files ("chatgpt-shell.el"
