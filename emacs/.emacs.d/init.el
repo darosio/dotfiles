@@ -3242,6 +3242,7 @@ With a prefix ARG, remove start location."
 (use-package ox-hugo
   :after ox
   :init (eval-after-load 'ox '(require 'ox-hugo)))
+(use-package llm)
 (use-package ellama)
 
 (use-package gptel
@@ -3259,7 +3260,7 @@ With a prefix ARG, remove start location."
                      :host "localhost:41542"               ;Where it's running
                      :stream t                             ;Stream responses
                      :models '("mistral:latest"))          ;List of models
-  
+
   )
 (use-package chatgpt-shell
   :straight (:host github :repo "xenodium/chatgpt-shell"
