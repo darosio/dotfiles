@@ -25,3 +25,6 @@ checkout = git clone 'https://github.com/ncasiraghi/crispr.git' 'crispr'
 
 [nima_io]
 checkout = git clone 'https://github.com/darosio/nima_io.git' 'nima_io'
+
+[cookiecutter-python]
+checkout = git clone 'https://github.com/darosio/cookiecutter-python.git' 'cookiecutter-python'
