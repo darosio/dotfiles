@@ -3260,7 +3260,13 @@ With a prefix ARG, remove start location."
                      :host "localhost:41542"               ;Where it's running
                      :stream t                             ;Stream responses
                      :models '("mistral:latest"))          ;List of models
-
+  (gptel-make-anthropic "Claude"          ;Any name you want
+                        :stream t                             ;Streaming responses
+                        :key "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")
+  (setq
+   gptel-model "claude-3-sonnet-20240229" ;  "claude-3-opus-20240229" also available
+   gptel-backend (gptel-make-anthropic "Claude"
+                                       :stream t :key "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"))
   )
 (use-package chatgpt-shell
   :straight (:host github :repo "xenodium/chatgpt-shell"
