@@ -3242,32 +3242,47 @@ With a prefix ARG, remove start location."
 (use-package ox-hugo
   :after ox
   :init (eval-after-load 'ox '(require 'ox-hugo)))
+
 (use-package llm)
 (use-package ellama)
 
 (use-package gptel
+  :bind ("C-c C-<return>" . gptel-send)
   :config
-  (setq gptel-api-key (lambda ()
-                        (nth 0 (process-lines "pass" "show" "home/openai-dpa"))))
-  (setq
-   gptel-model   "test"
-   gptel-backend (gptel-make-openai "llama-cpp"
-                                    :stream t
-                                    :protocol "http"
-                                    :host "localhost:9990"
-                                    :models '("test")))
-  (gptel-make-ollama "Ollama"             ;Any name of your choosing
-                     :host "localhost:41542"               ;Where it's running
-                     :stream t                             ;Stream responses
-                     :models '("mistral:latest"))          ;List of models
-  (gptel-make-anthropic "Claude"          ;Any name you want
-                        :stream t                             ;Streaming responses
-                        :key "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")
-  (setq
-   gptel-model "claude-3-sonnet-20240229" ;  "claude-3-opus-20240229" also available
-   gptel-backend (gptel-make-anthropic "Claude"
-                                       :stream t :key "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"))
+  (setq gptel-api-key
+        (lambda () (nth 0 (process-lines "pass" "show" "home/openai-dpa"))))
+  (gptel-make-kagi "Kagi"
+    :key (lambda () (nth 0 (process-lines "pass" "show" "cloud/kagi"))))
+  (gptel-make-anthropic "Claude"
+    :stream t
+    :key (lambda () (nth 0 (process-lines "pass" "show" "cloud/claude"))))
+  (gptel-make-openai "OpenRouter"
+    :host "openrouter.ai"
+    :endpoint "/api/v1/chat/completions"
+    :stream t
+    :key (lambda () (nth 0 (process-lines "pass" "show" "cloud/openrouter")))
+    :models '("openai/gpt-3.5-turbo"
+              "mistralai/mixtral-8x7b-instruct"
+              "meta-llama/codellama-34b-instruct"
+              "codellama/codellama-70b-instruct"
+              "google/palm-2-codechat-bison-32k"
+              "google/gemini-pro"))
+  (gptel-make-openai "Groq"
+    :host "api.groq.com"
+    :endpoint "/openai/v1/chat/completions"
+    :stream t
+    :key (lambda () (nth 0 (process-lines "pass" "show" "cloud/groq")))
+    :models '("mixtral-8x7b-32768"
+              "gemma-7b-it"
+              "llama3-8b-8192"
+              "llama3-70b-8192"))
+  (gptel-make-ollama "Ollama"
+    :host "localhost:11434"
+    :stream t
+    :models '("zephyr:latest"
+              "mistral:latest"))
   )
+
 (use-package chatgpt-shell
   :straight (:host github :repo "xenodium/chatgpt-shell"
                    :files ("chatgpt-shell.el"
