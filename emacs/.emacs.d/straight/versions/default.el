@@ -101,7 +101,7 @@
  ("log4e" . "6d71462df9bf595d3861bfb328377346aceed422")
  ("lsp-mode" . "ab8ce86992f7c4bec8da3d494472106934fb03a4")
  ("lsp-ui" . "a59fb5d02eaa97908a06cfc07156de73458c8ae8")
- ("magit" . "058ca81497c2400db45644bfe3920bcaac21f1f1")
+ ("magit" . "7c794201c473e19c6c41c73148221151997d8197")
  ("magit-annex" . "056f0d4462cdccbd7bb7589994da7fef9de766da")
  ("magit-todos" . "f73921e484dbae056e84080c743dffd241cb6bf3")
  ("map" . "48fa72ddd02002ce30d400f04ce2bd88ef02d577")

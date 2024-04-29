@@ -3267,15 +3267,17 @@ With a prefix ARG, remove start location."
               "codellama/codellama-70b-instruct"
               "google/palm-2-codechat-bison-32k"
               "google/gemini-pro"))
-  (gptel-make-openai "Groq"
-    :host "api.groq.com"
-    :endpoint "/openai/v1/chat/completions"
-    :stream t
-    :key (lambda () (nth 0 (process-lines "pass" "show" "cloud/groq")))
-    :models '("mixtral-8x7b-32768"
-              "gemma-7b-it"
-              "llama3-8b-8192"
-              "llama3-70b-8192"))
+  (setq gptel-model   "mixtral-8x7b-32768"
+        gptel-backend
+        (gptel-make-openai "Groq"
+          :host "api.groq.com"
+          :endpoint "/openai/v1/chat/completions"
+          :stream t
+          :key (lambda () (nth 0 (process-lines "pass" "show" "cloud/groq")))
+          :models '("mixtral-8x7b-32768"
+                    "gemma-7b-it"
+                    "llama3-8b-8192"
+                    "llama3-70b-8192")))
   (gptel-make-ollama "Ollama"
     :host "localhost:11434"
     :stream t
