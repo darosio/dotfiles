@@ -9,6 +9,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 Releases will start from 2022.1.
 
+## 3.16.0 (2024-04-29)
+
+### Feat
+
+- **emacs**: Add Anthropic to gptel
+- **emacs**: Add LLMs gptel and ellama
+
+### Fix
+
+- llm
+- **emacs**: lsp ruff mypy
+
+### Build
+
+- Update deps
+- Switch from python-lsp-ruff to ruff-lsp
+- **deps**: bump python-lsp-ruff from 2.2.0 to 2.2.1 (#67)
+- **deps**: bump ruff from 0.4.1 to 0.4.2 (#66)
+- **deps**: bump ruff from 0.4.0 to 0.4.1 (#65)
+- Update deps
+
+### chore
+
+- **emacs**: gptel
+- **mr**: Register cookiecutter
+- **emacs**: Comment the use of lsp-mode
+
 ## 3.15.1 (2024-04-20)
 
 ### Fix
