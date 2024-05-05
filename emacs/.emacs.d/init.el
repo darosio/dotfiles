@@ -3088,7 +3088,6 @@ With a prefix ARG, remove start location."
     (python-mode-hook . lsp-deferred)
     (lsp-mode-hook . lsp-enable-which-key-integration)
     (lsp-mode-hook . lsp-diagnostics-mode)
-    (lsp-mode-hook . lsp-completion-mode-maybe)
     )
   (use-package lsp-ui
     :hook
