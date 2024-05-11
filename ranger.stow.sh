@@ -24,6 +24,7 @@ yay -S --noconfirm python-pillow
 yay -S --noconfirm transmission-cli
 yay -S --noconfirm ueberzug
 yay -S --noconfirm w3m
+yay -S --noconfirm trash-cli
 
 mkdir -p "$HOME"/.config/ranger
 stow -t "$HOME" ranger
