@@ -8,7 +8,7 @@ from email import policy
 from email.parser import BytesParser
 from pathlib import Path
 
-import html2text
+import html2text  # type: ignore[import-untyped]
 
 
 def extract_text_mime(file_path: str) -> str:

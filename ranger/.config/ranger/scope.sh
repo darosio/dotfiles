@@ -336,10 +336,7 @@ handle_mime() {
             exit 1;;
 
 		message/rfc822)
-		    # view_mail_text.py "${FILE_PATH}" && exit 5
             mu view -- "${FILE_PATH}" && exit 5
-            # notmuch show --format=raw -- path:"${FILE_PATH}" && exit 5
-		    # view_mail_html.py "${FILE_PATH}" && exit 5
             exit 1;;
 
     esac
