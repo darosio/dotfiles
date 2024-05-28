@@ -1392,14 +1392,15 @@ completing-read prompter."
                        (mu4e-sent-folder . "/gmail/[Gmail]/Sent Mail" )
                        (mu4e-drafts-folder . "/gmail/[Gmail]/Drafts" )
                        (mu4e-refile-folder . "/archive" )
-                       (mu4e-trash-folder . "/gmail/[Gmail]/Trash" )
+                       (mu4e-trash-folder . "/gmail/Deleted" )
                        (message-signature . "")))
              ,(make-mu4e-context
                :name "gmail"
                :vars '( (user-mail-address . "danielepietroarosio@gmail.com" )
                         (mu4e-drafts-folder . "/gmail/[Gmail]/Drafts")
                         (mu4e-refile-folder . "/archive" )
-                        (mu4e-trash-folder . "/gmail/[Gmail]/Trash")
+                        ;; (mu4e-trash-folder . "/gmail/[Gmail]/Trash")
+                        (mu4e-trash-folder . "/gmail/Deleted")
                         ;; (mu4e-sent-messages-behavior . delete) ; Not needed anymore IMO
                         (message-signature  . "daniele arosio\n38123 Trento\n")))
              ,(make-mu4e-context
