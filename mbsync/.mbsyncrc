@@ -3,41 +3,43 @@ SyncState *
 
 # Automatically create missing mailboxes, both locally and on the server
 Create Both  # default None
-Remove Both
+Remove Near
 # Set off auto-expunge deleted messages on gmail IMAP server configuration:
 # https://mail.google.com/mail/u/0/?tab=cm#settings/fwdandpop
 Expunge Both
 CopyArrivalDate yes
 
-#
+################################################################################
 # Postecert
-#
+################################################################################
+# imap account information
 IMAPAccount pec
 Host mail.postecert.it
 User daniele.arosio@postecert.it
 PassCmd "pass email/postecert"
-# Use SSL
 SSLType IMAPS
 CertificateFile /etc/ssl/certs/ca-certificates.crt
 
+# remote storage (use the imap account specified above)
 IMAPStore pec-remote
 Account pec
 
+# local storage
 MaildirStore pec-local
 # The trailing "/" is important
 Path ~/Maildir/pec/
 Inbox ~/Maildir/pec/INBOX
-# Flatten .
 
+# channel to remote storage
 Channel pec
 Far :pec-remote:
 Near :pec-local:
-Patterns INBOX * !"Sent"
-Sync Push New ReNew Delete Pull All
+Patterns INBOX *
 
-#
+################################################################################
 # Gmail for dpa
-#
+################################################################################
+# imap account information
 IMAPAccount gmail
 Host imap.gmail.com
 User danielepietroarosio@gmail.com
@@ -45,25 +47,21 @@ PassCmd "pass email/gmail-isync"
 SSLType IMAPS
 CertificateFile /etc/ssl/certs/ca-certificates.crt
 
+# remote storage (use the imap account specified above)
 IMAPStore gmail-remote
 Account gmail
 
+# local storage
 MaildirStore gmail-local
 SubFolders Verbatim
 Path ~/Maildir/gmail/
 Inbox ~/Maildir/gmail/Inbox
 
+# channel to remote storage
 Channel gmail
 Far :gmail-remote:
 Near :gmail-local:
-Patterns INBOX "[Gmail]/*" !"[Gmail]/All Mail" "refs" "keepup" "templates" "TmpCNR" "Deleted"
+Patterns * ![Gmail]* "[Gmail]/Draft" "[Gmail]/Sent Mail" "[Gmail]/Spam" "[Gmail]/Trash"
 
-Group gmail
-Channel gmail
-
-#############################################################################
-#		INBOXES
-#############################################################################
-Group inboxes
-Channel gmail-inbox
-Channel pec:INBOX
+# Group gmail
+# Channel gmail
