@@ -1340,16 +1340,17 @@ completing-read prompter."
         smtpmail-queue-dir   "~/Maildir/queue/cur") ; Remember to "mu mkdir" and "touch /queue/.noindex"
   ;; (setq smtpmail-debug-info t)
   (setq mu4e-maildir-shortcuts
-        '(("/gmail/[Gmail]/Spam"      . ?m)
-          ("/gmail/[Gmail]/Starred"   . ?S)
+        '(
+          ;; ("/personal"                . ?p)
+          ("/pec/INBOX"               . ?p)
           ("/gmail/Inbox"             . ?j)
-          ("/gmail/[Gmail]/Sent Mail" . ?s)
-          ("/gmail/templates"         . ?t)
-          ("/archive"                 . ?a)
-          ("/personal"                . ?p)
           ("/gmail/refs"              . ?r)
           ("/gmail/keepup"            . ?k)
-          ("/gmail/[Gmail]/Drafts"    . ?d)))
+          ("/gmail/[Gmail]/Drafts"    . ?d)
+          ("/gmail/[Gmail]/Sent Mail" . ?J)
+          ("/gmail/[Gmail]/Spam"      . ?s)
+          ("/archive"                 . ?a)
+          ))
 
   (setq mu4e-compose-format-flowed t  ; Set format=flowed
         mu4e-compose-context-policy 'ask-if-none)
@@ -1358,28 +1359,34 @@ completing-read prompter."
   (setq mu4e-bookmarks
         `((:key ?u
                 :name "Unread messages"
+                :hide t
                 :query "flag:unread AND NOT flag:trashed")
-          (:key ?f
-                :name "CNRtmp"
-                :query "maildir:/gmail/Tmpcnr")
-          (:key ?t
-                :name "Today's messages"
-                :query "date:today..now")
-          (:key ?w
-                :name "Last 7 days"
-                :query "date:7d..now")
-          (:key ?p
-                :name "Messages with images"
-                :query "mime:image/*")
+          (:key ?U
+                :name "Unread bulk messages"
+                :hide t
+                :query "flag:unread NOT flag:trashed AND (flag:list OR from:trac@sagemath.org)")
+          (:key ?s
+                :name "Starred"
+                :hide t
+                :query "flag:flagged")
+          (:key ?3
+                :name "Last 3 days"
+                :hide t
+                :query "date:3d..now")
+          (:key ?o
+                :name "Messages with Office docs"
+                :hide t
+                :query "mime:application/vnd.*")
           (:key ?b
                 :name "Big messages"
-                :query "size:2M..500M")
-          (:key ?a
-                :name "Old Aruba Pec"
-                :query "tags:arubapec")
-          (:key ?l
-                :name "Unread bulk messages"
-                :query "flag:unread NOT flag:trashed AND (flag:list OR from:trac@sagemath.org)")
+                :hide t
+                :query "size:5M..500M")
+          (:key ?p
+                :name "Personal archive"
+                :query "maildir:/personal")
+          (:key ?t
+                :name "Trash for Gmail w/o related"
+                :query "maildir:/gmail/[Gmail]/Trash")
           ))
 
   (use-package mu4e-context :straight mu4e
