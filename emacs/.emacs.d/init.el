@@ -1341,14 +1341,14 @@ completing-read prompter."
   ;; (setq smtpmail-debug-info t)
   (setq mu4e-maildir-shortcuts
         '(
-          ;; ("/personal"                . ?p)
-          ("/pec/INBOX"               . ?p)
           ("/gmail/Inbox"             . ?j)
           ("/gmail/refs"              . ?r)
           ("/gmail/keepup"            . ?k)
           ("/gmail/[Gmail]/Drafts"    . ?d)
-          ("/gmail/[Gmail]/Sent Mail" . ?J)
-          ("/gmail/[Gmail]/Spam"      . ?s)
+          ("/gmail/[Gmail]/Sent Mail" . ?s)
+          ("/gmail/[Gmail]/Spam"      . ?x)
+          ("/pec/INBOX"               . ?P)
+          ("/personal"                . ?p)
           ("/archive"                 . ?a)
           ))
 
@@ -1357,36 +1357,28 @@ completing-read prompter."
   (setq message-signature nil)
   (setq mu4e-compose-switch 'frame); every new email composition gets its own frame
   (setq mu4e-bookmarks
-        `((:key ?u
-                :name "Unread messages"
-                :hide t
-                :query "flag:unread AND NOT flag:trashed")
-          (:key ?U
-                :name "Unread bulk messages"
-                :hide t
-                :query "flag:unread NOT flag:trashed AND (flag:list OR from:trac@sagemath.org)")
-          (:key ?s
-                :name "Starred"
-                :hide t
-                :query "flag:flagged")
-          (:key ?3
-                :name "Last 3 days"
-                :hide t
-                :query "date:3d..now")
-          (:key ?o
-                :name "Messages with Office docs"
-                :hide t
-                :query "mime:application/vnd.*")
-          (:key ?b
-                :name "Big messages"
-                :hide t
-                :query "size:5M..500M")
-          (:key ?p
-                :name "Personal archive"
-                :query "maildir:/personal")
+        `(
+          (:key ?a
+                :name "Temporary archive"
+                :query "maildir:/gmail/archive_tmp")
           (:key ?t
                 :name "Trash for Gmail w/o related"
                 :query "maildir:/gmail/[Gmail]/Trash")
+          (:key ?s :hide t
+                :name "Starred"
+                :query "flag:flagged")
+          (:key ?u :hide t
+                :name "Unread messages"
+                :query "flag:unread AND NOT flag:trashed")
+          (:key ?o :hide t
+                :name "Messages with Office docs"
+                :query "mime:application/vnd.*")
+          (:key ?b :hide t
+                :name "Big messages"
+                :query "size:5M..500M")
+          (:key ?3 :hide t
+                :name "Last 3 days"
+                :query "date:3d..now")
           ))
 
   (use-package mu4e-context :straight mu4e
