@@ -123,3 +123,6 @@ checkout = git clone 'https://github.com/PolusAI/bfio.git' 'bfio'
 
 [imaging_data_sim]
 checkout = git clone 'https://github.com/joe311/imaging_data_sim.git' 'imaging_data_sim'
+
+[mint]
+checkout = git clone 'https://github.com/biophotlumin/mint.git' 'mint'
