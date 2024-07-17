@@ -8,6 +8,5 @@ fi
 sudo mdadm --examine --scan | sudo tee -a /etc/mdadm.conf
 echo "MAILADDR root" | sudo tee -a /etc/mdadm.conf
 sudo mdadm --monitor --scan --oneshot --test
-f
 sudo systemctl start raid_scrubbing.timer
 sudo systemctl enable raid_scrubbing.timer
