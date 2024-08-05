@@ -9,6 +9,59 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 Releases will start from 2022.1.
 
+## 3.17.0 (2024-08-05)
+
+### Feat
+
+- Add calcium signal simulation example
+- **mu4e**: Add archive_tmp label in gmail
+- **ranger**: Add trash-cli properly
+- **ranger**: Display ipynb file
+
+### Fix
+
+- error in 2root.raid_mdadm_scrubbing.sh
+- **ranger**: media shortcut
+- **mu4e**: for gmail again
+- **mu4e**: for gmail again
+- **mu4e**: (cnr fw to) for gmail
+- **ranger**: Display/Open html email
+
+### Build
+
+- **emacs**: Update deps
+- **deps**: bump ruff from 0.5.5 to 0.5.6 (#89)
+- **deps**: bump pre-commit from 3.7.1 to 3.8.0 (#88)
+- **deps**: bump ruff from 0.5.4 to 0.5.5 (#87)
+- **deps**: bump ruff from 0.5.3 to 0.5.4 (#86)
+- **deps**: bump ruff from 0.5.2 to 0.5.3 (#85)
+- **deps**: bump commitizen from 3.27.0 to 3.28.0 (#84)
+- **deps**: bump ruff from 0.5.1 to 0.5.2 (#83)
+- **deps**: bump ruff from 0.5.0 to 0.5.1 (#82)
+- **emacs**: Update deps
+- **deps**: bump ruff from 0.4.10 to 0.5.0 (#81)
+- **deps**: bump ruff-lsp from 0.0.53 to 0.0.54 (#80)
+- Update deps
+- **deps**: bump ruff from 0.4.9 to 0.4.10 (#79)
+- **deps**: bump ruff from 0.4.8 to 0.4.9 (#78)
+- **deps**: bump ruff from 0.4.7 to 0.4.8 (#77)
+- **deps**: bump ruff from 0.4.6 to 0.4.7 (#76)
+- **deps**: bump ruff from 0.4.5 to 0.4.6 (#75)
+- Update deps
+- **deps**: bump ruff from 0.4.4 to 0.4.5 (#74)
+- **deps**: bump commitizen from 3.25.0 to 3.26.0 (#72)
+- **deps**: bump pre-commit from 3.7.0 to 3.7.1 (#71)
+- **deps**: bump ruff from 0.4.3 to 0.4.4 (#70)
+- **deps**: bump ruff from 0.4.2 to 0.4.3 (#69)
+- Update deps
+- **deps**: bump commitizen from 3.24.0 to 3.25.0 (#68)
+- Update deps
+
+### chore
+
+- Add MINT repo to examples
+- Align dependabot time
+
 ## 3.16.0 (2024-04-29)
 
 ### Feat
