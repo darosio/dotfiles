@@ -17,7 +17,7 @@ IMAPAccount pec
 Host mail.postecert.it
 User daniele.arosio@postecert.it
 PassCmd "pass email/postecert"
-SSLType IMAPS
+TLSType IMAPS
 CertificateFile /etc/ssl/certs/ca-certificates.crt
 
 # remote storage (use the imap account specified above)
@@ -43,8 +43,8 @@ Patterns INBOX *
 IMAPAccount gmail
 Host imap.gmail.com
 User danielepietroarosio@gmail.com
-PassCmd "pass email/gmail-isync"
-SSLType IMAPS
+PassCmd "pass email/gmail-mbsync"
+TLSType IMAPS
 CertificateFile /etc/ssl/certs/ca-certificates.crt
 
 # remote storage (use the imap account specified above)
@@ -64,4 +64,3 @@ Near :gmail-local:
 Patterns * ![Gmail]* "[Gmail]/Drafts" "[Gmail]/Sent Mail" "[Gmail]/Spam" "[Gmail]/Trash"
 
 # Group gmail
-# Channel gmail
