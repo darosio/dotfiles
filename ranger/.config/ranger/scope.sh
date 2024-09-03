@@ -94,6 +94,7 @@ handle_extension() {
             ## Preview as csv conversion
             ## Uses: https://github.com/dilshod/xlsx2csv
             xlsx2csv -- "${FILE_PATH}" && exit 5
+            ssconvert "${FILE_PATH}" fd://1 2>/dev/null && exit 5
             exit 1;;
 
         ## HTML

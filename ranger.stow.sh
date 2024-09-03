@@ -12,7 +12,6 @@ yay -S --noconfirm unrar
 yay -S --noconfirm zip
 yay -S --noconfirm unzip
 
-
 yay -S --noconfirm ffmpegthumbnailer
 yay -S --noconfirm highlight
 yay -S --noconfirm imagemagick
@@ -25,6 +24,8 @@ yay -S --noconfirm transmission-cli
 yay -S --noconfirm ueberzug
 yay -S --noconfirm w3m
 yay -S --noconfirm trash-cli
+
+yay -S --noconfirm python-xlsx2csv
 
 mkdir -p "$HOME"/.config/ranger
 stow -t "$HOME" ranger

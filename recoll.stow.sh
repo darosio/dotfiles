@@ -3,12 +3,14 @@
 yay -S --noconfirm recoll
 yay -S --noconfirm pstotext
 yay -S --noconfirm python-mutagen
-yay -S --noconfirm python-lxml
 yay -S --noconfirm python-pychm
 mkdir -p "$HOME"/.recoll
 mkdir -p "$HOME"/.config/systemd/user
 mkdir -p "$HOME"/.local/bin
 stow -t "$HOME" recoll
 pacaur -Qi recoll
-yay -S --noconfirm python-unrar
-yay -S --noconfirm lyx
+if ! yay -Q lyx >/dev/null 2>&1; then
+    yay -S --noconfirm lyx
+else
+    echo "Lyx is already installed."
+fi
