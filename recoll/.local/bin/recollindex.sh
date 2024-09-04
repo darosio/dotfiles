@@ -4,7 +4,7 @@ out=/tmp/$(basename "$0")-$(date +%d%H%M%S)
 useremail=daniele.arosio@cnr.it
 
 (echo "To: daniele.arosio@cnr.it"
-echo "From: $(hostname)"
+echo "From: $(cat /proc/sys/kernel/hostname)"
 echo "Subject: recollindex from $(hostname)")  >  "$out"
 # shellcheck disable=SC2129
 cat ~/.recoll/idxstatus.txt					   >> "$out"
