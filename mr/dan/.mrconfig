@@ -4,18 +4,14 @@
 #include = cat /usr/share/mr/git-annex
 #include = cat /usr/share/mr/vis
 
-# TODO: consider: git pull; git merge; git push for mr up default
-# [workspace/zim/zim-arch]
-# [workspace/zim/zim-home]
-# [workspace/zim/zim-work]
 
-[workspace/dotfiles]
-checkout = git clone 'git@bitbucket.org:darosio/dotfiles.git' '.dotfiles'
-zap =
-    git pull
-    git add .
-    git commit -m "updated `date -I`"
-    git push
+#[workspace/dotfiles]
+#checkout = git clone 'git@bitbucket.org:darosio/dotfiles.git' '.dotfiles'
+#zap =
+#    git pull
+#    git add .
+#    git commit -m "updated `date -I`"
+#    git push
 #adding remote upstream
 #zap =
 #    git pull upstream
