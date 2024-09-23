@@ -17,6 +17,8 @@ for file in ~/.bashrc.d/*.sh; do
 done
 
 # Host-specific configuration
+# Try to read HOSTNAME, fallback to /proc/sys/kernel/hostname if not set
+: "${HOSTNAME:=$(cat /proc/sys/kernel/hostname)}"
 # shellcheck source=/dev/null
 [[ -r ~/.bashrc."$HOSTNAME" ]] && source "$HOME/.bashrc.$HOSTNAME"
 

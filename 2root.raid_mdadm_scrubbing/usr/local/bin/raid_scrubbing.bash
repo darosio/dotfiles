@@ -1,11 +1,12 @@
 #!/bin/bash
 #
 out=/tmp/raid_scrubbing.out
+hostname=$(cat /proc/sys/kernel/hostname)  # Get the hostname from /proc
 
-echo "To: daniele.arosio@cnr.it" 				 > $out
+echo "To: daniele.arosio@cnr.it"             > $out
 # shellcheck disable=SC2129
-echo "From: $HOSTNAME" 							>> $out
-echo "Subject: RAID scrubbing on $HOSTNAME" 	>> $out
+echo "From: $hostname"                      >> $out
+echo "Subject: RAID scrubbing on $hostname" >> $out
 printf "\nmismatches before: " 					>> $out
 cat /sys/block/*/md/mismatch_cnt				>> $out
 mdadm --misc --detail /dev/md/*					>> $out

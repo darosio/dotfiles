@@ -1,5 +1,7 @@
 #!/bin/bash
 
+hostname=$(cat /proc/sys/kernel/hostname)  # Get the hostname from /proc
+
 # Check if the argument (service unit name) is provided
 if [ -z "$1" ]; then
   echo "Usage: $0 <service_unit_name>"
@@ -16,7 +18,7 @@ MESSAGE="Service unit '$SERVICE_UNIT' has failed."
 
 # Send email using sendmail
 (
-echo "From: systemd@$HOSTNAME"
+echo "From: systemd@$hostname"
 echo "To: $RECIPIENT"
 echo "Subject: $SUBJECT"
 echo "Content-Transfer-Encoding: 8bit"

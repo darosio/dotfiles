@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+#
+hostname=$(cat /proc/sys/kernel/hostname)  # Get the hostname from /proc
 
 # Check for internet connectivity
 if ! ping -c1 www.google.com > /dev/null 2>&1; then
@@ -7,7 +9,7 @@ fi
 
 # Prepare email content
 EMAIL_BODY="To: darosio@duck.com
-Subject: SMART error ($SMARTD_FAILTYPE) detected on host: $HOSTNAME
+Subject: SMART error ($SMARTD_FAILTYPE) detected on host: $hostname
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset=UTF-8
 

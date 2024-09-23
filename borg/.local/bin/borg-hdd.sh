@@ -4,11 +4,12 @@ bname=$(basename "$0")
 out=/tmp/$bname-$(date +%d%H%M%S)
 #borg init --encryption=none /media/rsnapshots/borg-hdd
 REPOSITORY=/media/rsnapshots/borg-hdd
+hostname=$(cat /proc/sys/kernel/hostname)  # Get the hostname from /proc
 
 echo "To: daniele.arosio@cnr.it"							 > "$out"
 # shellcheck disable=SC2129
 echo "From: $(hostname)"									 >> "$out"
-echo "Subject: $bname backup on $(hostname)"				 >> "$out"
+echo "Subject: $bname backup on $hostname"                   >> "$out"
 
 #`date +%Y-%m-%d`               \
 printf "\nBackup ~/.origin70 ...\n" 						 >> "$out"
