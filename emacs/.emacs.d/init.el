@@ -3301,6 +3301,9 @@ With a prefix ARG, remove start location."
           (nth 0 (process-lines "pass" "show" "home/openai-dpa"))))
   )
 
+(straight-use-package
+ '(seqel :type git :host github :repo "RNAer/seqel"))
+
 (setq debug-on-error nil)
 (setq debug-on-quit nil)
 (let ((elapsed (float-time (time-subtract (current-time) emacs-start-time))))
