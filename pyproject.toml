@@ -30,7 +30,7 @@ version = "3.17.0"
 dev = [
   "commitizen == 3.29.0",
   "pre-commit == 3.8.0",
-  "ruff == 0.6.7",
+  "ruff == 0.6.8",
   "pylsp-mypy == 0.6.9",
   "ruff-lsp == 0.0.57"
 ]
