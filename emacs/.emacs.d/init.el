@@ -3081,6 +3081,8 @@ With a prefix ARG, remove start location."
     (lsp-pylsp-plugins-pydocstyle-enabled nil)
     (lsp-pylsp-plugins-mypy-enabled t)
     (lsp-pylsp-plugins-ruff-enabled t)
+    (lsp-enable-file-watchers t) ;; Enable file watchers
+    (lsp-file-watch-threshold 2000) ;; Increase the threshold for large projects
     :init
     (setq read-process-output-max (* 1024 1024)) ;; 1mb
     :hook
