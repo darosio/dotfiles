@@ -1822,14 +1822,13 @@ completing-read prompter."
     (use-package ox-beamer :straight org :init (eval-after-load 'ox '(require 'ox-beamer)))
     (use-package ox-md :straight org :init (eval-after-load 'ox '(require 'ox-md)))
     (use-package ox-koma-letter :straight org :init (eval-after-load 'ox '(require 'ox-koma-letter)))
+    ;; https://opensource.com/article/18/2/org-mode-slides
     (use-package ox-reveal
-      ;; https://www.yanboyang.com/revealslides/
-      ;; https://opensource.com/article/18/2/org-mode-slides
       :config
-      ;; (setq org-reveal-root "file:///home/dan/.pandoc/reveal.js")
-      ;; npm install --save reveal.js-menu
-      ;; npm install --save reveal.js
-      (setq org-reveal-root "file:///home/dan/node_modules/reveal.js")
+      (setq org-reveal-root "file:///home/dan/workspace/examples/reveal.js/")
+      (setq org-reveal-theme "night")
+      (setq org-reveal-quiet t)
+      ;; (setq org-reveal-css "path/to/your/custom/css")
       :init
       (eval-after-load 'ox '(require 'ox-reveal))
       )
@@ -2416,10 +2415,15 @@ completing-read prompter."
                 ("<f14> d r" . org-download-rename-at-point)
                 ("<f14> d R" . org-download-rename-last-file)
                 ("<f14> d s" . org-download-screenshot))
-    :hook (dired-mode-hook . org-download-enable)
+    :hook
+    (dired-mode-hook . org-download-enable)
     (org-mode-hook . org-download-enable)
     :config
-    (setq org-download-screenshot-method "maim -o -u -s %s")
+    (setq org-download-method 'directory) ;'attach
+    ;; (setq org-download-screenshot-method "sleep 10 && flameshot gui -p %s")
+    ;; (setq org-download-screenshot-method "maim -o -u -s %s")
+    (setq org-download-screenshot-method "sleep 7; maim -s %s")
+    (setq org-download-heading-lvl 2)  ;; nil Save all images in the same directory
     )
   (use-package org-cliplink
     :bind ("<f14> i c" . org-cliplink)

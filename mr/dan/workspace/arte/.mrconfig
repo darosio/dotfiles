@@ -44,3 +44,6 @@ checkout = git clone 'https://github.com/darosio/emcp.git' 'emcp'
 
 [ms-aiello]
 checkout = git clone 'https://github.com/darosio/ms-aiello.git' 'ms-aiello'
+
+[mkprotocols]
+checkout = git clone 'https://github.com/darosio/mkprotocols.git' 'mkprotocols'
