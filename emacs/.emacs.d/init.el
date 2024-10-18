@@ -3243,9 +3243,6 @@ With a prefix ARG, remove start location."
   (setq calibredb-ref-default-bibliography "~/Sync/media/ebooks.bib")
   ;; (add-to-list 'bibtex-completion-bibliography calibredb-ref-default-bibliography)
   )
-(use-package ox-hugo
-  :after ox
-  :init (eval-after-load 'ox '(require 'ox-hugo)))
 
 (use-package llm)
 (use-package ellama)
