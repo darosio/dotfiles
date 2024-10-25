@@ -116,6 +116,9 @@ message = "Do you want to add body message in commit?"
 name = "show_message"
 type = "confirm"
 
+[tool.hatch.build.targets.wheel]
+packages = ["emacs"]
+
 [tool.hatch.envs.default]
 features = ["dev"]
 
