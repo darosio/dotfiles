@@ -2731,25 +2731,25 @@ completing-read prompter."
     :init (setq org-cite-csl-styles-dir "~/Zotero/styles"))
   (use-package oc-natbib :straight org :after oc)
 
-  (use-package pdf-tools
-    :demand t
-    :functions pdf-loader-install
-    :bind (:map pdf-view-mode-map
-                ("C-s" . isearch-forward)
-                ("/" . pdf-occur)
-                ("C-?" . pdf-isearch-occur))
-    :init
-    (pdf-loader-install)
-    :config
-    (setq pdf-view-resize-factor 1.1)   ;; more fine-grained zooming
-    (use-package pdf-misc
-      :straight pdf-tools
-      :config (setq pdf-misc-print-program "/usr/bin/gtklp"))
-    (use-package pdf-annot
-      :straight pdf-tools
-      :bind (:map pdf-view-mode-map
-                  ("h" . pdf-annot-add-highlight-markup-annotation))
-      :config (setq-local pdf-annot-activate-created-annotations nil)))
+  ;; (use-package pdf-tools
+  ;;   :demand t
+  ;;   :functions pdf-loader-install
+  ;;   :bind (:map pdf-view-mode-map
+  ;;               ("C-s" . isearch-forward)
+  ;;               ("/" . pdf-occur)
+  ;;               ("C-?" . pdf-isearch-occur))
+  ;;   :init
+  ;;   (pdf-loader-install)
+  ;;   :config
+  ;;   (setq pdf-view-resize-factor 1.1)   ;; more fine-grained zooming
+  ;;   (use-package pdf-misc
+  ;;     :straight pdf-tools
+  ;;     :config (setq pdf-misc-print-program "/usr/bin/gtklp"))
+  ;;   (use-package pdf-annot
+  ;;     :straight pdf-tools
+  ;;     :bind (:map pdf-view-mode-map
+  ;;                 ("h" . pdf-annot-add-highlight-markup-annotation))
+  ;;     :config (setq-local pdf-annot-activate-created-annotations nil)))
 
   ;; https://github.com/fuxialexander/org-pdftools
   ;; Maybe defun are unused but follow the instruction
