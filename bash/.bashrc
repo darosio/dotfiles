@@ -37,7 +37,7 @@ cd "$AUTOCD" || return
 [ -z "$PS1" ] && return
 
 export EDITOR='emacsclient -c -a=""'
-export TERMINAL=urxvt
+export TERMINAL=alacritty
 export HISTCONTROL=ignoredups
 export WINEARCH=win32
 export R_LIBS_USER=~/.Renviron/

@@ -31,8 +31,8 @@ yay -S --noconfirm perl-image-exiftool
 yay -S --noconfirm poppler
 yay -S --noconfirm python-pillow
 yay -S --noconfirm transmission-cli
-yay -S --noconfirm ueberzug
-yay -S --noconfirm w3m
+yay -S --noconfirm ueberzugpp
+# yay -S --noconfirm w3m
 yay -S --noconfirm trash-cli
 
 yay -S --noconfirm python-xlsx2csv

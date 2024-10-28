@@ -8,3 +8,20 @@ cd "$HOME"/.emacs.d || exit
 [ -d "$HOME"/Sync/.emacs ] && ln -sf "$HOME"/Sync/.emacs/* .
 mkdir -p "$HOME"/Sync/notes/org-roam/
 cd "$HOME" && ln -sf "$HOME"/Sync/.home/.hunspell_* .
+
+yay -S --noconfirm emacs-wayland
+
+yay -S --noconfirm jupyterlab
+yay -S --noconfirm ripgrep
+yay -S --noconfirm the_silver_searcher
+yay -S --noconfirm hunspell
+yay -S --noconfirm hunspell-en_us
+yay -S --noconfirm hunspell-it
+# for flycheck
+yay -S --noconfirm vale
+yay -S --noconfirm xmlstarlet
+  # - [ ] python-pylint
+  # - [X] shellcheck
+yay -S --noconfirm graphviz
+yay -S --noconfirm plantuml
+yay -S --noconfirm gnuplot

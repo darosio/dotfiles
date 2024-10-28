@@ -15,12 +15,6 @@ set $up k
 set $right l
 # Your preferred terminal emulator
 set $term alacritty
-set $menu wofi --show run    # Wayland-compatible app launcher (use wofi or similar)
-
-# Your preferred application launcher
-# Note: pass the final command to swaymsg so that the resulting window can be opened
-# on the original workspace that the command was run on.
-set $menu dmenu_path | wmenu | xargs swaymsg exec --
 set $menu wmenu-run
 ### Output configuration
 #
@@ -56,9 +50,9 @@ output * bg '#5C001E' solid_color
 # Example configuration:
 #
     input "type:keyboard" {
-          xkb_layout us,de
+          xkb_layout us,it
           xkb_variant ,nodeadkeys
-          xkb_options ctrl:nocaps
+          xkb_options grp:rctrl_rshift_toggle
           }
    input * {
          dwt enabled
@@ -272,13 +266,12 @@ bindsym --release Print exec "f=$(date +%Y-%m-%d:%T).png && maim -o ~/Sync/tmp/P
 # bindsym Shift+Ctrl+Print exec ~/.files/i3/record-screen.sh gif
 # bindsym Shift+Mod4+Print exec ~/.files/i3/record-screen.sh ogv
 
-# start dmenu (a program launcher)
-# bindsym $mod+d exec dmenu_run -nb "#eee8d5" -nf "#073642" -sb "#dc322f" -fn "-misc-monaco-medium-r-*-*-11-*" -l 30 -i -f -b
-# bindsym --release $mod+space exec  rofi -show drun -matching fuzzy
-bindsym --release $mod+space exec  wofi -show drun -matching fuzzy
-# list open windows to switch to
-# bindsym $mod+Tab exec rofi -show window
-bindsym $mod+Shift+s exec wofi -show ssh
+# start rofi (programlauncher, ssh, windows)
+bindsym --release $mod+space exec  rofi -show drun -matching fuzzy
+bindsym $mod+Tab exec rofi -show window
+bindsym $mod+Shift+s exec rofi -show ssh
+bindsym $mod+Shift+d exec wldash
+bindsym $mod+Shift+f exec fuzzel
 
 # class                 border  backgr. text    indicator
 client.focused          #859900 #859900 #fdf6e3 #2e9ef4

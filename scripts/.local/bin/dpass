@@ -19,4 +19,4 @@ if [[ -n $word ]]; then
   done
 fi > /tmp/pp
 
-urxvt -e bash -c "cat /tmp/pp; bash"
+alacritty -e bash -c "cat /tmp/pp; bash"

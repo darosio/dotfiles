@@ -189,10 +189,10 @@ HEIGHT, if supplied, specifies height of letters to use."
     (put 'narrow-to-region 'disabled nil) ; narrow to region =C-x n n=
     (fset 'yes-or-no-p 'y-or-n-p)
     :bind
-    (("M-/" . hippie-expand)
-     ("H-;" . comment-box)
-     ("H-<backspace>" . kill-whole-line)
-     ("H-\\" . indent-region)
+    (("C-M-s-/" . hippie-expand)
+     ("C-M-s-;" . comment-box)
+     ("C-M-s-<backspace>" . kill-whole-line)
+     ("C-M-s-\\" . indent-region)
      ("C-c t A" . auto-revert-mode)
      ("C-c t o e" . org-toggle-pretty-entities)
      ("C-c t d" . toggle-debug-on-error)
@@ -296,26 +296,26 @@ HEIGHT, if supplied, specifies height of letters to use."
     (setq window-sides-vertical nil)
     :hook ((help-mode-hook . visual-line-mode)
            (Custom-mode-hook . visual-line-mode))
-    :bind (("H-n" . next-buffer)
-           ("H-p" . previous-buffer)
-           ("H-o" . other-window)
-           ("H-2" . split-window-below)
-           ("H-3" . split-window-right)
-           ("H-0" . delete-window)
-           ("H-1" . delete-other-windows)
-           ("H-5" . delete-frame)
-           ("H-{" . shrink-window-horizontally)
-           ("H-}" . enlarge-window-horizontally)
-           ("H-[" . shrink-window)
-           ("H-]" . enlarge-window)
-           ("H-=" . balance-windows-area)
-           ("H-m" . prot/window-single-toggle)
-           ("H-s" . window-toggle-side-windows)
-           ("H-q" . delete-window)            ; emulate i3wm
-           ("H-<up>" . windmove-up)
-           ("H-<left>" . windmove-left)
-           ("H-<down>" . windmove-down)
-           ("H-<right>" . windmove-right)))
+    :bind (("C-M-s-n" . next-buffer)
+           ("C-M-s-p" . previous-buffer)
+           ("C-M-s-o" . other-window)
+           ("C-M-s-2" . split-window-below)
+           ("C-M-s-3" . split-window-right)
+           ("C-M-s-0" . delete-window)
+           ("C-M-s-1" . delete-other-windows)
+           ("C-M-s-5" . delete-frame)
+           ("C-M-s-{" . shrink-window-horizontally)
+           ("C-M-s-}" . enlarge-window-horizontally)
+           ("C-M-s-[" . shrink-window)
+           ("C-M-s-]" . enlarge-window)
+           ("C-M-s-=" . balance-windows-area)
+           ("C-M-s-m" . prot/window-single-toggle)
+           ("C-M-s-s" . window-toggle-side-windows)
+           ("C-M-s-q" . delete-window)            ; emulate i3wm
+           ("C-M-s-<up>" . windmove-up)
+           ("C-M-s-<left>" . windmove-left)
+           ("C-M-s-<down>" . windmove-down)
+           ("C-M-s-<right>" . windmove-right)))
 
   (use-package electric
     :straight (:type built-in)
@@ -420,7 +420,7 @@ HEIGHT, if supplied, specifies height of letters to use."
   (use-package which-key
     :commands (which-key-mode
                which-key-add-key-based-replacements)
-    :bind ("H-<f1>" . which-key-show-top-level)
+    :bind ("C-M-s-<f1>" . which-key-show-top-level)
     :init
     (which-key-mode 1)
     (which-key-add-key-based-replacements "C-c t m" "Toggle mode")
@@ -474,7 +474,7 @@ HEIGHT, if supplied, specifies height of letters to use."
 
   (use-package ace-window
     :demand t
-    :bind (("H-w" . ace-window)
+    :bind (("C-M-s-w" . ace-window)
            ("C-'" . ace-select-window)
            ("C-\"" . ace-swap-window))
     :config
@@ -483,7 +483,7 @@ HEIGHT, if supplied, specifies height of letters to use."
           aw-dispatch-always nil))
 
   (use-package transpose-frame
-    :bind ("H-E" . transpose-frame))
+    :bind ("C-M-s-e" . transpose-frame))
 
   (use-package imenu-list               ; F9
     :bind (("<f9>" . imenu-list)
@@ -520,16 +520,16 @@ HEIGHT, if supplied, specifies height of letters to use."
           sp-highlight-wrap-tag-overlay nil)
     :bind (:map smartparens-mode-map
                 ("<C-backspace>" . sp-backward-kill-sexp)
-                ("H-b" . sp-backward-sexp)
-                ("H-d" . sp-kill-sexp)
-                ("H-f" . sp-forward-sexp)
-                ("H-h" . sp-select-next-thing)
-                ("H-k" . sp-kill-hybrid-sexp)
-                ("H-t" . sp-add-to-previous-sexp)
-                ("H-)" . sp-forward-slurp-sexp)
-                ("H-}" . sp-forward-barf-sexp)
-                ("H-(" . sp-backward-slurp-sexp)
-                ("H-{" . sp-backward-barf-sexp))
+                ("C-M-s-b" . sp-backward-sexp)
+                ("C-M-s-d" . sp-kill-sexp)
+                ("C-M-s-f" . sp-forward-sexp)
+                ("C-M-s-h" . sp-select-next-thing)
+                ("C-M-s-k" . sp-kill-hybrid-sexp)
+                ("C-M-s-t" . sp-add-to-previous-sexp)
+                ("C-M-s-)" . sp-forward-slurp-sexp)
+                ("C-M-s-}" . sp-forward-barf-sexp)
+                ("C-M-s-(" . sp-backward-slurp-sexp)
+                ("C-M-s-{" . sp-backward-barf-sexp))
     :hook
     (inferior-python-mode-hook . smartparens-mode)
     (jupyter-repl-mode-hook . smartparens-mode)
@@ -549,8 +549,8 @@ HEIGHT, if supplied, specifies height of letters to use."
            (:map
             prog-mode-map
             ("<backtab>" . hs-toggle-hiding)
-            ("H-z" . hs-hide-all)
-            ("H-Z" . hs-show-all)))
+            ("C-M-s-z" . hs-hide-all)
+            ("C-M-s-a" . hs-show-all)))
     :config
     (setq hs-hide-comments-when-hiding-all nil)
     :hook (prog-mode-hook . hs-minor-mode))
@@ -869,11 +869,11 @@ HEIGHT, if supplied, specifies height of letters to use."
            ("M-." . embark-dwim)       ; orig. xref-find-definition
            ("C-h B" . embark-bindings) ;; alternative for `describe-bindings'
            :map minibuffer-local-completion-map
-           ("H-e" . embark-export)
-           ("H-b" . embark-become)
+           ("C-M-s-e" . embark-export)
+           ("C-M-s-b" . embark-become)
            :map minibuffer-local-map
-           ("H-e" . embark-export)
-           ("H-b" . embark-become))
+           ("C-M-s-e" . embark-export)
+           ("C-M-s-b" . embark-become))
     :preface
     (defun embark-which-key-indicator ()
       "An embark indicator that displays keymaps using which-key.
@@ -1037,7 +1037,7 @@ completing-read prompter."
     :bind (("C-c t s" . flyspell-mode)
            ("C-c t S" . flyspell-correct-auto-mode)
            :map flyspell-mode-map
-           ("H-," . flyspell-auto-correct-previous-word) ; I mostly use flyspell-correct
+           ("C-M-s-," . flyspell-auto-correct-previous-word) ; I mostly use flyspell-correct
            ("C-;" . nil)                ; to avoid conflicts
            ("C-." . nil)
            ("C-," . nil)))
@@ -1572,7 +1572,7 @@ completing-read prompter."
     :bind (:map org-mode-map
                 ("C-c s" . org-babel-jupyter-scratch-buffer)
                 ("C-c <DEL>" . jupyter-org-clear-all-results)
-                ("H-<tab>" . jupyter-org-hydra/body))
+                ("C-M-s-<tab>" . jupyter-org-hydra/body))
     :config
     (setq jupyter-repl-prompt-margin-width 4)
     (setq org-babel-default-header-args:jupyter-python '((:async . "yes")
@@ -2407,14 +2407,14 @@ completing-read prompter."
   (use-package org-download
     :after (org)
     :bind (:map org-mode-map
-                ("<f14> d c" . org-download-clipboard)
-                ("<f14> d i" . org-download-image)
-                ("<f14> d y" . org-download-yank)
-                ("<f14> d e" . org-download-edit)
-                ("<f14> d k" . org-download-delete)
-                ("<f14> d r" . org-download-rename-at-point)
-                ("<f14> d R" . org-download-rename-last-file)
-                ("<f14> d s" . org-download-screenshot))
+                ("<Launch5> d c" . org-download-clipboard)
+                ("<Launch5> d i" . org-download-image)
+                ("<Launch5> d y" . org-download-yank)
+                ("<Launch5> d e" . org-download-edit)
+                ("<Launch5> d k" . org-download-delete)
+                ("<Launch5> d r" . org-download-rename-at-point)
+                ("<Launch5> d R" . org-download-rename-last-file)
+                ("<Launch5> d s" . org-download-screenshot))
     :hook
     (dired-mode-hook . org-download-enable)
     (org-mode-hook . org-download-enable)
@@ -2426,7 +2426,7 @@ completing-read prompter."
     (setq org-download-heading-lvl 2)  ;; nil Save all images in the same directory
     )
   (use-package org-cliplink
-    :bind ("<f14> i c" . org-cliplink)
+    :bind ("<Launch5> i c" . org-cliplink)
     )
   (use-package org-preview-html)
   (use-package calendar                 ; calendars
@@ -2624,9 +2624,9 @@ completing-read prompter."
   (use-package bibtex
     :bind (:map bibtex-mode-map
                 ("<backtab>" . hs-toggle-hiding)
-                ("H-z" . hs-hide-all)
-                ("H-<tab>" . hs-minor-mode)
-                ("H-Z" . hs-show-all))
+                ("C-M-s-z" . hs-hide-all)
+                ("C-M-s-<tab>" . hs-minor-mode)
+                ("C-M-s-a" . hs-show-all))
     :config
     (setq bibtex-dialect 'biblatex)
     (setq ;; Fields from Zotero
@@ -2762,13 +2762,13 @@ completing-read prompter."
                 org-noter--pretty-print-location)
     :bind (("C-c n n" . org-noter)
            :map org-noter-notes-mode-map
-           ("H-k" . org-noter-create-skeleton)
-           ("H-n" . org-noter-sync-next-note)
-           ("H-p" . org-noter-sync-prev-note)
+           ("C-M-s-k" . org-noter-create-skeleton)
+           ("C-M-s-n" . org-noter-sync-next-note)
+           ("C-M-s-p" . org-noter-sync-prev-note)
            :map org-noter-doc-mode-map
-           ("H-k" . org-noter-create-skeleton)
-           ("H-n" . org-noter-sync-next-note)
-           ("H-p" . org-noter-sync-prev-note)
+           ("C-M-s-k" . org-noter-create-skeleton)
+           ("C-M-s-n" . org-noter-sync-next-note)
+           ("C-M-s-p" . org-noter-sync-prev-note)
            )
     :config
     (setq ;; org-noter-default-notes-file-names '("noter-othernotes.org" "biblio.org")
@@ -3194,7 +3194,7 @@ With a prefix ARG, remove start location."
          ("M-p" . slack-room-pins-list)
          ("\C-n" . slack-buffer-goto-next-message)
          ("\C-p" . slack-buffer-goto-prev-message)
-         ("H-<tab>" . hydra-slack/body)
+         ("C-M-s-<tab>" . hydra-slack/body)
          ("@" . slack-message-embed-mention)
          ("#" . slack-message-embed-channel))
   :init
