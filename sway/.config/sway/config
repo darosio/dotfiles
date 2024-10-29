@@ -218,7 +218,6 @@ bar {
     #tray_output       none
     font pango:FontAwesome 11
     # font pango:IBM Plex, Icons 10.5
-
     # swaybar_command i3status  # waybar
     position bottom
     mode hide
@@ -253,13 +252,13 @@ include /etc/sway/config.d/*
 bindsym $mod+o exec xrandr --output VGA1 --auto --right-of LVDS1 &
 bindsym $mod+Shift+o exec xrandr --output VGA1 --off &
 
-## screenshoot
-# Multi-screen screenshots with scrot
-# bindsym --release Print exec scrot 'screenshot_%Y%m%d_%H%M%S.png' -e 'mkdir -p ~/Pictures/screenshots && mv $f ~/Pictures/screenshots && xclip -selection clipboard -t image/png -i ~/Pictures/screenshots/`ls -1 -t ~/Pictures/screenshots | head -1`' # All screens
-# a screen  portion
-bindsym --release Shift+Print exec "f=$(date +%Y-%m-%d:%T).png && maim -o -u -s ~/Sync/tmp/PrtSc/$f && xclip -selection clipboard -t image/png -i $f"
-# all screens
-bindsym --release Print exec "f=$(date +%Y-%m-%d:%T).png && maim -o ~/Sync/tmp/PrtSc/$f && xclip -selection clipboard -t image/png -i $f"
+# Multi-screen screenshots with maim (replace xclip with wl-copy for Wayland)
+# A screen portion
+bindsym --release Shift+Print exec 'f=$(date +%Y-%m-%d:%T).png && grim -g "$(slurp)" ~/Sync/tmp/PrtSc/$f && wl-copy < ~/Sync/tmp/PrtSc/$f'
+# bindsym --release Shift+Print exec "f=$(date +%Y-%m-%d:%T).png && maim -o -u -s ~/Sync/tmp/PrtSc/$f && xclip -selection clipboard -t image/png -i $f"
+# All screens
+bindsym --release Print exec "f=$(date +%Y-%m-%d:%T).png && grim ~/Sync/tmp/PrtSc/$f && wl-copy < ~/Sync/tmp/PrtSc/$f"
+# bindsym --release Print exec "f=$(date +%Y-%m-%d:%T).png && maim -o ~/Sync/tmp/PrtSc/$f && xclip -selection clipboard -t image/png -i $f"
 
 # bindsym Print exec "maim -u -s -n -l -c 0.157,0.333,0.466,0.4 ~/Pictures/Screenshot-$(date -Iseconds | cut -d'+' -f1).png"
 # bindsym Shift+Print exec ~/.files/i3/record-screen.sh byzanz
@@ -273,6 +272,9 @@ bindsym $mod+Shift+s exec rofi -show ssh
 bindsym $mod+Shift+d exec wldash
 bindsym $mod+Shift+f exec fuzzel
 
+# Set window borders to 0 pixels
+# for_window [class="^.*"] border pixel 0
+default_border pixel 0
 # class                 border  backgr. text    indicator
 client.focused          #859900 #859900 #fdf6e3 #2e9ef4
 client.focused_inactive #268bd2 #268bd2 #fdf6e3 #484e50
@@ -280,24 +282,22 @@ client.unfocused        #333333 #93a1a1 #fdf6e3 #292d2e
 
 # #shortcuts
 bindsym $mod+t exec thunar
-# bindsym $mod+Shift+m exec lxterminal -e alsamixer
-bindsym $mod+Shift+m exec alacritty -e alsamixer
 bindsym $mod+p exec bash -c dpass
 bindsym $mod+Shift+p exec pavucontrol
-bindsym $mod+Shift+g exec gvim
 
-#bindsym XF86AudioLowerVolume exec /usr/bin/pactl set-sink-volume 0 -- -5%; exec /usr/bin/pactl set-sink-volume 1 -- -5%
-#bindsym XF86AudioRaiseVolume exec /usr/bin/pactl set-sink-volume 0 -- +5%; exec /usr/bin/pactl set-sink-volume 1 -- +5%
-#bindsym XF86AudioMute exec /usr/bin/pactl set-sink-volume 0 0; exec /usr/bin/pactl set-sink-volume 1 0
+# Audio
+# bindsym XF86AudioPlay exec pactl play-sample
+bindsym XF86AudioLowerVolume exec pactl set-sink-volume 0 -5%; exec pactl set-sink-volume 1 -5%
+bindsym XF86AudioRaiseVolume exec pactl set-sink-volume 0 +5%; exec pactl set-sink-volume 1 +5%
 bindsym $mod+Next exec pactl set-sink-volume 0 -5%; exec pactl set-sink-volume 1 -5%
 bindsym $mod+Prior  exec pactl set-sink-volume 0 +5%; exec pactl set-sink-volume 1 +5%
+bindsym XF86AudioMute exec pactl set-sink-mute 0 toggle; exec pactl set-sink-mute 1 toggle
 bindsym $mod+End   exec pactl set-sink-mute 0 toggle;  exec pactl set-sink-mute 1 toggle
-#bindsym XF86Launch1 exec /usr/bin/pactl play-sample that_was_easy
 
-
-#bindsym XF86Launch1 exec /usr/bin/pactl play-sample that_was_easy
+# Backlight
 bindsym --release XF86MonBrightnessUp exec --no-startup-id brightnessctl set +5%
 bindsym --release XF86MonBrightnessDown exec --no-startup-id brightnessctl set 5%-
+
 # XF86WLAN
 #bindsym --release XF86WLAN exec --no-startup-id /usr/bin/urxvt -c ls
 
@@ -313,8 +313,6 @@ bindsym --release XF86MonBrightnessDown exec --no-startup-id brightnessctl set 5
 # move to newest window Firefox
 bindsym $mod+u for_window [urgent="newest" ] focus
 
-#fzf search
-#bindsym $mod+period exec bash -c "source ~/Dropbox/4sharing/4aliases; od"
 #recoll search
 bindsym $mod+Shift+period exec recoll
 
@@ -323,17 +321,11 @@ bindsym $mod+F11 exec xrdb -DSOLARIZED_DARK -merge .Xresources
 bindsym $mod+F12 exec xrdb -DSOLARIZED_LIGHT -merge .Xresources
 
 # Favorite programs
-# F2 and F3 for thunderbird and firefox
-#bindsym $mod+F2 workspace 2; exec thunderbird
 bindsym $mod+F2 workspace 2; exec emacs
-#bindsym $mod+x exec emacsclient --alternate-editor="" -c "$@"
 bindsym $mod+x exec em
 bindsym $mod+Shift+x exec emacsclient -c -n -e '(switch-to-buffer nil)'
-# bindsym $mod+F3 workspace 3; exec MOZ_ENABLE_WAYLAND=1 firefox
 bindsym $mod+F3 workspace 3; exec firefox
 bindsym $mod+F5 workspace 5; exec zotero
-
-
 
 # with the help of xorg-xprop
 for_window [instance="^sun-awt-X11-XFramePeer$"] floating enable
@@ -346,11 +338,6 @@ for_window [class="^fiji-Main$"] floating enable, border 3, focus_follows_mouse 
 # # Show the first scratchpad window
 # bindsym $mod+minus scratchpad show
 # bindsym $mod+Shift+minus move scratchpad
-
-
-# Set window borders to 0 pixels
-# for_window [class="^.*"] border pixel 0
-default_border pixel 0
 
 # Define locker command (use swaylock instead of i3lock)
 set $Locker swaylock && sleep 1
