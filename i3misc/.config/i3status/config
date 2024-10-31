@@ -19,9 +19,9 @@ order += "disk /home"
 #order += "run_watch VPN"
 order += "wireless _first_"
 order += "ethernet _first_"
-order += "load"
 order += "cpu_temperature 0"
 order += "volume master"
+order += "load"
 order += "battery 0"
 order += "tztime local"
 
@@ -63,7 +63,7 @@ tztime local {
 }
 
 load {
-        format = "%1min"
+        format = "Load:%1min"
 }
 
 disk "/" {
@@ -76,8 +76,9 @@ disk "/home" {
 
 cpu_temperature 0 {
         format = "T: %degrees °C"
-        path = "/sys/devices/platform/coretemp.0/temp1_input"
-        max_threshold = 50
+        # path = "/sys/devices/platform/coretemp.0/temp1_input"
+        path = "/sys/class/hwmon/hwmon5/temp1_input"
+        max_threshold = 70
 }
 
 volume master {
