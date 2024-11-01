@@ -14,7 +14,7 @@ set $down j
 set $up k
 set $right l
 # Your preferred terminal emulator
-set $term alacritty
+set $term $TERMINAL
 set $menu wmenu-run
 ### Output configuration
 #
@@ -252,13 +252,11 @@ include /etc/sway/config.d/*
 bindsym $mod+o exec xrandr --output VGA1 --auto --right-of LVDS1 &
 bindsym $mod+Shift+o exec xrandr --output VGA1 --off &
 
-# Multi-screen screenshots with maim (replace xclip with wl-copy for Wayland)
+# Multi-screen screenshots with grim and slurp
 # A screen portion
 bindsym --release Shift+Print exec 'f=$(date +%Y-%m-%d:%T).png && grim -g "$(slurp)" ~/Sync/tmp/PrtSc/$f && wl-copy < ~/Sync/tmp/PrtSc/$f'
-# bindsym --release Shift+Print exec "f=$(date +%Y-%m-%d:%T).png && maim -o -u -s ~/Sync/tmp/PrtSc/$f && xclip -selection clipboard -t image/png -i $f"
 # All screens
 bindsym --release Print exec "f=$(date +%Y-%m-%d:%T).png && grim ~/Sync/tmp/PrtSc/$f && wl-copy < ~/Sync/tmp/PrtSc/$f"
-# bindsym --release Print exec "f=$(date +%Y-%m-%d:%T).png && maim -o ~/Sync/tmp/PrtSc/$f && xclip -selection clipboard -t image/png -i $f"
 
 # bindsym Print exec "maim -u -s -n -l -c 0.157,0.333,0.466,0.4 ~/Pictures/Screenshot-$(date -Iseconds | cut -d'+' -f1).png"
 # bindsym Shift+Print exec ~/.files/i3/record-screen.sh byzanz
@@ -316,9 +314,8 @@ bindsym $mod+u for_window [urgent="newest" ] focus
 #recoll search
 bindsym $mod+Shift+period exec recoll
 
-# mod+f12 toggle light to darl solarized
-bindsym $mod+F11 exec xrdb -DSOLARIZED_DARK -merge .Xresources
-bindsym $mod+F12 exec xrdb -DSOLARIZED_LIGHT -merge .Xresources
+# Switch to Solarized Light theme
+bindsym $mod+F12 exec alacritty --config-file ~/.config/alacritty/alacritty_light.toml
 
 # Favorite programs
 bindsym $mod+F2 workspace 2; exec emacs

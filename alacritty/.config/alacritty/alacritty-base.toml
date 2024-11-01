@@ -21,5 +21,10 @@ style = "Regular"
 
 [[keyboard.bindings]]
 action = "Paste"
-key = "V"
-mods = "Control|Alt"
+key = "Y"
+mods = "Alt"
+
+[[keyboard.bindings]]
+action = "Copy"
+key = "W"
+mods = "Alt"

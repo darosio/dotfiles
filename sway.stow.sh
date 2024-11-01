@@ -14,7 +14,12 @@ yay -S --noconfirm rofi-wayland
 yay -S --noconfirm wldash
 yay -S --noconfirm fuzzel
 
+yay -S --noconfirm qt5-wayland
+yay -S --noconfirm qt6-wayland
 
+yay -S --noconfirm wlr-randr
+# wdisplays
+# kanshi
 mkdir -p "$HOME"/.config/
 stow -t "$HOME" sway
 
