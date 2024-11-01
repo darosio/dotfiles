@@ -58,7 +58,7 @@ repos:
     rev: v2.2.4
     hooks:
       - id: codespell
-        exclude: vim/.vim/plugin|ranger/.config/ranger|vim/.vim/vimrc|goldendict/.goldendict/config
+        exclude: vim/.vim/plugin|ranger/.config/ranger|vim/.vim/vimrc|goldendict/.goldendict/config|2root.nftables/etc/nftables.conf
 
   - repo: https://github.com/shellcheck-py/shellcheck-py
     rev: v0.9.0.2
