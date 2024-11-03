@@ -9,6 +9,59 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 Releases will start from 2022.1.
 
+## 3.18.0 (2024-11-03)
+
+### Feat
+
+- Add security and clamav
+- Add latex.sh
+- Add libreoffice.sh
+- Add pdf.stow
+- sway and update some pre-commit
+- Add nftables as firewall
+- **emacs**: Add seqel
+
+### Fix
+
+- i3bar
+- **emacs**: org-download and ox-reveal
+- hostname from /proc/sys/kernel
+- **recoll**: indexing of large files and .service unit
+- **recoll**: configuration
+- **ssh**: tresero
+
+### Build
+
+- **emacs**: Update packages
+- **deps**: bump ruff-lsp from 0.0.57 to 0.0.58 (#110)
+- **deps**: bump ruff from 0.6.9 to 0.7.0 (#109)
+- **emacs**: Update deps
+- **deps**: bump pre-commit from 4.0.0 to 4.0.1 (#108)
+- **deps**: bump pre-commit from 3.8.0 to 4.0.0 (#107)
+- **deps**: bump ruff from 0.6.8 to 0.6.9 (#106)
+- **emacs**: Update deps
+- **deps**: bump commitizen from 3.29.0 to 3.29.1 (#105)
+- **deps**: bump ruff from 0.6.7 to 0.6.8 (#104)
+- **deps**: bump ruff-lsp from 0.0.55 to 0.0.57 (#103)
+- **deps**: bump ruff from 0.6.3 to 0.6.7 (#102)
+- **deps**: bump pylsp-mypy from 0.6.8 to 0.6.9 (#97)
+- **deps**: bump ruff from 0.6.2 to 0.6.3 (#96)
+- **emacs**: Update deps
+- **deps**: bump ruff from 0.6.1 to 0.6.2 (#95)
+- **deps**: bump ruff from 0.5.7 to 0.6.1 (#94)
+- **deps**: bump ruff-lsp from 0.0.54 to 0.0.55 (#93)
+- **deps**: bump commitizen from 3.28.0 to 3.29.0 (#91)
+- **deps**: bump ruff from 0.5.6 to 0.5.7 (#90)
+
+### chore
+
+- Update rclone encryption key for fbk
+- **emacs**: set lsp file watchers threshold
+- leonardo
+- remove mr zap for dotfiles repo
+- Update python version to 3.12.5
+- Update isync from 1.4.4 to 1.5.0
+
 ## 3.17.0 (2024-08-05)
 
 ### Feat
