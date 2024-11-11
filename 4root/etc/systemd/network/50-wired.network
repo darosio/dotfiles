@@ -3,3 +3,4 @@ Name=eno1
 
 [Network]
 DHCP=ipv4
+LinkLocalAddressing=ipv4
