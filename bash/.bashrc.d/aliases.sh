@@ -41,6 +41,9 @@ alias xr0='xrandr --output HDMI-1 --rotate normal'
 alias xr1='xrandr --output HDMI-1 --rotate inverted'
 alias xr2='xrandr --output HDMI-2 --left-of HDMI-1 --rotate left'
 alias xr='xrandr --output HDMI-1 --rotate inverted --output HDMI-2 --left-of HDMI-1 --rotate left'
+alias wxr='wlr-randr --output HDMI-A-1 --transform 180 --pos 1080,0 --output HDMI-A-2 --transform 90 --pos 0,0'
+# wlr-randr --output HDMI-A-1 --transform 180 --pos 1080,0 --output HDMI-A-2 --transform 90 --pos 0,0
+
 alias xrr='xrandr --output eDP-1 --scale 1.24x1.24 --auto'
 alias xrr2='xrandr --output DP-1 --left-of eDP-1 --auto'
 alias vga_ont='xrandr --output VGA1 --auto --above LVDS1'
