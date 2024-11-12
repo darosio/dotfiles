@@ -11,8 +11,6 @@ fi
 [[ -f ~/.progs/bash_profile ]] && . "$HOME"/.progs/bash_profile
 
 # User specific environment and startup programs
-PATH=$PATH:$HOME/.progs/git-annex.linux:$HOME/.ssh/
-PATH=$PATH:~/workspace/HIV_pipeline_mpba/HIV/library_name/
 PATH=$PATH:$HOME/.local/bin
 export PATH
 
