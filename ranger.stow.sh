@@ -1,5 +1,15 @@
 #!/usr/bin/env sh
 #
+
+# Check if the script is already running in an isolated environment
+if [ -z "$ISOLATED_ENV" ]; then
+  # Re-run the script in an isolated environment without 'exec' so it continues
+  env -i HOME="$HOME" USER="$USER" PATH="/usr/bin:$PATH" ISOLATED_ENV=1 "$0" "$@"
+  exit  # Ensure we don't run the original environment after re-execution
+fi
+# Clear any lingering variables that might interfere
+unset PYTHONPATH
+
 yay -S --noconfirm ranger
 
 yay -S --noconfirm atool
@@ -30,4 +40,4 @@ yay -S --noconfirm python-xlsx2csv
 mkdir -p "$HOME"/.config/ranger
 stow -t "$HOME" ranger
 cd "$HOME"/.config/ranger || exit
-ln -s "$HOME"/Sync/.config/ranger/* .
+ln -sf "$HOME"/Sync/.config/ranger/* .
