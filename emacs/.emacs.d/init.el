@@ -99,9 +99,9 @@
     (setq use-package-verbose t)
     (setq use-package-hook-name-suffix nil)
     (setq use-package-enable-imenu-support t))
-  (use-package magit)                    ;XXX Fix https://github.com/magit/magit/discussions/4997
-  ;;   :demand t)
-  (use-package use-package-ensure-system-package)
+  ;; (use-package magit)                    ;XXX Fix https://github.com/magit/magit/discussions/4997
+  ;; ;;   :demand t)
+  ;; (use-package use-package-ensure-system-package)
   (use-package async)
   )
 (progn                                  ; UI base setting
@@ -2731,25 +2731,26 @@ completing-read prompter."
     :init (setq org-cite-csl-styles-dir "~/Zotero/styles"))
   (use-package oc-natbib :straight org :after oc)
 
-  ;; (use-package pdf-tools
-  ;;   :demand t
-  ;;   :functions pdf-loader-install
-  ;;   :bind (:map pdf-view-mode-map
-  ;;               ("C-s" . isearch-forward)
-  ;;               ("/" . pdf-occur)
-  ;;               ("C-?" . pdf-isearch-occur))
-  ;;   :init
-  ;;   (pdf-loader-install)
-  ;;   :config
-  ;;   (setq pdf-view-resize-factor 1.1)   ;; more fine-grained zooming
-  ;;   (use-package pdf-misc
-  ;;     :straight pdf-tools
-  ;;     :config (setq pdf-misc-print-program "/usr/bin/gtklp"))
-  ;;   (use-package pdf-annot
-  ;;     :straight pdf-tools
-  ;;     :bind (:map pdf-view-mode-map
-  ;;                 ("h" . pdf-annot-add-highlight-markup-annotation))
-  ;;     :config (setq-local pdf-annot-activate-created-annotations nil)))
+  (use-package pdf-tools
+    :demand t
+    :functions pdf-loader-install
+    :bind (:map pdf-view-mode-map
+                ("C-s" . isearch-forward)
+                ("/" . pdf-occur)
+                ("C-?" . pdf-isearch-occur))
+    :init
+    (pdf-loader-install)
+    :config
+    (setq pdf-view-resize-factor 1.1)   ;; more fine-grained zooming
+    (setq pdf-view-use-scaling t)
+    (use-package pdf-misc
+      :straight pdf-tools
+      :config (setq pdf-misc-print-program "/usr/bin/gtklp"))
+    (use-package pdf-annot
+      :straight pdf-tools
+      :bind (:map pdf-view-mode-map
+                  ("h" . pdf-annot-add-highlight-markup-annotation))
+      :config (setq-local pdf-annot-activate-created-annotations nil)))
 
   ;; https://github.com/fuxialexander/org-pdftools
   ;; Maybe defun are unused but follow the instruction
@@ -3286,23 +3287,38 @@ With a prefix ARG, remove start location."
               "mistral:latest"))
   )
 
-(use-package chatgpt-shell
-  :straight (:host github :repo "xenodium/chatgpt-shell"
-                   :files ("chatgpt-shell.el"
-                           "dall-e-shell.el"
-                           "ob-chatgpt-shell.el"
-                           "ob-dall-e-shell.el"
-                           "shell-maker.el"))
-  :hook
-  (org-mode-hook . (lambda () (require 'ob-chatgpt-shell)))
-  (org-mode-hook . (lambda () (require 'ob-dall-e-shell)))
-  :config (setq chatgpt-shell-openai-key
-                (lambda ()
-                  (nth 0 (process-lines "pass" "show" "home/openai-dpa"))))
-  (setq dall-e-shell-openai-key
-        (lambda ()
-          (nth 0 (process-lines "pass" "show" "home/openai-dpa"))))
-  )
+;; (use-package chatgpt-shell
+;;   :hook
+;;   (org-mode-hook . (lambda () (require 'ob-chatgpt-shell)))
+;;   (org-mode-hook . (lambda () (require 'ob-dall-e-shell)))
+;;   :config (setq chatgpt-shell-openai-key
+;;                 (lambda ()
+;;                   (nth 0 (process-lines "pass" "show" "home/openai-dpa"))))
+;;   (setq dall-e-shell-openai-key
+;;         (lambda ()
+;;           (nth 0 (process-lines "pass" "show" "home/openai-dpa"))))
+;;   )
+;; :custom
+;; ((chatgpt-shell-openai-key
+;;   (lambda ()
+;;     (auth-source-pass-get 'secret "openai-key")))))
+;; (use-package chatgpt-shell
+;;   :straight (:host github :repo "xenodium/chatgpt-shell"
+;;                    :files ("chatgpt-shell.el"
+;;                            "dall-e-shell.el"
+;;                            "ob-chatgpt-shell.el"
+;;                            "ob-dall-e-shell.el"
+;;                            "shell-maker.el"))
+;;   :hook
+;;   (org-mode-hook . (lambda () (require 'ob-chatgpt-shell)))
+;;   (org-mode-hook . (lambda () (require 'ob-dall-e-shell)))
+;;   :config (setq chatgpt-shell-openai-key
+;;                 (lambda ()
+;;                   (nth 0 (process-lines "pass" "show" "home/openai-dpa"))))
+;;   (setq dall-e-shell-openai-key
+;;         (lambda ()
+;;           (nth 0 (process-lines "pass" "show" "home/openai-dpa"))))
+;;   )
 
 (straight-use-package
  '(seqel :type git :host github :repo "RNAer/seqel"))

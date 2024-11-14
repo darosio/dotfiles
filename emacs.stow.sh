@@ -10,6 +10,7 @@ mkdir -p "$HOME"/Sync/notes/org-roam/
 cd "$HOME" && ln -sf "$HOME"/Sync/.home/.hunspell_* .
 
 yay -S --noconfirm emacs-wayland
+yay -S --noconfirm watchexec
 
 yay -S --noconfirm jupyterlab
 yay -S --noconfirm ripgrep
