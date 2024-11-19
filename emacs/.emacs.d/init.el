@@ -99,7 +99,8 @@
     (setq use-package-verbose t)
     (setq use-package-hook-name-suffix nil)
     (setq use-package-enable-imenu-support t))
-  ;; (use-package magit)                    ;XXX Fix https://github.com/magit/magit/discussions/4997
+  ;; Prevent using the built-in transient https://github.com/magit/magit/discussions/4997
+  (use-package magit)
   ;; ;;   :demand t)
   ;; (use-package use-package-ensure-system-package)
   (use-package async)
@@ -1563,11 +1564,11 @@ completing-read prompter."
 (use-package mu4e-jump-to-list
   :after mu4e)
 (progn                                  ; org
-  (setenv "PYDEVD_DISABLE_FILE_VALIDATION" "1") ; https://github.com/nnicandro/emacs-jupyter/issues/439
+  ;; (setenv "PYDEVD_DISABLE_FILE_VALIDATION" "1") ; https://github.com/nnicandro/emacs-jupyter/issues/439
   (use-package jupyter
-    :straight (:no-native-compile t :no-byte-compile t)
+    ;; :straight (:no-native-compile t :no-byte-compile t)
     :after (org)
-    :init (eval-after-load 'org-babel (require 'jupyter))
+    :init (with-eval-after-load 'org-babel (require 'jupyter))
     :defines org-babel-default-header-args:jupyter-python
     :bind (:map org-mode-map
                 ("C-c s" . org-babel-jupyter-scratch-buffer)

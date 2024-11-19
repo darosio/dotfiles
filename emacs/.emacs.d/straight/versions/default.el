@@ -94,7 +94,7 @@
  ("jeison" . "19a51770f24eaa7b538c7be6a8a5c25d154b641f")
  ("json-mode" . "77125b01c0ddce537085201098bea9b4b8ba6be3")
  ("json-snatcher" . "b28d1c0670636da6db508d03872d96ffddbc10f2")
- ("jupyter" . "e966c5d3d6ac147992832af69135655290072042")
+ ("jupyter" . "577371744b36aa0afa117b7ded21d08f60331ff6")
  ("keyfreq" . "c6955162307f37c2ac631d9daf118781009f8dda")
  ("let-alist" . "8141e7c941105c92e89bba44e73aae6cdd962b49")
  ("llm" . "8ab74e91f9f566fb901f77f89af070dbc9dfcea7")

@@ -4,7 +4,6 @@ yay -S --noconfirm wayland
 
 yay -S --noconfirm sway
 yay -S --noconfirm swaylock
-yay -S --noconfirm swayimg
 yay -S --noconfirm wayprompt
 yay -S --noconfirm i3status
 yay -S --noconfirm wlroots
@@ -14,6 +13,10 @@ yay -S --noconfirm rofi-wayland
 yay -S --noconfirm wldash
 yay -S --noconfirm fuzzel
 yay -S --noconfirm wl-clipboard
+
+yay -S --noconfirm swayimg
+yay -S --noconfirm grim
+yay -S --noconfirm slurp
 
 yay -S --noconfirm qt5-wayland
 yay -S --noconfirm qt6-wayland
