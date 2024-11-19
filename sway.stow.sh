@@ -4,6 +4,7 @@ yay -S --noconfirm wayland
 
 yay -S --noconfirm sway
 yay -S --noconfirm swaylock
+yay -S --noconfirm swayimg
 yay -S --noconfirm wayprompt
 yay -S --noconfirm i3status
 yay -S --noconfirm wlroots

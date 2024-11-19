@@ -22,6 +22,7 @@ yay -S --noconfirm unrar
 yay -S --noconfirm zip
 yay -S --noconfirm unzip
 
+yay -S --noconfirm imv
 yay -S --noconfirm ffmpegthumbnailer
 yay -S --noconfirm highlight
 yay -S --noconfirm imagemagick

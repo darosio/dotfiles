@@ -3,8 +3,8 @@ application/x-fsdirectory|parentopen inode/directory \
 inode/directory|parentopen text/html|chm text/html|epub \
 text/html|gnuinfo
 [view]
-inode/directory = urxvt -e ranger %f
-inode/directory|parentopen = urxvt -e ranger %f
+inode/directory = alacritty --command ranger %f
+inode/directory|parentopen = alacritty --command ranger %f
 
 # application/pdf  = okular --page=%p %f
 

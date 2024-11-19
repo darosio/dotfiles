@@ -28,7 +28,7 @@ set menu-complete-display-prefix On
 "\C-o": "ranger_cd\C-m"
 "\C-f": "rifle `fzf -e`\C-m"
 "\ek": "fkill\C-m"
-# Bind urxvt to <F1>
-"\e[24~": "urxvt &\n"
+# Bind new terminal to <F12>
+"\e[24~": "$TERM &\n"
 
 # End of ~/.inputrc
