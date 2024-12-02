@@ -3117,14 +3117,14 @@ With a prefix ARG, remove start location."
                 ("C-c T" . python-pytest-dispatch)
                 ("<f8>" . python-pytest-dispatch)))
 
-  (use-package eval-in-repl
-    :after (python)
-    :hook (python-mode-hook . (lambda () (require 'eval-in-repl-python) ))
-    :config
-    (setq eir-jump-after-eval nil)      ; default t
-    :bind (:map python-mode-map
-                ("<C-return>" . eir-eval-in-python))
-    )
+  ;; (use-package eval-in-repl
+  ;;   :after (python)
+  ;;   :hook (python-mode-hook . (lambda () (require 'eval-in-repl-python) ))
+  ;;   :config
+  ;;   (setq eir-jump-after-eval nil)      ; default t
+  ;;   :bind (:map python-mode-map
+  ;;               ("<C-return>" . eir-eval-in-python))
+  ;;   )
   (use-package py-isort                 ;yay -S python-isort
     :after (python)
     :hook (before-save-hook . py-isort-before-save)
