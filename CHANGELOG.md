@@ -9,6 +9,331 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 Releases will start from 2022.1.
 
+## 3.19.0 (2024-12-09)
+
+### Feat
+
+- Solarized alacritty
+- **emacs**: Fix keybind adopting keyd
+- Add sway config and alacritty
+- Changed failure-notification
+- Add security and clamav
+- Add latex.sh
+- Add libreoffice.sh
+- Add pdf.stow
+- sway and update some pre-commit
+- Add nftables as firewall
+- **emacs**: Add seqel
+
+### Fix
+
+- **emacs**: emacs stow to include python development requirements
+- screen snapshots
+- urxvt to alacritty transition
+- wl-clipboard
+- wayland with multiple monitors
+- nftables
+- screnshots
+- run ranger.stow in isolated environment
+- sshd override
+- switch off ipv6LL
+- not needed anymore
+- keep i3 (not sway)
+- i3bar
+- **emacs**: org-download and ox-reveal
+- hostname from /proc/sys/kernel
+- **recoll**: indexing of large files and .service unit
+- **recoll**: configuration
+- **ssh**: tresero
+
+### Build
+
+- **deps**: bump commitizen from 4.0.0 to 4.1.0 (#123)
+- **deps**: bump ruff from 0.8.1 to 0.8.2 (#122)
+- **deps**: bump ruff from 0.8.0 to 0.8.1 (#121)
+- **deps**: bump commitizen from 3.31.0 to 4.0.0 (#120)
+- **deps**: bump ruff-lsp from 0.0.58 to 0.0.59 (#119)
+- **deps**: bump ruff from 0.7.4 to 0.8.0 (#118)
+- **deps**: bump ruff from 0.7.3 to 0.7.4 (#117)
+- **deps**: bump commitizen from 3.30.1 to 3.31.0 (#116)
+- **deps**: bump commitizen from 3.30.0 to 3.30.1 (#115)
+- **deps**: bump ruff from 0.7.1 to 0.7.3 (#114)
+- **deps**: bump ruff from 0.7.0 to 0.7.1 (#112)
+- **deps**: bump commitizen from 3.29.1 to 3.30.0 (#111)
+- **emacs**: Update packages
+- **deps**: bump ruff-lsp from 0.0.57 to 0.0.58 (#110)
+- **deps**: bump ruff from 0.6.9 to 0.7.0 (#109)
+- **emacs**: Update deps
+- **deps**: bump pre-commit from 4.0.0 to 4.0.1 (#108)
+- **deps**: bump pre-commit from 3.8.0 to 4.0.0 (#107)
+- **deps**: bump ruff from 0.6.8 to 0.6.9 (#106)
+- **emacs**: Update deps
+- **deps**: bump commitizen from 3.29.0 to 3.29.1 (#105)
+- **deps**: bump ruff from 0.6.7 to 0.6.8 (#104)
+- **deps**: bump ruff-lsp from 0.0.55 to 0.0.57 (#103)
+- **deps**: bump ruff from 0.6.3 to 0.6.7 (#102)
+- **deps**: bump pylsp-mypy from 0.6.8 to 0.6.9 (#97)
+- **deps**: bump ruff from 0.6.2 to 0.6.3 (#96)
+- **emacs**: Update deps
+- **deps**: bump ruff from 0.6.1 to 0.6.2 (#95)
+- **deps**: bump ruff from 0.5.7 to 0.6.1 (#94)
+- **deps**: bump ruff-lsp from 0.0.54 to 0.0.55 (#93)
+- **deps**: bump commitizen from 3.28.0 to 3.29.0 (#91)
+- **deps**: bump ruff from 0.5.6 to 0.5.7 (#90)
+
+### chore
+
+- **emacs**: Comment out eval-in-repl
+- remove unused PATH
+- Update rclone encryption key for fbk
+- **emacs**: set lsp file watchers threshold
+- leonardo
+- remove mr zap for dotfiles repo
+- Update python version to 3.12.5
+- Update isync from 1.4.4 to 1.5.0
+
+## 3.17.0 (2024-08-05)
+
+### Feat
+
+- Add calcium signal simulation example
+- **mu4e**: Add archive_tmp label in gmail
+- **ranger**: Add trash-cli properly
+- **ranger**: Display ipynb file
+
+### Fix
+
+- error in 2root.raid_mdadm_scrubbing.sh
+- **ranger**: media shortcut
+- **mu4e**: for gmail again
+- **mu4e**: for gmail again
+- **mu4e**: (cnr fw to) for gmail
+- **ranger**: Display/Open html email
+
+### Build
+
+- **emacs**: Update deps
+- **deps**: bump ruff from 0.5.5 to 0.5.6 (#89)
+- **deps**: bump pre-commit from 3.7.1 to 3.8.0 (#88)
+- **deps**: bump ruff from 0.5.4 to 0.5.5 (#87)
+- **deps**: bump ruff from 0.5.3 to 0.5.4 (#86)
+- **deps**: bump ruff from 0.5.2 to 0.5.3 (#85)
+- **deps**: bump commitizen from 3.27.0 to 3.28.0 (#84)
+- **deps**: bump ruff from 0.5.1 to 0.5.2 (#83)
+- **deps**: bump ruff from 0.5.0 to 0.5.1 (#82)
+- **emacs**: Update deps
+- **deps**: bump ruff from 0.4.10 to 0.5.0 (#81)
+- **deps**: bump ruff-lsp from 0.0.53 to 0.0.54 (#80)
+- Update deps
+- **deps**: bump ruff from 0.4.9 to 0.4.10 (#79)
+- **deps**: bump ruff from 0.4.8 to 0.4.9 (#78)
+- **deps**: bump ruff from 0.4.7 to 0.4.8 (#77)
+- **deps**: bump ruff from 0.4.6 to 0.4.7 (#76)
+- **deps**: bump ruff from 0.4.5 to 0.4.6 (#75)
+- Update deps
+- **deps**: bump ruff from 0.4.4 to 0.4.5 (#74)
+- **deps**: bump commitizen from 3.25.0 to 3.26.0 (#72)
+- **deps**: bump pre-commit from 3.7.0 to 3.7.1 (#71)
+- **deps**: bump ruff from 0.4.3 to 0.4.4 (#70)
+- **deps**: bump ruff from 0.4.2 to 0.4.3 (#69)
+- Update deps
+- **deps**: bump commitizen from 3.24.0 to 3.25.0 (#68)
+- Update deps
+
+### chore
+
+- Add MINT repo to examples
+- Align dependabot time
+
+## 3.16.0 (2024-04-29)
+
+### Feat
+
+- **emacs**: Add Anthropic to gptel
+- **emacs**: Add LLMs gptel and ellama
+
+### Fix
+
+- llm
+- **emacs**: lsp ruff mypy
+
+### Build
+
+- Update deps
+- Switch from python-lsp-ruff to ruff-lsp
+- **deps**: bump python-lsp-ruff from 2.2.0 to 2.2.1 (#67)
+- **deps**: bump ruff from 0.4.1 to 0.4.2 (#66)
+- **deps**: bump ruff from 0.4.0 to 0.4.1 (#65)
+- Update deps
+
+### chore
+
+- **emacs**: gptel
+- **mr**: Register cookiecutter
+- **emacs**: Comment the use of lsp-mode
+
+## 3.15.1 (2024-04-20)
+
+### Fix
+
+- **emacs**: lsp with pylsp-mypy and ruff-lsp
+- **emacs**: jsom-mode reformatting .ipynb files
+- apheleia
+
+### Build
+
+- Update deps
+- **deps**: bump ruff from 0.3.7 to 0.4.0 (#64)
+- **deps**: bump commitizen from 3.22.0 to 3.24.0 (#63)
+- **deps**: bump commitizen from 3.21.3 to 3.22.0 (#61)
+- **deps**: bump ruff from 0.3.5 to 0.3.7 (#62)
+
+## 3.15.0 (2024-04-10)
+
+### Feat
+
+- Drop notmuch
+- Apheleia adopt ruff-lsp
+
+### Build
+
+- Update deps
+- **deps-dev**: bump ruff from 0.3.4 to 0.3.5 (#60)
+- **deps-dev**: bump commitizen from 3.20.0 to 3.21.3 (#59)
+
+## 3.14.1 (2024-03-26)
+
+### Fix
+
+- lsp-mode by reverting previous update
+
+### Build
+
+- Update deps
+- **deps-dev**: bump pre-commit from 3.6.2 to 3.7.0 (#58)
+
+## 3.14.0 (2024-03-25)
+
+### Feat
+
+- **emacs**: Update packages
+
+### Build
+
+- **deps-dev**: bump ruff from 0.3.3 to 0.3.4 (#57)
+- **deps-dev**: bump commitizen from 3.18.4 to 3.20.0 (#56)
+- **deps-dev**: bump ruff from 0.3.2 to 0.3.3 (#55)
+- **deps-dev**: bump commitizen from 3.18.3 to 3.18.4 (#54)
+- **deps-dev**: bump commitizen from 3.18.2 to 3.18.3 (#53)
+- **deps-dev**: bump ruff from 0.3.1 to 0.3.2 (#52)
+- **deps-dev**: bump commitizen from 3.17.0 to 3.18.2 (#51)
+- **deps-dev**: bump ruff from 0.3.0 to 0.3.1 (#49)
+- **deps-dev**: bump commitizen from 3.16.0 to 3.17.0 (#48)
+- **deps-dev**: bump ruff from 0.2.2 to 0.3.0 (#47)
+
+## 3.13.0 (2024-02-29)
+
+### Feat
+
+- **emacs**: Update packages
+- **emacs**: Update mu4e 1.12
+
+### Fix
+
+- **emacs**: Update to mu-1.12 replace-duck-emails
+
+### Build
+
+- **deps-dev**: bump commitizen from 3.14.1 to 3.16.0 (#46)
+- **deps-dev**: bump ruff from 0.2.1 to 0.2.2 (#44)
+- **deps-dev**: bump pre-commit from 3.6.1 to 3.6.2 (#43)
+- **deps-dev**: bump pre-commit from 3.6.0 to 3.6.1 (#42)
+- **deps-dev**: bump ruff from 0.2.0 to 0.2.1 (#41)
+- **deps-dev**: bump commitizen from 3.14.0 to 3.14.1 (#40)
+- **deps-dev**: bump ruff from 0.1.14 to 0.2.0 (#39)
+- **deps-dev**: bump commitizen from 3.13.0 to 3.14.0 (#38)
+- **deps-dev**: bump ruff from 0.1.13 to 0.1.14 (#36)
+- **deps-dev**: bump ruff from 0.1.12 to 0.1.13 (#35)
+- **deps-dev**: bump ruff from 0.1.11 to 0.1.12 (#34)
+- **deps-dev**: bump ruff from 0.1.9 to 0.1.11 (#33)
+
+### chore
+
+- Update xrandr cmd for sterzing
+
+## 3.12.0 (2024-01-02)
+
+### Feat
+
+- **emacs**: Update packages
+- **git**: Add `remove-ipynb-output` filter
+- Add xr and xr1 for 2 monitor @fbk
+
+### Fix
+
+- **emacs**: Folding of python with hideshow
+- **emacs**: org captures
+
+### Build
+
+- **deps-dev**: bump ruff from 0.1.8 to 0.1.9 (#32)
+- **deps-dev**: bump ruff from 0.1.7 to 0.1.8 (#31)
+- **deps-dev**: bump pre-commit from 3.5.0 to 3.6.0 (#30)
+- **deps-dev**: bump ruff from 0.1.6 to 0.1.7 (#29)
+- **deps-dev**: bump commitizen from 3.12.0 to 3.13.0 (#28)
+- **deps-dev**: bump ruff from 0.1.5 to 0.1.6 (#27)
+
+### chore
+
+- Adopt jupyter-lab
+
+## 3.11.0 (2023-11-13)
+
+### Feat
+
+- **emacs**: Update packages
+- **emacs**: Update packages
+- Add lsfonts
+
+### Build
+
+- **deps-dev**: bump ruff from 0.1.4 to 0.1.5 (#26)
+- **deps-dev**: bump ruff from 0.1.3 to 0.1.4 (#25)
+
+### chore
+
+- **emacs**: Always use straight.el not package.el with use-package
+
+## 3.10.0 (2023-10-31)
+
+### Feat
+
+- **emacs**: Update packages and fix a magit/straight issue
+
+### Fix
+
+- **emacs**: chatgpt and dall-e org-mode babel
+- msmtp and sendmail
+
+### Build
+
+- **deps-dev**: bump ruff from 0.1.2 to 0.1.3 (#24)
+
+## 3.9.0 (2023-10-27)
+
+### Feat
+
+- **emacs**: Update packages
+
+### Build
+
+- **deps-dev**: bump ruff from 0.1.1 to 0.1.2 (#23)
+- **deps-dev**: bump ruff from 0.1.0 to 0.1.1 (#22)
+- **deps-dev**: bump commitizen from 3.10.1 to 3.12.0 (#21)
+- **deps-dev**: bump ruff from 0.0.292 to 0.1.0 (#20)
+- **deps-dev**: bump commitizen from 3.10.0 to 3.10.1 (#19)
+- **deps-dev**: bump pre-commit from 3.4.0 to 3.5.0 (#18)
+
 ## 3.18.0 (2024-11-03)
 
 ### Feat
