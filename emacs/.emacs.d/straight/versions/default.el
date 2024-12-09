@@ -116,7 +116,7 @@
  ("oauth2" . "ff3b40b5e989621433a92ae9b59b971b841d6a99")
  ("ob-async" . "9aac486073f5c356ada20e716571be33a350a982")
  ("orderless" . "96b74d2450ab4ab1a175d0e86c62f6695c4709b5")
- ("org" . "e87ecf88be043445f2af2acac53b1c61a382d0e5")
+ ("org" . "b9637ef14273f35e77ca9efe82fbab178c24993f")
  ("org-autolist" . "0f5dc4e00cb050b94289504925b36c7650552a1a")
  ("org-cliplink" . "13e0940b65d22bec34e2de4bc8cba1412a7abfbc")
  ("org-download" . "c8be2611786d1d8d666b7b4f73582de1093f25ac")
