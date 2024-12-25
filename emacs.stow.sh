@@ -12,6 +12,9 @@ cd "$HOME" && ln -sf "$HOME"/Sync/.home/.hunspell_* .
 yay -S --noconfirm emacs-wayland
 yay -S --noconfirm watchexec
 
+yay -S --noconfirm plocate
+sudo updatedb
+
 yay -S --noconfirm mypy
 yay -S --noconfirm ruff-lsp
 yay -S --noconfirm python-lsp-server
@@ -28,8 +31,16 @@ yay -S --noconfirm hunspell-it
 # for flycheck
 yay -S --noconfirm vale
 yay -S --noconfirm xmlstarlet
-  # - [ ] python-pylint
-  # - [X] shellcheck
+yay -S --noconfirm shellcheck
+# python-pylint
+# for lsp
+yay -S --noconfirm bash-language-server
+
 yay -S --noconfirm graphviz
 yay -S --noconfirm plantuml
 yay -S --noconfirm gnuplot
+
+yay -S --noconfirm mu
+yay -S --noconfirm isync
+stow -t "$HOME" mbsync
+# yay -S --noconfirm mb2md

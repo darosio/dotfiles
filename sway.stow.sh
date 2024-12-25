@@ -18,6 +18,8 @@ yay -S --noconfirm swayimg
 yay -S --noconfirm grim
 yay -S --noconfirm slurp
 
+yay -S --noconfirm brightnessctl
+
 yay -S --noconfirm qt5-wayland
 yay -S --noconfirm qt6-wayland
 
@@ -31,3 +33,10 @@ yay -S --noconfirm keyd
 sudo stow -t / 2root.keyd
 sudo systemctl enable keyd.service
 sudo systemctl start keyd.service
+
+yay -S --noconfirm ttf-ibm-plex
+yay -S --noconfirm ttf-hack
+yay -S --noconfirm noto-fonts-extra
+yay -S --noconfirm noto-fonts-emoji
+
+yay -S --noconfirm xorg-xwayland
