@@ -245,8 +245,8 @@ include /etc/sway/config.d/*
 #exec --no-startup-id git annex assistant --autostart
 #exec --no-startup-id artha
 #exec --no-startup-id goldendict
-
-# exec xrdb ~/.Xresources
+# to reload on chash
+# exec pgrep -x udiskie || udiskie -t
 
 # VGA external monitor
 bindsym $mod+o exec xrandr --output VGA1 --auto --right-of LVDS1 &
