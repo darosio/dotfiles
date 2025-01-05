@@ -79,6 +79,7 @@ alias yy='pacaur -Ss'
 
 # Shortcut for running 'mr --config $HOME/.mrconfig-progs'
 alias mrp='mr --config $HOME/.mrconfig-progs'
+alias mrr='mr run gh pr list 2>&1'
 
 # Python and pip update all
 alias simple-server='python -m SimpleHTTPServer'
