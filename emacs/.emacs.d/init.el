@@ -2492,6 +2492,26 @@ completing-read prompter."
     (setq plstore-cache-passphrase-for-symmetric-encryption t)
     ;; (add-hook 'org-agenda-mode-hook (lambda () (org-gcal-sync) ))
     )
+  (use-package calfw-blocks
+    :straight (calfw-blocks
+               :type git
+               :host github
+               :repo "ml729/calfw-blocks")
+    :init
+    ;; Place any initialization code here if necessary.
+    ;; Function to open the calendar with org-agenda entries
+    (defun my-open-calendar-agenda ()
+      "Open a calendar showing Org agenda entries."
+      (interactive)
+      (cfw:open-calendar-buffer
+       :contents-sources
+       (list
+        (cfw:org-create-source "medium purple")) ;; Use "medium purple" for Org entries
+       :view 'block-week))
+    ;; :bind
+    ;; ("C-c c" . my-open-calendar-agenda)
+    ) ;; Bind function to a key
+  
   (use-package calfw                    ; needed by calfw-org
     :bind
     ("C-c G W" . cfw:open-calendar-buffer))
