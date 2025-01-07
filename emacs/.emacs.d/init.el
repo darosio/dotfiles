@@ -1832,7 +1832,7 @@ completing-read prompter."
       :config
       (setq org-reveal-root "file:///home/dan/workspace/examples/reveal.js/")
       (setq org-reveal-theme "night")
-      (setq org-reveal-quiet t)
+      (setq org-reveal-quiet t);TODO: consider org-(re)-reveal
       ;; (setq org-reveal-css "path/to/your/custom/css")
       :init
       (eval-after-load 'ox '(require 'ox-reveal))
@@ -2940,19 +2940,8 @@ With a prefix ARG, remove start location."
     ("C-c g T" . git-timemachine-toggle))
   (use-package diff-hl
     :commands global-diff-hl-mode
-    :bind
-    (("C-c g n" . diff-hl-next-hunk)    ; consider removing
-     ("C-c g p" . diff-hl-previous-hunk))
-    :hook
-    ((magit-pre-refresh-hook . diff-hl-magit-pre-refresh)
-     (magit-post-refresh-hook . diff-hl-magit-post-refresh))
-    ;; :init
-    ;; (setq diff-hl-draw-borders nil)
-    ;; (setq diff-hl-global-modes '(not org-mode))
-    ;; (setq diff-hl-fringe-bmp-function 'diff-hl-fringe-bmp-from-type)
-    ;; (setq diff-hl-global-modes (not '(image-mode org-mode)))
-    :config
-    (global-diff-hl-mode))
+    :hook (magit-post-refresh-hook . diff-hl-magit-post-refresh)
+    :config (global-diff-hl-mode))
   )
 (progn                                  ; Project
   ;; (use-package project
@@ -3137,91 +3126,6 @@ With a prefix ARG, remove start location."
                 ("C-c S" . py-isort-region)))
   )
 
-(use-package emojify
-  :bind ("C-c M-e" . emojify-insert-emoji)
-  :hook (after-init-hook . global-emojify-mode)
-  :custom (emojify-emoji-set "emojione-v2.2.6-22"))
-(use-package slack
-  :defer t ;; avoid halting daemon startup asking for passwords
-  :commands (slack-channel-select
-             slack-im-select
-             slack-group-select
-             slack-select-rooms
-             slack-select-unread-rooms
-             slack-all-threads
-             slack-thread-show-or-create
-             slack-message-add-reaction
-             slack-message-remove-reaction
-             slack-message-show-reaction-users
-             slack-message-pins-add
-             slack-message-pins-remove
-             slack-message-delete
-             slack-room-pins-list
-             slack-message-edit
-             slack-message-write-another-buffer
-             slack-clipboard-image-upload
-             slack-ws-close
-             slack-register-team
-             slack-start)
-  :hook (slack-mode-hook . emojify-mode)
-  :preface
-  (defhydra hydra-slack (:color pink :hint nil :exit t)
-    "
-    ^Select^             ^Reaction^         ^Pins^          ^Message
-    ^^^^^^^^-----------------------------------------------------------------
-    _c_: channel         _ra_: add          _pa_: add       _md_: delete
-    _d_: direct IM       _rr_: remove       _pr_: remove    _me_: edit
-    _g_: group           _rs_: show users   _pl_: list      _mo_: other buffer
-    _R_: room            ^ ^
-    _u_: unread rooms    _a_: all threads   _t_: thread or create
-    _i_: image from clipboard
-    "
-    ("c" slack-channel-select)
-    ("d" slack-im-select)
-    ("g" slack-group-select)
-    ("R" slack-select-rooms)
-    ("u" slack-select-unread-rooms)
-    ("a" slack-all-threads :exit nil)
-    ("t" slack-thread-show-or-create)
-    ("ra" slack-message-add-reaction)
-    ("rr" slack-message-remove-reaction)
-    ("rs" slack-message-show-reaction-users)
-    ("pa" slack-message-pins-add)
-    ("pr" slack-message-pins-remove)
-    ("pl" slack-room-pins-list)
-    ("md" slack-message-delete :exit nil)
-    ("me" slack-message-edit)
-    ("mo" slack-message-write-another-buffer)
-    ("i" slack-clipboard-image-upload)
-    ("x" slack-ws-close "Close Slack")
-    ("q" nil "cancel" :color blue))
-  :bind (("M-g M-a s" . (lambda () (interactive "") (slack-start) (hydra-slack/body)))
-         :map slack-mode-map
-         ("M-p" . slack-room-pins-list)
-         ("\C-n" . slack-buffer-goto-next-message)
-         ("\C-p" . slack-buffer-goto-prev-message)
-         ("C-M-s-<tab>" . hydra-slack/body)
-         ("@" . slack-message-embed-mention)
-         ("#" . slack-message-embed-channel))
-  :init
-  (which-key-add-key-based-replacements "M-g M-a s" "Slack")
-  (setq slack-buffer-emojify t
-        slack-prefer-current-team t)
-  :config
-  (auth-source-pass-enable)
-  (slack-register-team
-   :name "molecularvirologylab"
-   :default t
-   :token (auth-source-pick-first-password
-           :host "molecularvirologylab.slack.com"
-           :user "daniele.arosio@cnr.it")
-   :subscribed-channels '(cftr papers labmeeting)
-   :full-and-display-names t)
-  (use-package alert
-    :commands (alert)
-    :init
-    (setq alert-default-style 'libnotify))
-  )
 (use-package nov
   :mode ("\\.epub\\'" . nov-mode)
   ;; :custom-face (variable-pitch ((t (:family "URW Bookman" :height 1.1))))
@@ -3232,10 +3136,7 @@ With a prefix ARG, remove start location."
              keyfreq-autosave-mode)
   :config
   (keyfreq-mode 1)
-
   (keyfreq-autosave-mode 1))
-(use-package pocket-reader
-  :bind ("M-g M-a r" . pocket-reader))
 (use-package calibredb
   :commands calibredb
   ;; ripgrep-all (rga)
@@ -3255,6 +3156,12 @@ With a prefix ARG, remove start location."
 
 (use-package gptel
   :bind ("C-c C-<return>" . gptel-send)
+  :commands (
+             gptel-make-kagi
+             gptel-make-anthropic
+             gptel-make-openai
+             gptel-make-ollama
+             )
   :config
   (setq gptel-api-key
         (lambda () (nth 0 (process-lines "pass" "show" "home/openai-dpa"))))
@@ -3292,38 +3199,21 @@ With a prefix ARG, remove start location."
               "mistral:latest"))
   )
 
-;; (use-package chatgpt-shell
-;;   :hook
-;;   (org-mode-hook . (lambda () (require 'ob-chatgpt-shell)))
-;;   (org-mode-hook . (lambda () (require 'ob-dall-e-shell)))
-;;   :config (setq chatgpt-shell-openai-key
-;;                 (lambda ()
-;;                   (nth 0 (process-lines "pass" "show" "home/openai-dpa"))))
-;;   (setq dall-e-shell-openai-key
-;;         (lambda ()
-;;           (nth 0 (process-lines "pass" "show" "home/openai-dpa"))))
-;;   )
-;; :custom
-;; ((chatgpt-shell-openai-key
-;;   (lambda ()
-;;     (auth-source-pass-get 'secret "openai-key")))))
-;; (use-package chatgpt-shell
-;;   :straight (:host github :repo "xenodium/chatgpt-shell"
-;;                    :files ("chatgpt-shell.el"
-;;                            "dall-e-shell.el"
-;;                            "ob-chatgpt-shell.el"
-;;                            "ob-dall-e-shell.el"
-;;                            "shell-maker.el"))
-;;   :hook
-;;   (org-mode-hook . (lambda () (require 'ob-chatgpt-shell)))
-;;   (org-mode-hook . (lambda () (require 'ob-dall-e-shell)))
-;;   :config (setq chatgpt-shell-openai-key
-;;                 (lambda ()
-;;                   (nth 0 (process-lines "pass" "show" "home/openai-dpa"))))
-;;   (setq dall-e-shell-openai-key
-;;         (lambda ()
-;;           (nth 0 (process-lines "pass" "show" "home/openai-dpa"))))
-;;   )
+(use-package chatgpt-shell
+  :hook
+  (org-mode-hook . (lambda () (require 'ob-chatgpt-shell)))
+  (org-mode-hook . (lambda () (require 'ob-dall-e-shell)))
+  :custom
+  (chatgpt-shell-openai-key
+   (lambda ()
+     (nth 0 (process-lines "pass" "show" "home/openai-dpa"))))
+  (dall-e-shell-openai-key
+   (lambda ()
+     (nth 0 (process-lines "pass" "show" "home/openai-dpa"))))
+  :hook
+  (org-mode-hook . (lambda () (require 'ob-chatgpt-shell)))
+  (org-mode-hook . (lambda () (require 'ob-dall-e-shell)))
+  )
 
 (straight-use-package
  '(seqel :type git :host github :repo "RNAer/seqel"))
