@@ -3221,9 +3221,6 @@ With a prefix ARG, remove start location."
   )
 
 (use-package chatgpt-shell
-  :hook
-  (org-mode-hook . (lambda () (require 'ob-chatgpt-shell)))
-  (org-mode-hook . (lambda () (require 'ob-dall-e-shell)))
   :custom
   (chatgpt-shell-openai-key
    (lambda ()
@@ -3231,9 +3228,14 @@ With a prefix ARG, remove start location."
   (dall-e-shell-openai-key
    (lambda ()
      (nth 0 (process-lines "pass" "show" "home/openai-dpa"))))
+  )
+(use-package ob-chatgpt-shell
+  :custom
+  (chatgpt-shell-openai-key
+   (lambda ()
+     (nth 0 (process-lines "pass" "show" "home/openai-dpa"))))
   :hook
   (org-mode-hook . (lambda () (require 'ob-chatgpt-shell)))
-  (org-mode-hook . (lambda () (require 'ob-dall-e-shell)))
   )
 
 (straight-use-package
