@@ -2492,6 +2492,15 @@ completing-read prompter."
     (setq plstore-cache-passphrase-for-symmetric-encryption t)
     ;; (add-hook 'org-agenda-mode-hook (lambda () (org-gcal-sync) ))
     )
+
+  (use-package calfw                    ; needed by calfw-org
+    :bind
+    ("C-c G W" . cfw:open-calendar-buffer))
+  (use-package calfw-org
+    :bind
+    (("C-c G w" . cfw:open-org-calendar)
+     :map org-agenda-mode-map
+     ("W" . cfw:open-org-calendar)))
   (use-package calfw-blocks
     :straight (calfw-blocks
                :type git
@@ -2511,15 +2520,7 @@ completing-read prompter."
     ;; :bind
     ;; ("C-c c" . my-open-calendar-agenda)
     ) ;; Bind function to a key
-  
-  (use-package calfw                    ; needed by calfw-org
-    :bind
-    ("C-c G W" . cfw:open-calendar-buffer))
-  (use-package calfw-org
-    :bind
-    (("C-c G w" . cfw:open-org-calendar)
-     :map org-agenda-mode-map
-     ("W" . cfw:open-org-calendar)))
+
   )
 (progn                                  ; org-roam and notes
   (use-package org-roam

@@ -7,7 +7,13 @@ rm -rf "$HOME"/.cache/org-persist
 cd "$HOME"/.emacs.d || exit
 [ -d "$HOME"/Sync/.emacs ] && ln -sf "$HOME"/Sync/.emacs/* .
 mkdir -p "$HOME"/Sync/notes/org-roam/
+
+# Store the current directory
+ORIGINAL_DIR=$(pwd)
 cd "$HOME" && ln -sf "$HOME"/Sync/.home/.hunspell_* .
+# Return to the original directory
+cd "$ORIGINAL_DIR" || exit
+
 
 yay -S --noconfirm emacs-wayland
 yay -S --noconfirm watchexec
