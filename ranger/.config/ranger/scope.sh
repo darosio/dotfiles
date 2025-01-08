@@ -94,7 +94,6 @@ handle_extension() {
             ## Preview as csv conversion
             ## Uses: https://github.com/dilshod/xlsx2csv
             xlsx2csv -- "${FILE_PATH}" && exit 5
-            ssconvert "${FILE_PATH}" fd://1 2>/dev/null && exit 5
             exit 1;;
 
         ## HTML
@@ -117,7 +116,21 @@ handle_extension() {
         dff|dsf|wv|wvc)
             mediainfo "${FILE_PATH}" && exit 5
             exiftool "${FILE_PATH}" && exit 5
-            ;; # Continue with next handler on failure
+            exit 1;; # Continue with next handler on failure
+
+        ## Text
+        txt|md|log|conf|c|cpp|py|sh|js|css|yaml|yml)
+            bat --color=always --style=grid,numbers "${FILE_PATH}" && exit 5
+            exit 1;;
+
+        ppt|pptx)
+            ## Extract file extension and set output basename
+            EXT="${FILE_PATH##*.}"
+            BASENAME=$(basename "${FILE_PATH}" ."${EXT}")
+            ## Convert to PDF using LibreOffice CLI
+            libreoffice --headless --convert-to pdf --outdir /tmp "${FILE_PATH}" >/dev/null 2>&1 \
+                && pdftoppm -jpeg "/tmp/${BASENAME}.pdf" > "${IMAGE_CACHE_PATH}" && exit 6
+            exit 1;;
 
     esac
 }
@@ -138,10 +151,10 @@ handle_image() {
         #     exit 1;;
 
         ## DjVu
-        # image/vnd.djvu)
-        #     ddjvu -format=tiff -quality=90 -page=1 -size="${DEFAULT_SIZE}" \
-        #           - "${IMAGE_CACHE_PATH}" < "${FILE_PATH}" \
-        #           && exit 6 || exit 1;;
+        image/vnd.djvu)
+            ddjvu -format=tiff -quality=90 -page=1 -size="${DEFAULT_SIZE}" \
+                  - "${IMAGE_CACHE_PATH}" < "${FILE_PATH}" \
+                  && exit 6 || exit 1;;
 
         ## Image
         image/*)
@@ -159,10 +172,10 @@ handle_image() {
             exit 7;;
 
         ## Video
-        # video/*)
-        #     # Thumbnail
-        #     ffmpegthumbnailer -i "${FILE_PATH}" -o "${IMAGE_CACHE_PATH}" -s 0 && exit 6
-        #     exit 1;;
+        video/*)
+            # Thumbnail
+            ffmpegthumbnailer -i "${FILE_PATH}" -o "${IMAGE_CACHE_PATH}" -s 0 && exit 6
+            exit 1;;
 
         ## PDF
         application/pdf)
@@ -176,14 +189,14 @@ handle_image() {
 
 
         ## ePub, MOBI, FB2 (using Calibre)
-        # application/epub+zip|application/x-mobipocket-ebook|\
-        # application/x-fictionbook+xml)
-        #     # ePub (using https://github.com/marianosimone/epub-thumbnailer)
-        #     epub-thumbnailer "${FILE_PATH}" "${IMAGE_CACHE_PATH}" \
-        #         "${DEFAULT_SIZE%x*}" && exit 6
-        #     ebook-meta --get-cover="${IMAGE_CACHE_PATH}" -- "${FILE_PATH}" \
-        #         >/dev/null && exit 6
-        #     exit 1;;
+        application/epub+zip|application/x-mobipocket-ebook|\
+        application/x-fictionbook+xml)
+            # ePub (using https://github.com/marianosimone/epub-thumbnailer)
+            epub-thumbnailer "${FILE_PATH}" "${IMAGE_CACHE_PATH}" \
+                "${DEFAULT_SIZE%x*}" && exit 6
+            ebook-meta --get-cover="${IMAGE_CACHE_PATH}" -- "${FILE_PATH}" \
+                >/dev/null && exit 6
+            exit 1;;
 
         ## Font
         application/font*|application/*opentype)
@@ -332,8 +345,7 @@ handle_mime() {
 
         ## Video and audio
         video/* | audio/*)
-            mediainfo "${FILE_PATH}" && exit 5
-            exiftool "${FILE_PATH}" && exit 5
+            mediainfo "${FILE_PATH}" && exiftool "${FILE_PATH}" && exit 5
             exit 1;;
 
 		message/rfc822)
@@ -357,4 +369,4 @@ handle_extension
 handle_mime "${MIMETYPE}"
 handle_fallback
 
-# exit 1
+exit 1

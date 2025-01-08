@@ -1,6 +1,5 @@
 #!/usr/bin/env sh
 #
-
 # Check if the script is already running in an isolated environment
 if [ -z "$ISOLATED_ENV" ]; then
   # Re-run the script in an isolated environment without 'exec' so it continues
@@ -36,9 +35,11 @@ yay -S --noconfirm ueberzugpp
 # yay -S --noconfirm w3m
 yay -S --noconfirm trash-cli
 
-yay -S --noconfirm python-xlsx2csv
-
+mkdir -p "$HOME"/.config/environment.d
 mkdir -p "$HOME"/.config/ranger
 stow -t "$HOME" ranger
 cd "$HOME"/.config/ranger || exit
 ln -sf "$HOME"/Sync/.config/ranger/* .
+
+yay -S --noconfirm perl-xls2csv
+pipx install xlsx2csv
