@@ -1116,8 +1116,11 @@ completing-read prompter."
     :init (apheleia-global-mode +1)
     :config
     (add-to-list 'apheleia-mode-alist '(markdown-mode . prettier))
-    (add-to-list 'apheleia-mode-alist '(python-mode . ruff))
-    (add-to-list 'apheleia-mode-alist '(python-ts-mode . ruff))
+    ;; Replace default (black) to use ruff for sorting import and formatting.
+    (setf (alist-get 'python-mode apheleia-mode-alist)
+          '(ruff-isort ruff))
+    (setf (alist-get 'python-ts-mode apheleia-mode-alist)
+          '(ruff-isort ruff))
     )
 
   (use-package flycheck ;; Syntax checking
@@ -3139,12 +3142,6 @@ With a prefix ARG, remove start location."
   ;;   :bind (:map python-mode-map
   ;;               ("<C-return>" . eir-eval-in-python))
   ;;   )
-  (use-package py-isort                 ;yay -S python-isort
-    :after (python)
-    :hook (before-save-hook . py-isort-before-save)
-    :bind (:map python-mode-map
-                ("C-c s" . py-isort-buffer)
-                ("C-c S" . py-isort-region)))
   )
 
 (use-package nov
