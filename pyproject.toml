@@ -32,7 +32,7 @@ dev = [
   "pre-commit == 4.1.0",
   "ruff == 0.9.5",
   "pylsp-mypy == 0.7.0",
-  "ruff-lsp == 0.0.61"
+  "ruff-lsp == 0.0.62"
 ]
 
 [project.urls]
