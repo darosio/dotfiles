@@ -3090,7 +3090,6 @@ With a prefix ARG, remove start location."
   ;;   (add-to-list 'eglot-server-programs '((toml-mode) "taplo" "lsp"))
   ;;   :hook
   ;;   (toml-mode-hook . eglot-ensure))
-
   (use-package lsp-mode
     :commands (lsp-deferred
                lsp-enable-which-key-integration)
@@ -3109,6 +3108,7 @@ With a prefix ARG, remove start location."
     :init
     (setq read-process-output-max (* 1024 1024)) ;; 1mb
     :hook
+    (yaml-mode-hook . lsp)
     (python-mode-hook . lsp-deferred)
     (lsp-mode-hook . lsp-enable-which-key-integration)
     (lsp-mode-hook . lsp-diagnostics-mode)

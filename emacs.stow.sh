@@ -40,6 +40,8 @@ yay -S --noconfirm xmlstarlet
 yay -S --noconfirm shellcheck
 # python-pylint
 # for lsp
+yay -S --noconfirm prettier
+yay -S --noconfirm yaml-language-server
 yay -S --noconfirm bash-language-server
 
 yay -S --noconfirm graphviz
