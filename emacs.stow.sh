@@ -24,7 +24,6 @@ sudo updatedb
 yay -S --noconfirm mypy
 yay -S --noconfirm ruff-lsp
 yay -S --noconfirm python-lsp-server
-yay -S --noconfirm python-isort
 yay -S --noconfirm jupyter-console
 yay -S --noconfirm jupyterlab
 yay -S --noconfirm tree-sitter-python
