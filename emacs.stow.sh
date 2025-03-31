@@ -4,13 +4,15 @@ mkdir -p "$HOME"/.emacs.d/straight/versions
 mkdir -p "$HOME"/.config/environment.d
 stow -t "$HOME" emacs
 rm -rf "$HOME"/.cache/org-persist
+
+# Store the current directory
+ORIGINAL_DIR=$(pwd)
 cd "$HOME"/.emacs.d || exit
 [ -d "$HOME"/Sync/.emacs ] && ln -sf "$HOME"/Sync/.emacs/* .
 mkdir -p "$HOME"/Sync/notes/org-roam/
 
-# Store the current directory
-ORIGINAL_DIR=$(pwd)
 cd "$HOME" && ln -sf "$HOME"/Sync/.home/.hunspell_* .
+
 # Return to the original directory
 cd "$ORIGINAL_DIR" || exit
 
