@@ -50,8 +50,3 @@ yay -S --noconfirm bash-language-server
 yay -S --noconfirm graphviz
 yay -S --noconfirm plantuml
 yay -S --noconfirm gnuplot
-
-yay -S --noconfirm mu
-yay -S --noconfirm isync
-stow -t "$HOME" mbsync
-# yay -S --noconfirm mb2md
