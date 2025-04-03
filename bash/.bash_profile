@@ -27,3 +27,7 @@ systemctl --user import-environment PATH
 if [ -z "$WAYLAND_DISPLAY" ] && [ -n "$XDG_VTNR" ] && [ "$XDG_VTNR" -eq 1 ] ; then
     exec sway
 fi
+
+if [ -z "$GPG_AGENT_INFO" ]; then
+  eval "$(gpg-agent --daemon --enable-ssh-support)"
+fi
