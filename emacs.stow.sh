@@ -2,6 +2,8 @@
 #
 mkdir -p "$HOME"/.emacs.d/straight/versions
 mkdir -p "$HOME"/.config/environment.d
+mkdir -p "$HOME"/.local/share
+mkdir -p "$HOME"/.local/bin
 stow -t "$HOME" emacs
 rm -rf "$HOME"/.cache/org-persist
 

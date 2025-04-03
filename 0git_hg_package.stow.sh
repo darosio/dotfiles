@@ -2,6 +2,7 @@
 set -e  # Exit immediately on error
 
 mkdir -p "$HOME"/.config
+mkdir -p "$HOME"/.local/bin
 
 #sudo pacman -S --needed base-devel
 sudo pacman -S --noconfirm stow

@@ -37,6 +37,7 @@ yay -S --noconfirm trash-cli
 
 mkdir -p "$HOME"/.config/environment.d
 mkdir -p "$HOME"/.config/ranger
+mkdir -p "$HOME"/.local/bin
 stow -t "$HOME" ranger
 cd "$HOME"/.config/ranger || exit
 ln -sf "$HOME"/Sync/.config/ranger/* .
