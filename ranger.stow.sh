@@ -43,4 +43,5 @@ cd "$HOME"/.config/ranger || exit
 ln -sf "$HOME"/Sync/.config/ranger/* .
 
 yay -S --noconfirm perl-xls2csv
+yay -S --noconfirm python-pipx
 pipx install xlsx2csv
