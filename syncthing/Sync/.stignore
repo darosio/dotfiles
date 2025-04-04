@@ -1,0 +1,6 @@
+# Ignore Python build artifacts
+.mypy_cache/
+.hatch/
+.venv/
+__pycache__/
+*.pyc
