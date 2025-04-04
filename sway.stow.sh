@@ -36,7 +36,8 @@ sudo systemctl start keyd.service
 
 yay -S --noconfirm ttf-ibm-plex
 yay -S --noconfirm ttf-hack
-yay -S --noconfirm noto-fonts-extra
-yay -S --noconfirm noto-fonts-emoji
+# yay -S --noconfirm noto-fonts-extra
+# yay -S --noconfirm noto-fonts-emoji
+yay -S --noconfirm ttf-nerd-fonts-symbols-mono
 
 yay -S --noconfirm xorg-xwayland

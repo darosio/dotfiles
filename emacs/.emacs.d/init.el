@@ -511,7 +511,19 @@ HEIGHT, if supplied, specifies height of letters to use."
     :commands (doom-modeline-mode)
     :custom (doom-modeline-minor-modes t)
     :config (doom-modeline-mode 1))
-
+  (use-package nerd-icons
+    :commands
+    nerd-icons-install-fonts
+    :init
+    (unless (file-exists-p "~/.local/share/fonts/NFM.ttf")
+      (nerd-icons-install-fonts))
+    :custom
+    ;; The Nerd Font you want to use in GUI
+    ;; "Symbols Nerd Font Mono" is the default and is recommended
+    ;; but you can use any other Nerd Font if you want
+    (nerd-icons-font-family "Symbols Nerd Font Mono")
+    )
+  
   (use-package minions
     :commands (minions-mode)
     :init (minions-mode 1))
