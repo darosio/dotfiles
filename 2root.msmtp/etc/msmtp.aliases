@@ -1,0 +1,10 @@
+# Example aliases file
+
+# Send root to duck and cnr
+root: darosio@duck.com, daniele.arosio@cnr.it
+
+# Send cron to
+cron: darosio@duck.com
+
+# Send everything else to admin
+default: darosio@duck.com
