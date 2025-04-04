@@ -3,8 +3,8 @@
 hostname=$(cat /proc/sys/kernel/hostname)  # Get the hostname from /proc
 
 # Check for internet connectivity
-if ! ping -c1 www.google.com > /dev/null 2>&1; then
-	sleep 30
+if ! curl -s --connect-timeout 5 http://www.google.com >/dev/null; then
+    sleep 30
 fi
 
 # Prepare email content
@@ -21,13 +21,14 @@ Date occurred:	$SMARTD_TFIRST
 $SMARTD_FULLMESSAGE
 "
 
-# Send mail
-if ! echo "$EMAIL_BODY" | sendmail -t; then
-	echo "Failed to send email"
-	exit 1
+# Send mail and log failures
+if ! echo "$EMAIL_BODY" | sendmail -t 2>> /var/log/smartdnotify.log; then
+    echo "Failed to send email" >> /var/log/smartdnotify.log
+    exit 1
 fi
 
-# Notify user
+# Notify user via notify-send
+USER_ID=$(id -u dan)
 if [ -f /usr/bin/notify-send ]; then
-  sudo -u dan DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus notify-send "S.M.A.R.T Error ($SMARTD_FAILTYPE)" "$SMARTD_MESSAGE" --icon=dialog-warning
+  sudo -u dan DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/"$USER_ID"/bus notify-send "S.M.A.R.T Error ($SMARTD_FAILTYPE)" "$SMARTD_MESSAGE" --icon=dialog-warning
 fi

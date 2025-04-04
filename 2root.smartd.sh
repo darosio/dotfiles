@@ -1,5 +1,8 @@
 #!/usr/bin/env sh
 #
+sudo touch /var/log/smartdnotify.log
+sudo chmod 666 /var/log/smartdnotify.log
+
 sudo stow -t / 2root.smartd
 yay -S --noconfirm smartmontools
 sudo systemctl enable smartd.service
