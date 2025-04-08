@@ -15,3 +15,6 @@
 [steve]
 
 [cftr]
+
+[arslanbaeva]
+checkout = git clone 'git@gin.g-node.org:/darosio/arslanbaeva.git' 'arslanbaeva'
