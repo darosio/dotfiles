@@ -3240,41 +3240,60 @@ OUTPUT: Bullet points with 3-5 sentences each"))
              gptel-make-ollama
              )
   :config
+  (setq gptel-default-mode 'org-mode)
   (setq gptel-api-key
         (lambda () (nth 0 (process-lines "pass" "show" "home/openai-dpa"))))
   (gptel-make-kagi "Kagi"
     :key (lambda () (nth 0 (process-lines "pass" "show" "cloud/kagi"))))
-  (gptel-make-anthropic "Claude"
-    :stream t
+  (gptel-make-anthropic "Claude"          ;Any name you want
+    :stream t                             ;Streaming responses
     :key (lambda () (nth 0 (process-lines "pass" "show" "cloud/claude"))))
-  (gptel-make-openai "OpenRouter"
+  ;; OpenRouter offers an OpenAI compatible API
+  (gptel-make-openai "OpenRouter"               ;Any name you want
     :host "openrouter.ai"
     :endpoint "/api/v1/chat/completions"
     :stream t
     :key (lambda () (nth 0 (process-lines "pass" "show" "cloud/openrouter")))
-    :models '("openai/gpt-3.5-turbo"
-              "mistralai/mixtral-8x7b-instruct"
-              "meta-llama/codellama-34b-instruct"
-              "codellama/codellama-70b-instruct"
-              "google/palm-2-codechat-bison-32k"
-              "google/gemini-pro"))
-  (setq gptel-model   "mixtral-8x7b-32768"
+    :models '(openai/gpt-3.5-turbo
+              mistralai/mixtral-8x7b-instruct
+              meta-llama/codellama-34b-instruct
+              codellama/codellama-70b-instruct
+              google/palm-2-codechat-bison-32k
+              google/gemini-pro))
+  (setq gptel-model   'qwen-qwq-32b
         gptel-backend
-        (gptel-make-openai "Groq"
+        ;; Groq offers an OpenAI compatible API
+        (gptel-make-openai "Groq"               ;Any name you want
           :host "api.groq.com"
           :endpoint "/openai/v1/chat/completions"
           :stream t
           :key (lambda () (nth 0 (process-lines "pass" "show" "cloud/groq")))
-          :models '("mixtral-8x7b-32768"
-                    "gemma-7b-it"
-                    "llama3-8b-8192"
-                    "llama3-70b-8192")))
-  (gptel-make-ollama "Ollama"
-    :host "localhost:11434"
-    :stream t
-    :models '("zephyr:latest"
-              "mistral:latest"))
+          :models '(llama-3.1-70b-versatile
+                    llama-3.1-8b-instant
+                    llama3-70b-8192
+                    llama3-8b-8192
+                    qwen-qwq-32b
+                    gemma2-9b-it)))
+  (gptel-make-ollama "Ollama"             ;Any name of your choosing
+    :host "localhost:11434"               ;Where it's running
+    :stream t                             ;Stream responses
+    :models '(mistral:latest
+              deepseek-r1:32b
+              qwen2.5:32b
+              phi4:latest
+              koesn/llama3-openbiollm-8b:Q5_K_M
+              dolphin-mixtral:8x22b
+              nous-hermes2-mixtral:latest
+              llama3:latest
+              ALIENTELLIGENCE/paperwriter:latest
+              qwen2.5-coder:3b
+              qwen2.5:3b
+              llama3:8b-instruct-q8_0
+              codellama:latest
+              gemma3:27b
+              deepseek-r1:latest))          ;List of models
   )
+
 
 (use-package chatgpt-shell
   :custom
