@@ -3190,29 +3190,11 @@ With a prefix ARG, remove start location."
   :hook (org-ctrl-c-ctrl-c-final . ellama-chat-send-last-message)
   :init
   (setopt ellama-auto-scroll t)
-  (setopt ellama-language "Italian")
-  (defun my/llm-research-section ()
-    "Generate a research section with proper structure."
-    (interactive)
-    (ellama-ask
-     "ROLE: Senior academic writing for Nature
-STYLE: Formal, citation-aware, no fluff
-TASK: Expand this outline into 3 paragraphs:
-<<selection>>"))
-  (defun my/grant-prompt ()
-    (interactive)
-    (ellama-ask
-     "NIH R01 SPECIFIC AIMS TEMPLATE:
-1. Significance: <<paste background>>  
-2. Innovation:  
-3. Approach:  
-OUTPUT: Bullet points with 3-5 sentences each"))
+  (setopt ellama-language "English")
   :config
   (require 'llm-ollama)
   (setopt ellama-provider
   	      (make-llm-ollama
-  	       ;; this model should be pulled to use it
-  	       ;; value should be the same as you print in terminal during pull
   	       :chat-model "llama3:8b-instruct-q8_0"
   	       :embedding-model "nomic-embed-text"
   	       :default-chat-non-standard-params '(("num_ctx" . 8192))))
@@ -3226,11 +3208,8 @@ OUTPUT: Bullet points with 3-5 sentences each"))
   	       :chat-model "qwen2.5-coder:3b"
   	       :embedding-model "nomic-embed-text"
   	       :default-chat-non-standard-params '(("num_ctx" . 32768))))
-  ;; show ellama context in header line in all buffers
   (ellama-context-header-line-global-mode +1)
-  ;; show ellama session id in header line in all buffers
   (ellama-session-header-line-global-mode +1))
-
 (use-package gptel
   :bind ("C-c C-<return>" . gptel-send)
   :commands (
@@ -3260,7 +3239,7 @@ OUTPUT: Bullet points with 3-5 sentences each"))
               codellama/codellama-70b-instruct
               google/palm-2-codechat-bison-32k
               google/gemini-pro))
-  (setq gptel-model   'qwen-qwq-32b
+  (setq gptel-model   'llama-3.1-70b-versatile
         gptel-backend
         ;; Groq offers an OpenAI compatible API
         (gptel-make-openai "Groq"               ;Any name you want
