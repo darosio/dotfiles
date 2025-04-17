@@ -81,3 +81,5 @@
     conflictstyle = diff3
 [pull]
 	rebase = true
+[annex]
+	sshcaching = true
