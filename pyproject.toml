@@ -9,10 +9,6 @@ authors = [
 classifiers = [
   "Development Status :: 4 - Beta",
   "Programming Language :: Python",
-  "Programming Language :: Python :: 3.7",
-  "Programming Language :: Python :: 3.8",
-  "Programming Language :: Python :: 3.9",
-  "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: Implementation :: CPython",
   "Programming Language :: Python :: Implementation :: PyPy"
@@ -23,7 +19,7 @@ keywords = []
 license = "BSD-3-Clause"
 name = "dotfiles"
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.11"
 version = "3.19.0"
 
 [project.optional-dependencies]
@@ -31,8 +27,7 @@ dev = [
   "commitizen == 4.6.0",
   "pre-commit == 4.2.0",
   "ruff == 0.11.6",
-  "pylsp-mypy == 0.7.0",
-  "ruff-lsp == 0.0.62"
+  "pylsp-mypy == 0.7.0"
 ]
 
 [project.urls]
@@ -121,6 +116,7 @@ packages = ["emacs"]
 
 [tool.hatch.envs.default]
 features = ["dev"]
+installer = "uv"
 
 [tool.hatch.envs.default.scripts]
 bump = [
