@@ -7,6 +7,7 @@ mkdir -p "$HOME"/.local/bin
 #sudo pacman -S --needed base-devel
 sudo pacman -S --noconfirm stow
 sudo pacman -S --noconfirm git
+sudo pacman -S --noconfirm git-delta
 sudo pacman -S --noconfirm mercurial
 stow -t "$HOME" git_hg
 
