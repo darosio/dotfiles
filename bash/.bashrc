@@ -51,6 +51,11 @@ shopt -s autocd					# Auto "cd" when entering just a path
 shopt -s checkwinsize			# Line wrap on window resize
 
 
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+# turn off deprecated pyenv prompt
+export PYENV_VIRTUALENV_DISABLE_PROMPT=1
+
 # store colors
 MAGENTA="\[\033[0;35m\]"
 YELLOW="\[\033[01;33m\]"
