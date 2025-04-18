@@ -1,0 +1,31 @@
+#!/bin/sh
+#
+# This script activates a virtual environment and executes additional commands.
+# Usage: ./script.sh <env_name> [additional_commands]
+#
+set -e
+
+# Get the virtual environment name from the first argument
+VENV="$1"
+shift
+
+# Construct the full path to the activate script
+ACTIVATE_PATH="$VENV/activate"
+
+# Check if the environment exists in the current directory
+if [ -d "$ACTIVATE_PATH" ]; then
+  # shellcheck disable=SC1090
+  . "$ACTIVATE_PATH"
+elif [ -d "$HOME/.local/venv/$VENV" ]; then
+  ACTIVATE_PATH="$HOME/.local/venv/$VENV/bin/activate"
+fi
+
+# If the activate script was not found, exit with an error message
+# shellcheck disable=SC3020
+if ! command -v activate &> /dev/null; then
+  echo "venv not found: $VENV"
+  exit 1
+fi
+
+# Execute additional commands if provided
+exec "$@"
