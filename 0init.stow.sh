@@ -10,8 +10,6 @@ mkdir -p "$HOME"/.local/bin
 stow -t "$HOME" scripts
 
 yay -S --noconfirm python-hatch
-#yay -S --noconfirm pyenv-virtualenv
-yay -S --noconfirm pyenv
 #yay -S --noconfirm direnv
 
 
