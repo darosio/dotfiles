@@ -22,8 +22,6 @@ fy() {
 pacman -Slq | fzf --multi --preview 'pacman -Si {1}' | xargs -ro sudo pacman -S
 }
 
-	# echo "opening $file" &&
-	# xdg-open "$file"
 # Perform rga search and open selected files
 frga() {
     RG_PREFIX="rga --files-with-matches"
@@ -36,7 +34,7 @@ frga() {
     )"
     if [ -n "$file" ]; then
         echo "opening $file"
-        xdg-open "$file"
+        rifle "$file"
     fi
 }
 

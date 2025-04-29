@@ -27,6 +27,7 @@ set menu-complete-display-prefix On
 
 "\C-o": "ranger_cd\C-m"
 "\C-f": "rifle `fzf -e`\C-m"
+"\es": "frga\C-m"
 "\ek": "fkill\C-m"
 # Bind new terminal to <F12>
 "\e[24~": "$TERM &\n"
