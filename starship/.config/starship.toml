@@ -51,6 +51,7 @@ symbol = " "
 
 [gcloud]
 symbol = "  "
+disabled = false
 
 [git_branch]
 symbol = " "
