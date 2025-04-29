@@ -74,8 +74,6 @@ alias paclist-time='expac --timefmt="%Y-%m-%d %T" "%l\t%n" | sort'
 alias paclist-size_d='expac -HM "%011m\t%-20n\t%10d" $( comm -23 <(pacman -Qqen|sort) <(pacman -Qqg base base-devel|sort) ) | sort -n'
 # shellcheck disable=SC2142
 alias paclist-size="expac -s \"%-30n %m\" | sort -hk 2 | awk '{printf \"%s %.0f MiB\n\", \$1, \$2/1024/1024}' | column -t"
-alias pup='sudo pacmatic -Syu'
-alias yy='pacaur -Ss'
 
 # Shortcut for running 'mr --config $HOME/.mrconfig-progs'
 alias mrp='mr --config $HOME/.mrconfig-progs'

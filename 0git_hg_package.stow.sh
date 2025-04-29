@@ -24,6 +24,7 @@ cd "$ORIGINAL_DIR" || exit
 
 paru -S --noconfirm yay-bin
 
+yay -S --noconfirm expac
 yay -S --noconfirm pacman-contrib  # needed for pacdiff
 yay -S --noconfirm pkgstats
 yay -S --noconfirm downgrade
