@@ -87,7 +87,7 @@ alias simple-server='python -m SimpleHTTPServer'
 alias pip_updatealluser='pip freeze --user | grep -v '\''^-e'\'' | cut -d "=" -f 1 | xargs -I {} pip install -U --user {}'
 # shellcheck disable=SC2142
 alias pip_updateall='pip freeze --local | awk '\''!/^-e/ { print $1 }'\'' | xargs -I {} pip install -U {}'
-alias venv='. /home/dan/.local/bin/venv.sh'
+alias venv='. /home/dan/.local/bin/venv.bash'
 
 # Web Browsing
 alias chromep='chromium --proxy-server="localhost:8118"'

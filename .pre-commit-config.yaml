@@ -35,6 +35,7 @@ repos:
         exclude: ".gitconfig"
       - id: pretty-format-toml
         args: [--autofix]
+        exclude: ^starship/.config/starship\.toml$
 
   - repo: https://github.com/charliermarsh/ruff-pre-commit
     rev: "v0.0.269"
