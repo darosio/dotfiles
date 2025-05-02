@@ -26,7 +26,7 @@ version = "3.19.0"
 dev = [
   "commitizen == 4.6.0",
   "pre-commit == 4.2.0",
-  "ruff == 0.11.7",
+  "ruff == 0.11.8",
   "pylsp-mypy == 0.7.0"
 ]
 
