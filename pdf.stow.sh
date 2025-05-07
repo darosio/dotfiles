@@ -31,6 +31,6 @@ yay -S --noconfirm xournalpp
 yay -S --noconfirm python-pdfminer
 # Print
 yay -S --noconfirm python-weasyprint
-yay -S --noconfirm wkhtmltopdf-static  # AUR
+yay -S --noconfirm wkhtmltopdf-bin  # AUR
 # Ppresenter
 yay -S --noconfirm pdfpc
