@@ -11,8 +11,8 @@ mkdir -p "$HOME"/Maildir/pec
 mbsync -a
 
 mu init --maildir "$HOME"/Maildir/ --my-address=daniele.arosio@cnr.it \
-  --my-address danielepietroarosio@gmail.com \
-  --my-address daniele.arosio@postecert.it
+	--my-address danielepietroarosio@gmail.com \
+	--my-address daniele.arosio@postecert.it
 mu index
 
 cd "$HOME"/Maildir || exit

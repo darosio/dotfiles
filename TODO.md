@@ -7,8 +7,10 @@ For Calibre just remember: /Sync/media/books
 
 In general store:
 
-    .local/share/applications/***.desktop
-    .config/***
+```
+.local/share/applications/***.desktop
+.config/***
+```
 
 MAYBE:
 
@@ -38,4 +40,4 @@ VMs/old64/old64.vbox .VirtualBox VMs/old64/old64.vbox-prev
 
 ## and ignore:
 
-.config/VirtualBox/_.log .config/VirtualBox/_.log._ .VirtualBox\ VMs/_/Logs/\*
+.config/VirtualBox/_.log .config/VirtualBox/_.log.\_ .VirtualBox\\ VMs/\_/Logs/\*

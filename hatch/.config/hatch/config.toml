@@ -22,7 +22,7 @@ name = "daniele arosio"
 
 [template.licenses]
 default = [
-  "BSD-3-Clause"
+  "BSD-3-Clause",
 ]
 headers = true
 

@@ -10,7 +10,7 @@ mkdir -p "$HOME"/.local/bin
 stow -t "$HOME" recoll
 pacaur -Qi recoll
 if ! yay -Q lyx >/dev/null 2>&1; then
-    yay -S --noconfirm lyx
+	yay -S --noconfirm lyx
 else
-    echo "Lyx is already installed."
+	echo "Lyx is already installed."
 fi

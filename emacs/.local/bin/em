@@ -1,12 +1,12 @@
 #!/bin/bash
 if [ -z "$DISPLAY" ]; then
-    IS_GRAPHICAL=true
+	IS_GRAPHICAL=true
 else
-    IS_GRAPHICAL=$(emacs --batch -Q --eval='(if (fboundp '"'"'tool-bar-mode) (message "true") (message "false"))' 2>&1)
+	IS_GRAPHICAL=$(emacs --batch -Q --eval='(if (fboundp '"'"'tool-bar-mode) (message "true") (message "false"))' 2>&1)
 fi
 
 if $IS_GRAPHICAL; then
-    exec emacsclient --alternate-editor="" -c "$@"
+	exec emacsclient --alternate-editor="" -c "$@"
 else
-    exec emacsclient --alternate-editor="" -t "$@"
+	exec emacsclient --alternate-editor="" -t "$@"
 fi

@@ -6,6 +6,7 @@ Usage:
   plot.py FILE
 
 """
+
 from __future__ import annotations
 
 import matplotlib.pyplot as plt
@@ -13,7 +14,7 @@ import pandas as pd
 from docopt import docopt
 
 
-def convert_to_number(w):  # noqa: ANN001
+def convert_to_number(w) -> bool:  # noqa: ANN001
     """Convert argument into float."""
     try:
         float(w)

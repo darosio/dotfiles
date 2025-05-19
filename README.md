@@ -5,96 +5,122 @@ Version: "3.19.0"
 ## Requirements
 
 1. GNU stow
-2. watchexec – for emacs package management with straight
-3. hatch – install using `pipx install hatch`
+1. watchexec – for emacs package management with straight
+1. hatch – install using `pipx install hatch`
 
 Initialize pre-commit hooks:
 
-    hatch run init
+```
+hatch run init
+```
 
 When bump version
 
-    hatch run bump
-    git push
-    git push --tags
+```
+hatch run bump
+git push
+git push --tags
+```
 
 ## Usage
 
 To create symlink into $HOME:
 
-    cd ~/workspace/dotfiles # or new location of dotfiles/
-    stow package-version
+```
+cd ~/workspace/dotfiles # or new location of dotfiles/
+stow package-version
+```
 
 when target is for example =/home use:
 
-    stow -t /home mr
+```
+stow -t /home mr
+```
 
 for some packages a folder must be created first, e.g.:
 
-    mkdir ~/.vim
-    then ~/.vim/bundle/Vundle.vim
+```
+mkdir ~/.vim
+then ~/.vim/bundle/Vundle.vim
+```
 
 pick package-version as needed.
 
 Better practice is to use specialized scripts e.g.:
 
-    gh.stow.sh
-    psd.stow.sh
-    emacs.stow.sh
-    rclone.stow.sh
-    recoll.stow.sh
-    goldendict.stow.sh
+```
+gh.stow.sh
+psd.stow.sh
+emacs.stow.sh
+rclone.stow.sh
+recoll.stow.sh
+goldendict.stow.sh
+```
 
 Plan to use machine-specific git branches is on hold.
 
 Update using `mr`:
 
-    cd workspace/repo
-    mr register
+```
+cd workspace/repo
+mr register
+```
 
 ## add new submodules
 
-    git submodule add -b <branch> <repository> [<submodule-path>]
-    git submodule update --remote
+```
+git submodule add -b <branch> <repository> [<submodule-path>]
+git submodule update --remote
+```
 
 ## remove submodules
 
-    Delete the relevant section from the .gitmodules file.
-    Stage the .gitmodules changes git add .gitmodules
-    Delete the relevant section from .git/config.
-    Run git rm --cached path_to_submodule (no trailing slash).
-    Run rm -rf .git/modules/path_to_submodule
-    Commit git commit -m "Removed submodule <name>"
-    Delete the now untracked submodule files
-    rm -rf path_to_submodule
+```
+Delete the relevant section from the .gitmodules file.
+Stage the .gitmodules changes git add .gitmodules
+Delete the relevant section from .git/config.
+Run git rm --cached path_to_submodule (no trailing slash).
+Run rm -rf .git/modules/path_to_submodule
+Commit git commit -m "Removed submodule <name>"
+Delete the now untracked submodule files
+rm -rf path_to_submodule
+```
 
 ## submodule problem
 
 I had once and solved the detached head problem following:
 <https://stackoverflow.com/questions/18770545/why-is-my-git-submodule-head-detached-from-master>
 
-    git branch -u refs/remotes/origin/master master
-    git co master
+```
+git branch -u refs/remotes/origin/master master
+git co master
+```
 
 check .gitmodule .git/config or:
 
-    cd <submodule-path>
-    git checkout <branch>
-    cd <parent-repo-path> # relative to parent repo root without starting path separator
-    git config -f .gitmodules submodule.<submodule-path>.branch <branch>
+```
+cd <submodule-path>
+git checkout <branch>
+cd <parent-repo-path> # relative to parent repo root without starting path separator
+git config -f .gitmodules submodule.<submodule-path>.branch <branch>
+```
 
 ## Development
 
 Commit following commitizen but consider this is a repository of configurations
 e.g. when updating emacs packages
 
-    feat(emacs): Update packages
+```
+feat(emacs): Update packages
+```
 
 what would normally called `build: Update dependencies`.
 
 Remember:
 
-    gh pr merge --squash --delete-branch -t “feat(emacs): …”
+```
+gh pr merge --squash --delete-branch -t “feat(emacs): …”
+```
 
 ## Applications [optional] requirements
 
@@ -109,15 +135,17 @@ Remember:
 
 TODO: [notes](/home/dan/Sync/notes/arch/emacs.org "emacs")
 
-Keybinding reserved to users are: C-c \<letter\> and F5 to F9.
+Keybinding reserved to users are: C-c \<letter> and F5 to F9.
 
 Package management useful commands:
 
-    straight-remove-unused-repos
-    straight-prune-build
-    straight-pull-all
-    straight-check-all
-    straight-freeze-versions
+```
+straight-remove-unused-repos
+straight-prune-build
+straight-pull-all
+straight-check-all
+straight-freeze-versions
+```
 
 ### To check
 

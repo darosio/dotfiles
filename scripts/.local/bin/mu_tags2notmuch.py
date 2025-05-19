@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 """Add notmuch tags to maildir w/ X-Keywords header in mails."""
+
 from __future__ import annotations
 
 import configparser
@@ -35,7 +36,8 @@ def get_notmuch_config() -> str:
 
 
 def add_tags(
-    notmuch_db: notmuch.Database, add_gmail: bool = False  # noqa: FBT001,FBT002
+    notmuch_db: notmuch.Database,
+    add_gmail: bool = False,  # noqa: FBT001,FBT002
 ) -> None:
     """Add tags from X-Keywords header to notmuch."""
     all_messages = notmuch.Query(notmuch_db, "").search_messages()

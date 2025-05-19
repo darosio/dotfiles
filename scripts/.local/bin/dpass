@@ -3,20 +3,20 @@
 shopt -s nullglob globstar
 
 prefix=${PASSWORD_STORE_DIR:-~/.password-store}
-files=( "$prefix"/**/*.gpg )
-files=( "${files[@]#"$prefix"/}" )
-files=( "${files[@]%.gpg}" )
-fbase=( "${files[@]##*/}" )
+files=("$prefix"/**/*.gpg)
+files=("${files[@]#"$prefix"/}")
+files=("${files[@]%.gpg}")
+fbase=("${files[@]##*/}")
 
 word=$(printf '%s\n' "${fbase[@]}" | rofi -dmenu "$@" -l 22)
 
 if [[ -n $word ]]; then
-  for match in "${files[@]}"; do
-    if [[ $word == "${match#*/}" ]]; then
-      /usr/bin/pass show "$match" 2>/dev/null | tail --lines=+2
-      /usr/bin/pass show -c "$match" 2>/dev/null
-    fi
-  done
-fi > /tmp/pp
+	for match in "${files[@]}"; do
+		if [[ $word == "${match#*/}" ]]; then
+			/usr/bin/pass show "$match" 2>/dev/null | tail --lines=+2
+			/usr/bin/pass show -c "$match" 2>/dev/null
+		fi
+	done
+fi >/tmp/pp
 
 alacritty -e bash -c "cat /tmp/pp; bash"

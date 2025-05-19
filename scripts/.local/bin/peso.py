@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 #
 """Track weight."""
+
 from __future__ import annotations
 
 from datetime import timedelta
@@ -71,8 +72,8 @@ plt.title("Tracking my weight")
 plt.xlim([0, df.days.iloc[-1] + 1])
 # plt.ylim([73.5, 77.5]) # noqa: ERA001
 plt.grid(b=True, which="minor", color="r", linestyle="--")
-ymin = int(round(min(df.peso) - 0.5))
-ymax = int(round(max(df.peso) + 0.5))
+ymin = round(min(df.peso) - 0.5)
+ymax = round(max(df.peso) + 0.5)
 plt.yticks([i / 2 for i in range(ymin * 2, ymax * 2 + 1)])
 plt.tight_layout()
 plt.show()

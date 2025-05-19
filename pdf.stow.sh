@@ -22,7 +22,7 @@ yay -S --noconfirm pdfmixtool
 yay -S --noconfirm pdfslicer
 yay -S --noconfirm pdftricks
 #   http://www.pdflabs.com/docs/pdftk-cli-examples/
-yay -S --noconfirm pdftk        # - pdftk A=HP0092.pdf B=HP0093.pdf shuffle A Bend-1 output 730-anna-2012.pdf
+yay -S --noconfirm pdftk # - pdftk A=HP0092.pdf B=HP0093.pdf shuffle A Bend-1 output 730-anna-2012.pdf
 yay -S --noconfirm qpdf
 # Annotation
 yay -S --noconfirm xournalpp
@@ -31,6 +31,6 @@ yay -S --noconfirm xournalpp
 yay -S --noconfirm python-pdfminer
 # Print
 yay -S --noconfirm python-weasyprint
-yay -S --noconfirm wkhtmltopdf-bin  # AUR
+yay -S --noconfirm wkhtmltopdf-bin # AUR
 # Ppresenter
 yay -S --noconfirm pdfpc

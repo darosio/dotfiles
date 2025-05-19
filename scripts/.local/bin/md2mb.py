@@ -26,13 +26,17 @@ cur, tmp, and the subfolders, which are hidden directories with names like
 [mbox_filename] will be newly created, as well as a [mbox_filename].sbd the
 directory.
 """
+
 from __future__ import annotations
 
 import email
 import mailbox
 import sys
-from io import BytesIO
 from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from io import BytesIO
 
 
 def custom_message_from_file(file: BytesIO) -> email.message.Message:
