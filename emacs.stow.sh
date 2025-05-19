@@ -49,6 +49,7 @@ yay -S --noconfirm yamlfmt
 # yay -S --noconfirm marksman
 yay -S --noconfirm taplo-cli
 yay -S --noconfirm shfmt
+yay -S --noconfirm actionlint # for gh workflow
 
 yay -S --noconfirm graphviz
 yay -S --noconfirm plantuml
