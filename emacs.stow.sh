@@ -18,7 +18,6 @@ cd "$HOME" && ln -sf "$HOME"/Sync/.home/.hunspell_* .
 # Return to the original directory
 cd "$ORIGINAL_DIR" || exit
 
-
 yay -S --noconfirm emacs-wayland
 yay -S --noconfirm watchexec
 
@@ -42,10 +41,14 @@ yay -S --noconfirm vale
 yay -S --noconfirm xmlstarlet
 yay -S --noconfirm shellcheck
 # python-pylint
-# for lsp
-yay -S --noconfirm prettier
-yay -S --noconfirm yaml-language-server
-yay -S --noconfirm bash-language-server
+# for lsp and apheleia
+# yay -S --noconfirm bash-language-server
+# yay -S --noconfirm yaml-language-server
+yay -S --noconfirm yamlfmt
+# yay -S --noconfirm mdformat
+# yay -S --noconfirm marksman
+yay -S --noconfirm taplo-cli
+yay -S --noconfirm shfmt
 
 yay -S --noconfirm graphviz
 yay -S --noconfirm plantuml

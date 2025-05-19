@@ -281,7 +281,8 @@ HEIGHT, if supplied, specifies height of letters to use."
      (prog-mode-hook . mk-auto-fill-mode)
      (proof-mode-hook . mk-auto-fill-mode)
      ;; (text-mode . auto-fill-mode)
-     (yaml-mode-hook . mk-auto-fill-mode)))
+     ;; (yaml-mode-hook . mk-auto-fill-mode) ;TODO: check and remove
+     ))
 
   (use-package window
     :straight (:type built-in)
@@ -523,7 +524,7 @@ HEIGHT, if supplied, specifies height of letters to use."
     ;; but you can use any other Nerd Font if you want
     (nerd-icons-font-family "Symbols Nerd Font Mono")
     )
-  
+
   (use-package minions
     :commands (minions-mode)
     :init (minions-mode 1))
@@ -1127,12 +1128,29 @@ completing-read prompter."
     :bind ("C-<tab>" . aj-toggle-fold)
     :init (apheleia-global-mode +1)
     :config
-    (add-to-list 'apheleia-mode-alist '(markdown-mode . prettier))
+    ;; Use json.tool for JSON files [python] (lsp: json-ls)
+    (add-to-list 'apheleia-mode-alist '(json-mode . python3-json))
+    ;; Use yamlfmt for YAML files [yamlfmt] (lsp: yamlls)
+    (add-to-list 'apheleia-formatters '(yamlfmt "yamlfmt" "-in"))
+    (add-to-list 'apheleia-mode-alist '(yaml-mode . yamlfmt))
+    ;; Use mdformat for MARKDOWN files [mdformat] (lsp: marksman) can be a dev dep
+    (add-to-list 'apheleia-formatters '(mdformat "mdformat" "-"))
+    (add-to-list 'apheleia-mode-alist '(markdown-mode . mdformat))
+    ;; Add the taplo for TOML files [taplo-cli] taplo-cli include lsp
+    (add-to-list 'apheleia-formatters '(taplo "taplo" "fmt")) ; Call 'taplo fmt' executable
+    (add-to-list 'apheleia-mode-alist '(toml-mode . taplo)) ; Link toml-mode to taplo formatter
+    ;; Add the shfmt for sh files [shfmt] (lsp: bash-language-server)
+    (add-to-list 'apheleia-mode-alist '(sh-mode . shfmt)) ; Link toml-mode to taplo formatter
+
     ;; Replace default (black) to use ruff for sorting import and formatting.
     (setf (alist-get 'python-mode apheleia-mode-alist)
           '(ruff-isort ruff))
     (setf (alist-get 'python-ts-mode apheleia-mode-alist)
           '(ruff-isort ruff))
+    (add-to-list 'apheleia-inhibit-functions
+                 (lambda ()
+                   (and buffer-file-name
+                        (string-match-p "\\.ipynb\\'" buffer-file-name)))) ; This function checks the file extension
     )
 
   (use-package flycheck ;; Syntax checking
@@ -1154,7 +1172,8 @@ completing-read prompter."
            ;; (org-mode-hook . flycheck-mode)
            ;; (text-mode-hook . flycheck-mode)
            (prog-mode-hook . flycheck-mode)
-           (yaml-mode-hook . flycheck-mode))
+           ;; (yaml-mode-hook . flycheck-mode) ;TODO: use lsp
+           )
     :init
     (which-key-add-key-based-replacements "M-g e" "Errors(flycheck)")
     :config
@@ -3121,6 +3140,10 @@ With a prefix ARG, remove start location."
     (setq read-process-output-max (* 1024 1024)) ;; 1mb
     :hook
     (yaml-mode-hook . lsp)
+    (json-mode-hook . lsp)
+    (markdown-mode-hook . lsp)
+    (toml-mode-hook . lsp)
+    (sh-mode-hook . lsp)
     (python-mode-hook . lsp-deferred)
     (lsp-mode-hook . lsp-enable-which-key-integration)
     (lsp-mode-hook . lsp-diagnostics-mode)
