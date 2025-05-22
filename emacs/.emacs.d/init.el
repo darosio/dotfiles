@@ -2981,7 +2981,7 @@ With a prefix ARG, remove start location."
     :config
     (add-to-list 'magit-todos-keywords-list "MAYBE")
     (add-to-list 'magit-todos-keywords-list "XXX"))
-  (use-package magit-annex)
+  ;; (use-package magit-annex)
   (use-package git-modes)
   (use-package gitignore-templates)
   (use-package browse-at-remote
