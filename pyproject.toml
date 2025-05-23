@@ -94,7 +94,14 @@ git tag $NEXT_VERSION
 git push
 git push --tags
 """
-clean = "rm -rf ./build .coverage ./__pycache__ ./.mypy_cache ./.pytest_cache ./docs/_build ./tests/__pycache__ ./dist ./src/nima/__pycache__"
+clean = """
+rm -rf **/__pycache__/ \
+  .mypy_cache/ .pytest_cache/ .ruff_cache/
+  build/ dist/ *.egg-info/ \
+  docs/_build/ \
+  **/.ipynb_checkpoints/ **/.virtual_documents/ \
+  **/*.pyc **/*.pyo **/*.pyd **/.coverage.*
+"""
 
 [tool.hatch.envs.lint]
 type = "virtual"

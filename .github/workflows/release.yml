@@ -44,19 +44,3 @@ jobs:
         with:
           tag: ${{ github.ref_name }}
           bodyFile: RELEASE_CLEANED.md
-
-        #   generateReleaseNotes: false
-        #   makeLatest: legacy
-        #   omitBody: false
-        #   omitBodyDuringUpdate: false
-        #   omitDraftDuringUpdate: false
-        #   omitName: false
-        #   omitNameDuringUpdate: false
-        #   omitPrereleaseDuringUpdate: false
-        #   removeArtifacts: false
-        #   replacesArtifacts: true
-        #   skipIfReleaseExists: false
-        #   token: ${{ secrets.GITHUB_TOKEN }} # This is correct for accessing the default token
-        #   updateOnlyUnreleased: false
-        # env:
-        #   UV_CACHE_DIR: /home/runner/work/_temp/setup-uv-cache
