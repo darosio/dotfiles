@@ -57,6 +57,7 @@ repos:
     rev: v0.1.9
     hooks:
       - id: ripsecrets
+        exclude: .goldendict/config
 
   - repo: https://github.com/gitleaks/gitleaks
     rev: v8.26.0

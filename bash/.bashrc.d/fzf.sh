@@ -4,7 +4,10 @@ export FZF_DEFAULT_OPTS="-e -m --sort 10000"
 export FZF_DEFAULT_COMMAND="fd"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_COMMAND="fd -t d"
+# next disable=SC1091 on github
+# shellcheck source=/dev/null
 . /usr/share/fzf/key-bindings.bash
+# shellcheck source=/dev/null
 . /usr/share/fzf/completion.bash
 
 # Functions using fzf

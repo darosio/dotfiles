@@ -56,7 +56,7 @@ eval "$(pyenv init -)"
 if command -v starship &>/dev/null; then
 	eval "$(starship init bash)"
 else
-	# shellcheck source=/home/dan/workspace/dotfiles/bash/.bashrc_custom_prompt.bash
+	# shellcheck source=bash/.bashrc_custom_prompt.bash
 	source "$HOME/.bashrc_custom_prompt.bash"
 fi
 
