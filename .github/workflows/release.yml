@@ -6,8 +6,11 @@ on:
       - 'v[0-9]+.[0-9]+.[0-9]+'
 
 jobs:
+
   build-publish-release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # This grants permission to create/manage releases, tags, and push content
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -41,3 +44,19 @@ jobs:
         with:
           tag: ${{ github.ref_name }}
           bodyFile: RELEASE_CLEANED.md
+
+        #   generateReleaseNotes: false
+        #   makeLatest: legacy
+        #   omitBody: false
+        #   omitBodyDuringUpdate: false
+        #   omitDraftDuringUpdate: false
+        #   omitName: false
+        #   omitNameDuringUpdate: false
+        #   omitPrereleaseDuringUpdate: false
+        #   removeArtifacts: false
+        #   replacesArtifacts: true
+        #   skipIfReleaseExists: false
+        #   token: ${{ secrets.GITHUB_TOKEN }} # This is correct for accessing the default token
+        #   updateOnlyUnreleased: false
+        # env:
+        #   UV_CACHE_DIR: /home/runner/work/_temp/setup-uv-cache

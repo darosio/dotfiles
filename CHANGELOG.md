@@ -1,13 +1,81 @@
-<!-- markdownlint-configure-file { "MD013": { "line_length": 90 } } -->
-<!-- markdownlint-configure-file { "MD024": { "allow_different_nesting": true } } -->
-
 # Changelog
 
-All notable changes to my dotfiles repo will be documented in this file.
+## [3.20.0] - 2025-05-23
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+### 🚀 Features
 
-Releases will start from 2022.1.
+- Add automount for usb keys
+- Add mrr
+- Add thunar
+- *(emacs)* Restore chatgpt-shell; Drop slack pocket-reader emoji
+- *(emacs)* Experiment calfw-block
+- Update ranger
+- *(emacs)* Drop py-isort
+- Separate mu, mbsync from emacs
+- *(sway)* Drop pinentry-wayprompt
+- Add 2root.msmtp
+- *(dati)* Add arslanbaeva
+- *(emacs)* Expand ellama
+- *(direnv)* Add layout uv
+- Drop pyenv
+- Add venv script
+- Add starship prompt
+- Bind M-s to frga
+- *(emacs)* Add fmt+lsp for json, yaml, toml, md and sh files
+
+### 🐛 Bug Fixes
+
+- Sway emacs fonts syncthing
+- *(emacs)* Emacs.stow
+- *(emacs)* Chatgpt-shell
+- *(emacs)* Prettier in emacs
+- Emacs installation
+- SSH thought GPG agent
+- 0git...
+- 0init.stow.sh
+- Stow into ~/.local
+- Stow into /etc/systemd/system
+- Gpg-agent is automatically started by systemd
+- Mu
+- Syncthing client
+- Xlsx2csv ranger dep installation with pipx
+- *(emacs)* Nerd icons install
+- *(emacs)* Nerd icons install
+- Psd and firefox
+- Smartd without ping
+- Remove unneeded MTA opensmtpd
+- Rclone.stow.sh
+- *(emacs)* Gptel
+- Gvim
+- *(ranger)* Add `bat`
+- Sshcaching for git-annex globally
+- Git-delta
+- Firefox needs speech-dispatcher
+- Venv command for .local/venv
+- Drop pyenv-virtualenv
+- Remove pacmatic pacaur aliases
+- Gcloud in whisker starship prompt
+- Installation of wkhtmltopdf-bin
+- Renovate configuration file
+
+### 🦾 Build
+
+- *(deps)* Bump ruff from 0.8.2 to 0.11.10
+- *(deps)* Bump ruff-lsp from 0.0.59 to 0.0.62
+- *(deps)* Bump pre-commit from 4.0.1 to 4.2.0
+- *(deps)* Drop commitizen
+- *(deps)* Bump pylsp-mypy from 0.6.9 to 0.7.0 (#135)
+- Adopt uv.lock
+- Add pre-commit-shfmt
+- Update to taplo, shfmt, yamlfmt, mdformat…
+- *(emacs)* Update packages
+- Adopt uv renovate and new update
+- Automerge with pascalgn/automerge-action
+
+### 🐙 CI/CD
+
+- Drop dependabot
+- Add ci
 
 ## 3.19.0 (2024-12-09)
 
@@ -1276,7 +1344,7 @@ Releases will start from 2022.1.
 
 #### emacs
 
-- early\-init.el.
+- early-init.el.
 - Completion with vertico, marginalia, embark (configured with which-key),
   consult, orderless and corfu.
 - Fuzzy search with affe.
