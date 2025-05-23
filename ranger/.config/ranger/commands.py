@@ -169,7 +169,7 @@ class fzf_mark(Command):
     `:fzf_mark` refer from `:fzf_select`  (But Just in `Current directory and Not Recursion`)
         so just `find` is enough instead of `fdfind`)
 
-    `:fzf_mark` can One/Multi/All Selected & Marked files of current dir that filterd by `fzf extended-search mode`
+    `:fzf_mark` can One/Multi/All Selected & Marked files of current dir that filtered by `fzf extended-search mode`
         fzf extended-search mode: https://github.com/junegunn/fzf#search-syntax
         eg:    py    'py    .py    ^he    py$    !py    !^py
     In addition:

@@ -18,7 +18,7 @@ repo = "main"
 
 [template]
 email = "daniele.arosio@cnr.it"
-name = "daniele arosio"
+name = "daniele Arosio"
 
 [template.licenses]
 default = [

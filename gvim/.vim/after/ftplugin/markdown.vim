@@ -9,7 +9,7 @@ let g:pandoc#folding#level = 2
 let g:pandoc#folding#fdc = 4
 " need this to make tagbar work
 let g:pandoc#filetypes#pandoc_markdown = 1 "default
-let g:pandoc#synatx#codeblock#embeds#langs = ['ruby', 'vim', 'python', 'r', 'json', 'c', 'julia', 'make', 'sh', 'latex']
+let g:pandoc#syntax#codeblock#embeds#langs = ['ruby', 'vim', 'python', 'r', 'json', 'c', 'julia', 'make', 'sh', 'latex']
 " }}}
 " vim-pandoc-after {{{
 let g:pandoc#after#modules#enabled = ["supertab", "ultisnips"]

@@ -1439,7 +1439,7 @@ completing-read prompter."
                         (mu4e-drafts-folder . "/gmail/[Gmail]/Drafts")
                         (mu4e-refile-folder . "/archive" )
                         (mu4e-trash-folder . "/gmail/[Gmail]/Trash")
-                        (message-signature  . "daniele arosio\n38123 Trento\n")))
+                        (message-signature  . "daniele Arosio\n38123 Trento\n")))
              ,(make-mu4e-context
                :name "pec"
                :match-func (lambda (msg)
@@ -1450,7 +1450,7 @@ completing-read prompter."
                         (mu4e-drafts-folder . "/pec/Drafts")
                         (mu4e-trash-folder . "/pec/trash")
                         (mu4e-sent-folder . "/pec/Sent Items")
-                        (message-signature . "daniele arosio\n38123 Trento\n")))
+                        (message-signature . "daniele Arosio\n38123 Trento\n")))
              ))
     )
 
@@ -1827,7 +1827,7 @@ completing-read prompter."
       (add-to-list 'org-latex-packages-alist '("" "color"))
       (setq org-latex-minted-options
             '(("frame" "lines") ("autogobble") ("breaklines" "true")
-              ;; ("fontsize" "\\small") ("baselinestretch" "1.2") ("no-messge") ("mathescape") ("tabsize" "4")
+              ;; ("fontsize" "\\small") ("baselinestretch" "1.2") ("no-message") ("mathescape") ("tabsize" "4")
               ;; ("breakanywhere" "true") ("numbersep" "0.5cm") ("xleftmargin" "1cm") ("frame" "single")("linenos")
               ("style" "colorful")))
       (add-to-list 'org-latex-classes
@@ -2931,7 +2931,7 @@ With a prefix ARG, remove start location."
     (defengine wikipedia
       "http://www.wikipedia.org/search-redirect.php?language=en&go=Go&search=%s"
       :keybinding "w"
-      :docstring "Searchin' the wikis.")
+      :docstring "Searching' the wikis.")
     (defengine wiktionary
       "https://www.wikipedia.org/search-redirect.php?family=wiktionary&language=en&go=Go&search=%s"
       :keybinding "k")

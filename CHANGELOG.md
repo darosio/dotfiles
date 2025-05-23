@@ -1398,7 +1398,7 @@ Releases will start from 2022.1.
 - (emacs) keychord.
 - (emacs) elfeed.
 - (emacs) eyebrowse.
-- (emacs) slow mu4e maildir-extention.
+- (emacs) slow mu4e maildir-extension.
 
 ### Fixed
 
