@@ -1,5 +1,11 @@
 # Changelog
 
+## [3.20.1] - 2025-05-23
+
+### 🐛 Bug Fixes
+
+- Hatch run clean
+
 ## [3.20.0] - 2025-05-23
 
 ### 🚀 Features
