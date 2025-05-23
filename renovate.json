@@ -7,7 +7,7 @@
     "prHourlyLimit": 0,
     "prConcurrentLimit": 0,
     "prFooter": " (#{{prNumber}})",
-    "automerge": false,
+    "automerge": true,
     "rangeStrategy": "bump",
     "commitMessagePrefix": "build(deps):",
     "commitMessageAction": "bump",
