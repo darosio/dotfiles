@@ -12,9 +12,9 @@
 ;;; Code:
 
 ;; Disable GUI elements
-(menu-bar-mode -1)
-(tool-bar-mode -1)
-(scroll-bar-mode -1)
+(when (fboundp 'menu-bar-mode) (menu-bar-mode -1))
+(when (fboundp 'tool-bar-mode) (tool-bar-mode -1))
+(when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 
 ;; Inhibit frame resizing to speed up startup time
 (setq frame-inhibit-implied-resize t)
@@ -2790,101 +2790,102 @@ completing-read prompter."
   (use-package oc-csl :straight org :after (oc)
     :init (setq org-cite-csl-styles-dir "~/Zotero/styles"))
   (use-package oc-natbib :straight org :after oc)
-
-  (use-package pdf-tools
-    :demand t
-    :functions pdf-loader-install
-    :bind (:map pdf-view-mode-map
-                ("C-s" . isearch-forward)
-                ("/" . pdf-occur)
-                ("C-?" . pdf-isearch-occur))
-    :init
-    (pdf-loader-install)
-    :config
-    (setq pdf-view-resize-factor 1.1)   ;; more fine-grained zooming
-    (setq pdf-view-use-scaling t)
-    (use-package pdf-misc
-      :straight pdf-tools
-      :config (setq pdf-misc-print-program "/usr/bin/gtklp"))
-    (use-package pdf-annot
-      :straight pdf-tools
+  (unless (getenv "CI")
+    (use-package pdf-tools
+      :demand t
+      :functions pdf-loader-install
       :bind (:map pdf-view-mode-map
-                  ("h" . pdf-annot-add-highlight-markup-annotation))
-      :config (setq-local pdf-annot-activate-created-annotations nil)))
+                  ("C-s" . isearch-forward)
+                  ("/" . pdf-occur)
+                  ("C-?" . pdf-isearch-occur))
+      :init
+      ;; Skip loader in CI or batch mode
+      (pdf-loader-install)
+      :config
+      (setq pdf-view-resize-factor 1.1)   ;; more fine-grained zooming
+      (setq pdf-view-use-scaling t)
+      (use-package pdf-misc
+        :straight pdf-tools
+        :config (setq pdf-misc-print-program "/usr/bin/gtklp"))
+      (use-package pdf-annot
+        :straight pdf-tools
+        :bind (:map pdf-view-mode-map
+                    ("h" . pdf-annot-add-highlight-markup-annotation))
+        :config (setq-local pdf-annot-activate-created-annotations nil)))
 
-  ;; https://github.com/fuxialexander/org-pdftools
-  ;; Maybe defun are unused but follow the instruction
-  (use-package org-noter
-    :commands  (org-noter-insert-note
-                org-noter--valid-session
-                org-noter--parse-root
-                org-noter--get-precise-info
-                org-noter--doc-approx-location
-                org-noter--pretty-print-location)
-    :bind (("C-c n n" . org-noter)
-           :map org-noter-notes-mode-map
-           ("C-M-s-k" . org-noter-create-skeleton)
-           ("C-M-s-n" . org-noter-sync-next-note)
-           ("C-M-s-p" . org-noter-sync-prev-note)
-           :map org-noter-doc-mode-map
-           ("C-M-s-k" . org-noter-create-skeleton)
-           ("C-M-s-n" . org-noter-sync-next-note)
-           ("C-M-s-p" . org-noter-sync-prev-note)
-           )
-    :config
-    (setq ;; org-noter-default-notes-file-names '("noter-othernotes.org" "biblio.org")
-     org-noter-hide-other nil
-     org-noter-separate-notes-from-heading t
-     ;; org-noter-notes-search-path '("~/Sync/biblio" "~/Sync/notes/org-roam/biblio")
-     org-noter-notes-search-path '("~/Sync/notes/org-roam/biblio")
-     org-noter-always-create-frame nil  ;; do not create a new frame
-     org-noter-doc-split-fraction '(0.67 . 0.75)
-     ;; org-noter-notes-window-location 'other-frame
-     )
-    ;; (require 'org-noter-pdftools) ; org-pdftools suggestion FAIL with deman
-    )
-  (use-package org-pdftools
-    :hook (org-mode-hook . org-pdftools-setup-link))
-  (use-package org-noter-pdftools
-    :after (org-noter)
-    :commands (org-noter-pdftools-jump-to-note)
-    :hook
-    (org-noter-doc-mode-hook . (lambda () (require 'org-noter-pdftools)))
-    (org-noter-notes-mode-hook . (lambda () (require 'org-noter-pdftools)))
-    :bind (:map org-noter-notes-mode-map
-                ("C-H-k" . org-noter-pdftools-create-skeleton)
-                :map org-noter-doc-mode-map
-                ("C-H-k" . org-noter-pdftools-create-skeleton))
-    :config
-    ;; Add a function to ensure precise note is inserted
-    (defun org-noter-pdftools-insert-precise-note (&optional toggle-no-questions)
-      (interactive "P")
-      (org-noter--with-valid-session
-       (let ((org-noter-insert-note-no-questions (if toggle-no-questions
-                                                     (not org-noter-insert-note-no-questions)
-                                                   org-noter-insert-note-no-questions))
-             (org-pdftools-use-isearch-link t)
-             (org-pdftools-use-freestyle-annot t))
-         (org-noter-insert-note (org-noter--get-precise-info)))))
-    ;; fix https://github.com/weirdNox/org-noter/pull/93/commits/f8349ae7575e599f375de1be6be2d0d5de4e6cbf
-    (defun org-noter-set-start-location (&optional arg)
-      "When opening a session with this document, go to the current location.
+    ;; https://github.com/fuxialexander/org-pdftools
+    ;; Maybe defun are unused but follow the instruction
+    (use-package org-noter
+      :commands  (org-noter-insert-note
+                  org-noter--valid-session
+                  org-noter--parse-root
+                  org-noter--get-precise-info
+                  org-noter--doc-approx-location
+                  org-noter--pretty-print-location)
+      :bind (("C-c n n" . org-noter)
+             :map org-noter-notes-mode-map
+             ("C-M-s-k" . org-noter-create-skeleton)
+             ("C-M-s-n" . org-noter-sync-next-note)
+             ("C-M-s-p" . org-noter-sync-prev-note)
+             :map org-noter-doc-mode-map
+             ("C-M-s-k" . org-noter-create-skeleton)
+             ("C-M-s-n" . org-noter-sync-next-note)
+             ("C-M-s-p" . org-noter-sync-prev-note)
+             )
+      :config
+      (setq ;; org-noter-default-notes-file-names '("noter-othernotes.org" "biblio.org")
+       org-noter-hide-other nil
+       org-noter-separate-notes-from-heading t
+       ;; org-noter-notes-search-path '("~/Sync/biblio" "~/Sync/notes/org-roam/biblio")
+       org-noter-notes-search-path '("~/Sync/notes/org-roam/biblio")
+       org-noter-always-create-frame nil  ;; do not create a new frame
+       org-noter-doc-split-fraction '(0.67 . 0.75)
+       ;; org-noter-notes-window-location 'other-frame
+       )
+      ;; (require 'org-noter-pdftools) ; org-pdftools suggestion FAIL with deman
+      )
+    (use-package org-pdftools
+      :hook (org-mode-hook . org-pdftools-setup-link))
+    (use-package org-noter-pdftools
+      :after (org-noter)
+      :commands (org-noter-pdftools-jump-to-note)
+      :hook
+      (org-noter-doc-mode-hook . (lambda () (require 'org-noter-pdftools)))
+      (org-noter-notes-mode-hook . (lambda () (require 'org-noter-pdftools)))
+      :bind (:map org-noter-notes-mode-map
+                  ("C-H-k" . org-noter-pdftools-create-skeleton)
+                  :map org-noter-doc-mode-map
+                  ("C-H-k" . org-noter-pdftools-create-skeleton))
+      :config
+      ;; Add a function to ensure precise note is inserted
+      (defun org-noter-pdftools-insert-precise-note (&optional toggle-no-questions)
+        (interactive "P")
+        (org-noter--with-valid-session
+         (let ((org-noter-insert-note-no-questions (if toggle-no-questions
+                                                       (not org-noter-insert-note-no-questions)
+                                                     org-noter-insert-note-no-questions))
+               (org-pdftools-use-isearch-link t)
+               (org-pdftools-use-freestyle-annot t))
+           (org-noter-insert-note (org-noter--get-precise-info)))))
+      ;; fix https://github.com/weirdNox/org-noter/pull/93/commits/f8349ae7575e599f375de1be6be2d0d5de4e6cbf
+      (defun org-noter-set-start-location (&optional arg)
+        "When opening a session with this document, go to the current location.
 With a prefix ARG, remove start location."
-      (interactive "P")
-      (org-noter--with-valid-session
-       (let ((inhibit-read-only t)
-             (ast (org-noter--parse-root))
-             (location (org-noter--doc-approx-location (when (called-interactively-p 'any) 'interactive))))
-         (with-current-buffer (org-noter--session-notes-buffer session)
-           (org-with-wide-buffer
-            (goto-char (org-element-property :begin ast))
-            (if arg
-                (org-entry-delete nil org-noter-property-note-location)
-              (org-entry-put nil org-noter-property-note-location
-                             (org-noter--pretty-print-location location))))))))
-    (with-eval-after-load 'pdf-annot
-      (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note)))
-
+        (interactive "P")
+        (org-noter--with-valid-session
+         (let ((inhibit-read-only t)
+               (ast (org-noter--parse-root))
+               (location (org-noter--doc-approx-location (when (called-interactively-p 'any) 'interactive))))
+           (with-current-buffer (org-noter--session-notes-buffer session)
+             (org-with-wide-buffer
+              (goto-char (org-element-property :begin ast))
+              (if arg
+                  (org-entry-delete nil org-noter-property-note-location)
+                (org-entry-put nil org-noter-property-note-location
+                               (org-noter--pretty-print-location location))))))))
+      (with-eval-after-load 'pdf-annot
+        (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note)))
+    )
   (declare-function keymap-set "compat-29")
   (use-package engine-mode
     :commands (engine/set-keymap-prefix
@@ -3296,23 +3297,24 @@ With a prefix ARG, remove start location."
               deepseek-r1:latest))          ;List of models
   )
 
-
-(use-package chatgpt-shell
-  :custom
-  (chatgpt-shell-openai-key
-   (lambda ()
-     (nth 0 (process-lines "pass" "show" "home/openai-dpa"))))
-  (dall-e-shell-openai-key
-   (lambda ()
-     (nth 0 (process-lines "pass" "show" "home/openai-dpa"))))
-  )
-(use-package ob-chatgpt-shell
-  :custom
-  (chatgpt-shell-openai-key
-   (lambda ()
-     (nth 0 (process-lines "pass" "show" "home/openai-dpa"))))
-  :hook
-  (org-mode-hook . (lambda () (require 'ob-chatgpt-shell)))
+(unless (getenv "CI")
+  (use-package chatgpt-shell
+    :custom
+    (chatgpt-shell-openai-key
+     (lambda ()
+       (nth 0 (process-lines "pass" "show" "home/openai-dpa"))))
+    (dall-e-shell-openai-key
+     (lambda ()
+       (nth 0 (process-lines "pass" "show" "home/openai-dpa"))))
+    )
+  (use-package ob-chatgpt-shell
+    :custom
+    (chatgpt-shell-openai-key
+     (lambda ()
+       (nth 0 (process-lines "pass" "show" "home/openai-dpa"))))
+    :hook
+    (org-mode-hook . (lambda () (require 'ob-chatgpt-shell)))
+    )
   )
 
 (straight-use-package

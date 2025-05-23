@@ -96,10 +96,9 @@ git push --tags
 """
 clean = """
 rm -rf **/__pycache__/ \
-  .mypy_cache/ .pytest_cache/ .ruff_cache/
+  .mypy_cache/ .pytest_cache/ .ruff_cache/ \
   build/ dist/ *.egg-info/ \
-  docs/_build/ \
-  **/.ipynb_checkpoints/ **/.virtual_documents/ \
+  docs/_build/ **/.ipynb_checkpoints/ **/.virtual_documents/ \
   **/*.pyc **/*.pyo **/*.pyd **/.coverage.*
 """
 
