@@ -51,24 +51,25 @@ jobs:
         run: uv run pre-commit run --all-files --show-diff-on-failure # hatch run lint:lint
 
 
-  # auto_merge_deps:
-  #   name: Auto Merge dependencies labeled PRs
-  #   needs: [pre-commit, tests, docs_build]
-  #   # Run only on pull_request labeled "dependencies"
-  #   if: >
-  #     startsWith(github.event.pull_request.title, 'build(pre-commit): update hooks') ||
-  #     contains(github.event.pull_request.labels.*.name, 'dependencies')
-  #   runs-on: ubuntu-latest
-  #   permissions:
-  #     contents: write
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v4
-  #     - name: Merge PR
-  #       uses: pascalgn/automerge-action@v0.16.4
-  #       env:
-  #         GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-  #         MERGE_LABELS: ""
-  #         MERGE_METHOD: squash
-  #         DELETE_BRANCH_AFTER_MERGE: true
-  #         LOG: "TRACE" # or DEBUG
+  auto_merge_deps:
+    name: Auto Merge dependencies labeled PRs
+    needs: [pre-commit]
+    # Run only on pull_request labeled "dependencies"
+    if: >
+      startsWith(github.event.pull_request.title, 'build(pre-commit): update hooks') ||
+      contains(github.event.pull_request.labels.*.name, 'dependencies')
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write # This grants permission to read and modify PRs
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Merge PR
+        uses: pascalgn/automerge-action@v0.16.4
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          MERGE_LABELS: ""
+          MERGE_METHOD: squash
+          DELETE_BRANCH_AFTER_MERGE: true
+          LOG: "TRACE" # or DEBUG

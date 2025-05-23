@@ -1,4 +1,4 @@
-number = false # Prevent renumbering ordered lists
+number = true # Prevent renumbering ordered lists
 extensions = [
   "gfm", # Enable GitHub Flavored Markdown extensions
 ]

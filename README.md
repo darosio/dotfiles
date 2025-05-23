@@ -5,8 +5,8 @@ Version: "3.19.0"
 ## Requirements
 
 1. GNU stow
-1. watchexec – for emacs package management with straight
-1. hatch – install using `pipx install hatch`
+2. watchexec – for emacs package management with straight
+3. hatch – install using `pipx install hatch`
 
 Initialize pre-commit hooks:
 
