@@ -1,4 +1,4 @@
-;;; init.el --- Personal Emacs configuration file
+;;; init.el --- Personal Emacs configuration file; -*- lexical-binding: t; -*-
 ;;
 ;; Author: DanieleArosio <daniele.arosio@cnr.it>
 ;; Version: 3.19.0
@@ -8,6 +8,13 @@
 
 ;;; Commentary:
 ;; Binding keys reserved to user are: "C-c <letter>" and <F5> to <F9>.
+
+;; Consider that I am trying to setup github CI to run package updated automatically
+;; (straight-pull-all)
+;; (straight-check-all)
+;; (straight-version-freeze)
+;; then test
+;; Emacs --batch -l init.el -l test.el
 
 ;;; Code:
 
