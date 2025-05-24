@@ -16,3 +16,22 @@
 (magit-version)
 
 (message "✅ All Emacs smoke tests passed.")
+
+;; ;; Basic package health check
+;; (defun test-package-health ()
+;;   (dolist (pkg '((org . "9.6")
+;;                  (magit . "3.3")
+;;                  (use-package . "2.4")))
+;;     (unless (package-installed-p (car pkg) (cdr pkg))
+;;       (error "Package %s not properly installed" (car pkg))))
+
+;;   ;; Core functionality test
+;;   (defun test-core-features ()
+;;     (require 'org)
+;;     (unless (fboundp 'org-version)
+;;       (error "Org mode not properly loaded")))
+
+;;   (test-package-health)
+;;   (test-core-features)
+
+;;   (message "All tests passed successfully!")

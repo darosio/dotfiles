@@ -18,104 +18,82 @@
 
 ;;; Code:
 
+;; --- Startup & Core Emacs Settings ---
 ;; Disable GUI elements
 (when (fboundp 'menu-bar-mode) (menu-bar-mode -1))
 (when (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-
-;; Inhibit frame resizing to speed up startup time
-(setq frame-inhibit-implied-resize t)
-
-;; Disable splash screen and file dialogs
-(setq inhibit-splash-screen t)
-(setq use-file-dialog nil)
-
-;; Set global variables
-(setq-default debug-on-error t)
-(setq-default debug-on-quit t)
-
-;; Set custom variables
-;; Ensure Doom is running out of this file's directory
-(custom-set-variables
- '(user-emacs-directory (file-truename (file-name-directory load-file-name))))
-
-;; Define a constant variable
+;; Speed up startup
+(setq frame-inhibit-implied-resize t
+      inhibit-splash-screen t
+      use-file-dialog nil)
+;; Global debug settings (consider making these conditional for normal use)
+(setq debug-on-error t
+      debug-on-quit t)
+;; Set user-emacs-directory to the directory of this file
+(setq user-emacs-directory (file-truename (file-name-directory load-file-name)))
+;; Define a constant for Emacs start time (good for profiling)
 (defconst emacs-start-time (current-time))
+;; Configure Emacs as a daemon if applicable
+(require 'server)
+(defvar is-daemon nil "T if Emacs is running as a daemon.")
+(if (daemonp)
+    (progn
+      (setq server-raise-frame t
+            is-daemon t)
+      (setenv "EDITOR" "emacsclient -c -a=''")))
 
-(progn ;; Package configuration
-  ;; Disable file-name-handler-alist during startup
-  (defvar doom--initial-file-name-handler-alist file-name-handler-alist)
-  (setq file-name-handler-alist nil)
-  ;; Restore `file-name-handler-alist' later, because it is needed for handling
-  ;; encrypted or compressed files, among other things.
-  (add-hook 'emacs-startup-hook
-            (lambda ()
-              (dolist (handler file-name-handler-alist)
-                (add-to-list 'doom--initial-file-name-handler-alist handler))
-              (setq file-name-handler-alist doom--initial-file-name-handler-alist)))
 
-  ;; Use 'setq-default' instead of custom-set or setq to set variables
-  (setq-default straight-vc-git-default-clone-depth 1)
-  (setq-default straight-recipes-gnu-elpa-use-mirror t)
+;; --- Package Management (straight.el and use-package) ---
+;; Use 'setq-default' instead of custom-set or setq to set variables
+(setq-default straight-vc-git-default-clone-depth 1)
+(setq-default straight-recipes-gnu-elpa-use-mirror t)
+;; Bootstrap straight.el
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name
+        "straight/repos/straight.el/bootstrap.el"
+        (or (bound-and-true-p straight-base-dir)
+            user-emacs-directory)))
+      (bootstrap-version 7))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+;; Enable straight.el for all use-package calls by default
+(require 'straight)
+(setq straight-use-package-by-default t)
+;; Install org built-in via straight to shadow Emacs's version (good practice)
+(straight-use-package 'org)
+;; Enable autoload caching and modification checks for straight.el
+(setq straight-cache-autoloads t
+      straight-check-for-modifications '(check-on-startup find-when-checking))
+;; Use-package configuration
+(use-package use-package
+  :straight t ; Ensure use-package itself is managed by straight
+  :init
+  ;; Defer package loading based on daemon status
+  (if is-daemon
+      (setq use-package-always-demand nil)
+    (setq use-package-always-defer t))
+  :config
+  (setq use-package-compute-statistics t
+        use-package-verbose t
+        use-package-hook-name-suffix nil
+        use-package-enable-imenu-support t))
 
-  ;; Bootstrap straight.el
-  (defvar bootstrap-version)
-  (let ((bootstrap-file
-         (expand-file-name
-          "straight/repos/straight.el/bootstrap.el"
-          (or (bound-and-true-p straight-base-dir)
-              user-emacs-directory)))
-        (bootstrap-version 7))
-    (unless (file-exists-p bootstrap-file)
-      (with-current-buffer
-          (url-retrieve-synchronously
-           "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
-           'silent 'inhibit-cookies)
-        (goto-char (point-max))
-        (eval-print-last-sexp)))
-    (load bootstrap-file nil 'nomessage))
+;; Prevent using the built-in transient https://github.com/magit/magit/discussions/4997
+;; This often gets fixed by `:straight t` which fetches the latest version.
+(use-package magit
+  :straight t)
 
-  (require 'straight)
-  ;; list-load-path-shadows built-in org
-  (straight-use-package 'org)
-  ;; Install packages using straight.el by default
-  ;; (setq-local straight-use-package-by-default t)
-  (setq straight-use-package-by-default t)
+;; (use-package async
+;; :straight t)
 
-  ;; Enable autoload caching and check for modifications
-  (setq straight-cache-autoloads t)     ;remember to prune then
-  (setq straight-check-for-modifications '(watch-files find-when-checking))
-
-  ;; Configure use-package
-  (require 'server)
-  (defvar is-daemon nil)
-  (if (daemonp)
-      (progn
-        (setq server-raise-frame t
-              is-daemon t)
-        (setenv "EDITOR" "emacsclient -c -a=''"))
-    )
-  (straight-use-package 'use-package)
-  ;; Configure use-package to use straight.el by default
-  (use-package straight
-    :custom
-    (straight-use-package-by-default t))
-  (use-package use-package
-    :config
-    (if is-daemon
-        (setq use-package-always-demand nil)
-      (setq use-package-always-defer t))
-
-    (setq use-package-compute-statistics t)
-    (setq use-package-verbose t)
-    (setq use-package-hook-name-suffix nil)
-    (setq use-package-enable-imenu-support t))
-  ;; Prevent using the built-in transient https://github.com/magit/magit/discussions/4997
-  (use-package magit)
-  ;; ;;   :demand t)
-  ;; (use-package use-package-ensure-system-package)
-  (use-package async)
-  )
 (progn                                  ; UI base setting
   (use-package bookmark
     :straight (:type built-in)
@@ -144,7 +122,7 @@
     ;; Go to change fonts
     (defun mk-set-font (font &optional height)
       "Set font FONT as main font for all frames.
-HEIGHT, if supplied, specifies height of letters to use."
+      HEIGHT, if supplied, specifies height of letters to use."
       (interactive
        (list (completing-read "Use font: " (font-family-list)) nil))
       (set-face-attribute 'default nil :family font)
