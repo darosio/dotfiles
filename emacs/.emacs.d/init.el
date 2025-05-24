@@ -9,12 +9,8 @@
 ;;; Commentary:
 ;; Binding keys reserved to user are: "C-c <letter>" and <F5> to <F9>.
 
-;; Consider that I am trying to setup github CI to run package updated automatically
-;; (straight-pull-all)
-;; (straight-check-all)
-;; (straight-version-freeze)
-;; then test
-;; Emacs --batch -l init.el -l test.el
+;; ;TODO: explore
+;; embark-consult
 
 ;;; Code:
 
@@ -46,7 +42,7 @@
 
 ;; --- Package Management (straight.el and use-package) ---
 ;; Use 'setq-default' instead of custom-set or setq to set variables
-(setq-default straight-vc-git-default-clone-depth 1)
+(setq-default straight-vc-git-default-clone-depth 'full) ;1
 (setq-default straight-recipes-gnu-elpa-use-mirror t)
 ;; Bootstrap straight.el
 (defvar bootstrap-version)
@@ -91,8 +87,6 @@
 (use-package magit
   :straight t)
 
-;; (use-package async
-;; :straight t)
 
 (progn                                  ; UI base setting
   (use-package bookmark
@@ -611,41 +605,32 @@
   (use-package visual-regexp
     :bind ("C-c %" . vr/query-replace))
   )
-(progn ;; hydra, hl-todo and mk-text
+(progn ;; transient, hl-todo and mk-text
 
-  (use-package hydra
-    :bind (("C-x C-b" . hydra-buffer/body))
-    :commands (hydra-default-pre
-               hydra-keyboard-quit
-               hydra--call-interactively-remap-maybe
-               hydra-show-hint
-               hydra-set-transient-map)
+  (use-package transient
+    :bind ("<f5>" . my-global-transient)
     :config
-    (defhydra hydra-buffer (:color red :hint nil)
-      ("k" kill-this-buffer "kill")
-      ("K" kill-buffer-and-window "kill all")
-      ("x" delete-window "delete")
-      ("s" save-buffer "save")
-      ("b" consult-buffer "switch")
-      ("e" eval-buffer "evaluate")
-      ("<" previous-buffer "previous")
-      (">" next-buffer "next")))
+    (transient-define-prefix my-global-transient ()
+      "My Commands"
+      [["Files"
+        ("f" "Find file" find-file)
+        ("s" "Save" save-buffer)]
+       ["Buffers"
+        ("b" "Switch" switch-to-buffer)
+        ("k" "Kill" kill-buffer)]]))
 
   (use-package hl-todo
-    :bind (("C-c 2 2" . hydra-2DO/body)
-           ("C-c 2 n" . hl-todo-next)
-           ("C-c 2 p" . hl-todo-previous)
-           ("C-c 2 i" . hl-todo-insert)
-           ("C-c 2 o" . hl-todo-occur)
-           )
+    :bind (("C-c 2" . my-hl-todo-transient))
+    :after transient
     :config
-    (defhydra hydra-2DO (:color pink :hint nil :foreign-keys warn)
-      "A hydra for hl-todo."
-      ("p" hl-todo-previous "previous")
-      ("n" hl-todo-next "next")
-      ("o" hl-todo-occur "occur")
-      ("i" hl-todo-insert "insert")
-      ("q" nil "cancel" :color blue))
+    (transient-define-prefix my-hl-todo-transient ()
+      "HL-Todo Commands"
+      [["Navigation"
+        ("p" "Previous" hl-todo-previous)
+        ("n" "Next" hl-todo-next)]
+       ["Actions"
+        ("o" "Occur" hl-todo-occur)
+        ("i" "Insert" hl-todo-insert)]])
     (add-to-list 'hl-todo-keyword-faces '("MAYBE:" . "#80CCCC"))
     (add-to-list 'hl-todo-keyword-faces '("XXX:" . "#ff8c00"))
     (add-to-list 'hl-todo-keyword-faces '("TODO:" . "#dc143c"))
@@ -805,7 +790,8 @@
            ("M-g M-i" . consult-imenu-multi)
            ;; M-s bindings (search-map)
            ("M-s a" . consult-org-agenda)
-           ("M-s f" . consult-find)
+           ("M-s f" . consult-fd)
+           ("M-s F" . consult-find)
            ("M-s M-f" . consult-locate)
            ("M-s g" . consult-grep)
            ("M-s M-g" . consult-git-grep)
@@ -922,14 +908,6 @@ completing-read prompter."
             embark-isearch-highlight-indicator))
     (advice-add #'embark-completing-read-prompter
                 :around #'embark-hide-which-key-indicator))
-
-  (use-package affe
-    :after (orderless)
-    :bind (("C-x x" . affe-find)
-           ("C-x X" . affe-grep))
-    ;; :custom ((affe-regexp-function #'orderless-pattern-compiler)
-    ;;       (affe-highlight-function #'orderless-highlight-matches))
-    )
 
   (use-package wgrep :demand t)
   (use-package consult-recoll
@@ -1188,18 +1166,19 @@ completing-read prompter."
                langtool-correct-buffer
                langtool-check-done
                langtool-switch-default-language)
-    :bind ("<f7> l" . hydra-LT/body)
-    :init
-    (which-key-add-key-based-replacements "<f7>" "Writing")
-    (defhydra hydra-LT (:color pink :hint nil)
-      "A hydra for Langtool."
-      ("p" langtool-goto-previous-error "previous")
-      ("n" langtool-goto-next-error "next")
-      ("c" langtool-check "check")
-      ("b" langtool-correct-buffer "correct buffer")
-      ("d" langtool-check-done "done")
-      ("l" langtool-switch-default-language "switch language")
-      ("q" nil "cancel" :color blue))
+    :bind ("<f7> l" . my-langtool-transient)
+    :config
+    (transient-define-prefix my-langtool-transient ()
+      "Langtool Commands"
+      [["Navigation"
+        ("p" "Previous error" langtool-goto-previous-error)
+        ("n" "Next error" langtool-goto-next-error)]
+       ["Actions"
+        ("c" "Check" langtool-check)
+        ("b" "Correct buffer" langtool-correct-buffer)
+        ("d" "Done" langtool-check-done)]
+       ["Configuration"
+        ("l" "Switch language" langtool-switch-default-language)]])
     (setq langtool-java-classpath
           "/usr/share/languagetool:/usr/share/java/languagetool/*"
           langtool-java-bin "/usr/bin/java"
@@ -1207,6 +1186,7 @@ completing-read prompter."
                                     "MORFOLOGIK_RULE_EN_US")
           langtool-mother-tongue "it"
           langtool-default-language "en-US"))
+
 
   (use-package sdcv
     :bind
@@ -3302,8 +3282,8 @@ With a prefix ARG, remove start location."
     )
   )
 
-(straight-use-package
- '(seqel :type git :host github :repo "RNAer/seqel"))
+;; (straight-use-package
+;;  '(seqel :type git :host github :repo "RNAer/seqel"))
 
 (setq debug-on-error nil)
 (setq debug-on-quit nil)
