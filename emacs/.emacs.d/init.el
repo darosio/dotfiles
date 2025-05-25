@@ -1,4 +1,4 @@
-;;; init.el --- Personal Emacs configuration file; -*- lexical-binding: t; -*-
+;;; init.el --- Personal Emacs configuration file -*- lexical-binding: t; -*-
 ;;
 ;; Author: DanieleArosio <daniele.arosio@cnr.it>
 ;; Version: 3.19.0
@@ -447,9 +447,10 @@
     ("C-c d" . crux-duplicate-current-line-or-region)
     ("C-c M-d" . crux-duplicate-and-comment-current-line-or-region)
     ("C-a" . crux-move-beginning-of-line)
-    ("C-S-o" . crux-smart-open-line)
     ("C-S-j" . crux-top-join-line)
     ;; mk-mark use C-x SPC
+    ("C-o" . crux-smart-open-line)
+    ("C-S-o" . open-line)
     ("C-k" . crux-smart-kill-line)
     ("C-S-k" . kill-whole-line)
     ("C-$" . (lambda () (interactive) (move-end-of-line 1) (yank)))
@@ -647,44 +648,64 @@
     (add-to-list 'hl-todo-keyword-faces '("FIXME:" . "#4e9393")))
   )
 (progn                                  ; Completion: vertico.
+
   (use-package vertico
-    :straight (vertico :includes vertico-repeat :files (:defaults "extensions/vertico-repeat.el"))
+    :commands vertico-mode
+    :init (vertico-mode)
+    :custom
+    (vertico-scroll-margin 0) ;; Different scroll margin
+    (vertico-count 20) ;; Show more candidates
+    (vertico-resize t) ;; Grow and shrink the Vertico minibuffer
+    (vertico-cycle t) ;; Enable cycling for `vertico-next/previous'
+    :config
+    (setq completion-in-region-function #'consult-completion-in-region)
+    :bind (:map vertico-map
+                ("<next>" . vertico-last)
+                ("<prior>" . vertico-first)
+                ("C-S-n" . vertico-next-group)
+                ("C-S-p" . vertico-previous-group)
+                ("<M-RET>" . minibuffer-force-complete-and-exit)
+                ("M-<tab>" . minibuffer-complete)))
+  (use-package vertico-repeat
+    :after vertico
+    :straight vertico
     :bind
     (("C-;" . vertico-repeat)
-     ("C-:" . vertico-repeat-select)
-     :map vertico-map
-     ("<next>" . vertico-last)
-     ("<prior>" . vertico-first)
-     ("C-S-n" . vertico-next-group)
-     ("C-S-p" . vertico-previous-group)
-     ("<M-RET>" . minibuffer-force-complete-and-exit)
-     ("M-<tab>" . minibuffer-complete)
-     )
-    :hook
-    (minibuffer-setup-hook . vertico-repeat-save)
-    :init
-    (vertico-mode t)
-    :custom
-    (vertico-scroll-margin 0)
-    (vertico-count 20)
-    (vertico-resize t)
-    ;; Cycling for `vertico-next' and `vertico-previous'
-    (vertico-cycle t))
-  (use-package vertico-repeat)
+     ("C-:" . vertico-repeat-select)))
+  (use-package vertico-multiform
+    :after vertico
+    :straight vertico
+    :config
+    (add-to-list 'vertico-multiform-categories '(embark-keybinding grid))
+    (vertico-multiform-mode)
+    )
 
   (use-package orderless
     :custom
-    (completion-styles '(orderless basic))
+    (completion-styles '(orderless partial-completion basic))
     (completion-category-defaults nil)
-    (completion-category-overrides '((file (styles basic partial-completion)))))
+    (completion-category-overrides '((file (styles orderless partial-completion))
+                                     (buffer (styles orderless partial-completion))
+                                     (command (styles orderless partial-completion)))))
 
   (use-package savehist
-    :after (vertico)
     :init
     (savehist-mode)
     :config
     (add-to-list 'savehist-additional-variables 'vertico-repeat-history))
 
+  (use-package crm
+    :straight (:type built-in)
+    :preface
+    ;; Prompt indicator for `completing-read-multiple'.
+    (when (< emacs-major-version 31)
+      (advice-add #'completing-read-multiple :filter-args
+                  (lambda (args)
+                    (cons (format "[CRM%s] %s"
+                                  (string-replace "[ \t]*" "" crm-separator)
+                                  (car args))
+                          (cdr args)))))
+    )
   (use-package emacs
     :bind
     (("C-c l f" . find-library) ;; tmm =M-\`= and Mind mark, bookmark and register
@@ -693,40 +714,40 @@
     :init
     (which-key-add-key-based-replacements "C-c f" "Files")
     (which-key-add-key-based-replacements "C-c l" "Libraries")
-    :preface
-    ;; Improve `completing-read-multiple' prompt by adding a prefix.
-    (defun crm-indicator (args)
-      (cons (concat "[CRM] " (car args)) (cdr args)))
     :config
-    (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
     ;; Make minibuffer prompt read-only and cursor-intangible.
-    (setq minibuffer-prompt-properties '(read-only t cursor-intangible t face minibuffer-prompt))
     (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
-    ;; Emacs 28: Hide commands in M-x which do not work in the current mode.
-    ;; Vertico commands are hidden in normal buffers.
-    (setq read-extended-command-predicate #'command-completion-default-include-p)
-    )
+    (setq read-file-name-completion-ignore-case t)
+    (setq completion-ignore-case t)
+    :custom
+    (enable-recursive-minibuffers t)
+    ;; Hide commands in M-x which do not work in the current mode.  Vertico
+    ;; commands are hidden in normal buffers. This setting is useful beyond
+    ;; Vertico.
+    (read-extended-command-predicate #'command-completion-default-include-p)
+    ;; Do not allow the cursor in the minibuffer prompt
+    (minibuffer-prompt-properties
+     '(read-only t cursor-intangible t face minibuffer-prompt)))
 
   (use-package marginalia
     :commands (marginalia-mode)
+    :defines marginalia-annotators
     :bind (:map minibuffer-local-map
                 ("M-A" . marginalia-cycle))
-    :init (marginalia-mode))
-
-  ;; (use-package consult
-  ;;   :custom
-  ;;   (completion-in-region-function #'consult-completion-in-region)
-  ;;   (completions-format 'vertical)
-  ;;   :bind ((:map minibuffer-local-map
-  ;;                ("C-r" . consult-history))
-  ;;   :init
-  ;;   (advice-add #'completing-read-multiple
-  ;;               :override #'consult-completing-read-multiple))
+    :init (marginalia-mode)
+    :config (setq marginalia-annotators
+                  '(marginalia-annotators-heavy marginalia-annotators-light nil)))
 
   (use-package consult
+    :defines (xref-show-definitions-function
+              xref-show-xrefs-function
+              )
     :commands (consult--customize-put
                consult--customize-set
-               consult-completion-in-region)
+               consult-completion-in-region
+               consult-register-window
+               consult-completing-read-multiple
+               consult-xref)
     :bind (("C-/" . consult-line)
            ("C-c f f" . consult-find)
            ("C-c f F" . consult-locate)
@@ -771,33 +792,27 @@
            ("M-s u" . consult-focus-lines)
            ;; Isearch integration
            ("M-s e" . consult-isearch-history)
+           (:map minibuffer-local-map
+                 ("C-r" . consult-history))
            :map isearch-mode-map
            ("M-e" . consult-isearch-history)         ;; orig. isearch-edit-string
            ("M-s e" . consult-isearch-history)       ;; orig. isearch-edit-string
            ("M-s l" . consult-line)                  ;; needed by consult-line to detect isearch
            ("M-s M-l" . consult-line-multi)           ;; needed by consult-line to detect isearch
            )
-    ;; Enable automatic preview at point in the *Completions* buffer. This is
-    ;; relevant when you use the default completion UI. You may want to also
-    ;; enable `consult-preview-at-point-mode` in Embark Collect buffers.
-    :hook (completion-list-mode-hook . consult-preview-at-point-mode)
-    ;; :init
-    ;; ;; `consult-register-store' and the Emacs built-ins.
-    ;; (setq register-preview-delay 0.5
-    ;;       register-preview-function #'consult-register-format)
-    ;; (advice-add #'register-preview :override #'consult-register-window)
-    ;; (setq xref-show-xrefs-function #'consult-xref
-    ;;          xref-show-definitions-function #'consult-xref)
+    :init
+    ;; Tweak the register preview for `consult-register-load',
+    ;; `consult-register-store' and the built-in commands.  This improves the
+    ;; register formatting, adds thin separator lines, register sorting and hides
+    ;; the window mode line.
+    (advice-add #'register-preview :override #'consult-register-window)
+    (setq register-preview-delay 0.5)
+    ;; Use Consult to select xref locations with preview
+    (setq xref-show-xrefs-function #'consult-xref
+          xref-show-definitions-function #'consult-xref)
     :config
-    ;; Use `consult-completion-in-region' if Vertico is enabled.
-    ;; Otherwise use the default `completion--in-region' function.
-    (setq completion-in-region-function
-          (lambda (&rest args)
-            (apply (if vertico-mode
-                       #'consult-completion-in-region
-                     #'completion--in-region)
-                   args)))
-    ;; :preview-key on a per-command basis using the `consult-customize' macro.
+    (advice-add #'completing-read-multiple
+                :override #'consult-completing-read-multiple)
     (consult-customize
      consult-theme :preview-key '(:debounce 0.4 any)
      consult-ripgrep consult-git-grep consult-org-agenda ;consult-grep
@@ -807,15 +822,7 @@
     (setq consult-ripgrep-args          ; --multiline-dotall
           "rg --null --line-buffered --color=never --max-columns=1000 --path-separator / --smart-case --search-zip --no-heading --with-filename --line-number --hidden --glob=!.git/ --sortr=accessed")
     ;; Narrowing key. Both < and C-+ work reasonably well.
-    (setq consult-narrow-key "C-+")
-    )
-
-  (use-package embark-consult
-    :demand t ; only necessary if you have the hook below
-    ;; if you want to have consult previews as you move around an
-    ;; auto-updating embark collect buffer
-    :hook
-    (embark-collect-mode-hook . consult-preview-at-point-mode))
+    (setq consult-narrow-key "C-+"))
 
   (use-package embark
     :commands (embark--truncate-target
@@ -823,8 +830,7 @@
     :functions (which-key--hide-popup-ignore-command
                 which-key--show-keymap)
     :bind (("C-." . embark-act)
-           ("C->" . embark-act-noquit)
-           ("M-." . embark-dwim)       ; orig. xref-find-definition
+           ("C-|" . embark-dwim)
            ("C-h B" . embark-bindings) ;; alternative for `describe-bindings'
            :map minibuffer-local-completion-map
            ("C-M-s-e" . embark-export)
@@ -833,36 +839,36 @@
            ("C-M-s-e" . embark-export)
            ("C-M-s-b" . embark-become))
     :preface
-    (defun embark-which-key-indicator ()
-      "An embark indicator that displays keymaps using which-key.
-The which-key help message will show the type and value of the
-current target followed by an ellipsis if there are further
-targets."
-      (lambda (&optional keymap targets prefix)
-        (if (null keymap)
-            (which-key--hide-popup-ignore-command)
-          (which-key--show-keymap
-           (if (eq (plist-get (car targets) :type) 'embark-become)
-               "Become"
-             (format "Act on %s '%s'%s"
-                     (plist-get (car targets) :type)
-                     (embark--truncate-target (plist-get (car targets) :target))
-                     (if (cdr targets) "…" "")))
-           (if prefix
-               (pcase (lookup-key keymap prefix 'accept-default)
-                 ((and (pred keymapp) km) km)
-                 (_ (key-binding prefix 'accept-default)))
-             keymap)
-           nil nil t (lambda (binding)
-                       (not (string-suffix-p "-argument" (cdr binding))))))))
+    ;; (defun embark-which-key-indicator ()
+    ;;   "An embark indicator that displays keymaps using which-key.
+    ;; The which-key help message will show the type and value of the
+    ;; current target followed by an ellipsis if there are further
+    ;; targets."
+    ;;   (lambda (&optional keymap targets prefix)
+    ;;     (if (null keymap)
+    ;;         (which-key--hide-popup-ignore-command)
+    ;;       (which-key--show-keymap
+    ;;        (if (eq (plist-get (car targets) :type) 'embark-become)
+    ;;            "Become"
+    ;;          (format "Act on %s '%s'%s"
+    ;;                  (plist-get (car targets) :type)
+    ;;                  (embark--truncate-target (plist-get (car targets) :target))
+    ;;                  (if (cdr targets) "…" "")))
+    ;;        (if prefix
+    ;;            (pcase (lookup-key keymap prefix 'accept-default)
+    ;;              ((and (pred keymapp) km) km)
+    ;;              (_ (key-binding prefix 'accept-default)))
+    ;;          keymap)
+    ;;        nil nil t (lambda (binding)
+    ;;                    (not (string-suffix-p "-argument" (cdr binding))))))))
 
-    (defun embark-hide-which-key-indicator (fn &rest args)
-      "Hide the which-key indicator immediately when using the
-completing-read prompter."
-      (which-key--hide-popup-ignore-command)
-      (let ((embark-indicators
-             (remq #'embark-which-key-indicator embark-indicators)))
-        (apply fn args)))
+    ;; (defun embark-hide-which-key-indicator (fn &rest args)
+    ;;   "Hide the which-key indicator immediately when using the
+    ;; completing-read prompter"
+    ;;   (which-key--hide-popup-ignore-command)
+    ;;   (let ((embark-indicators
+    ;;          (remq #'embark-which-key-indicator embark-indicators)))
+    ;;     (apply fn args)))
 
     (defun embark-act-noquit ()
       "Run action but don't quit the minibuffer afterwards."
@@ -871,12 +877,25 @@ completing-read prompter."
         (embark-act)))
 
     :config
-    (setq embark-indicators
-          '(embark-which-key-indicator
-            embark-highlight-indicator
-            embark-isearch-highlight-indicator))
-    (advice-add #'embark-completing-read-prompter
-                :around #'embark-hide-which-key-indicator))
+    (setq embark-quit-after-action '((kill-buffer . t) (t . nil)))
+    ;; (setq embark-indicators
+    ;;       '(embark-which-key-indicator
+    ;;         embark-highlight-indicator
+    ;;         embark-isearch-highlight-indicator))
+    ;; (advice-add #'embark-completing-read-prompter
+    ;;             :around #'embark-hide-which-key-indicator)
+    ;; (setq embark-indicators
+    ;;       '(embark-mixed-indicator
+    ;;         embark-highlight-indicator
+    ;;         embark-isearch-highlight-indicator))
+    ;; (setq embark-prompter #'embark-completing-read-prompter)
+    )
+
+  (use-package embark-consult
+    :demand t ; Loads embark-consult immediately.
+    :hook
+    ;; if you want to have consult previews as you move around an auto-updating embark collect buffer
+    (embark-collect-mode-hook . consult-preview-at-point-mode))
 
   (use-package wgrep :demand t)
   (use-package consult-recoll
@@ -900,35 +919,30 @@ completing-read prompter."
     ;; Other useful Dabbrev configurations.
     :custom
     (dabbrev-ignored-buffer-regexps '("\\.\\(?:pdf\\|jpe?g\\|png\\)\\'")))
+
   (use-package corfu
-    :hook (;;(prog-mode-hook . corfu-mode)
-           (org-mode-hook . corfu-mode))
-    :bind
-    (:map corfu-map
-          ("C-n" . corfu-next)
-          ("C-p" . corfu-previous))
-    :custom
-    (corfu-cycle t)
-    ;; (corfu-auto t)
-    ;; (corfu-separator ?\s)
-    (corfu-quit-no-match t)
-    (corfu-commit-predicate nil)
+    :straight (corfu :files (:defaults "extensions/*")
+                     :includes (corfu-info corfu-history))
     :config
-    (setq corfu-preselect t)
-    ;; Already set
-    ;; (setq read-extended-command-predicate #'command-completion-default-include-p)
-    )
-  (use-package corfu-doc
-    :bind (:map corfu-map
-                ("C-h" . corfu-doc-toggle)
-                ("C-n" . corfu-doc-scroll-down)
-                ("C-p" . corfu-doc-scroll-up))
-    ;; :config
-    ;; (setq corfu-doc-delay 0.2
-    ;;      corfu-doc-max-width 80
-    ;;      corfu-doc-max-height 40)
-    ;; :init
-    ;; (corfu-doc-mode +1)
+    (setq corfu-popupinfo-delay 0)
+    :custom
+    (text-mode-ispell-word-completion nil)
+    :init
+    (global-corfu-mode)
+    (corfu-popupinfo-mode))
+
+  (use-package cape
+    :commands (cape-dabbrev
+               cape-file
+               cape-elisp-block)
+    ;; Bind prefix keymap providing all Cape commands under a mnemonic key.
+    ;; Press C-c p ? to for help.
+    :bind ("M-p" . cape-prefix-map) ;; Alternative key: M-<tab>, M-p, M-+
+    :init
+    (add-hook 'completion-at-point-functions #'cape-dabbrev)
+    (add-hook 'completion-at-point-functions #'cape-file)
+    (add-hook 'completion-at-point-functions #'cape-elisp-block)
+    ;; (add-hook 'completion-at-point-functions #'cape-history)
     )
   )
 (use-package yasnippet ;; Yasnippet
@@ -995,7 +1009,7 @@ completing-read prompter."
   (use-package flyspell-correct
     :after (flyspell)
     :bind (:map flyspell-mode-map
-                ("C-M-i" . flyspell-correct-wrapper)))
+                ("C-M-i" . flyspell-correct-wrapper))) ;M-TAB
 
   (use-package consult-flyspell
     :bind (("M-g s" . consult-flyspell)))
