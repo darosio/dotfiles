@@ -1243,8 +1243,10 @@
     (interactive)
     (save-excursion
       (goto-char (point-min))
-      (while (re-search-forward "\\(\\w+\\)_at_\\(\\w+\\)\\(\\.[a-zA-Z\\.]+\\)_\\w+@duck.com" nil t)
+      ;; (while (re-search-forward "\\(\\w+\\)_at_\\(\\w+\\)\\(\\.[a-zA-Z\\.]+\\)_\\w+@duck.com" nil t)
+      (while (re-search-forward "\\([[:word:].+-]+\\)_at_\\([[:word:].+-]+\\)\\(\\.[a-zA-Z.]+\\)_[[:word:]]+@duck\\.com" nil t)
         (replace-match "\\1@\\2\\3" nil nil))))
+
 
   (defun my-mu4e-compose-mode-hook ()
     "My settings for message composition."
@@ -1268,6 +1270,7 @@
                               (my-mu4e-compose-mode-hook)
                               (replace-duck-emails-in-buffer)))
   (mu4e-update-pre-hook . mu4e-update-index-nonlazy)
+  (mu4e-view-mode-hook . turn-on-orgstruct++)
   :bind
   (("M-g M-a m" . mu4e)
    ("C-x m" . mu4e)
@@ -1292,9 +1295,6 @@
    ("f"         . mu4e-headers-mark-for-flag)
    )
   :config
-  (setq mu4e-read-option-use-builtin nil ;; Use Vertico
-        mu4e-completing-read-function 'completing-read)
-
   (set-variable 'read-mail-command 'mu4e) ;; use mu4e as Default
   (setq mail-user-agent 'mu4e-user-agent
         mu4e-maildir (expand-file-name "~/Maildir")
@@ -1304,6 +1304,7 @@
         mu4e-index-lazy-check t;; don't consider up-to-date dirs
         mu4e-attachment-dir "~/"
         mu4e-change-filenames-when-moving t; rename files when moving (Needed for mbsync)
+        mu4e-read-option-use-builtin nil ; Use Vertico
         mu4e-completing-read-function 'completing-read; use convenient completion for navigation =j o=
         mu4e-compose-keep-self-cc nil
         mu4e-hide-index-messages t
@@ -1342,7 +1343,7 @@
   (setq mu4e-compose-format-flowed t  ; Set format=flowed
         mu4e-compose-context-policy 'ask-if-none)
   (setq message-signature nil)
-  (setq mu4e-compose-switch 'frame); every new email composition gets its own frame
+  (setq mu4e-compose-in-new-frame t); every new email composition gets its own frame
   (setq mu4e-bookmarks
         `(
           (:key ?a
