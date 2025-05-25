@@ -9,9 +9,6 @@
 ;;; Commentary:
 ;; Binding keys reserved to user are: "C-c <letter>" and <F5> to <F9>.
 
-;; ;TODO: explore
-;; embark-consult
-
 ;;; Code:
 
 ;; --- Startup & Core Emacs Settings ---
@@ -446,10 +443,23 @@
 
   (use-package crux
     :bind
+    ("M-r" . crux-duplicate-current-line-or-region)
+    ("C-c d" . crux-duplicate-current-line-or-region)
+    ("C-c M-d" . crux-duplicate-and-comment-current-line-or-region)
     ("C-a" . crux-move-beginning-of-line)
-    ("C-o" . crux-smart-open-line)
-    ("C-S-o" . crux-smart-open-line-above)
-    ("C-H-o" . crux-duplicate-and-comment-current-line-or-region))
+    ("C-S-o" . crux-smart-open-line)
+    ("C-S-j" . crux-top-join-line)
+    ;; mk-mark use C-x SPC
+    ("C-k" . crux-smart-kill-line)
+    ("C-S-k" . kill-whole-line)
+    ("C-$" . (lambda () (interactive) (move-end-of-line 1) (yank)))
+    ("C-c s" . sort-lines))
+
+  (use-package move-text
+    :demand t
+    :commands move-text-default-bindings
+    :config
+    (move-text-default-bindings))  ;; Binds M-<up>/<down> automatically
 
   (use-package recentf
     ;; (setq recentf-exclude `(,(expand-file-name "straight/build/" user-emacs-directory)
@@ -468,7 +478,7 @@
           aw-dispatch-always nil))
 
   (use-package transpose-frame
-    :bind ("C-M-s-e" . transpose-frame))
+    :bind ("C-x M-e" . transpose-frame))
 
   (use-package imenu-list               ; F9
     :bind (("<f9>" . imenu-list)
@@ -605,7 +615,7 @@
   (use-package visual-regexp
     :bind ("C-c %" . vr/query-replace))
   )
-(progn ;; transient, hl-todo and mk-text
+(progn ;; transient and hl-todo
 
   (use-package transient
     :bind ("<f5>" . my-global-transient)
@@ -635,47 +645,6 @@
     (add-to-list 'hl-todo-keyword-faces '("XXX:" . "#ff8c00"))
     (add-to-list 'hl-todo-keyword-faces '("TODO:" . "#dc143c"))
     (add-to-list 'hl-todo-keyword-faces '("FIXME:" . "#4e9393")))
-
-  ;; https://github.com/mrkkrp/nixos-config/tree/master/imports/emacs
-  ;; (straight-use-package '(mk :local-repo "~/.emacs.d/mk/" :branch "vanilla" :includes(mk-text mk-utils)))
-  (use-package mk-utils
-    :demand t
-    :defer 0
-    :straight nil
-    :load-path "~/.emacs.d/mk")
-  (use-package mk-text                  ; XXX: composable or objed
-    ;;https://github.com/paldepind/composable.el
-    ;;https://github.com/clemera/objed
-    :demand t
-    :defer 0
-    :straight nil
-    :load-path "~/.emacs.d/mk/"
-    :commands (mk-transpose-line-down
-               mk-transpose-line-up
-               mk-duplicate-line
-               mk-mark-command
-               mk-smart-indent
-               mk-eat-indent
-               mk-join-lines
-               mk-copy-rest-of-line
-               mk-copy-buffer
-               mk-yark-primary
-               mk-narrow-to-region
-               mk-add-to-end-of-lines
-               mk-sort-lines-dwim)
-    :bind
-    ("C-SPC" . mk-mark-command)
-    ("C-S-r" . mk-smart-indent)
-    ("M-S" . mk-eat-indent)
-    ("M-C-j" . mk-join-lines)
-    ("M-n" . mk-transpose-line-down)
-    ("M-p" . mk-transpose-line-up)
-    ("M-r" . mk-duplicate-line)
-    ("C-H-w" . mk-copy-rest-of-line)
-    ("C-c E e" . mk-add-to-end-of-lines)
-    ("C-S-y" . mk-yank-primary)
-    ("C-c E s" . mk-sort-lines-dwim)
-    ("C-$" . (lambda () (interactive) (move-end-of-line 1) (yank))))
   )
 (progn                                  ; Completion: vertico.
   (use-package vertico
@@ -2927,9 +2896,6 @@ With a prefix ARG, remove start location."
     ("C-c g e" . magit-ediff-resolve)
     ("C-c g c" . magit-clone)
     ("C-c g i" . magit-init)
-    (:map git-commit-mode-map
-          ("M-n" . mk-transpose-line-down)
-          ("M-p" . mk-transpose-line-up))
     :init
     (which-key-add-key-based-replacements "C-c g" "Git")
     (setq magit-repository-directories '(("/home/dan/workspace" . 4)
@@ -2976,10 +2942,8 @@ With a prefix ARG, remove start location."
   )
 (progn                                  ; Additional modes
   (use-package markdown-mode            ;;markdownlint-cli ruby-mdl
-    :bind (:map markdown-mode-map
-                ("<return>" . nil)
-                ("M-n" . mk-transpose-line-down)
-                ("M-p" . mk-transpose-line-up))
+    ;; :bind (:map markdown-mode-map
+    ;;             ("<return>" . nil))
     :init (setq markdown-url-compose-char ?…)
     :mode (("\\.md\\'" . markdown-mode)
            ("README\\.md\\'" . gfm-mode)
@@ -3282,8 +3246,8 @@ With a prefix ARG, remove start location."
     )
   )
 
-;; (straight-use-package
-;;  '(seqel :type git :host github :repo "RNAer/seqel"))
+(straight-use-package
+ '(seqel :type git :host github :repo "RNAer/seqel"))
 
 (setq debug-on-error nil)
 (setq debug-on-quit nil)
