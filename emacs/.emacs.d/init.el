@@ -934,7 +934,10 @@
   (use-package cape
     :commands (cape-dabbrev
                cape-file
-               cape-elisp-block)
+               cape-elisp-block
+               cape-dict
+               cape-keyword
+               cape-capf-super)
     ;; Bind prefix keymap providing all Cape commands under a mnemonic key.
     ;; Press C-c p ? to for help.
     :bind ("M-p" . cape-prefix-map) ;; Alternative key: M-<tab>, M-p, M-+
@@ -943,6 +946,8 @@
     (add-hook 'completion-at-point-functions #'cape-file)
     (add-hook 'completion-at-point-functions #'cape-elisp-block)
     ;; (add-hook 'completion-at-point-functions #'cape-history)
+    (setq-local completion-at-point-functions
+                (list (cape-capf-super #'cape-dabbrev #'cape-dict #'cape-file #'cape-keyword)))
     )
   )
 (use-package yasnippet ;; Yasnippet
@@ -1270,7 +1275,6 @@
                               (my-mu4e-compose-mode-hook)
                               (replace-duck-emails-in-buffer)))
   (mu4e-update-pre-hook . mu4e-update-index-nonlazy)
-  (mu4e-view-mode-hook . turn-on-orgstruct++)
   :bind
   (("M-g M-a m" . mu4e)
    ("C-x m" . mu4e)
@@ -1594,7 +1598,7 @@
     ;; "~/Sync/box/org/TODOs.org" ;; target for org-projectile REVIEW:
     ;; "~/Sync/box/org/shopping.org")
     (let ((proj-dir "~/Sync/proj/"))
-      (condition-case err
+      (condition-case _
           (set-default 'da-refile-files (append (directory-files proj-dir t "\\.org$")
                                                 (directory-files "~/Sync/notes/home/" t "\\.org$")
                                                 (directory-files-recursively "~/Sync/notes/arch/" "\\.org$")
@@ -1812,6 +1816,7 @@
     (use-package ox-koma-letter :straight org :init (eval-after-load 'ox '(require 'ox-koma-letter)))
     ;; https://opensource.com/article/18/2/org-mode-slides
     (use-package ox-reveal
+      :defines org-reveal-quiet
       :config
       (setq org-reveal-root "file:///home/dan/workspace/examples/reveal.js/")
       (setq org-reveal-theme "night")
@@ -2476,34 +2481,6 @@
     ;; (add-hook 'org-agenda-mode-hook (lambda () (org-gcal-sync) ))
     )
 
-  (use-package calfw                    ; needed by calfw-org
-    :bind
-    ("C-c G W" . cfw:open-calendar-buffer))
-  (use-package calfw-org
-    :bind
-    (("C-c G w" . cfw:open-org-calendar)
-     :map org-agenda-mode-map
-     ("W" . cfw:open-org-calendar)))
-  (use-package calfw-blocks
-    :straight (calfw-blocks
-               :type git
-               :host github
-               :repo "ml729/calfw-blocks")
-    :init
-    ;; Place any initialization code here if necessary.
-    ;; Function to open the calendar with org-agenda entries
-    (defun my-open-calendar-agenda ()
-      "Open a calendar showing Org agenda entries."
-      (interactive)
-      (cfw:open-calendar-buffer
-       :contents-sources
-       (list
-        (cfw:org-create-source "medium purple")) ;; Use "medium purple" for Org entries
-       :view 'block-week))
-    ;; :bind
-    ;; ("C-c c" . my-open-calendar-agenda)
-    ) ;; Bind function to a key
-
   )
 (progn                                  ; org-roam and notes
   (use-package org-roam
@@ -2740,16 +2717,18 @@
     :init (setq org-cite-csl-styles-dir "~/Zotero/styles"))
   (use-package oc-natbib :straight org :after oc)
   (unless (getenv "CI")
+
     (use-package pdf-tools
-      :demand t
+      :demand is-daemon
       :functions pdf-loader-install
       :bind (:map pdf-view-mode-map
                   ("C-s" . isearch-forward)
                   ("/" . pdf-occur)
                   ("C-?" . pdf-isearch-occur))
       :init
-      ;; Skip loader in CI or batch mode
-      (pdf-loader-install)
+      ;; Skip installation in CI or batch mode
+      (unless noninteractive
+        (pdf-loader-install))
       :config
       (setq pdf-view-resize-factor 1.1)   ;; more fine-grained zooming
       (setq pdf-view-use-scaling t)
@@ -2793,8 +2772,49 @@
        )
       ;; (require 'org-noter-pdftools) ; org-pdftools suggestion FAIL with deman
       )
+    ;; (use-package org-noter
+    ;;   :after org
+    ;;   :commands (org-noter)
+    ;;   :bind (("C-c n n" . org-noter))
+    ;;   :custom
+    ;;   (org-noter-notes-search-path '("~/Sync/notes/org-roam/biblio"))
+    ;;   (org-noter-hide-other nil)
+    ;;   (org-noter-separate-notes-from-heading t)
+    ;;   (org-noter-always-create-frame nil)
+    ;;   (org-noter-doc-split-fraction '(0.67 . 0.75))
+    ;;   :config
+    ;;   ;; Define and bind external viewer integration (Okular)
+    ;;   (defun org-noter-open-in-okular ()
+    ;;     "Open the current org-noter PDF in Okular at the current page."
+    ;;     (interactive)
+    ;;     (org-noter--with-valid-session
+    ;;      (let* ((doc-file (org-noter--session-doc-file session))
+    ;;             (page-info (org-noter--doc-approx-location))
+    ;;             (page (cdr page-info))) ;; (backend . page)
+    ;;        (start-process "okular" nil "okular"
+    ;;                       "--page" (number-to-string page)
+    ;;                       (expand-file-name doc-file)))))
+    ;;   ;; Add keybinding inside doc-mode
+    ;;   (define-key org-noter-doc-mode-map (kbd "C-c C-o") #'org-noter-open-in-okular))
+
+    ;; (use-package org
+    ;;   :config
+    ;;   (defcustom my/default-pdf-viewer "zathura"
+    ;;     "Preferred PDF viewer executable."
+    ;;     :type 'string)
+
+    ;;   (defun my/open-pdf-externally ()
+    ;;     "Open the PDF at point using an external viewer."
+    ;;     (interactive)
+    ;;     (let ((pdf-path (thing-at-point 'filename)))
+    ;;       (if (and pdf-path (file-exists-p pdf-path))
+    ;;           (start-process "pdf-viewer" nil my/default-pdf-viewer pdf-path)
+    ;;         (message "No valid PDF file at point."))))
+    ;;   )
+
     (use-package org-pdftools
       :hook (org-mode-hook . org-pdftools-setup-link))
+
     (use-package org-noter-pdftools
       :after (org-noter)
       :commands (org-noter-pdftools-jump-to-note)
@@ -2819,7 +2839,7 @@
       ;; fix https://github.com/weirdNox/org-noter/pull/93/commits/f8349ae7575e599f375de1be6be2d0d5de4e6cbf
       (defun org-noter-set-start-location (&optional arg)
         "When opening a session with this document, go to the current location.
-With a prefix ARG, remove start location."
+  With a prefix ARG, remove start location."
         (interactive "P")
         (org-noter--with-valid-session
          (let ((inhibit-read-only t)
