@@ -126,6 +126,10 @@
       (interactive)
       (setq-local line-spacing (if line-spacing nil 0.5))
       (redraw-frame))
+    :init
+    (which-key-add-key-based-replacements "C-c f" "Files")
+    (which-key-add-key-based-replacements "C-c l" "Libraries")
+    (which-key-add-key-based-replacements "C-c t" "Toggle")
     :config
     (setq-default blink-cursor-mode 0       ; Don't blink the cursor
                   buffer-file-coding-system 'utf-8-auto
@@ -186,8 +190,12 @@
      ("C-c t w" . whitespace-mode)
      ("C-c t 5" . xah-toggle-line-spacing)
      ("M-g F" . mk-set-font)
-     ("C-c Q" . save-buffers-kill-emacs))
+     ("C-c Q" . save-buffers-kill-emacs)
+     ("C-c l f" . find-library) ;; tmm =M-\`= and Mind mark, bookmark and register
+     ("C-c l a" . apropos-library)
+     ("C-c l l" . load-library))
     )
+
   (use-package files
     :straight (:type built-in)
     :preface
@@ -649,35 +657,72 @@
   )
 (progn                                  ; Completion: vertico.
 
+  ;; Enable Vertico.
   (use-package vertico
     :commands vertico-mode
-    :init (vertico-mode)
     :custom
-    (vertico-scroll-margin 0) ;; Different scroll margin
     (vertico-count 20) ;; Show more candidates
     (vertico-resize t) ;; Grow and shrink the Vertico minibuffer
     (vertico-cycle t) ;; Enable cycling for `vertico-next/previous'
+    :init
+    (vertico-mode)
     :config
     (setq completion-in-region-function #'consult-completion-in-region)
     :bind (:map vertico-map
                 ("<next>" . vertico-last)
                 ("<prior>" . vertico-first)
+                ;; ("<M-RET>" . minibuffer-force-complete-and-exit)
+                ;; ("M-<tab>" . minibuffer-complete)
                 ("C-S-n" . vertico-next-group)
-                ("C-S-p" . vertico-previous-group)
-                ("<M-RET>" . minibuffer-force-complete-and-exit)
-                ("M-<tab>" . minibuffer-complete)))
+                ("C-S-p" . vertico-previous-group)))
   (use-package vertico-repeat
-    :after vertico
     :straight vertico
+    :hook
+    (minibuffer-setup-hook . vertico-repeat-save)
     :bind
     (("C-;" . vertico-repeat)
      ("C-:" . vertico-repeat-select)))
   (use-package vertico-multiform
-    :after vertico
+    :demand t
     :straight vertico
     :config
-    (add-to-list 'vertico-multiform-categories '(embark-keybinding grid))
     (vertico-multiform-mode)
+    ;; Configure the display per command.
+    ;; Use a buffer with indices for imenu
+    ;; and a flat (Ido-like) menu for M-x.
+    (setq vertico-multiform-commands
+          '((consult-imenu buffer indexed)
+            (execute-extended-command grid)))
+    ;; Configure the display per completion category.
+    ;; Use the grid display for files and a buffer
+    ;; for the consult-grep commands.
+    (setq vertico-multiform-categories
+          '((file indexed)
+            (consult-grep buffer)
+            (symbol (vertico-sort-function . vertico-sort-alpha))))
+    (add-to-list 'vertico-multiform-categories '(embark-keybinding grid))
+    )
+
+  ;; Persist history over Emacs restarts. Vertico sorts by history position.
+  (use-package savehist
+    :init
+    (savehist-mode)
+    )
+
+  ;; Emacs minibuffer configurations.
+  (use-package emacs
+    :custom
+    ;; Support opening new minibuffers from inside existing minibuffers.
+    (enable-recursive-minibuffers t)
+    ;; Hide commands in M-x which do not work in the current mode.
+    (read-extended-command-predicate #'command-completion-default-include-p)
+    ;; Do not allow the cursor in the minibuffer prompt
+    (minibuffer-prompt-properties
+     '(read-only t cursor-intangible t face minibuffer-prompt))
+    :config
+    (setq read-file-name-completion-ignore-case t
+          read-buffer-completion-ignore-case t
+          completion-ignore-case t)
     )
 
   (use-package orderless
@@ -688,15 +733,10 @@
                                      (buffer (styles orderless partial-completion))
                                      (command (styles orderless partial-completion)))))
 
-  (use-package savehist
-    :init
-    (savehist-mode)
-    :config
-    (add-to-list 'savehist-additional-variables 'vertico-repeat-history))
-
   (use-package crm
     :straight (:type built-in)
-    :preface
+    :demand t
+    :init
     ;; Prompt indicator for `completing-read-multiple'.
     (when (< emacs-major-version 31)
       (advice-add #'completing-read-multiple :filter-args
@@ -706,28 +746,6 @@
                                   (car args))
                           (cdr args)))))
     )
-  (use-package emacs
-    :bind
-    (("C-c l f" . find-library) ;; tmm =M-\`= and Mind mark, bookmark and register
-     ("C-c l a" . apropos-library)
-     ("C-c l l" . load-library))
-    :init
-    (which-key-add-key-based-replacements "C-c f" "Files")
-    (which-key-add-key-based-replacements "C-c l" "Libraries")
-    :config
-    ;; Make minibuffer prompt read-only and cursor-intangible.
-    (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
-    (setq read-file-name-completion-ignore-case t)
-    (setq completion-ignore-case t)
-    :custom
-    (enable-recursive-minibuffers t)
-    ;; Hide commands in M-x which do not work in the current mode.  Vertico
-    ;; commands are hidden in normal buffers. This setting is useful beyond
-    ;; Vertico.
-    (read-extended-command-predicate #'command-completion-default-include-p)
-    ;; Do not allow the cursor in the minibuffer prompt
-    (minibuffer-prompt-properties
-     '(read-only t cursor-intangible t face minibuffer-prompt)))
 
   (use-package marginalia
     :commands (marginalia-mode)
@@ -746,7 +764,6 @@
                consult--customize-set
                consult-completion-in-region
                consult-register-window
-               consult-completing-read-multiple
                consult-xref)
     :bind (("C-/" . consult-line)
            ("C-c f f" . consult-find)
@@ -811,8 +828,8 @@
     (setq xref-show-xrefs-function #'consult-xref
           xref-show-definitions-function #'consult-xref)
     :config
-    (advice-add #'completing-read-multiple
-                :override #'consult-completing-read-multiple)
+    ;; (advice-add #'completing-read-multiple
+    ;;             :override #'consult-completing-read-multiple)
     (consult-customize
      consult-theme :preview-key '(:debounce 0.4 any)
      consult-ripgrep consult-git-grep consult-org-agenda ;consult-grep
@@ -3261,24 +3278,22 @@
               deepseek-r1:latest))          ;List of models
   )
 
-(unless (getenv "CI")
-  (use-package chatgpt-shell
-    :custom
-    (chatgpt-shell-openai-key
-     (lambda ()
-       (nth 0 (process-lines "pass" "show" "home/openai-dpa"))))
-    (dall-e-shell-openai-key
-     (lambda ()
-       (nth 0 (process-lines "pass" "show" "home/openai-dpa"))))
-    )
-  (use-package ob-chatgpt-shell
-    :custom
-    (chatgpt-shell-openai-key
-     (lambda ()
-       (nth 0 (process-lines "pass" "show" "home/openai-dpa"))))
-    :hook
-    (org-mode-hook . (lambda () (require 'ob-chatgpt-shell)))
-    )
+(use-package chatgpt-shell
+  :custom
+  (chatgpt-shell-openai-key
+   (lambda ()
+     (nth 0 (process-lines "pass" "show" "home/openai-dpa"))))
+  (dall-e-shell-openai-key
+   (lambda ()
+     (nth 0 (process-lines "pass" "show" "home/openai-dpa"))))
+  )
+(use-package ob-chatgpt-shell
+  :custom
+  (chatgpt-shell-openai-key
+   (lambda ()
+     (nth 0 (process-lines "pass" "show" "home/openai-dpa"))))
+  :hook
+  (org-mode-hook . (lambda () (require 'ob-chatgpt-shell)))
   )
 
 (straight-use-package
