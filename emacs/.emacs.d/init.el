@@ -1603,6 +1603,7 @@
               da-refile-files)
     :init
     (defvar da-gtd "~/Sync/box/org/gtd.org")
+    ;; (add-to-list 'org-file-apps '("\\.pdf\\'" . "okular %s"))
     (setq-default da-agenda-files
                   (append '("~/Sync/box/org/gtd.org"
                             "~/Sync/box/org/gcal/dpa.org"
