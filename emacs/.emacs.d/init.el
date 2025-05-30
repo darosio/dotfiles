@@ -3150,6 +3150,7 @@
 
 (use-package llm
   :commands make-llm-ollama)
+
 (use-package ellama
   :commands ellama-ask
   :bind ("C-c e" . ellama)
@@ -3176,7 +3177,21 @@
   	       :embedding-model "nomic-embed-text"
   	       :default-chat-non-standard-params '(("num_ctx" . 32768))))
   (ellama-context-header-line-global-mode +1)
-  (ellama-session-header-line-global-mode +1))
+  (ellama-session-header-line-global-mode +1)
+  (require 'llm-openai)
+  (require 'llm-gemini)
+  (defvar my/openai-api-key (lambda () (nth 0 (process-lines "pass" "show" "home/openai-dpa")))
+    "Your OpenAI API key.  Set this!")
+  (setopt ellama-providers
+          '(("OpenAI" . (make-llm-openai
+                         :key my/openai-api-key
+                         :chat-model "gpt-4-turbo-preview" ; Or another model like "gpt-3.5-turbo"
+                         :embedding-model "text-embedding-ada-002"))
+            ("Gemini" . (make-llm-gemini
+                         :key (lambda () (nth 0 (process-lines "pass" "show" "cloud/gemini_API_key")))
+                         :chat-model "gemini-2.0-flash"
+                         ))))
+  )
 (use-package gptel
   :bind ("C-c C-<return>" . gptel-send)
   :commands (
@@ -3238,6 +3253,10 @@
               codellama:latest
               gemma3:27b
               deepseek-r1:latest))          ;List of models
+  ;; :key can be a function that returns the API key.
+  (gptel-make-gemini "Gemini"
+    :key (lambda () (nth 0 (process-lines "pass" "show" "cloud/gemini_API_key")))
+    :stream t)
   )
 
 (use-package chatgpt-shell
@@ -3248,7 +3267,20 @@
   (dall-e-shell-openai-key
    (lambda ()
      (nth 0 (process-lines "pass" "show" "home/openai-dpa"))))
-  )
+  ;; Gemini API key from pass
+
+  (chatgpt-shell-google-key
+   (lambda ()
+     (nth 0 (process-lines "pass" "show" "cloud/gemini_API_key"))))
+
+  ;; Ollama model (e.g., "llama3", "mistral", etc.)
+  (ollama-shell-model "llama4")  ;; or "mistral" or any other local model
+
+  ;; Optional: Automatically pop to buffer
+  (chatgpt-shell-chat-buffer-name "*chatgpt*")
+  (ollama-shell-buffer-name "*ollama*")
+  (gemini-shell-buffer-name "*gemini*"))
+
 (use-package ob-chatgpt-shell
   :custom
   (chatgpt-shell-openai-key
