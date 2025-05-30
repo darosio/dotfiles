@@ -2790,45 +2790,6 @@
        )
       ;; (require 'org-noter-pdftools) ; org-pdftools suggestion FAIL with deman
       )
-    ;; (use-package org-noter
-    ;;   :after org
-    ;;   :commands (org-noter)
-    ;;   :bind (("C-c n n" . org-noter))
-    ;;   :custom
-    ;;   (org-noter-notes-search-path '("~/Sync/notes/org-roam/biblio"))
-    ;;   (org-noter-hide-other nil)
-    ;;   (org-noter-separate-notes-from-heading t)
-    ;;   (org-noter-always-create-frame nil)
-    ;;   (org-noter-doc-split-fraction '(0.67 . 0.75))
-    ;;   :config
-    ;;   ;; Define and bind external viewer integration (Okular)
-    ;;   (defun org-noter-open-in-okular ()
-    ;;     "Open the current org-noter PDF in Okular at the current page."
-    ;;     (interactive)
-    ;;     (org-noter--with-valid-session
-    ;;      (let* ((doc-file (org-noter--session-doc-file session))
-    ;;             (page-info (org-noter--doc-approx-location))
-    ;;             (page (cdr page-info))) ;; (backend . page)
-    ;;        (start-process "okular" nil "okular"
-    ;;                       "--page" (number-to-string page)
-    ;;                       (expand-file-name doc-file)))))
-    ;;   ;; Add keybinding inside doc-mode
-    ;;   (define-key org-noter-doc-mode-map (kbd "C-c C-o") #'org-noter-open-in-okular))
-
-    ;; (use-package org
-    ;;   :config
-    ;;   (defcustom my/default-pdf-viewer "zathura"
-    ;;     "Preferred PDF viewer executable."
-    ;;     :type 'string)
-
-    ;;   (defun my/open-pdf-externally ()
-    ;;     "Open the PDF at point using an external viewer."
-    ;;     (interactive)
-    ;;     (let ((pdf-path (thing-at-point 'filename)))
-    ;;       (if (and pdf-path (file-exists-p pdf-path))
-    ;;           (start-process "pdf-viewer" nil my/default-pdf-viewer pdf-path)
-    ;;         (message "No valid PDF file at point."))))
-    ;;   )
 
     (use-package org-pdftools
       :hook (org-mode-hook . org-pdftools-setup-link))
@@ -3299,6 +3260,16 @@
 
 (straight-use-package
  '(seqel :type git :host github :repo "RNAer/seqel"))
+
+(use-package emacs
+  :straight nil
+  :preface
+  (defun my-org-zotero-open (path _)
+    (call-process "xdg-open" nil nil nil (concat "zotero:" path)))
+  :config
+  (org-link-set-parameters "zotero" :follow #'my-org-zotero-open)
+  )
+
 
 (setq debug-on-error nil)
 (setq debug-on-quit nil)
