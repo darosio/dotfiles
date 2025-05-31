@@ -2813,7 +2813,8 @@
                                                        (not org-noter-insert-note-no-questions)
                                                      org-noter-insert-note-no-questions))
                (org-pdftools-use-isearch-link t)
-               (org-pdftools-use-freestyle-annot t))
+               ;; (org-pdftools-use-freestyle-annot t)
+               )
            (org-noter-insert-note (org-noter--get-precise-info)))))
       ;; fix https://github.com/weirdNox/org-noter/pull/93/commits/f8349ae7575e599f375de1be6be2d0d5de4e6cbf
       (defun org-noter-set-start-location (&optional arg)
@@ -3152,7 +3153,7 @@
   :commands make-llm-ollama)
 
 (use-package ellama
-  :commands ellama-ask
+  :commands make-llm-openai make-llm-gemini
   :bind ("C-c e" . ellama)
   ;; send last message in chat buffer with C-c C-c
   :hook (org-ctrl-c-ctrl-c-final . ellama-chat-send-last-message)
@@ -3160,38 +3161,61 @@
   (setopt ellama-auto-scroll t)
   (setopt ellama-language "English")
   :config
+  (setopt ellama-sessions-directory "~/Sync/ellama_sessions/")
   (require 'llm-ollama)
-  (setopt ellama-provider
-  	      (make-llm-ollama
-  	       :chat-model "llama3:8b-instruct-q8_0"
-  	       :embedding-model "nomic-embed-text"
-  	       :default-chat-non-standard-params '(("num_ctx" . 8192))))
-  (setopt ellama-summarization-provider
-  	      (make-llm-ollama
-  	       :chat-model "qwen2.5:3b"
-  	       :embedding-model "nomic-embed-text"
-  	       :default-chat-non-standard-params '(("num_ctx" . 32768))))
-  (setopt ellama-coding-provider
-  	      (make-llm-ollama
-  	       :chat-model "qwen2.5-coder:3b"
-  	       :embedding-model "nomic-embed-text"
-  	       :default-chat-non-standard-params '(("num_ctx" . 32768))))
-  (ellama-context-header-line-global-mode +1)
-  (ellama-session-header-line-global-mode +1)
   (require 'llm-openai)
   (require 'llm-gemini)
+  ;; Naming new sessions with llm
+  (setopt ellama-naming-provider
+          (make-llm-ollama
+           :chat-model "gemma3:4b-it-qat"
+           :embedding-model "nomic-embed-text"
+           :default-chat-non-standard-params '(("stop" . ("\n")))))
+  (setopt ellama-naming-scheme 'ellama-generate-name-by-llm)
+  ;; Customize display buffer behavior
+  (setopt ellama-chat-display-action-function #'display-buffer-full-frame)
+  (setopt ellama-instant-display-action-function #'display-buffer-at-bottom)
+  ;; Show ellama context/session in header line
+  (ellama-context-header-line-global-mode +1)
+  (ellama-session-header-line-global-mode +1)
+  ;; Handle scrolling events (optional, keep if you find it useful)
+  (advice-add 'pixel-scroll-precision :before #'ellama-disable-scroll)
+  (advice-add 'end-of-buffer :after #'ellama-enable-scroll)
+  ;; --- Define API Keys ---
   (defvar my/openai-api-key (lambda () (nth 0 (process-lines "pass" "show" "home/openai-dpa")))
-    "Your OpenAI API key.  Set this!")
+    "Your OpenAI API key.")
+  (defvar my/gemini-api-key (lambda () (nth 0 (process-lines "pass" "show" "cloud/gemini_API_key")))
+    "Your Gemini API key.")
+  ;; --- Define Providers ---
   (setopt ellama-providers
-          '(("OpenAI" . (make-llm-openai
-                         :key my/openai-api-key
-                         :chat-model "gpt-4-turbo-preview" ; Or another model like "gpt-3.5-turbo"
-                         :embedding-model "text-embedding-ada-002"))
-            ("Gemini" . (make-llm-gemini
-                         :key (lambda () (nth 0 (process-lines "pass" "show" "cloud/gemini_API_key")))
-                         :chat-model "gemini-2.0-flash"
-                         ))))
+          `(("Ollama gemma3" . ,(make-llm-ollama
+                                 :chat-model "gemma3:4b-it-qat"
+                                 :embedding-model "nomic-embed-text"
+                                 :default-chat-non-standard-params '(("num_ctx" . 8192))))
+            ("Ollama LLaVA" . ,(make-llm-ollama ; For vision
+                                :chat-model "llava:latest" ; Or specific version like "llava:7b-v1.6-mistral-q8_0"
+                                :embedding-model "nomic-embed-text" ; Might not be used by llava for embeddings
+                                :default-chat-non-standard-params '(("num_ctx" . 4096))))
+            ("OpenAI o4-mini" . ,(make-llm-openai
+                                  :key my/openai-api-key
+                                  :chat-model "o4-mini"
+                                  :embedding-model "text-embedding-ada-002"))
+            ("Gemini 2.0 Flash" . ,(make-llm-gemini
+                                    :key my/gemini-api-key
+                                    :chat-model "gemini-2.0-flash"))))
+  ;; Set a default provider from the list
+  (setopt ellama-default-provider-id "Ollama Llama3")
+  ;; If you want specific providers for specific tasks, you can still define
+  ;; them: ellama-translation-provider ellama-extraction-provider
+  ;; For example, using a smaller/faster model for summarization or translation
+  (setopt ellama-summarization-provider
+          (make-llm-ollama
+           :chat-model "gemma3:4b-it-qat"
+           :embedding-model "nomic-embed-text"
+           :default-chat-non-standard-params '(("num_ctx" . 8192))))
   )
+
+
 (use-package gptel
   :bind ("C-c C-<return>" . gptel-send)
   :commands (
@@ -3199,6 +3223,7 @@
              gptel-make-anthropic
              gptel-make-openai
              gptel-make-ollama
+             gptel-make-gemini
              )
   :config
   (setq gptel-default-mode 'org-mode)
@@ -3220,8 +3245,8 @@
               meta-llama/codellama-34b-instruct
               codellama/codellama-70b-instruct
               google/palm-2-codechat-bison-32k
-              google/gemini-pro))
-  (setq gptel-model   'llama-3.1-70b-versatile
+              deepseek/deepseek-r1-0528:free))
+  (setq gptel-model   'llama-3.3-70b-versatile
         gptel-backend
         ;; Groq offers an OpenAI compatible API
         (gptel-make-openai "Groq"               ;Any name you want
@@ -3229,10 +3254,8 @@
           :endpoint "/openai/v1/chat/completions"
           :stream t
           :key (lambda () (nth 0 (process-lines "pass" "show" "cloud/groq")))
-          :models '(llama-3.1-70b-versatile
-                    llama-3.1-8b-instant
-                    llama3-70b-8192
-                    llama3-8b-8192
+          :models '(llama-3.3-70b-versatile
+                    deepseek-r1-distill-llama-70b
                     qwen-qwq-32b
                     gemma2-9b-it)))
   (gptel-make-ollama "Ollama"             ;Any name of your choosing
