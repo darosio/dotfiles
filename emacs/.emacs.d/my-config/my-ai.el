@@ -1,4 +1,4 @@
-;;; ai.el --- To use LLM -*- lexical-binding: t; -*-
+;;; my-ai.el --- To use LLM -*- lexical-binding: t; -*-
 ;;
 ;;; Commentary:
 ;; Binding keys reserved to user are: "C-c C-<return>" "C-c e"
@@ -175,5 +175,5 @@
   (org-mode-hook . (lambda () (require 'ob-chatgpt-shell)))
   )
 
-(provide 'ai)
-;;; ai.el ends here
+(provide 'my-ai)
+;;; my-ai.el ends here
