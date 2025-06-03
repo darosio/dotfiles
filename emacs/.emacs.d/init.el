@@ -2947,13 +2947,13 @@
   )
 (progn                                  ; Project
   ;; (use-package project
-  ;;    :straight (:type built-in)
-  ;;    :config
-  ;;    (setq project--list))
+  ;;   :straight (:type built-in)
+  ;;   :config
+  ;;   (setq project--list))
   (use-package consult-project-extra
     :bind
     ("C-c p" . consult-project-extra-find))
-  ;; (use-package rg)
+
   )
 ;; --- Additional modes ---
 (straight-use-package 'markdown-mode)
@@ -2974,15 +2974,7 @@
 (require 'my-modes)
 
 (progn                                  ; python
-  (use-package devdocs
-    :demand t
-    :bind ("C-c D" . devdocs-lookup))
-  (use-package numpydoc
-    :commands (numpydoc-generate)
-    :bind (:map python-mode-map
-                ("C-c C-N" . numpydoc-generate))
-    :config (setq numpydoc-insertion-style 'yas) ;'prompt|nil
-    :after python)
+
   (use-package python
     :straight (:type built-in)
     :bind   (("C-c t m p" . python-mode)
@@ -2997,65 +2989,96 @@
           python-shell-prompt-detect-failure-warning nil)
     (add-to-list 'python-shell-completion-native-disabled-interpreters "jupyter"))
 
-  ;; ;; For toml files using taplo-cli
-  ;; (use-package eglot
-  ;;   :config
-  ;;   (add-to-list 'eglot-server-programs '((toml-mode) "taplo" "lsp"))
-  ;;   :hook
-  ;;   (toml-mode-hook . eglot-ensure))
+  (use-package devdocs
+    :demand t
+    :bind ("C-c D" . devdocs-lookup))
+
+  (use-package envrc
+    :commands envrc-global-mode
+    :init
+    (envrc-global-mode))
+
+  (use-package numpydoc
+    :bind (:map python-mode-map
+                ("C-c C-N" . numpydoc-generate))
+    :init
+    (setq numpydoc-insertion-style 'yas)) ;'prompt|nil
+
+  (use-package python-pytest
+    :bind (:map python-mode-map
+                ("C-c T" . python-pytest-dispatch)
+                ("<f8>"  . python-pytest-dispatch)))
+
   (use-package lsp-mode
-    :commands (lsp-deferred
-               lsp-enable-which-key-integration)
+    :commands (lsp-deferred lsp-enable-which-key-integration)
     :custom
-    (lsp-completion-provider :none) ;; we use Corfu!
+    (lsp-completion-provider :none) ; use Corfu
     (lsp-diagnostics-provider :flycheck)
     (lsp-keymap-prefix "C-S-l")
+    (lsp-enable-file-watchers t)
+    (lsp-file-watch-threshold 2000)
+    ;; pylsp plugin settings
     (lsp-pylsp-plugins-flake8-enabled nil)
     (lsp-pylsp-plugins-mccabe-enabled nil)
     (lsp-pylsp-plugins-preload-enabled nil)
     (lsp-pylsp-plugins-pydocstyle-enabled nil)
     (lsp-pylsp-plugins-mypy-enabled t)
     (lsp-pylsp-plugins-ruff-enabled t)
-    (lsp-enable-file-watchers t) ;; Enable file watchers
-    (lsp-file-watch-threshold 2000) ;; Increase the threshold for large projects
     :init
-    (setq read-process-output-max (* 1024 1024)) ;; 1mb
-    :hook
-    (yaml-mode-hook . lsp)
-    (json-mode-hook . lsp)
-    (markdown-mode-hook . lsp)
-    (toml-mode-hook . lsp)
-    (sh-mode-hook . lsp)
-    (python-mode-hook . lsp-deferred)
-    (lsp-mode-hook . lsp-enable-which-key-integration)
-    (lsp-mode-hook . lsp-diagnostics-mode)
-    )
+    (setq read-process-output-max (* 1024 1024)) ;; 1 MB
+    :hook ((python-mode-hook . lsp-deferred)
+           (yaml-mode-hook . lsp)
+           (json-mode-hook . lsp)
+           (markdown-mode-hook . lsp)
+           (toml-mode-hook . lsp)
+           (sh-mode-hook . lsp)
+           (lsp-mode-hook . lsp-enable-which-key-integration)
+           (lsp-mode-hook . lsp-diagnostics-mode)))
+
   (use-package lsp-ui
     :hook
     (lsp-mode-hook . lsp-ui-mode)
-    :config
-    (setq lsp-ui-doc-enable t)
-    (setq lsp-ui-doc-include-signature t)
-    (setq lsp-ui-sideline-enable nil)
-    (setq lsp-ui-flycheck-list-position 'right)
-    )
+    :custom
+    (lsp-ui-doc-enable t)
+    (lsp-ui-doc-include-signature t)
+    (lsp-ui-sideline-enable nil)
+    (lsp-ui-flycheck-list-position 'right))
 
-  (use-package envrc
-    :commands envrc-global-mode
-    :after python
-    :init
-    (envrc-global-mode))
-  (use-package python-pytest            ;install projectile
-    :after (python)
-    :bind (:map python-mode-map
-                ("C-c T" . python-pytest-dispatch)
-                ("<f8>" . python-pytest-dispatch)))
+  ;; (global-set-key (kbd "C-c ! l") 'flymake-show-buffer-diagnostics)
+  ;; (global-set-key (kbd "C-c ! n") 'flymake-goto-next-error)
+  ;; (global-set-key (kbd "C-c ! p") 'flymake-goto-prev-error)
 
+  ;; ;; eglot for LSP (built-in in Emacs 29+)
+  ;; (use-package eglot
+  ;;   :straight (:type built-in)
+  ;;   :hook ((python-mode-hook . eglot-ensure)
+  ;;          (sh-mode-hook . eglot-ensure)
+  ;;          (json-mode-hook . eglot-ensure)
+  ;;          (yaml-mode-hook . eglot-ensure)
+  ;;          (markdown-mode-hook . eglot-ensure)
+  ;;          (toml-mode-hook . eglot-ensure))
+  ;;   :custom
+  ;;   (eglot-autoshutdown t)
+  ;;   (eglot-send-changes-idle-time 0.2)
+  ;;   :config
+  ;;   (add-to-list 'eglot-server-programs '((toml-mode) "taplo" "lsp"))
+  ;;   ;; (add-to-list 'eglot-server-programs '(python-mode . ("ruff" "server")))
+
+  ;;   ;; (add-hook 'eglot-managed-mode-hook (lambda () (flymake-mode -1)))
+  ;;   ;; (setq eglot-report-progress nil)
+  ;;   ;; disable formatting if you use external tools like black/ruff
+  ;;   ;; (setq eglot-ignored-server-capabilities '(:documentFormattingProvider))
+  ;;   ;; (add-hook 'eglot-managed-mode-hook
+  ;;   ;;           (lambda ()
+  ;;   ;;             (message "Eglot is managing this buffer with %s" (eglot--current-server))))
+  ;;   )
+
+
+  ;; Optionally, for REPL-driven workflows
   ;; (use-package eval-in-repl
   ;;   :after (python)
   ;;   :hook (python-mode-hook . (lambda () (require 'eval-in-repl-python) ))
-  ;;   :config
-  ;;   (setq eir-jump-after-eval nil)      ; default t
+  ;;   :custom (eir-jump-after-eval nil)
   ;;   :bind (:map python-mode-map
   ;;               ("<C-return>" . eir-eval-in-python))
   ;;   )
