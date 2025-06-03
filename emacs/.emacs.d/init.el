@@ -1140,14 +1140,6 @@
     ("<f7> Gl" . writegood-grade-level)
     ("<f7> Gr" . writegood-reading-ease))
 
-  (use-package typo
-    :bind ("C-c t t" . typo-mode)
-    :commands typo-global-mode
-    :config (typo-global-mode)          ; Complement `C-x 8`
-    :hook
-    (org-mode-hook . (lambda () (typo-mode -1)))
-    (text-mode-hook . typo-mode))
-
   (use-package google-translate
     :defines google-translate-translation-directions-alist
     :commands (google-translate-at-point
@@ -1582,7 +1574,6 @@
       (when (internet-up-p) (org-gcal-fetch)))
     (defun my-babelsrc-org-mode-hook ()
       "Custom `org-mode' `typo-mode' behavior."
-      (typo-mode 1)
       (add-hook 'typo-disable-electricity-functions 'org-in-src-block-p nil :local))
     :hook
     ((org-mode-hook . visual-line-mode)
@@ -2688,37 +2679,37 @@
                     ("h" . pdf-annot-add-highlight-markup-annotation))
         :config (setq-local pdf-annot-activate-created-annotations nil)))
 
-    ;; https://github.com/fuxialexander/org-pdftools
-    ;; Maybe defun are unused but follow the instruction
-    (use-package org-noter
-      :commands  (org-noter-insert-note
-                  org-noter--valid-session
-                  org-noter--parse-root
-                  org-noter--get-precise-info
-                  org-noter--doc-approx-location
-                  org-noter--pretty-print-location)
-      :bind (("C-c n n" . org-noter)
-             :map org-noter-notes-mode-map
-             ("C-M-s-k" . org-noter-create-skeleton)
-             ("C-M-s-n" . org-noter-sync-next-note)
-             ("C-M-s-p" . org-noter-sync-prev-note)
-             :map org-noter-doc-mode-map
-             ("C-M-s-k" . org-noter-create-skeleton)
-             ("C-M-s-n" . org-noter-sync-next-note)
-             ("C-M-s-p" . org-noter-sync-prev-note)
-             )
-      :config
-      (setq ;; org-noter-default-notes-file-names '("noter-othernotes.org" "biblio.org")
-       org-noter-hide-other nil
-       org-noter-separate-notes-from-heading t
-       ;; org-noter-notes-search-path '("~/Sync/biblio" "~/Sync/notes/org-roam/biblio")
-       org-noter-notes-search-path '("~/Sync/notes/org-roam/biblio")
-       org-noter-always-create-frame nil  ;; do not create a new frame
-       org-noter-doc-split-fraction '(0.67 . 0.75)
-       ;; org-noter-notes-window-location 'other-frame
-       )
-      ;; (require 'org-noter-pdftools) ; org-pdftools suggestion FAIL with deman
-      )
+    ;; ;; https://github.com/fuxialexander/org-pdftools
+    ;; ;; Maybe defun are unused but follow the instruction
+    ;; (use-package org-noter
+    ;;   :commands  (org-noter-insert-note
+    ;;               org-noter--valid-session
+    ;;               org-noter--parse-root
+    ;;               org-noter--get-precise-info
+    ;;               org-noter--doc-approx-location
+    ;;               org-noter--pretty-print-location)
+    ;;   :bind (("C-c n n" . org-noter)
+    ;;          :map org-noter-notes-mode-map
+    ;;          ("C-M-s-k" . org-noter-create-skeleton)
+    ;;          ("C-M-s-n" . org-noter-sync-next-note)
+    ;;          ("C-M-s-p" . org-noter-sync-prev-note)
+    ;;          :map org-noter-doc-mode-map
+    ;;          ("C-M-s-k" . org-noter-create-skeleton)
+    ;;          ("C-M-s-n" . org-noter-sync-next-note)
+    ;;          ("C-M-s-p" . org-noter-sync-prev-note)
+    ;;          )
+    ;;   :config
+    ;;   (setq ;; org-noter-default-notes-file-names '("noter-othernotes.org" "biblio.org")
+    ;;    org-noter-hide-other nil
+    ;;    org-noter-separate-notes-from-heading t
+    ;;    ;; org-noter-notes-search-path '("~/Sync/biblio" "~/Sync/notes/org-roam/biblio")
+    ;;    org-noter-notes-search-path '("~/Sync/notes/org-roam/biblio")
+    ;;    org-noter-always-create-frame nil  ;; do not create a new frame
+    ;;    org-noter-doc-split-fraction '(0.67 . 0.75)
+    ;;    ;; org-noter-notes-window-location 'other-frame
+    ;;    )
+    ;;   ;; (require 'org-noter-pdftools) ; org-pdftools suggestion FAIL with deman
+    ;;   )
 
     (use-package org-pdftools
       :hook (org-mode-hook . org-pdftools-setup-link))
