@@ -76,7 +76,6 @@
   :config
   (setq use-package-compute-statistics t
         use-package-verbose t
-        use-package-hook-name-suffix nil
         use-package-enable-imenu-support t))
 
 ;; Prevent using the built-in transient https://github.com/magit/magit/discussions/4997
@@ -233,7 +232,7 @@
     ("C-x B" . revert-buffer)
     :hook
     ;; After saving make scripts executable
-    (after-save-hook . executable-make-buffer-file-executable-if-script-p))
+    (after-save . executable-make-buffer-file-executable-if-script-p))
 
   (use-package isearch
     :straight (:type built-in)
@@ -261,12 +260,12 @@
     ("M-S-h" . mark-paragraph)
     ("<f7> c" . count-words)
     :hook
-    ((gitignore-mode-hook . mk-auto-fill-mode)
-     (haskell-cabal-mode-hook . mk-auto-fill-mode)
-     (prog-mode-hook . mk-auto-fill-mode)
-     (proof-mode-hook . mk-auto-fill-mode)
+    ((gitignore-mode . mk-auto-fill-mode)
+     (haskell-cabal-mode . mk-auto-fill-mode)
+     (prog-mode . mk-auto-fill-mode)
+     (proof-mode . mk-auto-fill-mode)
      ;; (text-mode . auto-fill-mode)
-     ;; (yaml-mode-hook . mk-auto-fill-mode) ;TODO: check and remove
+     ;; (yaml-mode . mk-auto-fill-mode) ;TODO: check and remove
      ))
 
   (use-package window
@@ -285,8 +284,8 @@
         (delete-other-windows)))
     :config
     (setq window-sides-vertical nil)
-    :hook ((help-mode-hook . visual-line-mode)
-           (Custom-mode-hook . visual-line-mode))
+    :hook ((help-mode . visual-line-mode)
+           (Custom-mode . visual-line-mode))
     :bind (("C-M-s-n" . next-buffer)
            ("C-M-s-p" . previous-buffer)
            ("C-M-s-o" . other-window)
@@ -313,7 +312,7 @@
     :config
     (electric-indent-mode 0)
     ;; python is excluded by aggressive indent because of not absolute indentation
-    :hook (python-mode-hook . electric-indent-mode))
+    :hook (python-mode . electric-indent-mode))
 
   (use-package lpr
     :straight (:type built-in)
@@ -396,8 +395,8 @@
     :bind
     ("C-c t i" . aggressive-indent-mode)
     :hook
-    (emacs-lisp-mode-hook . aggressive-indent-mode)
-    (html-mode-hook . aggressive-indent-mode))
+    (emacs-lisp-mode . aggressive-indent-mode)
+    (html-mode . aggressive-indent-mode))
 
   (use-package delsel
     :init (delete-selection-mode 1))
@@ -437,7 +436,7 @@
     ;; adjust margins upon text resize
     (advice-add 'text-scale-adjust :after #'visual-fill-column-adjust)
     :hook
-    (visual-fill-column-mode-hook . visual-line-mode)
+    (visual-fill-column-mode . visual-line-mode)
     :preface
     (defun no-distraction-enable ()
       "Switch to no distraction env"
@@ -531,7 +530,6 @@
   (use-package smartparens
     :commands smartparens-global-mode
     :init
-    (add-hook 'prog-mode-hook #'smartparens-mode)
     (setq sp-highlight-pair-overlay nil
           sp-highlight-wrap-overlay nil
           sp-highlight-wrap-tag-overlay nil)
@@ -548,8 +546,7 @@
                 ("C-M-s-(" . sp-backward-slurp-sexp)
                 ("C-M-s-{" . sp-backward-barf-sexp))
     :hook
-    (inferior-python-mode-hook . smartparens-mode)
-    (jupyter-repl-mode-hook . smartparens-mode)
+    ((prog-mode inferior-python-mode jupyter-repl-mode) . smartparens-mode)
     :config
     (smartparens-global-mode 1)
     (advice-add 'sp-add-to-previous-sexp :after (lambda () (just-one-space)))
@@ -570,7 +567,7 @@
             ("C-M-s-a" . hs-show-all)))
     :config
     (setq hs-hide-comments-when-hiding-all nil)
-    :hook (prog-mode-hook . hs-minor-mode))
+    :hook (prog-mode . hs-minor-mode))
 
   (use-package calc
     :bind ("M-g M-a c" . calc))
@@ -679,7 +676,7 @@
   (use-package vertico-repeat
     :straight vertico
     :hook
-    (minibuffer-setup-hook . vertico-repeat-save)
+    (minibuffer-setup . vertico-repeat-save)
     :bind
     (("C-;" . vertico-repeat)
      ("C-:" . vertico-repeat-select)))
@@ -913,7 +910,7 @@
     :demand t ; Loads embark-consult immediately.
     :hook
     ;; if you want to have consult previews as you move around an auto-updating embark collect buffer
-    (embark-collect-mode-hook . consult-preview-at-point-mode))
+    (embark-collect-mode . consult-preview-at-point-mode))
 
   (use-package wgrep :demand t)
   (use-package consult-recoll
@@ -968,202 +965,46 @@
                 (list (cape-capf-super #'cape-dabbrev #'cape-dict #'cape-file #'cape-keyword)))
     )
   )
-(use-package yasnippet ;; Yasnippet
+
+(use-package yasnippet
   :bind
-  ("M-g Y a" . yas-reload-all)
-  ("M-g Y n" . yas-new-snippet)
-  ("M-g Y v" . yas-visit-snippet-file)
-  ("C-c t y" . yas-minor-mode)
-  ;; ;; disable yas minor mode map ;; use hippie-expand instead [sp]
-  ;; (setq yas-minor-mode-map (make-sparse-keymap))
+  (("M-g Y a" . yas-reload-all)
+   ("M-g Y n" . yas-new-snippet)
+   ("M-g Y v" . yas-visit-snippet-file)
+   ("C-c t y" . yas-minor-mode))
   :init
   (which-key-add-key-based-replacements "M-g Y" "Yasnippet")
   :hook
-  (prog-mode-hook . yas-minor-mode)
-  (org-mode-hook . yas-minor-mode)
-  (message-mode-hook . yas-minor-mode)
-  (markdown-mode-hook . yas-minor-mode)
+  ((prog-mode org-mode message-mode markdown-mode) . yas-minor-mode)
   :config
   (setq yas-snippet-dirs '("~/.emacs.d/yasnippets")
         yas-triggers-in-field t
-        yas-wrap-around-region t)     ;or [a-z] register
+        yas-wrap-around-region t)
   (add-to-list 'hippie-expand-try-functions-list 'yas-hippie-try-expand))
+
 (use-package yasnippet-snippets
   :after yasnippet)
+
 (use-package consult-yasnippet
   :after yasnippet
   :bind ("M-s y" . consult-yasnippet))
 
-(progn ;; Spell checking and writing
-  (use-package ispell
-    :hook ((text-mode-hook . flyspell-mode)
-           (org-mode-hook . flyspell-mode)
-           (prog-mode-hook . flyspell-prog-mode)
-           (LaTeX-mode-hook . flyspell-mode)
-           (change-log-mode-hook . (lambda () (flyspell-mode -1)))
-           (log-edit-mode-hook . (lambda () (flyspell-mode -1))))
-    :config
-    (setq ispell-program-name (executable-find "hunspell")
-          ispell-really-hunspell t
-          ispell-silently-savep t       ; Save personal dictionary silently
-          ispell-dictionary "en_US-large")
-    (add-to-list 'ispell-skip-region-alist
-                 '("^From:" . "line--$")) ; Skip email headers and quoted text
-    ;; ("^\\[\\[" . "^\\]\\]") ; Skip org-mode links
-    ;; ("^#+BEGIN_SRC" . "^#+END_SRC")
-    )
-
-  (use-package flyspell
-    :after ispell
-    :hook ((text-mode-hook . flyspell-mode)
-           (org-mode-hook . flyspell-mode)
-           (prog-mode-hook . flyspell-prog-mode)
-           (LaTeX-mode-hook . flyspell-mode)
-           (change-log-mode-hook . (lambda () (flyspell-mode -1)))
-           (log-edit-mode-hook . (lambda () (flyspell-mode -1))))
-    :bind (("C-c t s" . flyspell-mode)
-           ("C-c t S" . flyspell-correct-auto-mode)
-           :map flyspell-mode-map
-           ("C-M-s-," . flyspell-auto-correct-previous-word) ; I mostly use flyspell-correct
-           ("C-;" . nil)                ; to avoid conflicts
-           ("C-." . nil)
-           ("C-," . nil)))
-
-  (use-package flyspell-correct
-    :after (flyspell)
-    :bind (:map flyspell-mode-map
-                ("<f7> s" . flyspell-correct-wrapper))) ;M-TAB
-
-  (use-package consult-flyspell
-    :bind (("M-g s" . consult-flyspell)))
-
-  (use-package cm-mode ;; critic markup
-    ;; :hook (text-mode . cm-mode)
-    :bind
-    ("<f7> M" . cm-mode)
-    ("<f7> m" . cm-prefix-map))
-
-  (use-package guess-language
-    ;; For multi language within same doc.
-    :bind
-    ("C-c t g" . guess-language-mode)
-    ("C-c S e" . (lambda () (interactive)
-                   (ispell-change-dictionary "en_US-large")
-                   (flyspell-buffer)))
-    ("C-c S i" . (lambda () (interactive)
-                   (ispell-change-dictionary "it_IT")
-                   ;; TODO: cape (ispell|dict)
-                   (flyspell-buffer)))
-    ;; :hook
-    ;; (flyspell-mode . guess-language-mode)
-    ;; ;; (flyspell-mode-prog . guess-language-mode)
-    ;; (text-mode . guess-language-mode)
-    :functions guess-language-switch-function
-    :init
-    (which-key-add-key-based-replacements "C-c S" "Spell")
-    :config
-    (setq guess-language-langcodes '((en . ("en_US-large" "English"))
-                                     (it . ("it_IT" "Italian")))
-          guess-language-min-paragraph-length 15
-          guess-language-languages '(en it))
-    ;; (defun guess-language-switch-function (lang beginning end)
-    ;;   "Switch additional dictionaries. LANG is the ISO 639-1 code of the language
-    ;;    (as a symbol). BEGINNING and END are the endpoints of the region in which
-    ;;    LANG was detected but these are ignored."
-    ;; (when (and (featurep 'festival)
-    ;;       (festivalp))
-    ;;  (pcase lang
-    ;;    ('en (festival-voice-english-female))
-    ;;    ('it (festival-voice-italian-female))))
-    ;;   )
-    ;; (add-hook 'guess-language-after-detection-functions
-    ;; #'guess-language-switch-function)
-    )
-
-  (use-package langtool
-    :commands (langtool-goto-previous-error
-               langtool-goto-next-error
-               langtool-check
-               langtool-correct-buffer
-               langtool-check-done
-               langtool-switch-default-language)
-    :bind ("<f7> l" . my-langtool-transient)
-    :config
-    (transient-define-prefix my-langtool-transient ()
-      "Langtool Commands"
-      [["Navigation"
-        ("p" "Previous error" langtool-goto-previous-error)
-        ("n" "Next error" langtool-goto-next-error)]
-       ["Actions"
-        ("c" "Check" langtool-check)
-        ("b" "Correct buffer" langtool-correct-buffer)
-        ("d" "Done" langtool-check-done)]
-       ["Configuration"
-        ("l" "Switch language" langtool-switch-default-language)]])
-    (setq langtool-java-classpath
-          "/usr/share/languagetool:/usr/share/java/languagetool/*"
-          langtool-java-bin "/usr/bin/java"
-          langtool-disabled-rules '("EN_UNPAIRED_BRACKETS"
-                                    "MORFOLOGIK_RULE_EN_US")
-          langtool-mother-tongue "it"
-          langtool-default-language "en-US"))
-
-  (use-package sdcv
-    :bind
-    ("<f7> S" . sdcv-search-pointer)
-    (:map sdcv-mode-map
-          ("n" . sdcv-next-dictionary)
-          ("p" . sdcv-previous-dictionary)))
-
-  (use-package wordnut
-    :bind
-    ("<f7> w" . wordnut-lookup-current-word)
-    ("<f7> W" . wordnut-search))
-
-  (use-package powerthesaurus
-    :bind
-    ("<f7> p 0" . powerthesaurus-lookup-dwim)
-    ("<f7> p p" . powerthesaurus-lookup-synonyms-dwim)
-    ("<f7> p a" . powerthesaurus-lookup-antonyms-dwim)
-    ("<f7> p d" . powerthesaurus-lookup-definitions-dwim)
-    ("<f7> p r" . powerthesaurus-lookup-related-dwim)
-    ("<f7> p s" . powerthesaurus-lookup-sentences-dwim))
-
-  (use-package academic-phrases
-    :bind
-    ("<f7> i" . academic-phrases-by-section)
-    ("<f7> I" . academic-phrases))
-
-  (use-package writegood-mode
-    :bind
-    ("<f7> g" . writegood-mode)
-    ("<f7> Gl" . writegood-grade-level)
-    ("<f7> Gr" . writegood-reading-ease))
-
-  (use-package google-translate
-    :defines google-translate-translation-directions-alist
-    :commands (google-translate-at-point
-               google-translate-at-point-reverse)
-    :bind
-    ("<f7> t" . google-translate-smooth-translate)
-    :init
-    (setq google-translate-translation-directions-alist
-          '(("it" . "en") ("en" . "it") ("it" . "de") ("it" . "fr"))
-          google-translate-output-destination kill-ring
-          google-translate-enable-ido-completion t
-          google-translate-show-phonetic t
-          ;; google-translate-listen-program
-          google-translate-pop-up-buffer-set-focus t)
-    (defun google-translate--search-tkk () "Search TKK." (list 430675 2721866130))
-    (defun my-google-translate-at-point()
-      "reverse translate if prefix"
-      (interactive)
-      (if current-prefix-arg
-          (google-translate-at-point)
-        (google-translate-at-point-reverse)))
-    ;; API changed
-    (setq google-translate-backend-method 'curl))
-  )
+;; --- Spell and Translate ---
+(straight-use-package 'ispell)
+(straight-use-package 'flyspell)
+(straight-use-package 'flyspell-correct)
+(straight-use-package 'consult-flyspell)
+(straight-use-package 'guess-language)
+(straight-use-package 'sdcv)
+(straight-use-package 'wordnut)
+(straight-use-package 'powerthesaurus)
+(require 'my-spell)
+;; --- Prose ---
+(straight-use-package 'cm-mode) ;; critic markup
+(straight-use-package 'langtool)
+(straight-use-package 'academic-phrases)
+(straight-use-package 'writegood-mode)
+(require 'my-prose)
 
 (use-package mu4e                       ; mu4e
   :demand is-daemon
@@ -1196,12 +1037,12 @@
             (goto-char (point-max))
             (mml-attach-file "~/Sync/Maildir/firma-istituzionale.html")))))))
   :hook
-  (dired-mode-hook . turn-on-gnus-dired-mode)
-  (mu4e-view-mode-hook . variable-pitch-mode)
-  (mu4e-compose-mode-hook . (lambda ()
-                              (my-mu4e-compose-mode-hook)
-                              (replace-duck-emails-in-buffer)))
-  (mu4e-update-pre-hook . mu4e-update-index-nonlazy)
+  (dired-mode . turn-on-gnus-dired-mode)
+  (mu4e-view-mode . variable-pitch-mode)
+  (mu4e-compose-mode . (lambda ()
+                         (my-mu4e-compose-mode-hook)
+                         (replace-duck-emails-in-buffer)))
+  (mu4e-update-pre . mu4e-update-index-nonlazy)
   :bind
   (("M-g M-a m" . mu4e)
    ("C-x m" . mu4e)
@@ -1460,16 +1301,16 @@
            ("C-c M-o" . org-mime-org-subtree-htmlize)
            ("C-c M-O" . org-mime-org-buffer-htmlize))
     :hook
-    (org-mime-html-hook . (lambda ()
-                            (org-mime-change-element-style
-                             "pre" (format "color: %s; background-color: %s; padding: 0.5em;"
-                                           "#E6E1DC" "#232323")))) ; "darkred" "burlywood"
+    (org-mime-html . (lambda ()
+                       (org-mime-change-element-style
+                        "pre" (format "color: %s; background-color: %s; padding: 0.5em;"
+                                      "#E6E1DC" "#232323")))) ; "darkred" "burlywood"
     ;; the following can be used to nicely offset block quotes in email bodies
-    (org-mime-html-hook . (lambda ()
-                            (org-mime-change-element-style
-                             "blockquote" "border-left: 2px solid gray; padding-left: 4px;")))
-    ;; (message-send-hook . org-mime-confirm-when-no-multipart)
-    (mu4e-compose-mode-hook . (lambda ()(require 'org-mime))) ; work w/out server
+    (org-mime-html . (lambda ()
+                       (org-mime-change-element-style
+                        "blockquote" "border-left: 2px solid gray; padding-left: 4px;")))
+    ;; (message-send . org-mime-confirm-when-no-multipart)
+    (mu4e-compose-mode . (lambda ()(require 'org-mime))) ; work w/out server
     :config
     (setq org-mime-library 'semi
           org-mime-export-ascii 'utf-8
@@ -1478,6 +1319,7 @@
                                     :section-numbers nil
                                     :with-author nil
                                     :with-toc nil)))
+
   )
 (use-package mu4e-jump-to-list
   :after mu4e)
@@ -1576,12 +1418,12 @@
       "Custom `org-mode' `typo-mode' behavior."
       (add-hook 'typo-disable-electricity-functions 'org-in-src-block-p nil :local))
     :hook
-    ((org-mode-hook . visual-line-mode)
-     (org-mode-hook . flyspell-mode)
-     (org-mode-hook . variable-pitch-mode)
-     (org-mode-hook . my-babelsrc-org-mode-hook)
-     (org-mode-hook . prettify-symbols-mode)
-     (org-after-todo-state-change-hook . dpa-proj-state-change-hook))
+    ((org-mode . visual-line-mode)
+     (org-mode . flyspell-mode)
+     (org-mode . variable-pitch-mode)
+     (org-mode . my-babelsrc-org-mode-hook)
+     (org-mode . prettify-symbols-mode)
+     (org-after-todo-state-change . dpa-proj-state-change-hook))
     :bind
     (("C-c a" . org-agenda)
      ("M-h" . mark-word)
@@ -1933,7 +1775,7 @@
           (save-buffer)))
 
       :hook
-      (org-after-refile-insert-hook . save-buffer)
+      (org-after-refile-insert . save-buffer)
       :config
       (setq org-capture-templates
             '(
@@ -2031,7 +1873,7 @@
        :map org-agenda-mode-map
        ("C-a" . org-agenda))
       :hook
-      (org-agenda-mode-hook . (lambda () (hl-line-mode) (setq line-spacing 0.0)))
+      (org-agenda-mode . (lambda () (hl-line-mode) (setq line-spacing 0.0)))
       :config
       (setq org-habit-show-habits-only-for-today nil)
       (setq org-habit-graph-column 60)
@@ -2322,7 +2164,7 @@
     )
   (use-package org-autolist
     :after (org)
-    :hook (org-mode-hook . org-autolist-mode)
+    :hook (org-mode . org-autolist-mode)
     )
   (use-package org-download
     :after (org)
@@ -2336,8 +2178,8 @@
                 ("<Launch5> d R" . org-download-rename-last-file)
                 ("<Launch5> d s" . org-download-screenshot))
     :hook
-    (dired-mode-hook . org-download-enable)
-    (org-mode-hook . org-download-enable)
+    (dired-mode . org-download-enable)
+    (org-mode . org-download-enable)
     :config
     (setq org-download-method 'directory) ;'attach
     ;; (setq org-download-screenshot-method "sleep 10 && flameshot gui -p %s")
@@ -2352,7 +2194,7 @@
   (use-package calendar                 ; calendars
     :straight (:type built-in)
     :hook
-    (calendar-today-visible-hook . calendar-mark-today)
+    (calendar-today-visible . calendar-mark-today)
     )
   (use-package solar                    ; (2) sunrise and sunset
     :straight (:type built-in)
@@ -2617,9 +2459,9 @@
                              ":NOTER_DOCUMENT: ${file}\n"
                              ":END:"))))
     :hook
-    (LaTeX-mode-hook . citar-capf-setup)
-    (org-mode-hook . citar-capf-setup)
-    (markdown-mode-hook . citar-capf-setup)
+    (LaTeX-mode . citar-capf-setup)
+    (org-mode . citar-capf-setup)
+    (markdown-mode . citar-capf-setup)
     :config
     (setq citar-notes-source 'citar-file)
     (setq citar-symbol-separator "  ")
@@ -2712,14 +2554,14 @@
     ;;   )
 
     (use-package org-pdftools
-      :hook (org-mode-hook . org-pdftools-setup-link))
+      :hook (org-mode . org-pdftools-setup-link))
 
     (use-package org-noter-pdftools
       :after (org-noter)
       :commands (org-noter-pdftools-jump-to-note)
       :hook
-      (org-noter-doc-mode-hook . (lambda () (require 'org-noter-pdftools)))
-      (org-noter-notes-mode-hook . (lambda () (require 'org-noter-pdftools)))
+      (org-noter-doc-mode . (lambda () (require 'org-noter-pdftools)))
+      (org-noter-notes-mode . (lambda () (require 'org-noter-pdftools)))
       :bind (:map org-noter-notes-mode-map
                   ("C-H-k" . org-noter-pdftools-create-skeleton)
                   :map org-noter-doc-mode-map
@@ -2872,7 +2714,7 @@
 
   (use-package diff-hl
     :commands global-diff-hl-mode
-    :hook (magit-post-refresh-hook . diff-hl-magit-post-refresh)
+    :hook (magit-post-refresh . diff-hl-magit-post-refresh)
     :config (global-diff-hl-mode))
 
   )
@@ -2929,10 +2771,10 @@
 (use-package eglot
   :straight (:type built-in)
   :hook
-  (prog-mode-hook . eglot-ensure)
-  (yaml-mode-hook . eglot-ensure)
-  (markdown-mode-hook . eglot-ensure)
-  (toml-mode-hook . eglot-ensure)
+  (prog-mode . eglot-ensure)
+  (yaml-mode . eglot-ensure)
+  (markdown-mode . eglot-ensure)
+  (toml-mode . eglot-ensure)
   :custom
   (eglot-autoshutdown t)
   (eglot-send-changes-idle-time 0.2)
@@ -2944,6 +2786,14 @@
          ("C-c r a" . eglot-code-actions)
          ("C-c r r" . eglot-rename)
          ("C-c r f" . eglot-format)))
+(use-package flymake
+  :hook ((gitignore-mode . flymake-mode)
+         (markdown-mode . flymake-mode)
+         (prog-mode . flymake-mode)
+         ;; (org-mode . flymake-mode) ; Uncomment if you want flymake in Org-mode
+         ;; (text-mode . flymake-mode) ; Uncomment if you want flymake in text-mode
+         ;; (yaml-mode . flymake-mode) ; If you want flymake for YAML without LSP
+         ))
 
 ;; --- Additional modes ---
 (straight-use-package 'markdown-mode)
@@ -3002,7 +2852,7 @@
   ;; Optionally, for REPL-driven workflows
   ;; (use-package eval-in-repl
   ;;   :after (python)
-  ;;   :hook (python-mode-hook . (lambda () (require 'eval-in-repl-python) ))
+  ;;   :hook (python-mode . (lambda () (require 'eval-in-repl-python) ))
   ;;   :custom (eir-jump-after-eval nil)
   ;;   :bind (:map python-mode-map
   ;;               ("<C-return>" . eir-eval-in-python))
@@ -3012,7 +2862,7 @@
 (use-package nov
   :mode ("\\.epub\\'" . nov-mode)
   ;; :custom-face (variable-pitch ((t (:family "URW Bookman" :height 1.1))))
-  :hook (nov-mode-hook . visual-fill-column-mode)
+  :hook (nov-mode . visual-fill-column-mode)
   :config (setq nov-text-width t))
 
 (use-package keyfreq
