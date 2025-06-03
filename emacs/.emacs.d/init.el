@@ -788,6 +788,7 @@
            ("M-y" . consult-yank-pop)                ;; orig. yank-pop
            ;; M-g bindings (goto-map)
            ("M-g E" . consult-compile-error)
+           ("M-g f" . consult-flymake)
            ("M-g M-g" . consult-goto-line)           ;; orig. goto-line
            ("M-g o" . consult-outline)
            ("M-g M-o" . consult-org-heading)
@@ -1096,9 +1097,9 @@
     :bind ("C-<tab>" . aj-toggle-fold)
     :init (apheleia-global-mode +1)
     :config
-    ;; Use json.tool for JSON files [python] (lsp: json-ls)
+    ;; Use json.tool for JSON files [python] (lsp: json-ls) extra/vscode-json-languageserver
     (add-to-list 'apheleia-mode-alist '(json-mode . python3-json))
-    ;; Use yamlfmt for YAML files [yamlfmt] (lsp: yamlls)
+    ;; Use yamlfmt for YAML files [yamlfmt] (lsp: yamlls) extra/yaml-language-server
     (add-to-list 'apheleia-formatters '(yamlfmt "yamlfmt" "-in"))
     (add-to-list 'apheleia-mode-alist '(yaml-mode . yamlfmt))
     ;; Use mdformat for MARKDOWN files [mdformat] (lsp: marksman) can be a dev dep
@@ -1120,49 +1121,6 @@
                    (and buffer-file-name
                         (string-match-p "\\.ipynb\\'" buffer-file-name)))) ; This function checks the file extension
     )
-
-  (use-package flycheck ;; Syntax checking
-    :commands (flycheck-add-next-checker)
-    :bind (("M-g e l" . flycheck-list-errors)
-           ("M-g e e" . flycheck-mode)
-           ("M-g e b" . flycheck-buffer)
-           ("M-g e d" . flycheck-clear)
-           ("M-g e h" . flycheck-describe-checker)
-           ("M-g e n" . flycheck-next-error)
-           ("M-g e p" . flycheck-previous-error)
-           ("M-g e s" . flycheck-select-checker)
-           ("M-g e S" . flycheck-set-checker-executable)
-           ("M-g e v" . flycheck-verify-setup)
-           ("M-g e y" . flycheck-copy-errors-as-kill)
-           ("M-g e x" . flycheck-explain-error-at-point))
-    :hook ((gitignore-mode-hook . flycheck-mode)
-           (markdown-mode-hook . flycheck-mode)
-           ;; (org-mode-hook . flycheck-mode)
-           ;; (text-mode-hook . flycheck-mode)
-           (prog-mode-hook . flycheck-mode)
-           ;; (yaml-mode-hook . flycheck-mode) ;TODO: use lsp
-           )
-    :init
-    (which-key-add-key-based-replacements "M-g e" "Errors(flycheck)")
-    :config
-    (setq flycheck-idle-change-delay nil) ; Disable idle checking to avoid performance problems
-    (setq-default flycheck-emacs-lisp-load-path 'inherit
-                  flycheck-temp-prefix ".flycheck"))
-
-  (use-package consult-flycheck
-    :bind ("M-g f" . consult-flycheck))
-
-  (use-package flycheck-vale
-    :after flycheck
-    :commands (flycheck-vale-setup
-               flycheck-vale-toggle-enabled)
-    :init
-    (flycheck-vale-toggle-enabled)
-    :config
-    (flycheck-vale-setup)
-    (flycheck-add-next-checker 'vale 'proselint)
-    (flycheck-add-next-checker 'proselint 'markdown-markdownlint-cli)
-    (setq flycheck-checker-error-threshold 1000))
 
   (use-package langtool
     :commands (langtool-goto-previous-error
@@ -2945,16 +2903,16 @@
     :hook (magit-post-refresh-hook . diff-hl-magit-post-refresh)
     :config (global-diff-hl-mode))
   )
-(progn                                  ; Project
-  ;; (use-package project
-  ;;   :straight (:type built-in)
-  ;;   :config
-  ;;   (setq project--list))
-  (use-package consult-project-extra
-    :bind
-    ("C-c p" . consult-project-extra-find))
 
-  )
+;; --- Project ---
+(use-package project
+  :straight (:type built-in)
+  :config
+  (setq project-switch-commands #'project-find-file))
+(use-package consult-project-extra
+  :bind
+  ("C-c p" . consult-project-extra-find))
+
 ;; --- Additional modes ---
 (straight-use-package 'markdown-mode)
 (straight-use-package 'sphinx-mode)
@@ -3009,70 +2967,25 @@
                 ("C-c T" . python-pytest-dispatch)
                 ("<f8>"  . python-pytest-dispatch)))
 
-  (use-package lsp-mode
-    :commands (lsp-deferred lsp-enable-which-key-integration)
-    :custom
-    (lsp-completion-provider :none) ; use Corfu
-    (lsp-diagnostics-provider :flycheck)
-    (lsp-keymap-prefix "C-S-l")
-    (lsp-enable-file-watchers t)
-    (lsp-file-watch-threshold 2000)
-    ;; pylsp plugin settings
-    (lsp-pylsp-plugins-flake8-enabled nil)
-    (lsp-pylsp-plugins-mccabe-enabled nil)
-    (lsp-pylsp-plugins-preload-enabled nil)
-    (lsp-pylsp-plugins-pydocstyle-enabled nil)
-    (lsp-pylsp-plugins-mypy-enabled t)
-    (lsp-pylsp-plugins-ruff-enabled t)
-    :init
-    (setq read-process-output-max (* 1024 1024)) ;; 1 MB
-    :hook ((python-mode-hook . lsp-deferred)
-           (yaml-mode-hook . lsp)
-           (json-mode-hook . lsp)
-           (markdown-mode-hook . lsp)
-           (toml-mode-hook . lsp)
-           (sh-mode-hook . lsp)
-           (lsp-mode-hook . lsp-enable-which-key-integration)
-           (lsp-mode-hook . lsp-diagnostics-mode)))
-
-  (use-package lsp-ui
+  ;; eglot for LSP (built-in in Emacs 29+)
+  (use-package eglot
+    :straight (:type built-in)
     :hook
-    (lsp-mode-hook . lsp-ui-mode)
+    (prog-mode-hook . eglot-ensure)
+    (yaml-mode-hook . eglot-ensure)
+    (markdown-mode-hook . eglot-ensure)
+    (toml-mode-hook . eglot-ensure)
     :custom
-    (lsp-ui-doc-enable t)
-    (lsp-ui-doc-include-signature t)
-    (lsp-ui-sideline-enable nil)
-    (lsp-ui-flycheck-list-position 'right))
-
-  ;; (global-set-key (kbd "C-c ! l") 'flymake-show-buffer-diagnostics)
-  ;; (global-set-key (kbd "C-c ! n") 'flymake-goto-next-error)
-  ;; (global-set-key (kbd "C-c ! p") 'flymake-goto-prev-error)
-
-  ;; ;; eglot for LSP (built-in in Emacs 29+)
-  ;; (use-package eglot
-  ;;   :straight (:type built-in)
-  ;;   :hook ((python-mode-hook . eglot-ensure)
-  ;;          (sh-mode-hook . eglot-ensure)
-  ;;          (json-mode-hook . eglot-ensure)
-  ;;          (yaml-mode-hook . eglot-ensure)
-  ;;          (markdown-mode-hook . eglot-ensure)
-  ;;          (toml-mode-hook . eglot-ensure))
-  ;;   :custom
-  ;;   (eglot-autoshutdown t)
-  ;;   (eglot-send-changes-idle-time 0.2)
-  ;;   :config
-  ;;   (add-to-list 'eglot-server-programs '((toml-mode) "taplo" "lsp"))
-  ;;   ;; (add-to-list 'eglot-server-programs '(python-mode . ("ruff" "server")))
-
-  ;;   ;; (add-hook 'eglot-managed-mode-hook (lambda () (flymake-mode -1)))
-  ;;   ;; (setq eglot-report-progress nil)
-  ;;   ;; disable formatting if you use external tools like black/ruff
-  ;;   ;; (setq eglot-ignored-server-capabilities '(:documentFormattingProvider))
-  ;;   ;; (add-hook 'eglot-managed-mode-hook
-  ;;   ;;           (lambda ()
-  ;;   ;;             (message "Eglot is managing this buffer with %s" (eglot--current-server))))
-  ;;   )
-
+    (eglot-autoshutdown t)
+    (eglot-send-changes-idle-time 0.2)
+    :config
+    ;; (add-to-list 'eglot-server-programs '(python-mode . ("ruff" "server")))
+    (add-to-list 'eglot-server-programs '((toml-mode) "taplo" "lsp" "stdio"))
+    :bind (:map
+           eglot-mode-map
+           ("C-c r a" . eglot-code-actions)
+           ("C-c r r" . eglot-rename)
+           ("C-c r f" . eglot-format)))
 
   ;; Optionally, for REPL-driven workflows
   ;; (use-package eval-in-repl
