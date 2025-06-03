@@ -2787,6 +2787,7 @@
          ("C-c r r" . eglot-rename)
          ("C-c r f" . eglot-format)))
 (use-package flymake
+  :straight (:type built-in)
   :hook ((gitignore-mode . flymake-mode)
          (markdown-mode . flymake-mode)
          (prog-mode . flymake-mode)
