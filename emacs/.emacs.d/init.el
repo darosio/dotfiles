@@ -1031,7 +1031,7 @@
   (use-package flyspell-correct
     :after (flyspell)
     :bind (:map flyspell-mode-map
-                ("C-M-i" . flyspell-correct-wrapper))) ;M-TAB
+                ("<f7> s" . flyspell-correct-wrapper))) ;M-TAB
 
   (use-package consult-flyspell
     :bind (("M-g s" . consult-flyspell)))
@@ -1195,7 +1195,7 @@
 
   (use-package sdcv
     :bind
-    ("<f7> s" . sdcv-search-pointer)
+    ("<f7> S" . sdcv-search-pointer)
     (:map sdcv-mode-map
           ("n" . sdcv-next-dictionary)
           ("p" . sdcv-previous-dictionary)))
@@ -3121,6 +3121,7 @@
   (org-link-set-parameters "zotero" :follow #'my-org-zotero-open)
   )
 
+;; --- AI LLM ---
 (straight-use-package 'ellama)
 (straight-use-package 'gptel)
 (straight-use-package 'chatgpt-shell)
