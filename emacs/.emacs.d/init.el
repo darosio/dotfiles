@@ -1080,48 +1080,6 @@
     ;; #'guess-language-switch-function)
     )
 
-  (use-package apheleia
-    :demand t
-    :commands apheleia-global-mode
-    :preface
-    ;; https://blog.chmouel.com/2016/09/07/dealing-with-yaml-in-emacs/
-    (defun aj-toggle-fold ()
-      "Toggle fold all lines larger than indentation on current line"
-      (interactive)
-      (let ((col 1))
-        (save-excursion
-          (back-to-indentation)
-          (setq col (+ 1 (current-column)))
-          (set-selective-display
-           (if selective-display nil (or col 1))))))
-    :bind ("C-<tab>" . aj-toggle-fold)
-    :init (apheleia-global-mode +1)
-    :config
-    ;; Use json.tool for JSON files [python] (lsp: json-ls) extra/vscode-json-languageserver
-    (add-to-list 'apheleia-mode-alist '(json-mode . python3-json))
-    ;; Use yamlfmt for YAML files [yamlfmt] (lsp: yamlls) extra/yaml-language-server
-    (add-to-list 'apheleia-formatters '(yamlfmt "yamlfmt" "-in"))
-    (add-to-list 'apheleia-mode-alist '(yaml-mode . yamlfmt))
-    ;; Use mdformat for MARKDOWN files [mdformat] (lsp: marksman) can be a dev dep
-    (add-to-list 'apheleia-formatters '(mdformat "mdformat" "-"))
-    (add-to-list 'apheleia-mode-alist '(markdown-mode . mdformat))
-    ;; Add the taplo for TOML files [taplo-cli] taplo-cli include lsp
-    (add-to-list 'apheleia-formatters '(taplo "taplo" "fmt")) ; Call 'taplo fmt' executable
-    (add-to-list 'apheleia-mode-alist '(toml-mode . taplo)) ; Link toml-mode to taplo formatter
-    ;; Add the shfmt for sh files [shfmt] (lsp: bash-language-server)
-    (add-to-list 'apheleia-mode-alist '(sh-mode . shfmt)) ; Link toml-mode to taplo formatter
-
-    ;; Replace default (black) to use ruff for sorting import and formatting.
-    (setf (alist-get 'python-mode apheleia-mode-alist)
-          '(ruff-isort ruff))
-    (setf (alist-get 'python-ts-mode apheleia-mode-alist)
-          '(ruff-isort ruff))
-    (add-to-list 'apheleia-inhibit-functions
-                 (lambda ()
-                   (and buffer-file-name
-                        (string-match-p "\\.ipynb\\'" buffer-file-name)))) ; This function checks the file extension
-    )
-
   (use-package langtool
     :commands (langtool-goto-previous-error
                langtool-goto-next-error
@@ -1150,17 +1108,18 @@
           langtool-mother-tongue "it"
           langtool-default-language "en-US"))
 
-
   (use-package sdcv
     :bind
     ("<f7> S" . sdcv-search-pointer)
     (:map sdcv-mode-map
           ("n" . sdcv-next-dictionary)
           ("p" . sdcv-previous-dictionary)))
+
   (use-package wordnut
     :bind
     ("<f7> w" . wordnut-lookup-current-word)
     ("<f7> W" . wordnut-search))
+
   (use-package powerthesaurus
     :bind
     ("<f7> p 0" . powerthesaurus-lookup-dwim)
@@ -1174,11 +1133,13 @@
     :bind
     ("<f7> i" . academic-phrases-by-section)
     ("<f7> I" . academic-phrases))
+
   (use-package writegood-mode
     :bind
     ("<f7> g" . writegood-mode)
     ("<f7> Gl" . writegood-grade-level)
     ("<f7> Gr" . writegood-reading-ease))
+
   (use-package typo
     :bind ("C-c t t" . typo-mode)
     :commands typo-global-mode
@@ -1186,7 +1147,6 @@
     :hook
     (org-mode-hook . (lambda () (typo-mode -1)))
     (text-mode-hook . typo-mode))
-
 
   (use-package google-translate
     :defines google-translate-translation-directions-alist
@@ -2435,6 +2395,7 @@
     (setq holiday-hebrew-holidays nil)
     (setq holiday-islamic-holidays nil)
     )
+
   (use-package org-gcal
     :bind
     ("C-c G p" . org-gcal-post-at-point) ; (add-hook 'org-capture-before-finalize-hook)
@@ -2459,6 +2420,7 @@
 
   )
 (progn                                  ; org-roam and notes
+
   (use-package org-roam
     :after org
     :demand 2
@@ -2581,8 +2543,10 @@
     ("C-c n b" . consult-org-roam-backlinks)
     ("C-c n l" . consult-org-roam-forward-links)
     ("C-c n r" . consult-org-roam-search))
+
   )
 (progn ;; Bibliography
+
   (use-package bibtex
     :bind (:map bibtex-mode-map
                 ("<backtab>" . hs-toggle-hiding)
@@ -2605,6 +2569,7 @@
           bibtex-autokey-titleword-case-convert-function 'capitalize
           bibtex-autokey-titleword-length 9) ;; Bibtex key format
     )
+
   (defvar completion-bibliography
     '("~/Sync/biblio/main.bib"
       "~/Sync/biblio/MY.bib"
@@ -2669,10 +2634,12 @@
     (setq citar-symbol-separator "  ")
     )
   ;; https://github.com/bdarcus/citar/wiki/Notes-configuration
+
   (use-package citar-org-roam
     :after (citar org-roam)
     :commands (citar-org-roam-mode)
     :config (citar-org-roam-mode))
+
   (use-package citar-embark
     :after (citar embark)
     :commands (citar-embark-mode)
@@ -2688,10 +2655,14 @@
             (latex biblatex)
             (t csl)))
     )
+
   (use-package oc-biblatex :straight org :after oc)
+
   (use-package oc-csl :straight org :after (oc)
     :init (setq org-cite-csl-styles-dir "~/Zotero/styles"))
+
   (use-package oc-natbib :straight org :after oc)
+
   (unless (getenv "CI")
 
     (use-package pdf-tools
@@ -2770,7 +2741,7 @@
          (let ((org-noter-insert-note-no-questions (if toggle-no-questions
                                                        (not org-noter-insert-note-no-questions)
                                                      org-noter-insert-note-no-questions))
-               (org-pdftools-use-isearch-link t)
+               ;; (org-pdftools-use-isearch-link t)
                ;; (org-pdftools-use-freestyle-annot t)
                )
            (org-noter-insert-note (org-noter--get-precise-info)))))
@@ -2793,6 +2764,7 @@
       (with-eval-after-load 'pdf-annot
         (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note)))
     )
+
   (declare-function keymap-set "compat-29")
   (use-package engine-mode
     :commands (engine/set-keymap-prefix
@@ -2861,6 +2833,7 @@
     )
   )
 (progn                                  ; Magit
+
   (use-package magit
     :bind
     ("C-c g g" . magit-status)
@@ -2876,6 +2849,7 @@
                                          ("~/Sync" . 9)))
     :config
     (setq magit-display-buffer-function 'magit-display-buffer-fullframe-status-v1))
+
   (use-package magit-todos
     :after (magit)
     :bind
@@ -2886,22 +2860,30 @@
     :config
     (add-to-list 'magit-todos-keywords-list "MAYBE")
     (add-to-list 'magit-todos-keywords-list "XXX"))
+
   ;; (use-package magit-annex)
+
   (use-package git-modes)
+
   (use-package gitignore-templates)
+
   (use-package browse-at-remote
     :bind ("C-c g b" . bar-browse))
+
   (use-package git-messenger
     :bind ("C-c g m" . git-messenger:popup-message))
+
   (use-package git-timemachine
     ;; :straight (:type git :repo "https://codeberg.org/pidu/git-timemachine")
     :bind
     ("C-c g t" . git-timemachine)
     ("C-c g T" . git-timemachine-toggle))
+
   (use-package diff-hl
     :commands global-diff-hl-mode
     :hook (magit-post-refresh-hook . diff-hl-magit-post-refresh)
     :config (global-diff-hl-mode))
+
   )
 
 ;; --- Project ---
@@ -2912,6 +2894,65 @@
 (use-package consult-project-extra
   :bind
   ("C-c p" . consult-project-extra-find))
+(use-package apheleia
+  :demand t
+  :commands apheleia-global-mode
+  :preface
+  ;; https://blog.chmouel.com/2016/09/07/dealing-with-yaml-in-emacs/
+  (defun aj-toggle-fold ()
+    "Toggle fold all lines larger than indentation on current line"
+    (interactive)
+    (let ((col 1))
+      (save-excursion
+        (back-to-indentation)
+        (setq col (+ 1 (current-column)))
+        (set-selective-display
+         (if selective-display nil (or col 1))))))
+  :bind ("C-<tab>" . aj-toggle-fold)
+  :init (apheleia-global-mode +1)
+  :config
+  ;; Use json.tool for JSON files [python] (lsp: json-ls) extra/vscode-json-languageserver
+  (add-to-list 'apheleia-mode-alist '(json-mode . python3-json))
+  ;; Use yamlfmt for YAML files [yamlfmt] (lsp: yamlls) extra/yaml-language-server
+  (add-to-list 'apheleia-formatters '(yamlfmt "yamlfmt" "-in"))
+  (add-to-list 'apheleia-mode-alist '(yaml-mode . yamlfmt))
+  ;; Use mdformat for MARKDOWN files [mdformat] (lsp: marksman) can be a dev dep
+  (add-to-list 'apheleia-formatters '(mdformat "mdformat" "-"))
+  (add-to-list 'apheleia-mode-alist '(markdown-mode . mdformat))
+  ;; Add the taplo for TOML files [taplo-cli] taplo-cli include lsp
+  (add-to-list 'apheleia-formatters '(taplo "taplo" "fmt")) ; Call 'taplo fmt' executable
+  (add-to-list 'apheleia-mode-alist '(toml-mode . taplo)) ; Link toml-mode to taplo formatter
+  ;; Add the shfmt for sh files [shfmt] (lsp: bash-language-server)
+  (add-to-list 'apheleia-mode-alist '(sh-mode . shfmt)) ; Link toml-mode to taplo formatter
+
+  ;; Replace default (black) to use ruff for sorting import and formatting.
+  (setf (alist-get 'python-mode apheleia-mode-alist)
+        '(ruff-isort ruff))
+  (setf (alist-get 'python-ts-mode apheleia-mode-alist)
+        '(ruff-isort ruff))
+  (add-to-list 'apheleia-inhibit-functions
+               (lambda ()
+                 (and buffer-file-name
+                      (string-match-p "\\.ipynb\\'" buffer-file-name)))) ; This function checks the file extension
+  )
+(use-package eglot
+  :straight (:type built-in)
+  :hook
+  (prog-mode-hook . eglot-ensure)
+  (yaml-mode-hook . eglot-ensure)
+  (markdown-mode-hook . eglot-ensure)
+  (toml-mode-hook . eglot-ensure)
+  :custom
+  (eglot-autoshutdown t)
+  (eglot-send-changes-idle-time 0.2)
+  :config
+  ;; (add-to-list 'eglot-server-programs '(python-mode . ("ruff" "server")))
+  (add-to-list 'eglot-server-programs '((toml-mode) "taplo" "lsp" "stdio"))
+  :bind (:map
+         eglot-mode-map
+         ("C-c r a" . eglot-code-actions)
+         ("C-c r r" . eglot-rename)
+         ("C-c r f" . eglot-format)))
 
 ;; --- Additional modes ---
 (straight-use-package 'markdown-mode)
@@ -2967,26 +3008,6 @@
                 ("C-c T" . python-pytest-dispatch)
                 ("<f8>"  . python-pytest-dispatch)))
 
-  ;; eglot for LSP (built-in in Emacs 29+)
-  (use-package eglot
-    :straight (:type built-in)
-    :hook
-    (prog-mode-hook . eglot-ensure)
-    (yaml-mode-hook . eglot-ensure)
-    (markdown-mode-hook . eglot-ensure)
-    (toml-mode-hook . eglot-ensure)
-    :custom
-    (eglot-autoshutdown t)
-    (eglot-send-changes-idle-time 0.2)
-    :config
-    ;; (add-to-list 'eglot-server-programs '(python-mode . ("ruff" "server")))
-    (add-to-list 'eglot-server-programs '((toml-mode) "taplo" "lsp" "stdio"))
-    :bind (:map
-           eglot-mode-map
-           ("C-c r a" . eglot-code-actions)
-           ("C-c r r" . eglot-rename)
-           ("C-c r f" . eglot-format)))
-
   ;; Optionally, for REPL-driven workflows
   ;; (use-package eval-in-repl
   ;;   :after (python)
@@ -3002,12 +3023,14 @@
   ;; :custom-face (variable-pitch ((t (:family "URW Bookman" :height 1.1))))
   :hook (nov-mode-hook . visual-fill-column-mode)
   :config (setq nov-text-width t))
+
 (use-package keyfreq
   :commands (keyfreq-mode
              keyfreq-autosave-mode)
   :config
   (keyfreq-mode 1)
   (keyfreq-autosave-mode 1))
+
 (use-package calibredb
   :commands calibredb
   ;; ripgrep-all (rga)
@@ -3039,7 +3062,6 @@
 (straight-use-package 'gptel)
 (straight-use-package 'chatgpt-shell)
 (require 'my-ai)
-
 
 (setq debug-on-error nil)
 (setq debug-on-quit nil)
