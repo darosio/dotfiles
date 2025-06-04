@@ -45,7 +45,8 @@
 ;; Use 'setq-default' instead of custom-set or setq to set variables
 (setq-default straight-vc-git-default-clone-depth 'full) ;1
 (setq-default straight-recipes-gnu-elpa-use-mirror t)
-;; Bootstrap straight.el
+
+;; *** 1. Straight Bootstrap ***
 (defvar bootstrap-version)
 (let ((bootstrap-file
        (expand-file-name
@@ -62,6 +63,7 @@
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
+;; *** 2. Straight Configuration ***
 ;; Declare straight.el variables to silence Flymake warnings
 (eval-when-compile
   (defvar straight-use-package-by-default)
@@ -70,13 +72,17 @@
   (declare-function straight-use-package "straight.el"))
 ;; Enable straight.el for all use-package calls by default
 (setq straight-use-package-by-default t)
-;; Install org built-in via straight to shadow Emacs's version (good practice)
-(straight-use-package 'org)
+;; (straight-use-package 'org)
 ;; Enable autoload caching and modification checks for straight.el
 (setq straight-cache-autoloads t
       straight-check-for-modifications '(check-on-startup find-when-checking))
 
-;; Use-package configuration
+;; *** 3. Crucial fix for the recognition of Use-Package Keywords ***
+;; = nil t = as arguments means: not generating error if not found, and not recharging if already loaded.
+(eval-when-compile
+  (require 'use-package nil t))
+
+;; *** 4. Use-package configuration ***
 (use-package use-package
   :straight t ; Ensure use-package itself is managed by straight
   :init
@@ -89,10 +95,14 @@
         use-package-verbose t
         use-package-enable-imenu-support t))
 
+;; *** 5. Load first packages ***
 ;; Prevent using the built-in transient https://github.com/magit/magit/discussions/4997
+(use-package org)
 ;; This often gets fixed by `:straight t` which fetches the latest version.
-(use-package magit
-  :straight t)
+;; Install org built-in via straight to shadow Emacs's version (good practice)
+(use-package magit)
+;; (use-package magit
+;;   :straight t)
 
 (progn                                  ; UI base setting
   (use-package bookmark
@@ -399,6 +409,7 @@
 (progn ;; single packages
 
   (use-package unfill
+    :ensure t
     :bind ("C-c M-q" . unfill-toggle))
 
   (use-package aggressive-indent
@@ -437,7 +448,7 @@
     :bind (("C-c v" . visual-fill-column-mode)
            ("<f12>" . no-distraction-enable)
            ("<C-f12>" . no-distraction-disable))
-    :init
+    :config
     (setq visual-fill-column-center-text t
           visual-fill-column-width 98
           visual-fill-column-fringes-outside-margins nil
@@ -445,7 +456,6 @@
           visual-line-fringe-indicators '(bottom-left-angle top-right-angle)
           ;; allow splitting windows with wide margins
           split-window-preferred-function #'visual-fill-column-split-window-sensibly)
-    :config
     ;; adjust margins upon text resize
     (advice-add 'text-scale-adjust :after #'visual-fill-column-adjust)
     :hook
@@ -533,10 +543,11 @@
 
   (use-package smartparens
     :commands smartparens-global-mode
-    :init
-    (setq sp-highlight-pair-overlay nil
-          sp-highlight-wrap-overlay nil
-          sp-highlight-wrap-tag-overlay nil)
+    :defines (sp-no-reindent-after-kill-modes smartparens-mode-map)
+    ;; :init
+    ;; (setq sp-highlight-pair-overlay nil
+    ;;       sp-highlight-wrap-overlay nil
+    ;;       sp-highlight-wrap-tag-overlay nil)
     :bind (:map smartparens-mode-map
                 ("<C-backspace>" . sp-backward-kill-sexp)
                 ("C-M-s-b" . sp-backward-sexp)
@@ -629,6 +640,9 @@
 (progn ;; transient and hl-todo
 
   (use-package transient
+    :commands (transient-define-prefix
+                transient-prefix
+                transient-setup)
     :bind ("<f5>" . my-global-transient)
     :config
     (transient-define-prefix my-global-transient ()
@@ -641,7 +655,7 @@
         ("k" "Kill" kill-buffer)]]))
 
   (use-package hl-todo
-    :bind (("C-c 2" . my-hl-todo-transient))
+    :defines hl-todo-keyword-faces
     :after transient
     :config
     (transient-define-prefix my-hl-todo-transient ()
@@ -655,17 +669,15 @@
     (add-to-list 'hl-todo-keyword-faces '("MAYBE:" . "#80CCCC"))
     (add-to-list 'hl-todo-keyword-faces '("XXX:" . "#ff8c00"))
     (add-to-list 'hl-todo-keyword-faces '("TODO:" . "#dc143c"))
-    (add-to-list 'hl-todo-keyword-faces '("FIXME:" . "#4e9393")))
+    (add-to-list 'hl-todo-keyword-faces '("FIXME:" . "#4e9393"))
+    :bind (("M-g 2" . my-hl-todo-transient)))
+
   )
 (progn                                  ; Completion: vertico.
 
-  ;; Enable Vertico.
   (use-package vertico
     :commands vertico-mode
-    :custom
-    (vertico-count 20) ;; Show more candidates
-    (vertico-resize t) ;; Grow and shrink the Vertico minibuffer
-    (vertico-cycle t) ;; Enable cycling for `vertico-next/previous'
+    :defines vertico-map
     :init
     (vertico-mode)
     :config
@@ -676,7 +688,12 @@
                 ;; ("<M-RET>" . minibuffer-force-complete-and-exit)
                 ;; ("M-<tab>" . minibuffer-complete)
                 ("C-S-n" . vertico-next-group)
-                ("C-S-p" . vertico-previous-group)))
+                ("C-S-p" . vertico-previous-group))
+    :custom
+    (vertico-count 20)
+    (vertico-resize t)
+    (vertico-cycle t))
+
   (use-package vertico-repeat
     :straight vertico
     :hook
@@ -760,9 +777,22 @@
 
   (use-package consult
     :defines (xref-show-definitions-function
-              xref-show-xrefs-function)
+              xref-show-xrefs-function
+              consult-theme
+              consult-ripgrep
+              consult-git-grep
+              consult-org-agenda
+              consult-bookmark
+              consult-recent-file
+              consult-xref
+              consult--source-recent-file
+              consult--source-project-recent-file
+              consult--source-bookmark
+              consult-ripgrep-args
+              consult-narrow-key)
     :commands (consult--customize-put
                consult--customize-set
+               consult-customize
                consult-completion-in-region
                consult-register-window
                consult-xref)
@@ -848,6 +878,7 @@
                embark-completing-read-prompter)
     :functions (which-key--hide-popup-ignore-command
                 which-key--show-keymap)
+    :defines embark-quit-after-action
     :bind (("C-." . embark-act)
            ("C-|" . embark-dwim)
            ("C-h B" . embark-bindings) ;; alternative for `describe-bindings'
@@ -971,20 +1002,20 @@
   )
 
 (use-package yasnippet
-  :bind
-  (("M-g Y a" . yas-reload-all)
-   ("M-g Y n" . yas-new-snippet)
-   ("M-g Y v" . yas-visit-snippet-file)
-   ("C-c t y" . yas-minor-mode))
-  :init
-  (which-key-add-key-based-replacements "M-g Y" "Yasnippet")
-  :hook
-  ((prog-mode org-mode message-mode markdown-mode) . yas-minor-mode)
+  :defines (yas-snippet-dirs
+            yas-triggers-in-field
+            yas-wrap-around-region)
+  :init (which-key-add-key-based-replacements "M-g Y" "Yasnippet")
   :config
   (setq yas-snippet-dirs '("~/.emacs.d/yasnippets")
         yas-triggers-in-field t
         yas-wrap-around-region t)
-  (add-to-list 'hippie-expand-try-functions-list 'yas-hippie-try-expand))
+  (add-to-list 'hippie-expand-try-functions-list 'yas-hippie-try-expand)
+  :bind (("M-g Y a" . yas-reload-all)
+         ("M-g Y n" . yas-new-snippet)
+         ("M-g Y v" . yas-visit-snippet-file)
+         ("C-c t y" . yas-minor-mode))
+  :hook ((prog-mode org-mode message-mode markdown-mode) . yas-minor-mode))
 
 (use-package yasnippet-snippets
   :after yasnippet)
@@ -1351,6 +1382,9 @@
     :after org
     :demand 2
     :commands (org-roam-db-autosync-mode)
+    :defines (org-roam-mode-map
+              org-roam-node-display-template
+              org-roam-completion-everywhere)
     :init
     ;; Help keep the `org-roam-buffer', toggled via `org-roam-buffer-toggle', sticky.
     (add-to-list 'display-buffer-alist
@@ -1410,6 +1444,13 @@
           org-roam-ui-open-on-start t))
 
   (use-package deft
+    :defines (deft-directory
+              deft-recursive
+              deft-use-filename-as-title
+              deft-file-naming-rules
+              deft-extensions
+              deft-default-extension
+              deft-use-filter-string-for-filename)
     :bind
     ("M-s C-n" . deft)
     :config
@@ -1444,12 +1485,22 @@
     )
 
   (use-package consult-org-roam
-    :commands consult-org-roam-mode
     :after org-roam
+    :commands consult-org-roam-mode
+    :defines consult-org-roam-forward-links
     :init
     (require 'consult-org-roam)
     ;; Activate the minor mode
     (consult-org-roam-mode 1)
+    :config
+    ;; Eventually suppress previewing for certain functions
+    (consult-customize consult-org-roam-forward-links :preview-key (kbd "M-."))
+    :bind
+    ;; Define some convenient keybindings as an addition
+    ("C-c n R" . consult-org-roam-file-find)
+    ("C-c n b" . consult-org-roam-backlinks)
+    ("C-c n l" . consult-org-roam-forward-links)
+    ("C-c n r" . consult-org-roam-search)
     :custom
     ;; Use `ripgrep' for searching with `consult-org-roam-search'
     (consult-org-roam-grep-func #'consult-ripgrep)
@@ -1457,18 +1508,7 @@
     (consult-org-roam-buffer-narrow-key ?r)
     ;; Display org-roam buffers right after non-org-roam buffers
     ;; in consult-buffer (and not down at the bottom)
-    (consult-org-roam-buffer-after-buffers t)
-    :config
-    ;; Eventually suppress previewing for certain functions
-    (consult-customize
-     consult-org-roam-forward-links
-     :preview-key (kbd "M-."))
-    :bind
-    ;; Define some convenient keybindings as an addition
-    ("C-c n R" . consult-org-roam-file-find)
-    ("C-c n b" . consult-org-roam-backlinks)
-    ("C-c n l" . consult-org-roam-forward-links)
-    ("C-c n r" . consult-org-roam-search))
+    (consult-org-roam-buffer-after-buffers t))
 
   )
 (progn ;; Bibliography
@@ -1516,6 +1556,9 @@
            :map minibuffer-local-map
            ("M-b" . citar-insert-preset))
     ;; ;; https://github.com/bdarcus/citar/wiki/Notes-configuration
+    :defines (citar-templates
+              citar-notes-source
+              citar-symbol-separator)
     :custom
     (org-cite-global-bibliography completion-bibliography)
     (citar-bibliography completion-bibliography)
@@ -1594,6 +1637,9 @@
     (use-package pdf-tools
       :demand is-daemon
       :functions pdf-loader-install
+      :defines (pdf-view-mode-map
+                pdf-view-resize-factor
+                pdf-view-use-scaling)
       :bind (:map pdf-view-mode-map
                   ("C-s" . isearch-forward)
                   ("/" . pdf-occur)
@@ -1649,46 +1695,57 @@
     (use-package org-pdftools
       :hook (org-mode . org-pdftools-setup-link))
 
-    (use-package org-noter-pdftools
-      :after (org-noter)
-      :commands (org-noter-pdftools-jump-to-note)
-      :hook
-      (org-noter-doc-mode . (lambda () (require 'org-noter-pdftools)))
-      (org-noter-notes-mode . (lambda () (require 'org-noter-pdftools)))
-      :bind (:map org-noter-notes-mode-map
-                  ("C-H-k" . org-noter-pdftools-create-skeleton)
-                  :map org-noter-doc-mode-map
-                  ("C-H-k" . org-noter-pdftools-create-skeleton))
-      :config
-      ;; Add a function to ensure precise note is inserted
-      (defun org-noter-pdftools-insert-precise-note (&optional toggle-no-questions)
-        (interactive "P")
-        (org-noter--with-valid-session
-         (let ((org-noter-insert-note-no-questions (if toggle-no-questions
-                                                       (not org-noter-insert-note-no-questions)
-                                                     org-noter-insert-note-no-questions))
-               ;; (org-pdftools-use-isearch-link t)
-               ;; (org-pdftools-use-freestyle-annot t)
-               )
-           (org-noter-insert-note (org-noter--get-precise-info)))))
-      ;; fix https://github.com/weirdNox/org-noter/pull/93/commits/f8349ae7575e599f375de1be6be2d0d5de4e6cbf
-      (defun org-noter-set-start-location (&optional arg)
-        "When opening a session with this document, go to the current location.
-  With a prefix ARG, remove start location."
-        (interactive "P")
-        (org-noter--with-valid-session
-         (let ((inhibit-read-only t)
-               (ast (org-noter--parse-root))
-               (location (org-noter--doc-approx-location (when (called-interactively-p 'any) 'interactive))))
-           (with-current-buffer (org-noter--session-notes-buffer session)
-             (org-with-wide-buffer
-              (goto-char (org-element-property :begin ast))
-              (if arg
-                  (org-entry-delete nil org-noter-property-note-location)
-                (org-entry-put nil org-noter-property-note-location
-                               (org-noter--pretty-print-location location))))))))
-      (with-eval-after-load 'pdf-annot
-        (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note)))
+    ;;   (use-package org-noter-pdftools
+    ;;     :after (org-noter)
+    ;;     :requires org
+    ;;     :commands (org-noter-pdftools-jump-to-note)
+    ;;     :defines (org-noter-notes-mode-map
+    ;;               org-noter-doc-mode-map
+    ;;               org-noter-insert-note-no-questions)
+    ;;     :functions (org-noter--with-valid-session
+    ;;                 org-noter-insert-note
+    ;;                 org-noter--get-precise-info
+    ;;                 org-noter--parse-root
+    ;;                 org-noter--doc-approx-location
+    ;;                 org-noter--session-notes-buffer
+    ;;                 )
+    ;;     :hook
+    ;;     (org-noter-doc-mode . (lambda () (require 'org-noter-pdftools)))
+    ;;     (org-noter-notes-mode . (lambda () (require 'org-noter-pdftools)))
+    ;;     :bind (:map org-noter-notes-mode-map
+    ;;                 ("C-H-k" . org-noter-pdftools-create-skeleton)
+    ;;                 :map org-noter-doc-mode-map
+    ;;                 ("C-H-k" . org-noter-pdftools-create-skeleton))
+    ;;     :config
+    ;;     ;; Add a function to ensure precise note is inserted
+    ;;     (defun org-noter-pdftools-insert-precise-note (&optional toggle-no-questions)
+    ;;       (interactive "P")
+    ;;       (org-noter--with-valid-session
+    ;;        (let ((org-noter-insert-note-no-questions (if toggle-no-questions
+    ;;                                                      (not org-noter-insert-note-no-questions)
+    ;;                                                    org-noter-insert-note-no-questions))
+    ;;              ;; (org-pdftools-use-isearch-link t)
+    ;;              ;; (org-pdftools-use-freestyle-annot t)
+    ;;              )
+    ;;          (org-noter-insert-note (org-noter--get-precise-info)))))
+    ;;     ;; fix https://github.com/weirdNox/org-noter/pull/93/commits/f8349ae7575e599f375de1be6be2d0d5de4e6cbf
+    ;;     (defun org-noter-set-start-location (&optional arg)
+    ;;       "When opening a session with this document, go to the current location.
+    ;; With a prefix ARG, remove start location."
+    ;;       (interactive "P")
+    ;;       (org-noter--with-valid-session
+    ;;        (let ((inhibit-read-only t)
+    ;;              (ast (org-noter--parse-root))
+    ;;              (location (org-noter--doc-approx-location (when (called-interactively-p 'any) 'interactive))))
+    ;;          (with-current-buffer (org-noter--session-notes-buffer session)
+    ;;            (org-with-wide-buffer
+    ;;             (goto-char (org-element-property :begin ast))
+    ;;             (if arg
+    ;;                 (org-entry-delete nil org-noter-property-note-location)
+    ;;               (org-entry-put nil org-noter-property-note-location
+    ;;                              (org-noter--pretty-print-location location))))))))
+    ;;     (with-eval-after-load 'pdf-annot
+    ;;       (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note)))
     )
 
   (declare-function keymap-set "compat-29")
@@ -1697,22 +1754,38 @@
                engine/get-query
                engine/execute-search
                engine-mode)
+    :functions defengine
+    :defines (1-amazon
+              2-duckduckgo
+              3-github
+              4-google
+              google-images
+              google-maps
+              project-gutenberg
+              5-qwant
+              stack-overflow
+              6-twitter
+              7-wikipedia
+              8-wiktionary
+              wolfram-alpha
+              Cambridge-dict-pronunciation
+              9-youtube)
     :init
     (engine-mode t)
     (engine/set-keymap-prefix (kbd "M-s M-/"))
     :config
-    (defengine amazon
+    (defengine 1-amazon
       "http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=%s"
       :keybinding "z"
       )
-    (defengine duckduckgo
+    (defengine 2-duckduckgo
       "https://duckduckgo.com/?q=%s"
       ;; :browser 'eww-browse-url
       :keybinding "d")
-    (defengine github
+    (defengine 3-github
       "https://github.com/search?ref=simplesearch&q=%s"
       :keybinding "h")
-    (defengine google
+    (defengine 4-google
       "http://www.google.com/search?ie=utf-8&oe=utf-8&q=%s"
       :keybinding "g")
     (defengine google-images
@@ -1725,20 +1798,20 @@
     (defengine project-gutenberg
       "http://www.gutenberg.org/ebooks/search/?query=%s"
       :keybinding "u")
-    (defengine qwant
+    (defengine 5-qwant
       "https://www.qwant.com/?q=%s"
       :keybinding "q")
     (defengine stack-overflow
       "https://stackoverflow.com/search?q=%s"
       :keybinding "o")
-    (defengine twitter
+    (defengine 6-twitter
       "https://twitter.com/search?q=%s"
       :keybinding "t")
-    (defengine wikipedia
+    (defengine 7-wikipedia
       "http://www.wikipedia.org/search-redirect.php?language=en&go=Go&search=%s"
       :keybinding "w"
       :docstring "Searching' the wikis.")
-    (defengine wiktionary
+    (defengine 8-wiktionary
       "https://www.wikipedia.org/search-redirect.php?family=wiktionary&language=en&go=Go&search=%s"
       :keybinding "k")
     (defengine wolfram-alpha
@@ -1747,20 +1820,25 @@
     (defengine Cambridge-dict-pronunciation
       "https://dictionary.cambridge.org/us/pronunciation/english/%s"
       :keybinding "p")
-    (defengine youtube
+    (defengine 9-youtube
       "http://www.youtube.com/results?aq=f&oq=&search_query=%s"
       :keybinding "y"))
 
   (use-package gscholar-bibtex
+    :defines (gscholar-bibtex-default-source
+              gscholar-bibtex-database-file)
     :bind ("M-s C-b" . gscholar-bibtex)
     :config
-    (setq gscholar-bibtex-default-source "Google Scholar")
-    (setq gscholar-bibtex-database-file "/home/dan/Sync/biblio/biblio.bib")
-    )
+    (setq gscholar-bibtex-default-source "Google Scholar"
+          gscholar-bibtex-database-file "/home/dan/Sync/biblio/biblio.bib"))
+
   )
 (progn                                  ; Magit
 
   (use-package magit
+    :defines (magit-repository-directories
+              magit-display-buffer-function
+              magit-display-buffer-function)
     :bind
     ("C-c g g" . magit-status)
     ("C-c g f" . magit-find-file-other-window)
@@ -1778,6 +1856,7 @@
 
   (use-package magit-todos
     :after (magit)
+    :defines magit-todos-keywords-list
     :bind
     ("C-c g 2" . magit-todos-list)
     ("C-c g 3" . magit-todos-mode)
@@ -1823,6 +1902,9 @@
 (use-package apheleia
   :demand t
   :commands apheleia-global-mode
+  :defines (apheleia-mode-alist
+            apheleia-formatters
+            apheleia-inhibit-functions)
   :preface
   ;; https://blog.chmouel.com/2016/09/07/dealing-with-yaml-in-emacs/
   (defun aj-toggle-fold ()
@@ -1936,6 +2018,7 @@
     (envrc-global-mode))
 
   (use-package numpydoc
+    :defines (python-mode-map numpydoc-insertion-style)
     :bind (:map python-mode-map
                 ("C-c C-N" . numpydoc-generate))
     :init
@@ -1957,6 +2040,7 @@
   )
 
 (use-package nov
+  :defines nov-text-width
   :mode ("\\.epub\\'" . nov-mode)
   ;; :custom-face (variable-pitch ((t (:family "URW Bookman" :height 1.1))))
   :hook (nov-mode . visual-fill-column-mode)
@@ -1971,6 +2055,12 @@
 
 (use-package calibredb
   :commands calibredb
+  :defines (calibredb-root-dir
+            calibredb-db-dir
+            calibredb-library-alist
+            calibredb-size-show
+            calibredb-comment-width
+            calibredb-ref-default-bibliography)
   ;; ripgrep-all (rga)
   :config
   (setq calibredb-root-dir "~/Sync/media/books/")
