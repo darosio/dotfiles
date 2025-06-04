@@ -37,6 +37,9 @@
             is-daemon t)
       (setenv "EDITOR" "emacsclient -c -a=''")))
 
+(add-to-list 'load-path (expand-file-name "my-config" user-emacs-directory))
+;; Set Flymake's load-path to match load-path
+(setq elisp-flymake-byte-compile-load-path load-path)
 
 ;; --- Package Management (straight.el and use-package) ---
 ;; Use 'setq-default' instead of custom-set or setq to set variables
@@ -58,14 +61,21 @@
       (goto-char (point-max))
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
+
+;; Declare straight.el variables to silence Flymake warnings
+(eval-when-compile
+  (defvar straight-use-package-by-default)
+  (defvar straight-cache-autoloads)
+  (defvar straight-check-for-modifications)
+  (declare-function straight-use-package "straight.el"))
 ;; Enable straight.el for all use-package calls by default
-(require 'straight)
 (setq straight-use-package-by-default t)
 ;; Install org built-in via straight to shadow Emacs's version (good practice)
 (straight-use-package 'org)
 ;; Enable autoload caching and modification checks for straight.el
 (setq straight-cache-autoloads t
       straight-check-for-modifications '(check-on-startup find-when-checking))
+
 ;; Use-package configuration
 (use-package use-package
   :straight t ; Ensure use-package itself is managed by straight
@@ -83,8 +93,6 @@
 ;; This often gets fixed by `:straight t` which fetches the latest version.
 (use-package magit
   :straight t)
-
-(add-to-list 'load-path (expand-file-name "my-config" user-emacs-directory))
 
 (progn                                  ; UI base setting
   (use-package bookmark
@@ -422,7 +430,10 @@
 
   (use-package visual-fill-column
     :commands (visual-fill-column-split-window-sensibly
-               visual-fill-column-adjust) ;; although are functions
+               visual-fill-column-adjust)
+    :defines (visual-fill-column-center-text
+              visual-fill-column-width
+              visual-fill-column-fringes-outside-margins)
     :bind (("C-c v" . visual-fill-column-mode)
            ("<f12>" . no-distraction-enable)
            ("<C-f12>" . no-distraction-disable))
@@ -777,7 +788,7 @@
            ;; Other custom bindings
            ("M-y" . consult-yank-pop)                ;; orig. yank-pop
            ;; M-g bindings (goto-map)
-           ("M-g E" . consult-compile-error)
+           ("M-g e e" . consult-compile-error)
            ("M-g f" . consult-flymake)
            ("M-g M-g" . consult-goto-line)           ;; orig. goto-line
            ("M-g o" . consult-outline)
@@ -1853,7 +1864,7 @@
 (use-package eglot
   :straight (:type built-in)
   :hook
-  (prog-mode . eglot-ensure)
+  (prog-mode . (lambda () (unless (eq major-mode 'emacs-lisp-mode) (eglot-ensure))))
   (yaml-mode . eglot-ensure)
   (markdown-mode . eglot-ensure)
   (toml-mode . eglot-ensure)
@@ -1870,6 +1881,9 @@
          ("C-c r f" . eglot-format)))
 (use-package flymake
   :straight (:type built-in)
+  :bind
+  ("M-g e l" . flymake-show-buffer-diagnostics)
+  ("M-g e p" . flymake-show-project-diagnostics)
   :hook ((gitignore-mode . flymake-mode)
          (markdown-mode . flymake-mode)
          (prog-mode . flymake-mode)
