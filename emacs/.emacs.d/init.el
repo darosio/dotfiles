@@ -163,10 +163,10 @@
                   image-use-external-converter t ; 27.1 viewer don't display many png
                   indent-tabs-mode nil  ; use spaces instead of tabs for indentation
                   indicate-empty-lines t
-                  inhibit-startup-screen t
-                  kept-new-versions 6
-                  kept-old-versions 2
-                  major-mode 'text-mode
+                  inhibit-startup-screen t          ; Redundant with `inhibit-splash-screen` above
+                  kept-new-versions 6               ; Redundant with `files` package below
+                  kept-old-versions 2               ; Redundant with `files` package below
+                  major-mode 'text-mode             ; This sets default major mode for new buffers. Consider if truly desired.
                   mark-ring-max 64
                   read-process-output-max (* 1024 1024)
                   resize-mini-windows t
@@ -302,9 +302,11 @@
         (setq prot/window-configuration (current-window-configuration))
         (delete-other-windows)))
     :config
-    (setq window-sides-vertical nil)
-    :hook ((help-mode . visual-line-mode)
-           (Custom-mode . visual-line-mode))
+    ;; Set splitting behavior: horizontal splits preferred over vertical splits
+    (setq window-sides-vertical 120) ;nil
+    (setq split-height-threshold 100)
+    :hook ((help-mode-hook . visual-line-mode)    ;; Wrap lines nicely in help buffers
+           (Custom-mode-hook . visual-line-mode)) ;; Wrap lines in customize buffers
     :bind (("C-M-s-n" . next-buffer)
            ("C-M-s-p" . previous-buffer)
            ("C-M-s-o" . other-window)
@@ -319,9 +321,9 @@
            ("C-M-s-[" . shrink-window)
            ("C-M-s-]" . enlarge-window)
            ("C-M-s-=" . balance-windows-area)
-           ("C-M-s-m" . prot/window-single-toggle)
+           ("C-M-s-m" . prot/window-single-toggle) ;; toggle monocle mode
            ("C-M-s-s" . window-toggle-side-windows)
-           ("C-M-s-q" . delete-window)            ; emulate i3wm
+           ("C-M-s-q" . delete-window)              ;; emulate i3 window manager 'close window'
            ("C-M-s-<up>" . windmove-up)
            ("C-M-s-<left>" . windmove-left)
            ("C-M-s-<down>" . windmove-down)
@@ -398,13 +400,16 @@
   (use-package spacemacs-theme
     :defer t
     :init
-    (if (not (daemonp))
-        (load-theme 'spacemacs-light t)))
-  (use-package poet-theme)
+    (unless (daemonp)
+      (load-theme 'spacemacs-light t)))
+
+  (use-package poet-theme
+    :defer t) ; Defer loading until theme is explicitly loaded
+
   (use-package solarized-theme
     :init
-    (if (daemonp)
-        (load-theme 'solarized-selenized-dark t)))
+    (when (daemonp)
+      (load-theme 'solarized-selenized-dark t)))
   )
 (progn ;; single packages
 
@@ -517,7 +522,7 @@
            ("C-x T t" . tzc-convert-time-at-mark)
            ("C-x T w" . tzc-world-clock))
     :config
-    (setq tzc-favourite-time-zones '("Europe/Rome")))
+    (setq tzc-favourite-time-zones '("Europe/Rome" "America/New_York" "Asia/Tokyo"))) ; Added more for example
 
   (use-package doom-modeline
     :demand t
@@ -528,14 +533,11 @@
     :commands
     nerd-icons-install-fonts
     :init
-    (unless (file-exists-p "~/.local/share/fonts/NFM.ttf")
+    ;; Check for font existence more robustly
+    (unless (find-font (font-spec :family "Symbols Nerd Font Mono"))
       (nerd-icons-install-fonts))
     :custom
-    ;; The Nerd Font you want to use in GUI
-    ;; "Symbols Nerd Font Mono" is the default and is recommended
-    ;; but you can use any other Nerd Font if you want
-    (nerd-icons-font-family "Symbols Nerd Font Mono")
-    )
+    (nerd-icons-font-family "Symbols Nerd Font Mono"))
 
   (use-package minions
     :commands (minions-mode)
@@ -566,6 +568,7 @@
     (smartparens-global-mode 1)
     (advice-add 'sp-add-to-previous-sexp :after (lambda () (just-one-space)))
     (advice-add 'sp-add-to-previous-sexp :after (lambda () (sp-forward-sexp)))
+    ;; Use `add-to-list` for these
     (add-to-list 'sp-no-reindent-after-kill-modes 'haskell-cabal-mode)
     (add-to-list 'sp-no-reindent-after-kill-modes 'haskell-mode))
 
@@ -575,11 +578,10 @@
   (use-package hideshow ;; for folding
     :straight (:type built-in)
     :bind (("C-c t f" . hs-minor-mode)
-           (:map
-            prog-mode-map
-            ("<backtab>" . hs-toggle-hiding)
-            ("C-M-s-z" . hs-hide-all)
-            ("C-M-s-a" . hs-show-all)))
+           (:map prog-mode-map
+                 ("<backtab>" . hs-toggle-hiding)
+                 ("C-M-s-z" . hs-hide-all)
+                 ("C-M-s-a" . hs-show-all)))
     :config
     (setq hs-hide-comments-when-hiding-all nil)
     :hook (prog-mode . hs-minor-mode))
