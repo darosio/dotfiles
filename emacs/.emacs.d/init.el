@@ -637,41 +637,24 @@
   (use-package visual-regexp
     :bind ("C-c %" . vr/query-replace))
   )
-(progn ;; transient and hl-todo
-
-  (use-package transient
-    :commands (transient-define-prefix
-                transient-prefix
-                transient-setup)
-    :bind ("<f5>" . my-global-transient)
-    :config
-    (transient-define-prefix my-global-transient ()
-      "My Commands"
-      [["Files"
-        ("f" "Find file" find-file)
-        ("s" "Save" save-buffer)]
-       ["Buffers"
-        ("b" "Switch" switch-to-buffer)
-        ("k" "Kill" kill-buffer)]]))
+(progn ;; hl-todo
 
   (use-package hl-todo
     :defines hl-todo-keyword-faces
-    :after transient
+    :functions flymake-hl-todo
+    :init
+    (add-hook 'flymake-diagnostic-functions #'flymake-hl-todo nil 'local)
     :config
-    (transient-define-prefix my-hl-todo-transient ()
-      "HL-Todo Commands"
-      [["Navigation"
-        ("p" "Previous" hl-todo-previous)
-        ("n" "Next" hl-todo-next)]
-       ["Actions"
-        ("o" "Occur" hl-todo-occur)
-        ("i" "Insert" hl-todo-insert)]])
     (add-to-list 'hl-todo-keyword-faces '("MAYBE:" . "#80CCCC"))
     (add-to-list 'hl-todo-keyword-faces '("XXX:" . "#ff8c00"))
     (add-to-list 'hl-todo-keyword-faces '("TODO:" . "#dc143c"))
     (add-to-list 'hl-todo-keyword-faces '("FIXME:" . "#4e9393"))
-    :bind (("M-g 2" . my-hl-todo-transient)))
+    :bind (("M-g 2" . hl-todo-insert)))
 
+  (use-package consult-todo
+    :bind
+    ("M-g t" . consult-todo-all)
+    ("M-g T" . consult-todo-dir))
   )
 (progn                                  ; Completion: vertico.
 
@@ -801,7 +784,7 @@
            ("C-c f F" . consult-locate)
            ("C-c f z" . (lambda () (interactive)(cd "~/")(consult-find)))
            ("C-c f r" . consult-recent-file)
-           ("M-g T" . consult-theme)
+           ("M-s t" . consult-theme)
            ("M-g M" . consult-minor-mode-menu)
            ("C-c m" . consult-mode-command)
            ("C-c k" . consult-kmacro)
