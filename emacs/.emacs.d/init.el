@@ -8,6 +8,7 @@
 
 ;;; Commentary:
 ;; Binding keys reserved to user are: "C-c <letter>" and <F5> to <F9>.
+;; C-M-s is Hyper key
 
 ;;; Code:
 
@@ -289,6 +290,7 @@
     :bind (("C-M-s-n" . next-buffer)
            ("C-M-s-p" . previous-buffer)
            ("C-M-s-o" . other-window)
+           ("C-M-s-'" . window-swap-states)
            ("C-M-s-2" . split-window-below)
            ("C-M-s-3" . split-window-right)
            ("C-M-s-0" . delete-window)
@@ -449,6 +451,7 @@
       (visual-fill-column-mode -1)
       (text-scale-set 0)))
 
+
   (use-package crux
     :bind
     ("M-r" . crux-duplicate-current-line-or-region)
@@ -476,18 +479,8 @@
     ;;                         ,(expand-file-name "var/" user-emacs-directory)))
     :init (recentf-mode t))
 
-  (use-package ace-window
-    :demand t
-    :bind (("C-M-s-w" . ace-window)
-           ("C-'" . ace-select-window)
-           ("C-\"" . ace-swap-window))
-    :config
-    (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)
-          aw-scope 'global              ; 'frame
-          aw-dispatch-always nil))
-
   (use-package transpose-frame
-    :bind ("C-x M-e" . transpose-frame))
+    :bind ("C-M-s-\"" . transpose-frame))
 
   (use-package imenu-list               ; F9
     :bind (("<f9>" . imenu-list)
