@@ -476,7 +476,6 @@
       (visual-fill-column-mode -1)
       (text-scale-set 0)))
 
-
   (use-package crux
     :bind
     ("M-r" . crux-duplicate-current-line-or-region)
@@ -499,9 +498,6 @@
     (move-text-default-bindings))  ;; Binds M-<up>/<down> automatically
 
   (use-package recentf
-    ;; (setq recentf-exclude `(,(expand-file-name "straight/build/" user-emacs-directory)
-    ;;                         ,(expand-file-name "eln-cache/" user-emacs-directory)
-    ;;                         ,(expand-file-name "var/" user-emacs-directory)))
     :init (recentf-mode t))
 
   (use-package transpose-frame
@@ -624,9 +620,11 @@
            ("b" . dired-up-directory)
            ("M-<up>" . dired-up-directory)
            ("e" . mk-dired-open-external)))
+
   (use-package dired-x
     :straight nil
     :init (setq dired-clean-up-buffers-too t))
+
   (use-package wdired
     :after dired
     :init (setq wdired-allow-to-change-permissions t)

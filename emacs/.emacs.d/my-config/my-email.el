@@ -1,7 +1,7 @@
 ;;; my-email.el --- To manage emails -*- lexical-binding: t; -*-
 ;;
 ;;; Commentary:
-;; Binding keys:
+;; Binding keys: "C-x m"
 ;;; Code:
 
 (use-package mu4e                       ; mu4e
@@ -39,7 +39,6 @@
   (mu4e-compose-mode . (lambda ()
                          (my-mu4e-compose-mode-hook)
                          (replace-duck-emails-in-buffer)))
-  (mu4e-update-pre . mu4e-update-index-nonlazy)
 
   :bind (("M-g M-a m" . mu4e)
          ("C-x m" . mu4e)
@@ -51,21 +50,20 @@
          ("C-c o s" . message-goto-subject)
          ("C-c o t" . message-goto-to)
          :map mu4e-view-mode-map
-         ("f" . mu4e-headers-mark-for-flag)
          ("<tab>"     . org-next-link)    ; 'shr-next-link
          ("<backtab>" . org-previous-link)    ; 'shr-previous-link
          ("G"         . end-of-buffer)
          ("V"         . mu4e-view-verify-msg-popup)
          ("v"         . visual-fill-column-mode)
          ("C-c l" . org-store-link)         ; requires ol.el
+         ("f" . mu4e-view-mark-for-flag)
          :map mu4e-headers-mode-map
-         ("G"         . end-of-buffer)
+         ("G" . end-of-buffer)
          ("D" . "T d")
-         ("f"         . mu4e-headers-mark-for-flag))
+         ("f" . mu4e-headers-mark-for-flag))
 
   :config
   (setq mail-user-agent 'mu4e-user-agent
-        read-mail-command 'mu4e;; use mu4e as Default
         ;; mu4e-root-maildir (expand-file-name "~/Maildir")
         mu4e-get-mail-command "mbsync -a"
         mu4e-update-interval 50
@@ -86,12 +84,12 @@
         mu4e-context-policy 'pick-first ; start with the first (default) context;
         mu4e-search-include-related t
         mu4e-search-skip-duplicates nil
-        mu4e-compose-switch 'new-frame)
+        mu4e-compose-switch 'pop-up-frames)
 
   (auth-source-pass-enable)
-  (setq auth-source-debug t
-        auth-source-do-cache nil
-        auth-sources '(password-store))
+  (setq ;; auth-source-debug t
+   auth-source-do-cache nil
+   auth-sources '(password-store))
   (setq smtpmail-queue-mail  nil
         smtpmail-queue-dir   "~/Maildir/queue/cur") ; Remember to "mu mkdir" and "touch /queue/.noindex"
 
@@ -330,7 +328,7 @@
   ;; (message-send . org-mime-confirm-when-no-multipart)
   (mu4e-compose-mode . (lambda ()(require 'org-mime))) ; work w/out server
   :config
-  (setq org-mime-library 'semi
+  (setq org-mime-library 'mml
         org-mime-export-ascii 'utf-8
         org-mime-export-options '(
                                   :with-latex dvipng
@@ -340,5 +338,6 @@
 
 (use-package mu4e-jump-to-list
   :after mu4e)
+
 (provide 'my-email)
 ;;; my-email.el ends here
