@@ -526,7 +526,7 @@
 
   (use-package doom-modeline
     :demand t
-    :after nerd-icons
+    ;; :after nerd-icons
     :commands (doom-modeline-mode)
     :custom (doom-modeline-minor-modes t)
     :config (doom-modeline-mode 1))
@@ -1033,26 +1033,28 @@
 
 ;; --- Org ---
 (straight-use-package 'jupyter)
-(straight-use-package 'org)
-(straight-use-package 'ox-reveal)
+(straight-use-package 'ob-async)
 (straight-use-package 'ox-rst)
 (straight-use-package 'ox-pandoc)
 (straight-use-package 'ox-twbs)
 (straight-use-package 'auctex)
 (straight-use-package 'cdlatex)
-(straight-use-package 'ob-async)
+(straight-use-package 'ox-reveal)
+(require 'my-ob)
+(straight-use-package 'org)
 (straight-use-package 'org-autolist)
 (straight-use-package 'org-download)
 (straight-use-package 'org-cliplink)
-(straight-use-package 'org-preview-html)
-(straight-use-package 'org-gcal)
+(straight-use-package 'org-modern)
+(straight-use-package 'spacious-padding)
 (require 'my-org)
+(straight-use-package 'org-gcal)
+(require 'my-org-cal)
 
 (progn                                  ; org-roam and notes
 
   (use-package org-roam
     :after org
-    :demand 2
     :commands (org-roam-db-autosync-mode)
     :defines (org-roam-mode-map
               org-roam-node-display-template
@@ -1423,10 +1425,8 @@
   (declare-function keymap-set "compat-29")
   (use-package engine-mode
     :commands (engine/set-keymap-prefix
-               engine/get-query
-               engine/execute-search
                engine-mode)
-    :functions defengine
+    :functions (engine--execute-search engine--get-query defengine)
     :defines (1-amazon
               2-duckduckgo
               3-github
@@ -1681,7 +1681,7 @@
     (add-to-list 'python-shell-completion-native-disabled-interpreters "jupyter"))
 
   (use-package devdocs
-    :demand t
+    :after python
     :bind ("C-c D" . devdocs-lookup))
 
   (use-package envrc

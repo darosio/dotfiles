@@ -5,7 +5,6 @@
 ;;; Code:
 
 (use-package mu4e                       ; mu4e
-  :demand is-daemon
   :straight (:type built-in)            ; in AUR/mu
   :commands (mu4e mu4e-compose-new)
   :preface
