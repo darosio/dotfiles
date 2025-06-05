@@ -43,7 +43,7 @@
 
 ;; --- Package Management (straight.el and use-package) ---
 ;; Use 'setq-default' instead of custom-set or setq to set variables
-(setq-default straight-vc-git-default-clone-depth 'full) ;1
+(setq-default straight-vc-git-default-clone-depth '1) ;full
 (setq-default straight-recipes-gnu-elpa-use-mirror t)
 
 ;; *** 1. Straight Bootstrap ***
@@ -72,7 +72,6 @@
   (declare-function straight-use-package "straight.el"))
 ;; Enable straight.el for all use-package calls by default
 (setq straight-use-package-by-default t)
-;; (straight-use-package 'org)
 ;; Enable autoload caching and modification checks for straight.el
 (setq straight-cache-autoloads t
       straight-check-for-modifications '(check-on-startup find-when-checking))
@@ -524,23 +523,25 @@
     :config
     (setq tzc-favourite-time-zones '("Europe/Rome" "America/New_York" "Asia/Tokyo"))) ; Added more for example
 
-  (use-package doom-modeline
-    :demand t
-    :commands (doom-modeline-mode)
-    :custom (doom-modeline-minor-modes t)
-    :config (doom-modeline-mode 1))
   (use-package nerd-icons
-    :commands
-    nerd-icons-install-fonts
-    :init
+    :commands nerd-icons-install-fonts
+    :config
     ;; Check for font existence more robustly
     (unless (find-font (font-spec :family "Symbols Nerd Font Mono"))
       (nerd-icons-install-fonts))
     :custom
     (nerd-icons-font-family "Symbols Nerd Font Mono"))
 
+  (use-package doom-modeline
+    :demand t
+    :after nerd-icons
+    :commands (doom-modeline-mode)
+    :custom (doom-modeline-minor-modes t)
+    :config (doom-modeline-mode 1))
+
   (use-package minions
-    :commands (minions-mode)
+    :demand t
+    :commands minions-mode
     :init (minions-mode 1))
 
   (use-package smartparens
