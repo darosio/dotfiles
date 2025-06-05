@@ -162,10 +162,6 @@
                   image-use-external-converter t ; 27.1 viewer don't display many png
                   indent-tabs-mode nil  ; use spaces instead of tabs for indentation
                   indicate-empty-lines t
-                  inhibit-startup-screen t          ; Redundant with `inhibit-splash-screen` above
-                  kept-new-versions 6               ; Redundant with `files` package below
-                  kept-old-versions 2               ; Redundant with `files` package below
-                  major-mode 'text-mode             ; This sets default major mode for new buffers. Consider if truly desired.
                   mark-ring-max 64
                   read-process-output-max (* 1024 1024)
                   resize-mini-windows t
@@ -576,7 +572,7 @@
     :straight (:type built-in)
     :bind (("C-c t f" . hs-minor-mode)
            (:map prog-mode-map
-                 ("<backtab>" . hs-toggle-hiding)
+                 ("M-<tab>" . hs-toggle-hiding)
                  ("C-M-s-z" . hs-hide-all)
                  ("C-M-s-a" . hs-show-all)))
     :config
@@ -669,8 +665,6 @@
     :bind (:map vertico-map
                 ("<next>" . vertico-last)
                 ("<prior>" . vertico-first)
-                ;; ("<M-RET>" . minibuffer-force-complete-and-exit)
-                ;; ("M-<tab>" . minibuffer-complete)
                 ("C-S-n" . vertico-next-group)
                 ("C-S-p" . vertico-previous-group))
     :custom
@@ -974,7 +968,7 @@
                cape-capf-super)
     ;; Bind prefix keymap providing all Cape commands under a mnemonic key.
     ;; Press C-c p ? to for help.
-    :bind ("M-p" . cape-prefix-map) ;; Alternative key: M-<tab>, M-p, M-+
+    :bind ("C-M-s-<tab>" . cape-prefix-map) ;; Alternative key: M-<tab>, M-p, M-+
     :init
     (add-hook 'completion-at-point-functions #'cape-dabbrev)
     (add-hook 'completion-at-point-functions #'cape-file)
@@ -988,7 +982,8 @@
 (use-package yasnippet
   :defines (yas-snippet-dirs
             yas-triggers-in-field
-            yas-wrap-around-region)
+            yas-wrap-around-region
+            yas-minor-mode-map)
   :init (which-key-add-key-based-replacements "M-g Y" "Yasnippet")
   :config
   (setq yas-snippet-dirs '("~/.emacs.d/yasnippets")
@@ -998,7 +993,11 @@
   :bind (("M-g Y a" . yas-reload-all)
          ("M-g Y n" . yas-new-snippet)
          ("M-g Y v" . yas-visit-snippet-file)
-         ("C-c t y" . yas-minor-mode))
+         ("C-c t y" . yas-minor-mode)
+         :map yas-minor-mode-map
+         ("<tab>" . nil)
+         ("TAB" . nil)
+         ("<backtab>" . yas-expand))
   :hook ((prog-mode org-mode message-mode markdown-mode) . yas-minor-mode))
 
 (use-package yasnippet-snippets
@@ -1188,9 +1187,9 @@
 
   (use-package bibtex
     :bind (:map bibtex-mode-map
-                ("<backtab>" . hs-toggle-hiding)
+                ("M-<tab>" . hs-toggle-hiding)
                 ("C-M-s-z" . hs-hide-all)
-                ("C-M-s-<tab>" . hs-minor-mode)
+                ("C-c t m h" . hs-minor-mode)
                 ("C-M-s-a" . hs-show-all))
     :config
     (setq bibtex-dialect 'biblatex)
@@ -1671,7 +1670,7 @@
     :straight (:type built-in)
     :bind   (("C-c t m p" . python-mode)
              (:map python-mode-map
-                   ("<backtab>" . hs-toggle-hiding) ; orig. python-indent-dedent-line
+                   ;; ("<backtab>" . hs-toggle-hiding) ; orig. python-indent-dedent-line
                    ("C-c C-P" . jupyter-run-repl)))
     :config
     (setq-default python-fill-docstring-style 'pep-257-nn
