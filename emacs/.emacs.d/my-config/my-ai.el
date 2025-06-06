@@ -163,24 +163,19 @@
   (chatgpt-shell-openrouter-key my/openrouter-api-key)
   (chatgpt-shell-kagi-key my/kagi-api-key)
   (chatgpt-shell-anthropic-key my/claude-api-key)
-  ;; (setq chatgpt-shell-google-model "gemini-1.5-flash-latest") ; Specify a default model for Gemini
-  ;; Ollama model (e.g., "llama3", "mistral", etc.)
-  (ollama-shell-model "llama4")  ;; or "mistral" or any other local model
-  (chatgpt-shell-chat-buffer-name "*chatgpt-shell*")
   (ollama-shell-buffer-name "*ollama-shell*")
+  (chatgpt-shell-chat-buffer-name "*chatgpt-shell*")
   (gemini-shell-buffer-name "*gemini-shell*")
   (openrouter-shell-buffer-name "*openrouter-shell*")
   (kagi-shell-buffer-name "*kagi-shell*")
   (anthropic-shell-buffer-name "*anthropic-shell*")
-  )
+  ;; (chatgpt-shell-model-version "gpt-4.1-mini")
+  (chatgpt-shell-model-version "gemini-2.0-flash"))
 
 (use-package ob-chatgpt-shell
   :after org
-  :config
-  (setq chatgpt-shell-openai-key my/openai-api-key)
-  :hook
-  (org-mode-hook . (lambda () (require 'ob-chatgpt-shell)))
-  )
+  :hook (org-mode-hook . (lambda () (require 'ob-chatgpt-shell)))
+  :custom (chatgpt-shell-openai-key my/openai-api-key))
 
 (provide 'my-ai)
 ;;; my-ai.el ends here

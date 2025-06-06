@@ -72,26 +72,6 @@
    ("C-c C-l" . org-insert-last-stored-link))
 
   :config
-  ;; Core GTD Files
-  (defvar da-gtd (file-truename "~/Sync/box/org/gtd.org"))
-  (let* ((agenda-paths '("~/Sync/box/org/gtd.org"
-                         "~/Sync/box/org/gcal/dpa.org"
-                         "~/Sync/box/org/gcal/figli.org"
-                         "~/Sync/box/org/ideas.org"
-                         "~/Sync/box/org/inbox.org"
-                         "~/Sync/box/org/inbox.box.org"
-                         "~/Sync/box/org/journal.org"
-                         "~/Sync/box/org/projects.org"))
-         (proj-dir "~/Sync/proj/"))
-    (setq-default da-agenda-files (mapcar #'file-truename agenda-paths))
-    (condition-case _
-        (setq-default da-refile-files
-                      (append (directory-files proj-dir t "\\.org$")
-                              (directory-files "~/Sync/notes/home/" t "\\.org$")
-                              (directory-files-recursively "~/Sync/notes/arch/" "\\.org$")
-                              (directory-files-recursively "~/Sync/notes/org-roam/" "\\.org$")))
-      (file-missing
-       (message "The directory %s does not exist or is not accessible." proj-dir))))
   ;; Core Org Settings
   (setq org-adapt-indentation nil
         org-startup-indented t
@@ -101,43 +81,35 @@
         org-confirm-babel-evaluate nil ; don't prompt to confirm evaluation every time
         org-image-actual-width 0.67    ; 67% of text width
         org-hide-emphasis-markers t
+        org-highlight-latex-and-related '(latex) ; Change color of inline latex $y=mx+c$
+        org-src-fontify-natively t
+        org-columns-default-format
+        "%48ITEM(Task) %TODO(todo) %ALLTAGS %SCHEDULED %6Effort(Effort){:} %6CLOCKSUM{:} %DEADLINE"
+        org-M-RET-may-split-line
+        '((default . t) (headline . nil) (item . nil) (table . nil))
+        org-fontify-done-headline t
+        org-fontify-whole-heading-line t
+        org-enforce-todo-dependencies t
+        org-enforce-todo-checkbox-dependencies t
+        org-track-ordered-property-with-tag t
+        org-special-ctrl-a/e t
+        org-special-ctrl-k t
+        org-loop-over-headlines-in-active-region nil
+        org-fontify-quote-and-verse-blocks t
         )
-  ;; Org Link Settings
-  (setq org-link-keep-stored-after-insertion t)
-  (org-link-set-parameters "mpv" :follow (lambda (path) (browse-url-xdg-open path)))
   ;; Org Attach Settings
   (setq org-attach-use-inheritance t)
   ;; Org Indent Settings
   (setq org-indent-indentation-per-level 2)
+  ;; Org Link Settings
+  (setq org-link-keep-stored-after-insertion t)
+  (org-link-set-parameters "mpv" :follow (lambda (path) (browse-url-xdg-open path)))
 
-  (setq org-highlight-latex-and-related '(latex)) ; Change color of inline latex $y=mx+c$
-  (setq org-src-fontify-natively t)               ; font in src blocks
-  (setq org-columns-default-format
-        "%48ITEM(Task) %TODO(todo) %ALLTAGS %SCHEDULED %6Effort(Effort){:} %6CLOCKSUM{:} %DEADLINE")
-  (setq org-M-RET-may-split-line
-        '((default . t)
-          (headline . nil)
-          (item . nil)
-          (table . nil)))
-  (setq org-fontify-done-headline t)
-  (setq org-fontify-whole-heading-line t)
-  (setq org-enforce-todo-dependencies t)
-  (setq org-enforce-todo-checkbox-dependencies t)
-  (setq org-track-ordered-property-with-tag t)
-  (setq org-special-ctrl-a/e t)
-  (setq org-special-ctrl-k t)
-  (setq org-loop-over-headlines-in-active-region nil)
-  (setq org-fontify-quote-and-verse-blocks t)
-
-  (consult-customize
-   da-consult-org
-   :preview-key "<right>")
-
+  (consult-customize da-consult-org :preview-key "<right>")
   ;; babel
   (setq ;;org-src-preserve-indentation t           ; indentation in src blocks
    ;;org-edit-src-content-indentation 2         ; default
    org-src-tab-acts-natively t)                ; tab in src blocks
-
   (org-babel-do-load-languages 'org-babel-load-languages
                                '((plantuml . t)
                                  (emacs-lisp . t)
@@ -154,7 +126,6 @@
                                  (jupyter . t) ;should be the last one
                                  ))
   (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
-
   (add-to-list 'org-structure-template-alist '("sl" . "src emacs-lisp"))
   (add-to-list 'org-structure-template-alist '("sb" . "src sh :results output :exports both"))
   (add-to-list 'org-structure-template-alist '("sB" . "src sh :session bash :results output :exports both"))
@@ -163,17 +134,39 @@
   ;; org-babel-default-header-args:bash  '((:results . "output replace"))
   ;; org-babel-default-header-args:shell '((:results . "output replace"))
 
-  ;; my-GTD
-  (setq org-directory "~/Sync/box/org"
-        org-default-notes-file "~/Sync/box/org/inbox.org"
-        org-use-property-inheritance nil) ; default
+  ;; -- GTD core file paths --
+  (defvar da-org-dir (expand-file-name "~/Sync/box/org"))
+  (defvar da-gtd (expand-file-name "gtd.org" da-org-dir))
 
-  ;; (1) Agenda files
-  (setq org-agenda-files da-agenda-files )
+  (let* ((agenda-paths '("gtd.org"
+                         "gcal/dpa.org"
+                         "gcal/figli.org"
+                         "ideas.org"
+                         "inbox.org"
+                         "inbox.box.org"
+                         "journal.org"
+                         "projects.org"))
+         (da-agenda-files (mapcar (lambda (f) (expand-file-name f da-org-dir))
+                                  agenda-paths))
+         (proj-dir (expand-file-name "~/Sync/proj/")))
+    (setq-default da-agenda-files da-agenda-files)
+    (condition-case _
+        (setq-default da-refile-files
+                      (append (directory-files proj-dir t "\\.org$")
+                              (directory-files "~/Sync/notes/home/" t "\\.org$")
+                              (directory-files-recursively "~/Sync/notes/arch/" "\\.org$")
+                              (directory-files-recursively "~/Sync/notes/org-roam/" "\\.org$")))
+      (file-missing
+       (message "The directory %s does not exist or is not accessible." proj-dir))))
 
-  ;; (2) Archives
-  (setq org-archive-location "~/Sync/notes/org-archives/%s_archive::")
-  (setq org-agenda-text-search-extra-files `(agenda-archives)) ; Search also in archives
+  (setq org-directory da-org-dir
+        org-default-notes-file (expand-file-name "inbox.org" da-org-dir)
+        org-agenda-files da-agenda-files                              ;; (1) Agenda files
+        org-archive-location "~/Sync/notes/org-archives/%s_archive::" ;; (2) Archives
+        org-agenda-text-search-extra-files `(agenda-archives)         ;; Search also in archives
+        org-use-property-inheritance nil                              ;; default
+        )
+
   (use-package org-archive :straight org
     :config
     (setq org-archive-file-header-format "#+FILETAGS: ARCHIVE\nArchived entries from file %s\n"))
@@ -230,7 +223,7 @@
     (setq org-clock-out-remove-zero-time-clocks t) ; Removes clocked tasks with 0:00 duration
     (setq org-clock-auto-clock-resolution (quote when-no-clock-is-running))   ; Enable auto clock resolution for finding open clocks
     )
-  (org-clock-persistence-insinuate)       ; Resume clocking task when emacs is restarted
+  ;; (org-clock-persistence-insinuate)       ; Resume clocking task when emacs is restarted
   (setq org-global-properties (quote (("Effort_ALL" . "0:15 0:30 0:45 1:00 1:30 2:00 3:00 4:00 6:00 0:00")
                                       ("STYLE_ALL" . "habit"))))
   )
