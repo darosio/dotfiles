@@ -18,7 +18,8 @@
 (when (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 ;; Speed up startup
-(setq frame-inhibit-implied-resize t
+(setq gc-cons-threshold (* 50 1000 1000)
+      ;;frame-inhibit-implied-resize t
       inhibit-splash-screen t
       use-file-dialog nil)
 ;; Global debug settings (consider making these conditional for normal use)
@@ -83,14 +84,10 @@
 
 ;; *** 4. Use-package configuration ***
 (use-package use-package
-  :straight t ; Ensure use-package itself is managed by straight
+  :straight t
   :init
-  ;; Defer package loading based on daemon status
-  (if is-daemon
-      (setq use-package-always-demand nil)
-    (setq use-package-always-defer t))
-  :config
-  (setq use-package-compute-statistics t
+  (setq use-package-always-defer (not is-daemon)
+        use-package-compute-statistics t
         use-package-verbose t
         use-package-enable-imenu-support t))
 
@@ -104,28 +101,32 @@
 ;;   :straight t)
 
 (progn                                  ; UI base setting
+
   (use-package bookmark
     :straight (:type built-in)
     :custom
     (bookmark-default-file "~/.emacs.d/bookmarks")
     (bookmark-save-flag 2))
+
   (use-package browse-url
     :straight (:type built-in)
     :custom
     (browse-url-browser-function 'browse-url-generic)
     (browse-url-generic-program "firefox"))
+
   (use-package comint
     :straight (:type built-in)
     :bind ("C-c <tab>" . comint-dynamic-complete-filename))
+
   (use-package ediff
     :straight (:type built-in)
     :custom
     (ediff-window-setup-function 'ediff-setup-windows-plain)
-    (ediff-split-window-function
-     (if (> (frame-width) 150)
-         'split-window-horizontally
-       'split-window-vertically))
+    (ediff-split-window-function (if (> (frame-width) 150)
+                                     'split-window-horizontally
+                                   'split-window-vertically))
     (ediff-diff-options "-w"))
+
   (use-package emacs
     :preface
     ;; Go to change fonts
@@ -157,7 +158,6 @@
                   enable-recursive-minibuffers t ; Enable recursive minibuffers
                   fill-column 80
                   font-lock-maximum-decoration t
-                  gc-cons-threshold (* 50 1000 1000)
                   global-mark-ring-max 1024
                   image-use-external-converter t ; 27.1 viewer don't display many png
                   indent-tabs-mode nil  ; use spaces instead of tabs for indentation
@@ -259,28 +259,62 @@
     (setq blink-matching-delay 0.5
           blink-matching-paren 'jump-offscreen
           kill-read-only-ok t
-          suggest-key-bindings nil)
-    :preface
-    (defun mk-auto-fill-mode ()
-      "Enable ‘auto-fill-mode’ limiting it to comments."
-      (setq-local comment-auto-fill-only-comments t)
-      (auto-fill-mode 1))
+          suggest-key-bindings t)
+    ;; :preface
+    ;; (defun mk-auto-fill-mode ()
+    ;;   "Enable ‘auto-fill-mode’ limiting it to comments."
+    ;;   (setq-local comment-auto-fill-only-comments t)
+    ;;   (auto-fill-mode 1))
     :config
     (column-number-mode 1)
     :bind
     ("C-z" . undo)
-    ("C-c q" . auto-fill-mode)
+    ;; ("C-c q" . auto-fill-mode)
     ("M-h" . mark-word)
     ("M-S-h" . mark-paragraph)
     ("<f7> c" . count-words)
-    :hook
-    ((gitignore-mode . mk-auto-fill-mode)
-     (haskell-cabal-mode . mk-auto-fill-mode)
-     (prog-mode . mk-auto-fill-mode)
-     (proof-mode . mk-auto-fill-mode)
-     ;; (text-mode . auto-fill-mode)
-     ;; (yaml-mode . mk-auto-fill-mode) ;TODO: check and remove
-     ))
+    ;; :hook
+    ;; ((gitignore-mode . mk-auto-fill-mode)
+    ;;  (haskell-cabal-mode . mk-auto-fill-mode)
+    ;;  (prog-mode . mk-auto-fill-mode)
+    ;;  (proof-mode . mk-auto-fill-mode))
+    ;; (text-mode . auto-fill-mode)
+    ;; (yaml-mode . mk-auto-fill-mode) ;TODO: check and remove
+    )
+
+
+  (use-package refill-mode
+    :straight (:type built-in)
+    :hook (text-mode . refill-mode)
+    :config
+    (setq refill-mode-refill-regex "\\([.?!]\\)\\(\\_>>\\|\n\\)")
+    (setq refill-mode-refill-hook
+          (lambda ()
+            (refill-region (point-min) (point-max))))
+    :bind ("M-q" . refill-paragraph))
+
+  (use-package text-mode
+    :straight (:type built-in)
+    :mode "\\.txt\\'"
+    :hook (text-mode . (lambda ()
+                         ;; (visual-line-mode -1)
+                         (auto-fill-mode -1)
+                         )))
+  ;; ;; paragraph
+  ;; (use-package refill-mode
+  ;;   :ensure t  ; Make sure it's installed
+  ;;   :hook (text-mode . refill-mode) ; Enable in text-mode
+  ;;   :config
+  ;;   (setq refill-mode-refill-hook
+  ;;         (lambda ()
+  ;;           (refill-region (point-min) (point-max))))
+  ;;   :bind ("M-q" . refill-paragraph))
+  ;; ;; Optional: Set a narrower fill column for better readability
+  ;; (setq default-fill-column 80)
+
+
+
+
 
   (use-package window
     :straight (:type built-in)
@@ -426,7 +460,10 @@
     :bind
     ("M-c" . fix-word-capitalize)
     ("M-l" . fix-word-downcase)
-    ("M-u" . fix-word-upcase))
+    ("M-u" . fix-word-upcase)
+    ("M-C" . capitalize-word)
+    ("M-L" . downcase-word)
+    ("M-U" . upcase-word))
 
   (use-package which-key
     :commands (which-key-mode
@@ -650,78 +687,67 @@
 
   (use-package consult-todo
     :bind
-    ("M-g t" . consult-todo-all)
-    ("M-g T" . consult-todo-dir))
+    ("M-s t" . consult-todo-all)
+    ("M-s T" . consult-todo-dir))
   )
 (progn                                  ; Completion: vertico.
 
+  ;; Vertico: Minimalistic vertical completion UI
   (use-package vertico
     :commands vertico-mode
     :defines vertico-map
     :init
     (vertico-mode)
-    :config
-    (setq completion-in-region-function #'consult-completion-in-region)
+    :custom
+    (vertico-count 20)
+    (vertico-resize t)
+    (vertico-cycle t)
     :bind (:map vertico-map
                 ("<next>" . vertico-last)
                 ("<prior>" . vertico-first)
                 ("C-S-n" . vertico-next-group)
                 ("C-S-p" . vertico-previous-group))
-    :custom
-    (vertico-count 20)
-    (vertico-resize t)
-    (vertico-cycle t))
+    :config
+    (setq completion-in-region-function #'consult-completion-in-region))
 
+  ;; Vertico Repeat: repeat last minibuffer session
   (use-package vertico-repeat
     :straight vertico
-    :hook
-    (minibuffer-setup . vertico-repeat-save)
-    :bind
-    (("C-;" . vertico-repeat)
-     ("C-:" . vertico-repeat-select)))
+    :after vertico
+    :hook (minibuffer-setup . vertico-repeat-save)
+    :bind (("C-;" . vertico-repeat)
+           ("C-:" . vertico-repeat-select)))
+
+  ;; Vertico Multiform: per-command/category layout configuration
   (use-package vertico-multiform
-    :demand t
     :straight vertico
-    :config
-    (vertico-multiform-mode)
-    ;; Configure the display per command.
-    ;; Use a buffer with indices for imenu
-    ;; and a flat (Ido-like) menu for M-x.
-    (setq vertico-multiform-commands
-          '((consult-imenu buffer indexed)
-            (execute-extended-command grid)))
-    ;; Configure the display per completion category.
-    ;; Use the grid display for files and a buffer
-    ;; for the consult-grep commands.
-    (setq vertico-multiform-categories
-          '((file indexed)
-            (consult-grep buffer)
-            (symbol (vertico-sort-function . vertico-sort-alpha))))
-    (add-to-list 'vertico-multiform-categories '(embark-keybinding grid))
-    )
+    :after vertico
+    :init (vertico-multiform-mode)
+    :custom
+    (vertico-multiform-commands
+     '((consult-imenu buffer indexed)))
+    (vertico-multiform-categories
+     '((file indexed)
+       (consult-grep buffer)
+       (symbol (vertico-sort-function . vertico-sort-alpha))
+       ;; (embark-keybinding grid)
+       )))
 
-  ;; Persist history over Emacs restarts. Vertico sorts by history position.
+  ;; Save minibuffer history across sessions
   (use-package savehist
-    :init
-    (savehist-mode)
-    )
+    :init (savehist-mode))
 
-  ;; Emacs minibuffer configurations.
+  ;; Emacs minibuffer tuning
   (use-package emacs
     :custom
-    ;; Support opening new minibuffers from inside existing minibuffers.
     (enable-recursive-minibuffers t)
-    ;; Hide commands in M-x which do not work in the current mode.
-    (read-extended-command-predicate #'command-completion-default-include-p)
-    ;; Do not allow the cursor in the minibuffer prompt
-    (minibuffer-prompt-properties
-     '(read-only t cursor-intangible t face minibuffer-prompt))
-    :config
-    (setq read-file-name-completion-ignore-case t
-          read-buffer-completion-ignore-case t
-          completion-ignore-case t)
-    )
+    (read-extended-command-predicate #'command-completion-default-include-p) ;only commands working in current mode
+    (minibuffer-prompt-properties '(read-only t cursor-intangible t face minibuffer-prompt)) ;turn off cursor
+    (read-file-name-completion-ignore-case t)
+    (read-buffer-completion-ignore-case t)
+    (completion-ignore-case t))
 
+  ;; Orderless: flexible matching style
   (use-package orderless
     :custom
     (completion-styles '(orderless partial-completion basic))
@@ -730,11 +756,10 @@
                                      (buffer (styles orderless partial-completion))
                                      (command (styles orderless partial-completion)))))
 
+  ;; CRM: Configure completing-read-multiple prompt
   (use-package crm
     :straight (:type built-in)
-    :demand t
     :init
-    ;; Prompt indicator for `completing-read-multiple'.
     (when (< emacs-major-version 31)
       (advice-add #'completing-read-multiple :filter-args
                   (lambda (args)
@@ -744,20 +769,24 @@
                           (cdr args)))))
     )
 
+  ;; Marginalia: annotations in minibuffer
   (use-package marginalia
     :commands (marginalia-mode)
     :defines marginalia-annotators
-    :bind (:map minibuffer-local-map
-                ("M-A" . marginalia-cycle))
     :init (marginalia-mode)
-    :config (setq marginalia-annotators
-                  '(marginalia-annotators-heavy marginalia-annotators-light nil)))
+    ;; :custom FIXME: is empty
+    ;; (marginalia-annotators
+    ;;  '(marginalia-annotators-heavy marginalia-annotators-light nil))
+    :bind (:map minibuffer-local-map
+                ("M-A" . marginalia-cycle)))
 
+  ;; Consult: powerful commands for navigation and search
   (use-package consult
     :defines (xref-show-definitions-function
               xref-show-xrefs-function
               consult-theme
               consult-ripgrep
+              consult-grep
               consult-git-grep
               consult-org-agenda
               consult-bookmark
@@ -774,42 +803,42 @@
                consult-completion-in-region
                consult-register-window
                consult-xref)
+    :functions consult-completing-read-multiple
     :bind (("C-/" . consult-line)
            ("C-c f f" . consult-find)
            ("C-c f F" . consult-locate)
            ("C-c f z" . (lambda () (interactive)(cd "~/")(consult-find)))
+           ("C-c f Z" . (lambda () (interactive)(cd "~/")(consult-fd))) ;;TODO: test
            ("C-c f r" . consult-recent-file)
-           ("M-s t" . consult-theme)
+           ("C-c f d" . consult-fd)
+           ("M-g t" . consult-theme)
            ("M-g M" . consult-minor-mode-menu)
            ("C-c m" . consult-mode-command)
            ("C-c k" . consult-kmacro)
-           ;; C-x bindings (ctl-x-map)
-           ("C-x :" . consult-complex-command)       ;; C-x M-: repeat-complex-command
+           ;; Buffers
            ("C-x b" . consult-buffer)                ;; orig. switch-to-buffer
            ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
            ("C-x 5 b" . consult-buffer-other-frame)  ;; orig. switch-to-buffer-other-frame
-           ("C-x r b" . consult-bookmark)            ;; orig. bookmark-jump
-           ;; Custom M-# bindings for fast register access
+           ;; Bookmarks and registers
+           ("C-x r b" . consult-bookmark)    ;; orig. bookmark-jump
            ("M-#" . consult-register-load)
-           ("M-\"" . consult-register-store)          ;; M-' orig. abbrev-prefix-mark (unrelated)
+           ("M-\"" . consult-register-store) ;; M-' orig. abbrev-prefix-mark (unrelated)
            ("H-M-'" . consult-register)
-           ;; Other custom bindings
+           ;; Other custom bindingst
            ("M-y" . consult-yank-pop)                ;; orig. yank-pop
-           ;; M-g bindings (goto-map)
-           ("M-g e e" . consult-compile-error)
-           ("M-g f" . consult-flymake)
-           ("M-g M-g" . consult-goto-line)           ;; orig. goto-line
+           ("C-x :" . consult-complex-command)       ;; C-x M-: repeat-complex-command
+           ;; Goto
+           ("M-g g" . consult-goto-line)
            ("M-g o" . consult-outline)
-           ("M-g M-o" . consult-org-heading)
-           ("M-g m" . consult-mark)
-           ("M-g M-m" . consult-global-mark)
            ("M-g i" . consult-imenu)
            ("M-g M-i" . consult-imenu-multi)
-           ;; M-s bindings (search-map)
+           ("M-g m" . consult-mark)
+           ("M-g M-m" . consult-global-mark)
+           ("M-g e e" . consult-compile-error)
+           ("M-g f" . consult-flymake)
+           ("M-g M-o" . consult-org-heading)
+           ;; Search
            ("M-s a" . consult-org-agenda)
-           ("M-s f" . consult-fd)
-           ("M-s F" . consult-find)
-           ("M-s M-f" . consult-locate)
            ("M-s g" . consult-grep)
            ("M-s M-g" . consult-git-grep)
            ("M-s r" . consult-ripgrep)
@@ -817,7 +846,7 @@
            ("M-s M-l" . consult-line-multi)
            ("M-s k" . consult-keep-lines)
            ("M-s u" . consult-focus-lines)
-           ;; Isearch integration
+           ;; History and Isearch integration
            ("M-s e" . consult-isearch-history)
            (:map minibuffer-local-map
                  ("C-r" . consult-history))
@@ -828,102 +857,57 @@
            ("M-s M-l" . consult-line-multi)           ;; needed by consult-line to detect isearch
            )
     :init
-    ;; Tweak the register preview for `consult-register-load',
-    ;; `consult-register-store' and the built-in commands.  This improves the
-    ;; register formatting, adds thin separator lines, register sorting and hides
-    ;; the window mode line.
+    ;; This improves the register formatting, adds thin separator lines,
+    ;; register sorting and hides the window mode line.
     (advice-add #'register-preview :override #'consult-register-window)
-    (setq register-preview-delay 0.5)
-    ;; Use Consult to select xref locations with preview
-    (setq xref-show-xrefs-function #'consult-xref
+    (setq register-preview-delay 0.5
+          xref-show-xrefs-function #'consult-xref
           xref-show-definitions-function #'consult-xref)
+    :custom
+    (consult-narrow-key "C-+")
+    (consult-ripgrep-args
+     "rg --null --line-buffered --color=never --max-columns=1000 --path-separator / --smart-case --search-zip --no-heading --with-filename --line-number --hidden --glob=!.git/ --sortr=accessed")
     :config
-    ;; (advice-add #'completing-read-multiple
-    ;;             :override #'consult-completing-read-multiple)
+    (advice-add #'completing-read-multiple
+                :override #'consult-completing-read-multiple)
     (consult-customize
      consult-theme :preview-key '(:debounce 0.4 any)
-     consult-ripgrep consult-git-grep consult-org-agenda ;consult-grep
+     consult-ripgrep consult-git-grep consult-org-agenda consult-grep
      consult-bookmark consult-recent-file consult-xref
      consult--source-recent-file consult--source-project-recent-file consult--source-bookmark
      :preview-key "<right>")
-    (setq consult-ripgrep-args          ; --multiline-dotall
-          "rg --null --line-buffered --color=never --max-columns=1000 --path-separator / --smart-case --search-zip --no-heading --with-filename --line-number --hidden --glob=!.git/ --sortr=accessed")
-    ;; Narrowing key. Both < and C-+ work reasonably well.
-    (setq consult-narrow-key "C-+"))
+    )
 
+  ;; Embark: context-sensitive minibuffer actions
   (use-package embark
-    :commands (embark--truncate-target
-               embark-completing-read-prompter)
-    :functions (which-key--hide-popup-ignore-command
-                which-key--show-keymap)
+    ;; :commands (embark--truncate-target
+    ;;            embark-completing-read-prompter)
+    ;; :functions (which-key--hide-popup-ignore-command
+    ;;             which-key--show-keymap)
     :defines embark-quit-after-action
-    :bind (("C-." . embark-act)
-           ("C-|" . embark-dwim)
-           ("C-h B" . embark-bindings) ;; alternative for `describe-bindings'
-           :map minibuffer-local-completion-map
-           ("C-M-s-e" . embark-export)
-           ("C-M-s-b" . embark-become)
-           :map minibuffer-local-map
-           ("C-M-s-e" . embark-export)
-           ("C-M-s-b" . embark-become))
     :preface
-    ;; (defun embark-which-key-indicator ()
-    ;;   "An embark indicator that displays keymaps using which-key.
-    ;; The which-key help message will show the type and value of the
-    ;; current target followed by an ellipsis if there are further
-    ;; targets."
-    ;;   (lambda (&optional keymap targets prefix)
-    ;;     (if (null keymap)
-    ;;         (which-key--hide-popup-ignore-command)
-    ;;       (which-key--show-keymap
-    ;;        (if (eq (plist-get (car targets) :type) 'embark-become)
-    ;;            "Become"
-    ;;          (format "Act on %s '%s'%s"
-    ;;                  (plist-get (car targets) :type)
-    ;;                  (embark--truncate-target (plist-get (car targets) :target))
-    ;;                  (if (cdr targets) "…" "")))
-    ;;        (if prefix
-    ;;            (pcase (lookup-key keymap prefix 'accept-default)
-    ;;              ((and (pred keymapp) km) km)
-    ;;              (_ (key-binding prefix 'accept-default)))
-    ;;          keymap)
-    ;;        nil nil t (lambda (binding)
-    ;;                    (not (string-suffix-p "-argument" (cdr binding))))))))
-
-    ;; (defun embark-hide-which-key-indicator (fn &rest args)
-    ;;   "Hide the which-key indicator immediately when using the
-    ;; completing-read prompter"
-    ;;   (which-key--hide-popup-ignore-command)
-    ;;   (let ((embark-indicators
-    ;;          (remq #'embark-which-key-indicator embark-indicators)))
-    ;;     (apply fn args)))
-
     (defun embark-act-noquit ()
       "Run action but don't quit the minibuffer afterwards."
       (interactive)
       (let ((embark-quit-after-action nil))
         (embark-act)))
-
     :config
+    ;; Quit minibuffer after actions that kill buffers, but not others
     (setq embark-quit-after-action '((kill-buffer . t) (t . nil)))
-    ;; (setq embark-indicators
-    ;;       '(embark-which-key-indicator
-    ;;         embark-highlight-indicator
-    ;;         embark-isearch-highlight-indicator))
-    ;; (advice-add #'embark-completing-read-prompter
-    ;;             :around #'embark-hide-which-key-indicator)
-    ;; (setq embark-indicators
-    ;;       '(embark-mixed-indicator
-    ;;         embark-highlight-indicator
-    ;;         embark-isearch-highlight-indicator))
-    ;; (setq embark-prompter #'embark-completing-read-prompter)
-    )
+    :bind (("C-." . embark-act); Main action key
+           ("C->" . embark-dwim); Do What I Mean
+           ("C-h B" . embark-bindings); Alternative to describe-bindings
+           :map minibuffer-local-completion-map
+           ("C-M-s-e" . embark-export); Export current candidates
+           ("C-M-s-b" . embark-become); Become a different command
+           :map minibuffer-local-map
+           ("C-M-s-e" . embark-export)
+           ("C-M-s-b" . embark-become)))
 
+  ;; Optional: Consult previews in embark-collect buffer
   (use-package embark-consult
-    :demand t ; Loads embark-consult immediately.
-    :hook
-    ;; if you want to have consult previews as you move around an auto-updating embark collect buffer
-    (embark-collect-mode . consult-preview-at-point-mode))
+    :after (embark consult)
+    :hook (embark-collect-mode . consult-preview-at-point-mode))
 
   (use-package wgrep :demand t)
   (use-package consult-recoll
@@ -1008,9 +992,9 @@
   :bind ("M-s y" . consult-yasnippet))
 
 ;; --- Spell and Translate ---
-(straight-use-package 'ispell)
+(straight-use-package 'ispell)          ;;TODO: remove
 (straight-use-package 'flyspell)
-(straight-use-package 'flyspell-correct)
+(straight-use-package 'flyspell-correct) ;;TODO: remove
 (straight-use-package 'consult-flyspell)
 (straight-use-package 'guess-language)
 (straight-use-package 'sdcv)
@@ -1667,3 +1651,113 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(safe-local-variable-values '((org-download-image-dir . "./WORK/"))))
+
+
+;; Here is a revision that simplifies your init.el by removing redundant or less-used packages, consolidates similar functionality, and transitions to some better-maintained or recommended alternatives. The goal is to keep your core workflow intact but reduce complexity and maintenance effort:
+
+;; ---
+
+
+;; - Removed `hungry-delete` and some commented out printing settings that aren't in use.
+;; - Removed `gscholar-bibtex` (outdated) in favor of `citar` for bibliography, which you already use.
+;; - Removed duplicative or lesser-used packages like `transpose-frame`, `tzc`, `numpydoc` (the latter can be reconsidered if you want but adds complexity).
+;; - Removed `engine-mode`: mostly replaced by minibuffer search with Consult + Embark which you have configured.
+;; - Consolidated built-in package uses to fewer `use-package` blocks with `:straight (:type built-in)` as appropriate.
+;; - For spell/translation: keep only essential `flyspell`, `consult-flyspell`, `guess-language`.
+;; - For completion, rely on `vertico`, `orderless`, `consult`, `embark` — already well set up.
+
+;; ### Recommended transitions
+
+;; - For snippet support: continue with `yasnippet` and `yasnippet-snippets` (well maintained).
+;; - For LSP: use `eglot` (which you have) but add minimal configuration only.
+;; - Use `apheleia` for formatters, keep it tuned to your existing setup.
+;; - Use `doom-modeline` + `nerd-icons` + `minions` as your modeline stack.
+
+;; ### Example of cleaned and simplified snippet for core packages:
+
+;; ```elisp
+
+;; ;; Completion & minibuffer: vertico + orderless + consult + embark
+;; (use-package vertico
+;;   :init (vertico-mode)
+;;   :custom (vertico-count 20) (vertico-cycle t))
+
+;; (use-package orderless
+;;   :custom (completion-styles '(orderless partial-completion basic)))
+
+;; (use-package consult
+;;   :bind (("C-/" . consult-line)
+;;          ("C-x b" . consult-buffer)
+;;          ;; Add other preferred consult bindings
+;;          ))
+
+;; (use-package embark
+;;   :bind (("C-." . embark-act)
+;;          ("C-|" . embark-dwim)))
+
+;; (use-package marginalia
+;;   :init (marginalia-mode))
+
+;; ;; Snippets
+;; (use-package yasnippet
+;;   :init (yas-global-mode 1)
+;;   :config
+;;   (setq yas-snippet-dirs '("~/.emacs.d/yasnippets")))
+
+;; (use-package yasnippet-snippets
+;;   :after yasnippet)
+
+;; ;; Modeline and icons
+;; (use-package nerd-icons
+;;   :config
+;;   (unless (find-font (font-spec :family "Symbols Nerd Font Mono"))
+;;     (nerd-icons-install-fonts))
+;;   (setq nerd-icons-font-family "Symbols Nerd Font Mono"))
+
+;; (use-package doom-modeline
+;;   :hook (after-init . doom-modeline-mode))
+
+;; (use-package minions
+;;   :hook (after-init . minions-mode))
+
+;; ;; Programming editing
+;; (use-package smartparens
+;;   :hook (prog-mode . smartparens-mode)
+;;   :config (smartparens-global-mode 1))
+
+;; (use-package hideshow
+;;   :hook (prog-mode . hs-minor-mode)
+;;   :bind (:map prog-mode-map
+;;               ("M-<tab>" . hs-toggle-hiding)))
+
+;; ;; Git
+;; (use-package magit
+;;   :bind (("C-c g g" . magit-status))
+;;   :config
+;;   (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1))
+
+;; (use-package git-modes)
+;; (use-package browse-at-remote)
+
+;; ;; Org Roam / Notes stack remains, but consider trimming users to only needed packages.
+
+;; ;; Spell check minimal
+;; (use-package flyspell)
+;; (use-package consult-flyspell)
+;; (use-package guess-language)
+
+;; ;; Formatter
+;; (use-package apheleia
+;;   :config (apheleia-global-mode +1))
+
+;; ;; LSP
+;; (use-package eglot
+;;   :hook (prog-mode . eglot-ensure)
+;;   :custom (eglot-autoshutdown t))
+
+;; ;; Misc essentials only; remove obsolete/unnecessary packages for simplicity.
+;; ```
+
+;; ---
+
+;; If you want, I can prepare a fully annotated cleaned init.el based on this or help identify specific packages to remove or replace with alternatives that have better support or simpler configs. The above approach reduces package count, duplicates, and unused legacy configs while keeping your experience familiar and efficient.
