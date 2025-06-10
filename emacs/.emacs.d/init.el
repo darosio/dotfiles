@@ -92,13 +92,13 @@
         use-package-enable-imenu-support t))
 
 ;; *** 5. Load first packages ***
+;; ;; Install org built-in via straight to shadow Emacs's version (good practice)
+(use-package org :ensure nil :straight (:type built-in))
+;; This tells straight.el to always treat org as built-in, even if a package requests it.
+(add-to-list 'straight-built-in-pseudo-packages 'org)
 ;; Prevent using the built-in transient https://github.com/magit/magit/discussions/4997
-(use-package org)
 ;; This often gets fixed by `:straight t` which fetches the latest version.
-;; Install org built-in via straight to shadow Emacs's version (good practice)
 (use-package magit)
-;; (use-package magit
-;;   :straight t)
 
 (progn                                  ; UI base setting
 
@@ -269,7 +269,7 @@
     (column-number-mode 1)
     :bind
     ("C-z" . undo)
-    ;; ("C-c q" . auto-fill-mode)
+    ("C-c q" . auto-fill-mode)
     ("M-h" . mark-word)
     ("M-S-h" . mark-paragraph)
     ("<f7> c" . count-words)
@@ -281,40 +281,6 @@
     ;; (text-mode . auto-fill-mode)
     ;; (yaml-mode . mk-auto-fill-mode) ;TODO: check and remove
     )
-
-
-  (use-package refill-mode              ;;TODO: Try longlines-mode
-    :straight (:type built-in)
-    ;; :hook (text-mode . refill-mode)
-    ;; :config
-    ;; (setq refill-mode-refill-regex "\\([.?!]\\)\\(\\_>>\\|\n\\)")
-    ;; (setq refill-mode-refill-hook
-    ;;       (lambda ()
-    ;;         (refill-region (point-min) (point-max))))
-    :bind ("M-q" . refill-paragraph))
-
-  (use-package text-mode
-    :straight (:type built-in)
-    :mode "\\.txt\\'"
-    :hook (text-mode . (lambda ()
-                         ;; (visual-line-mode -1)
-                         (auto-fill-mode -1)
-                         )))
-  ;; ;; paragraph
-  ;; (use-package refill-mode
-  ;;   :ensure t  ; Make sure it's installed
-  ;;   :hook (text-mode . refill-mode) ; Enable in text-mode
-  ;;   :config
-  ;;   (setq refill-mode-refill-hook
-  ;;         (lambda ()
-  ;;           (refill-region (point-min) (point-max))))
-  ;;   :bind ("M-q" . refill-paragraph))
-  ;; ;; Optional: Set a narrower fill column for better readability
-  ;; (setq default-fill-column 80)
-
-
-
-
 
   (use-package window
     :straight (:type built-in)
@@ -807,6 +773,7 @@
                consult-xref)
     :functions consult-completing-read-multiple
     :bind (("C-/" . consult-line)
+           ("M-X" . consult-mode-command)
            ("C-c f f" . consult-find)
            ("C-c f F" . consult-locate)
            ("C-c f z" . (lambda () (interactive)(cd "~/")(consult-find)))
@@ -815,7 +782,7 @@
            ("C-c f d" . consult-fd)
            ("M-g t" . consult-theme)
            ("M-g M" . consult-minor-mode-menu)
-           ("C-c m" . consult-mode-command)
+           ("C-c m" . consult-man)
            ("C-c k" . consult-kmacro)
            ;; Buffers
            ("C-x b" . consult-buffer)                ;; orig. switch-to-buffer
@@ -922,8 +889,8 @@
     )
   (use-package dabbrev
     ;; Swap M-/ and C-M-/
-    :bind (("M-/" . dabbrev-completion)
-           ("C-M-/" . dabbrev-expand))
+    :bind (("C-M-/" . dabbrev-completion)
+           ("M-/" . dabbrev-expand))
     ;; Other useful Dabbrev configurations.
     :custom
     (dabbrev-ignored-buffer-regexps '("\\.\\(?:pdf\\|jpe?g\\|png\\)\\'")))
@@ -1021,7 +988,7 @@
 (straight-use-package 'cdlatex)
 (straight-use-package 'ox-reveal)
 (require 'my-ob)
-(straight-use-package 'org)
+;; (straight-use-package 'org)
 (straight-use-package 'org-autolist)
 (straight-use-package 'org-download)
 (straight-use-package 'org-cliplink)

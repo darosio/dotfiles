@@ -5,6 +5,8 @@
 ;;; Code:
 
 (use-package org
+  :straight (:type built-in)
+  :ensure nil
   :commands (org-capture-finalize org-speed-move-safe org-narrow-to-subtree org-clock-in)
   :functions (org-read-date org-get-tags org-entry-delete org-entry-put org-toggle-tag)
   :defines org-state
@@ -218,18 +220,17 @@
   (setq org-tags-column -82)
   (setq org-support-shift-select t)       ;do not change state with left right arrow
 
-  (use-package org-clock :straight org
-    :config
-    (setq org-clock-out-remove-zero-time-clocks t) ; Removes clocked tasks with 0:00 duration
-    (setq org-clock-auto-clock-resolution (quote when-no-clock-is-running))   ; Enable auto clock resolution for finding open clocks
-    )
+  ;; (use-package org-clock :straight org
+  ;;   :config
+  ;;   (setq org-clock-out-remove-zero-time-clocks t) ; Removes clocked tasks with 0:00 duration
+  ;;   (setq org-clock-auto-clock-resolution (quote when-no-clock-is-running))   ; Enable auto clock resolution for finding open clocks
+  ;;   )
   ;; (org-clock-persistence-insinuate)       ; Resume clocking task when emacs is restarted
   (setq org-global-properties (quote (("Effort_ALL" . "0:15 0:30 0:45 1:00 1:30 2:00 3:00 4:00 6:00 0:00")
                                       ("STYLE_ALL" . "habit"))))
   )
 
 (use-package org-capture :straight org
-  :after org
   :preface
   (defun my-daily-review ()
     "Capture and review for daily tasks."
@@ -249,7 +250,8 @@
     (org-speed-move-safe 'outline-up-heading)
     (org-narrow-to-subtree)
     ;; (fetch-calendar)
-    (org-clock-in))
+    ;; (org-clock-in)
+    )
 
   (defun my/org-capture-and-gcal-sync (template-key)
     "Capture and sync with org-gcal."
