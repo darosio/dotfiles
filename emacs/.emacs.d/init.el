@@ -283,14 +283,14 @@
     )
 
 
-  (use-package refill-mode
+  (use-package refill-mode              ;;TODO: Try longlines-mode
     :straight (:type built-in)
-    :hook (text-mode . refill-mode)
-    :config
-    (setq refill-mode-refill-regex "\\([.?!]\\)\\(\\_>>\\|\n\\)")
-    (setq refill-mode-refill-hook
-          (lambda ()
-            (refill-region (point-min) (point-max))))
+    ;; :hook (text-mode . refill-mode)
+    ;; :config
+    ;; (setq refill-mode-refill-regex "\\([.?!]\\)\\(\\_>>\\|\n\\)")
+    ;; (setq refill-mode-refill-hook
+    ;;       (lambda ()
+    ;;         (refill-region (point-min) (point-max))))
     :bind ("M-q" . refill-paragraph))
 
   (use-package text-mode
@@ -339,6 +339,7 @@
     :bind (("C-M-s-n" . next-buffer)
            ("C-M-s-p" . previous-buffer)
            ("C-M-s-o" . other-window)
+           ("C-'" . other-window)
            ("C-M-s-'" . window-swap-states)
            ("C-M-s-2" . split-window-below)
            ("C-M-s-3" . split-window-right)
@@ -556,7 +557,8 @@
     :commands nerd-icons-install-fonts
     :config
     ;; Check for font existence more robustly
-    (unless (find-font (font-spec :family "Symbols Nerd Font Mono"))
+    (unless (or (find-font (font-spec :family "Symbols Nerd Font Mono"))
+                (file-exists-p "~/.local/share/fonts/NFM.ttf"))
       (nerd-icons-install-fonts))
     :custom
     (nerd-icons-font-family "Symbols Nerd Font Mono"))
@@ -868,8 +870,6 @@
     (consult-ripgrep-args
      "rg --null --line-buffered --color=never --max-columns=1000 --path-separator / --smart-case --search-zip --no-heading --with-filename --line-number --hidden --glob=!.git/ --sortr=accessed")
     :config
-    (advice-add #'completing-read-multiple
-                :override #'consult-completing-read-multiple)
     (consult-customize
      consult-theme :preview-key '(:debounce 0.4 any)
      consult-ripgrep consult-git-grep consult-org-agenda consult-grep
@@ -880,10 +880,6 @@
 
   ;; Embark: context-sensitive minibuffer actions
   (use-package embark
-    ;; :commands (embark--truncate-target
-    ;;            embark-completing-read-prompter)
-    ;; :functions (which-key--hide-popup-ignore-command
-    ;;             which-key--show-keymap)
     :defines embark-quit-after-action
     :preface
     (defun embark-act-noquit ()
@@ -1484,6 +1480,10 @@
                  (and buffer-file-name
                       (string-match-p "\\.ipynb\\'" buffer-file-name)))) ; This function checks the file extension
   )
+
+;; (use-package flycheck
+;;   :init (global-flycheck-mode))
+
 (use-package eglot
   :straight (:type built-in)
   :hook
@@ -1505,8 +1505,10 @@
 (use-package flymake
   :straight (:type built-in)
   :bind
-  ("M-g e l" . flymake-show-buffer-diagnostics)
-  ("M-g e p" . flymake-show-project-diagnostics)
+  (("M-g e l" . flymake-show-buffer-diagnostics)
+   ("M-g e p" . flymake-show-project-diagnostics)
+   :map flymake-mode-map
+   ("q" . delete-window))
   :hook ((gitignore-mode . flymake-mode)
          (markdown-mode . flymake-mode)
          (prog-mode . flymake-mode)
@@ -1514,7 +1516,6 @@
          ;; (text-mode . flymake-mode) ; Uncomment if you want flymake in text-mode
          ;; (yaml-mode . flymake-mode) ; If you want flymake for YAML without LSP
          ))
-
 ;; --- Additional modes ---
 (straight-use-package 'markdown-mode)
 (straight-use-package 'sphinx-mode)
