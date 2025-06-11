@@ -61,6 +61,8 @@
    ("M-S-h" . org-mark-element)
    :map
    org-mode-map
+   ("C-'" . nil)
+   ("C-\"" .  org-cycle-agenda-files)
    ("H-<return>" . org-next-link)
    ("H-S-<return>" . org-previous-link)
    ("M-<tab>" . org-cycle-global)
@@ -351,11 +353,11 @@
           ;; "Review" use `C-c R`
           ("rd" "Review: Daily"
            entry (file+olp+datetree "/tmp/daily-reviews.org")
-           (expand-file-name "templates/my_dailyreviewtemplate.org" user-emacs-directory))
+           "%[~/.emacs.d/templates/my_dailyreviewtemplate.org]")
 
           ("rw" "Review: Weekly"
            entry (file+olp+datetree "/tmp/weekly-reviews.org")
-           (expand-file-name "templates/my_weeklyreviewtemplate.org" user-emacs-directory))
+           "%[~/.emacs.d/templates/my_weeklyreviewtemplate.org]")
 
           ;; Only in mu4e
           ("R" "Reply to"
