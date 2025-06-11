@@ -281,16 +281,36 @@
   :hook
   (org-after-refile-insert . save-buffer)
 
-  ;;         '(("t" "Todo" entry (file org-default-notes-file)
-  ;;            "* TODO %?\n%[~/.emacs.d/templates/da-property-string]\n")
-  ;;           ("T" "GTD Task" entry (file+headline da-gtd "Tasks")
-  ;;            "* %^{State|TODO|NEXT|WAIT|PASS|MAYB} %? \t%^{Tag|:WORK:|:PERSONAL:}\n%[~/.emacs.d/templates/da-property-string]\n")
-  ;;           ("gc" "GCal DPA" entry (file "~/Sync/box/org/gcal/dpa.org")
-  ;;            "* %? %:subject\n:PROPERTIES:\n:calendar-id: danielepietroarosio@gmail.com\n:END:\n%^T\n%a" :immediate-finish t)
-  ;;           ("rd" "Daily Review" entry (file+olp+datetree "/tmp/daily-reviews.org")
-  ;;            (expand-file-name "templates/my_dailyreviewtemplate.org" user-emacs-directory))))
-
   :config
+  (defun my/org-timestamp-time-range-1h-or-all-day ()
+    "Prompt for start and optional end date/time.
+Return a valid Org timestamp string. If no time is entered, treat as all-day."
+    (let* ((start-str (org-read-date nil nil nil "Start date/time:"))
+           (start-time (org-read-date nil t start-str)) ; t → return time object
+           (start-has-time (string-match-p "\\([0-9]\\{1,2\\}:[0-9]\\{2\\}\\)" start-str))
+           (end-str (org-read-date nil nil nil "End date/time (optional):"))
+           (end-time (if (and end-str (not (string= end-str "")))
+                         (org-read-date nil t end-str)
+                       (if start-has-time
+                           (time-add start-time (seconds-to-time 3600))
+                         nil))))
+      ;; Ensure end time is after start
+      (when (and end-time (time-less-p end-time start-time))
+        (setq end-time (time-add start-time (seconds-to-time 3600))))
+      ;; Format timestamp
+      (if start-has-time
+          (if (and end-time (not (equal start-time end-time)))
+              (format "<%s %s-%s>"
+                      (format-time-string "%Y-%m-%d %a" start-time)
+                      (format-time-string "%H:%M" start-time)
+                      (format-time-string "%H:%M" end-time))
+            (format "<%s %s>"
+                    (format-time-string "%Y-%m-%d %a" start-time)
+                    (format-time-string "%H:%M" start-time)))
+        ;; all-day event
+        (format "<%s>" (format-time-string "%Y-%m-%d %a" start-time)))))
+
+
   (setq org-capture-templates
         '(
           ("t" "Todo simple entry"
@@ -340,12 +360,17 @@
            "* %? \t:SMT:\n" :unnarrowed t :kill-buffer t)
 
           ;; "Gcal" use `C-c G`
-          ("gc" "Gcal dpa"
+          ("xd" "Gcal dpa"
            entry (file  "~/Sync/box/org/gcal/dpa.org")
            "* %? %:subject\n :PROPERTIES:\n :calendar-id: danielepietroarosio@gmail.com\n :LOCATION: %^{Place}\n :END:\n:org-gcal:\n%^T\n%i\n:END:\n%a\n"
            :jump-to-captured t :immediate-finish t)
 
-          ("gf" "Gcal figli"
+          ("g" "Google Calendar event" entry
+           (file+headline "~/Sync/box/org/gcal/dpa.org" "Inbox")
+           "* %?\n  SCHEDULED: %(my/org-timestamp-time-range-1h-or-all-day)\n  :PROPERTIES:\n  :ORG-GCAL-ID:\n  :LOCATION: %^{Place}\n  :END:\n")
+          ;;  "* %?\n  SCHEDULED: %^t\n  :PROPERTIES:\n  :ORG-GCAL-ID:\n  :LOCATION: %^{Place|}\n  :END:\n")
+
+          ("xf" "Gcal figli"
            entry (file  "~/Sync/box/org/gcal/figli.org")
            "* %? %:subject\n :PROPERTIES:\n :calendar-id: c87gevr5pc3191on8c7nh8b4nc@group.calendar.google.com\n :LOCATION: %^{Place}\n :END:\n:org-gcal:\n%^T\n%1\n:END:\n%a\n"
            :jump-to-captured t :immediate-finish t)

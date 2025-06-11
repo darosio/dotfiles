@@ -42,6 +42,8 @@
 ;; Set Flymake's load-path to match load-path
 (setq elisp-flymake-byte-compile-load-path load-path)
 
+(setenv "GPG_TTY" (or (getenv "GPG_TTY") "/dev/tty")) ;store gpg for gcal
+
 ;; --- Package Management (straight.el and use-package) ---
 ;; Use 'setq-default' instead of custom-set or setq to set variables
 (setq-default straight-vc-git-default-clone-depth '1) ;full
@@ -1474,8 +1476,9 @@
   :bind
   (("M-g e l" . flymake-show-buffer-diagnostics)
    ("M-g e p" . flymake-show-project-diagnostics)
-   :map flymake-mode-map
-   ("q" . delete-window))
+   ;; :map flymake-mode-map
+   ;; ("q" . delete-window)
+   )
   :hook ((gitignore-mode . flymake-mode)
          (markdown-mode . flymake-mode)
          (prog-mode . flymake-mode)
