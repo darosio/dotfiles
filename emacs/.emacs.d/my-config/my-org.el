@@ -37,6 +37,18 @@
         (dolist (tag tags)
           (org-toggle-tag (cdr tag) 'off)))))
 
+
+                                        ;TODO: test
+  ;; (when (member "proj" (org-get-tags nil t))
+  ;;   (let ((tag-on (cdr (assoc org-state tags))))
+  ;;     (dolist (tag tags)
+  ;;       (org-toggle-tag (cdr tag) (if (and tag-on (equal (cdr tag) tag-on) 'on 'off)))
+  ;;       (unless tag-on
+  ;;         (dolist (tag tags)
+  ;;           (org-toggle-tag (cdr tag) 'off))))))
+
+
+
   ;; Utility Functions
   (defun internet-up-p (&optional host)
     "Check internet connectivity. Default HOST is google.com."
@@ -141,6 +153,7 @@
   ;; -- GTD core file paths --
   (defvar da-org-dir (expand-file-name "~/Sync/box/org"))
   (defvar da-gtd (expand-file-name "gtd.org" da-org-dir))
+  (defvar da-reviews-dir (expand-file-name "reviews" da-org-dir))
 
   (let* ((agenda-paths '("gtd.org"
                          "gcal/dpa.org"
@@ -252,8 +265,9 @@
     (org-capture-finalize t)
     (org-speed-move-safe 'outline-up-heading)
     (org-narrow-to-subtree)
-    ;; (fetch-calendar)
+    (fetch-calendar)
     ;; (org-clock-in)
+    (save-buffer)  ;; Save review immediately after creation
     )
 
   (defun clean-shopping-list ()
@@ -268,7 +282,7 @@
 
   :config
   (setq org-capture-templates
-        '(
+        `(
           ("t" "Todo simple entry"
            entry (file org-default-notes-file)
            "* TODO %?\n%[~/.emacs.d/templates/da-property-string]\n")
@@ -283,7 +297,11 @@
 
           ("P" "new Project"
            entry (file "~/Sync/box/org/projects.org")
-           "* %? \t%^{Tag|:WORK:proj:|:PERSONAL:proj:}\n%[~/.emacs.d/templates/da-property-string]\n%^{CATEGORY}p" :empty-lines 1 :prepend t)
+           "* %? \t%^{Tag|:WORK:proj:|:PERSONAL:proj:}\n%[~/.emacs.d/templates/da-property-string]\n%^{CATEGORY}p"
+           :empty-lines 1
+           :prepend t
+           :jump-to-captured t)  ;; Add this to jump after capture
+
 
           ("s" "Study item"
            entry (file+headline da-gtd "Study")
@@ -317,12 +335,16 @@
 
           ;; "Review" use `C-c R`
           ("rd" "Review: Daily"
-           entry (file+olp+datetree "/tmp/daily-reviews.org")
-           "%[~/.emacs.d/templates/my_dailyreviewtemplate.org]")
-
+           entry (file+datetree ,(expand-file-name "daily.org" da-reviews-dir))
+           "%[~/.emacs.d/templates/my_dailyreviewtemplate.org]"
+           :empty-lines 1
+           :jump-to-captured t)
           ("rw" "Review: Weekly"
-           entry (file+olp+datetree "/tmp/weekly-reviews.org")
-           "%[~/.emacs.d/templates/my_weeklyreviewtemplate.org]")
+           entry (file+datetree ,(expand-file-name "weekly.org" da-reviews-dir))
+           "%[~/.emacs.d/templates/my_weeklyreviewtemplate.org]"
+           :tree-type week
+           :empty-lines 1
+           :jump-to-captured t)
 
           ;; Only in mu4e
           ("R" "Reply to"

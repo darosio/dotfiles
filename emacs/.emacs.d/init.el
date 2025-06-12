@@ -790,6 +790,7 @@
            ("C-c k" . consult-kmacro)
            ;; Buffers
            ("C-x b" . consult-buffer)                ;; orig. switch-to-buffer
+           ("M-g b" . consult-buffer)
            ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
            ("C-x 5 b" . consult-buffer-other-frame)  ;; orig. switch-to-buffer-other-frame
            ;; Bookmarks and registers
