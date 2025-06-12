@@ -1,4 +1,4 @@
-;;; my-org.el --- To spell words -*- lexical-binding: t; -*-
+;;; my-org.el --- Org config -*- lexical-binding: t; -*-
 ;;
 ;;; Commentary:
 ;; Binding keys: "C-c"
@@ -233,6 +233,7 @@
   )
 
 (use-package org-capture :straight org
+  :after org
   :preface
   (defun my-daily-review ()
     "Capture and review for daily tasks."
@@ -255,22 +256,6 @@
     ;; (org-clock-in)
     )
 
-  (defun my/org-capture-and-gcal-sync (template-key)
-    "Capture and sync with org-gcal."
-    (interactive "sTemplate key: ")
-    (org-capture nil template-key)
-    (org-gcal-post-at-point))
-
-  (defun my/org-capture-and-gcal-sync-dpa ()
-    "Capture and sync with org-gcal for Gcal dpa."
-    (interactive)
-    (my/org-capture-and-gcal-sync "gc"))
-
-  (defun my/org-capture-and-gcal-sync-figli ()
-    "Capture and sync with org-gcal for Gcal figli."
-    (interactive)
-    (my/org-capture-and-gcal-sync "gf"))
-
   (defun clean-shopping-list ()
     (interactive)
     (with-current-buffer (find-file-noselect "~/Sync/box/org/shopping.org")
@@ -282,35 +267,6 @@
   (org-after-refile-insert . save-buffer)
 
   :config
-  (defun my/org-timestamp-time-range-1h-or-all-day ()
-    "Prompt for start and optional end date/time.
-Return a valid Org timestamp string. If no time is entered, treat as all-day."
-    (let* ((start-str (org-read-date nil nil nil "Start date/time:"))
-           (start-time (org-read-date nil t start-str)) ; t → return time object
-           (start-has-time (string-match-p "\\([0-9]\\{1,2\\}:[0-9]\\{2\\}\\)" start-str))
-           (end-str (org-read-date nil nil nil "End date/time (optional):"))
-           (end-time (if (and end-str (not (string= end-str "")))
-                         (org-read-date nil t end-str)
-                       (if start-has-time
-                           (time-add start-time (seconds-to-time 3600))
-                         nil))))
-      ;; Ensure end time is after start
-      (when (and end-time (time-less-p end-time start-time))
-        (setq end-time (time-add start-time (seconds-to-time 3600))))
-      ;; Format timestamp
-      (if start-has-time
-          (if (and end-time (not (equal start-time end-time)))
-              (format "<%s %s-%s>"
-                      (format-time-string "%Y-%m-%d %a" start-time)
-                      (format-time-string "%H:%M" start-time)
-                      (format-time-string "%H:%M" end-time))
-            (format "<%s %s>"
-                    (format-time-string "%Y-%m-%d %a" start-time)
-                    (format-time-string "%H:%M" start-time)))
-        ;; all-day event
-        (format "<%s>" (format-time-string "%Y-%m-%d %a" start-time)))))
-
-
   (setq org-capture-templates
         '(
           ("t" "Todo simple entry"
@@ -359,22 +315,6 @@ Return a valid Org timestamp string. If no time is entered, treat as all-day."
            entry (file+headline "~/Sync/box/org/shopping.org" "Supermarket")
            "* %? \t:SMT:\n" :unnarrowed t :kill-buffer t)
 
-          ;; "Gcal" use `C-c G`
-          ("xd" "Gcal dpa"
-           entry (file  "~/Sync/box/org/gcal/dpa.org")
-           "* %? %:subject\n :PROPERTIES:\n :calendar-id: danielepietroarosio@gmail.com\n :LOCATION: %^{Place}\n :END:\n:org-gcal:\n%^T\n%i\n:END:\n%a\n"
-           :jump-to-captured t :immediate-finish t)
-
-          ("g" "Google Calendar event" entry
-           (file+headline "~/Sync/box/org/gcal/dpa.org" "Inbox")
-           "* %?\n  SCHEDULED: %(my/org-timestamp-time-range-1h-or-all-day)\n  :PROPERTIES:\n  :ORG-GCAL-ID:\n  :LOCATION: %^{Place}\n  :END:\n")
-          ;;  "* %?\n  SCHEDULED: %^t\n  :PROPERTIES:\n  :ORG-GCAL-ID:\n  :LOCATION: %^{Place|}\n  :END:\n")
-
-          ("xf" "Gcal figli"
-           entry (file  "~/Sync/box/org/gcal/figli.org")
-           "* %? %:subject\n :PROPERTIES:\n :calendar-id: c87gevr5pc3191on8c7nh8b4nc@group.calendar.google.com\n :LOCATION: %^{Place}\n :END:\n:org-gcal:\n%^T\n%1\n:END:\n%a\n"
-           :jump-to-captured t :immediate-finish t)
-
           ;; "Review" use `C-c R`
           ("rd" "Review: Daily"
            entry (file+olp+datetree "/tmp/daily-reviews.org")
@@ -400,8 +340,6 @@ Return a valid Org timestamp string. If no time is entered, treat as all-day."
   :bind
   (("C-c c" . org-capture)
    ("C-c T" . (lambda () (interactive "") (org-capture nil "T")))
-   ("C-c G c" . my/org-capture-and-gcal-sync-dpa)
-   ("C-c G f" . my/org-capture-and-gcal-sync-figli)
    ("C-c R d" . my-daily-review)
    ("C-c R w" . my-weekly-review))
   )
@@ -701,6 +639,7 @@ Return a valid Org timestamp string. If no time is entered, treat as all-day."
   )
 
 (use-package org-faces :straight org
+  :after org
   :config
   ;; Customizing Org-mode todo keywords and tags faces
   (setq org-todo-keyword-faces
@@ -752,6 +691,7 @@ Return a valid Org timestamp string. If no time is entered, treat as all-day."
   )
 
 (use-package ob-ditaa :straight org
+  :after org
   :config
   (setq org-ditaa-jar-path "/usr/share/java/ditaa/ditaa-0.11.jar")
   )

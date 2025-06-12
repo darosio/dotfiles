@@ -509,6 +509,8 @@
     :bind (("<f9>" . imenu-list)
            ("<C-f9>" . imenu-list-smart-toggle)))
 
+
+  (use-package password-store :defer nil)
   (use-package pass
     :bind ("C-x P" . pass))
 
