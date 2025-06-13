@@ -400,25 +400,34 @@
                 (org-narrow-to-subtree)))
   (setq org-element-use-cache t)
   ;; org-compat
-  (setq org-agenda-overriding-columns-format "%TODO 100%ITEM %7EFFORT %SCHEDULED %DEADLINE 100%TAGS")
-
-  ;;   ;; Agenda Custom Commands
-  ;;   (setq org-agenda-custom-commands
-  ;;         '(("d" "Daily Review"
-  ;;            ((agenda "" ((org-agenda-span 1)))
-  ;;             (tags-todo "+proj-WAITING-PASSED-HOLDING-MAYBE/PASS|WAIT|NEXT"
-  ;;                        ((org-agenda-overriding-header "Active Projects"))))
-  ;;           ("j" "Projects"
-  ;;            ((tags "+proj+DEADLINE={.+}/-DONE-CANC"
-  ;;                   ((org-agenda-overriding-header "Due Projects")))
-  ;;             (tags "+proj-DEADLINE={.+}/-DONE-CANC"
-  ;;                   ((org-agenda-overriding-header "All Projects")))))))
+  ;; (setq org-agenda-overriding-columns-format "%TODO 100%ITEM %7EFFORT %SCHEDULED %DEADLINE 100%TAGS")
+  (setq org-columns-default-format
+        "%50ITEM(Task) %15CATEGORY(Category) %5TODO(Status) %SCHEDULED %DEADLINE %TAGS")
 
   (setq org-agenda-custom-commands
         '(
-          ("b" "Backwards calendar loops"
+          ("0" "Tasks to refile or archive"
+           ((tags "REFILE" ((org-agenda-overriding-header "Tasks to Refile")))
+            (tags "-NOTE-REFILE/DONE|CANC"
+                  ((org-agenda-overriding-header "Tasks to Archive")))))
+
+          ("l" "Standalone unscheduled tasks"
            (
-            (agenda "Backward"
+            (tags "-proj-recurring-STYLE=\"habit\"+WORK/TODO|NEXT"
+                  ((org-agenda-overriding-header "Work")))
+            (tags "-proj-recurring-STYLE=\"habit\"+PERSONAL-WORK/TODO|NEXT"
+                  ((org-agenda-overriding-header "Personal")))
+            (tags "-proj-recurring-STYLE=\"habit\"-WORK-PERSONAL/TODO|NEXT"
+                  ((org-agenda-overriding-header "Unassigned")))
+            )
+           (
+            (org-agenda-sorting-strategy '(priority-down category-keep tag-down))
+            (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline 'scheduled))
+            (org-tags-match-list-sublevels 'indented)
+            ))
+
+          ("b" "Backwards calendar loops"
+           ((agenda "Backward"
                     ((org-agenda-overriding-header "Backwards calendar loops")
                      ;; (org-agenda-overriding-columns-format "%20ITEM %DEADLINE")
                      ;; (org-agenda-view-columns-initially t)
@@ -427,27 +436,137 @@
                      (org-agenda-start-with-log-mode t)
                      (org-agenda-include-diary nil)
                      (org-agenda-skip-timestamp-if-done nil)
-                     ))
-            (agenda "Planning"
+                     )))
+           ((org-agenda-show-future-repeats t)
+            (org-agenda-compact-blocks nil)))
+
+          ("f" "Forwards loops, habits and recurring tasks"
+           ((agenda "Planning"
                     ((org-agenda-start-day "+1d")
                      (org-agenda-span 14)
-                     (org-agenda-show-all-dates nil)
-                     ))
+                     (org-agenda-overriding-header "Next 14 days planning")
+                     (org-agenda-show-all-dates nil)))
             (tags-todo "-recurring-STYLE=\"habit\"&DEADLINE>\"<+14d>\""
                        ((org-agenda-overriding-header "Next deadlines")
-                        (org-agenda-sorting-strategy '(deadline-up))
-                        ))
+                        (org-agenda-sorting-strategy '(deadline-up))))
+            (agenda "Scheduled_Deadline"
+                    ((org-agenda-overriding-header "Significant deadlines")
+                     (org-agenda-entry-types '(:scheduled :deadline))
+                     (org-agenda-start-day "+15d")
+                     (org-agenda-span 165)
+                     (org-agenda-include-diary nil)
+                     (org-agenda-show-all-dates nil)
+                     (org-agenda-time-grid nil)))
+            (tags-todo "+SCHEDULED>=\"<+180d>\"\|+DEADLINE>=\"<+180d>\""
+                       ((org-agenda-overriding-header "Over 6 months tasks and deadlines"))))
+           ((org-agenda-sorting-strategy '(deadline-up))))
+          ("F" "Forward planning and deadlines"
+           ((agenda "Next 14 days"
+                    ((org-agenda-start-day "+1d")
+                     (org-agenda-span 14)
+                     (org-agenda-overriding-header "Next 14 days planning")
+                     (org-agenda-show-all-dates nil)))
+            (agenda "Long-term schedule"
+                    ((org-agenda-entry-types '(:scheduled :deadline))
+                     (org-agenda-start-day "+15d")
+                     (org-agenda-span 165)
+                     (org-agenda-overriding-header "Significant Deadlines (15-180 days)")
+                     (org-agenda-include-diary nil)
+                     (org-agenda-show-all-dates nil)
+                     (org-agenda-time-grid nil)))
+            (tags-todo "+SCHEDULED>=\"<+180d>\"|+DEADLINE>=\"<+180d>\""
+                       ((org-agenda-overriding-header "Long-term Tasks (180+ days)"))))
+           ((org-agenda-sorting-strategy '(deadline-up))
+            (org-agenda-compact-blocks nil)))
+
+          ("w" "Follow-up list"
+           (
+            (tags "-proj/!WAIT|PASS"
+                  ((org-agenda-overriding-header "Follow-up tasks list")))
+            (tags "+proj/!WAIT|PASS"
+                  ((org-agenda-overriding-header "Follow-up projects list")
+                   (org-tags-exclude-from-inheritance '("proj"))))
             )
            (
-            (org-agenda-show-future-repeats t)
-            (org-agenda-compact-blocks nil)
-            ))
-          ("0" "Tasks to refile or archive"
+            (org-tags-match-list-sublevels 'indented)))
+
+          ("X" "Project Review"
            (
-            (tags "REFILE" ((org-agenda-overriding-header "Tasks to Refile")))
-            (tags "-NOTE-REFILE/DONE|CANC"
-                  ((org-agenda-overriding-header "Tasks to Archive")))
+            (tags "+proj"
+                  ((org-agenda-overriding-header "Project Review")
+                   (org-agenda-columns-compute-summary nil)
+                   (org-agenda-view-columns-initially t)
+                   (org-agenda-sorting-strategy '(category-keep priority-down))
+                   (org-agenda-column-format "%20Project %15CATEGORY %10STATUS %30Next Action")
+                   (org-agenda-tags-todo-honor-ignore-options t)
+                   (org-agenda-follow-mode t)
+                   (org-agenda-show-log nil)
+                   (org-agenda-show-inherited-tags t)
+                   ))
             ))
+          ("J" "Projects"
+           ((tags "+proj+DEADLINE={.+}/-DONE-CANC"
+                  ((org-agenda-overriding-header "Due Projects")))
+            (tags "+proj-DEADLINE={.+}/-DONE-CANC"
+                  ((org-agenda-overriding-header "All Projects")))
+            (org-columns-default-format
+             "%50ITEM(Task) %CATEGORY(Category) %TODO(Status) %TODO(Next Action)")
+            ))
+          ("j" "Projects list"
+           (
+            ;; (tags "+proj/-HOLD-MAYB-PASS-WAIT-CANC-DONE"; -Proj=\"ignore\"
+            (tags "+proj+DEADLINE={.+}/-DONE-CANC"
+                  ((org-agenda-overriding-header "Projects due")
+                   (org-tags-exclude-from-inheritance '("proj"))
+                   ))
+            (tags "+proj-DEADLINE={.+}/-DONE-CANC"
+                  ((org-agenda-overriding-header "Projects")
+                   (org-tags-exclude-from-inheritance '("proj"))
+                   ))
+            (tags "+proj"
+                  ((org-agenda-overriding-header "Project tasks")
+                   (org-agenda-sorting-strategy '(todo-state-up))
+                   (org-agenda-skip-function '(org-agenda-skip-entry-if 'regexp ":proj:"))
+                   ))
+            )
+           ((org-tags-match-list-sublevels 'indented)
+            (org-agenda-files (append da-agenda-files
+                                      '("~/Sync/notes/arch/emacs.org"
+                                        "~/Sync/notes/arch/archlinux.org")))
+            (org-agenda-sorting-strategy '(category-keep priority-down))
+            ;; (org-use-property-inheritance t)
+            (org-agenda-tag-filter-preset '("-WAITING" "-PASSED" "-HOLDING" "-MAYBE" "-ENDED"))
+            ))
+
+          ("h" "Tasks and projects on hold"
+           (
+            (tags "-proj/+HOLD"
+                  ((org-agenda-overriding-header "Tasks on hold")))
+            (tags "+proj/+HOLD"
+                  ((org-agenda-overriding-header "Projects on hold")
+                   (org-tags-exclude-from-inheritance '("proj"))))
+            (tags-todo "TIMESTAMP<=\"<now>\"")
+            )
+           (
+            (org-tags-match-list-sublevels 'indented)))
+
+          ("i" "Idea and hold, maybe, someday tasks and-or projects"
+           (
+            (tags "-proj-SCHEDULED={.+}-DEADLINE={.+}/+MAYB"
+                  ((org-agenda-overriding-header "Tasks for someday")
+                   ))
+            (tags "+proj/+MAYB"
+                  ((org-agenda-overriding-header "Projects for someday")
+                   (org-tags-exclude-from-inheritance '("proj"))))
+            (tags "+idea/-MAYB"
+                  ((org-agenda-overriding-header "Ideas")
+                   (org-tags-match-list-sublevels 'indented)
+                   (org-agenda-sorting-strategy '(todo-state-up priority-down category-keep tag-down))))
+            )
+           (
+            (org-agenda-sorting-strategy '(todo-state-up priority-down tag-down category-keep))
+            ))
+
           ("2" "Scattered action list"
            (
             (tags-todo "-proj")
@@ -472,6 +591,10 @@
                      (org-deadline-warning-days 0)
                      ))
             ))
+          ("D" "Daily Review"
+           ((agenda "" ((org-agenda-span 1)))
+            (tags-todo "+proj-WAITING-PASSED-HOLDING-MAYBE/PASS|WAIT|NEXT"
+                       ((org-agenda-overriding-header "Active Projects")))))
           ("d" "Daily review"
            (
             (agenda "Today"
@@ -524,99 +647,6 @@
            ((org-agenda-include-diary nil)
             ;; (org-agenda-sorting-strategy '(deadline-up scheduled-up habit-down time-up tag-down category-keep priority-up))
             (org-agenda-compact-blocks nil)))
-          ("f" "Forwards loops, habits and recurring tasks"
-           (
-            (agenda "scheduled"
-                    ((org-agenda-entry-types '(:scheduled :deadline))
-                     (org-agenda-start-day "+15d")
-                     (org-agenda-span 165)
-                     (org-agenda-include-diary nil)
-                     (org-agenda-show-all-dates nil)
-                     (org-agenda-time-grid nil)
-                     ))
-            (tags-todo "+SCHEDULED>=\"<+180d>\"\|+DEADLINE>=\"<+180d>\""
-                       ((org-agenda-overriding-header "Over 6 months")
-                        ))
-            )
-           (
-            (org-agenda-sorting-strategy '(deadline-up))
-            ))
-          ("l" "Standalone unscheduled tasks"
-           (
-            (tags "-proj-recurring-STYLE=\"habit\"+WORK/TODO|NEXT"
-                  ((org-agenda-overriding-header "Work")))
-            (tags "-proj-recurring-STYLE=\"habit\"+PERSONAL-WORK/TODO|NEXT"
-                  ((org-agenda-overriding-header "Personal")))
-            (tags "-proj-recurring-STYLE=\"habit\"-WORK-PERSONAL/TODO|NEXT"
-                  ((org-agenda-overriding-header "Unassigned")))
-            )
-           (
-            (org-agenda-sorting-strategy '(priority-down category-keep tag-down))
-            (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline 'scheduled))
-            (org-tags-match-list-sublevels 'indented)
-            ))
-          ("w" "Follow-up list"
-           (
-            (tags "-proj/!WAIT|PASS"
-                  ((org-agenda-overriding-header "Follow-up tasks list")))
-            (tags "+proj/!WAIT|PASS"
-                  ((org-agenda-overriding-header "Follow-up projects list")
-                   (org-tags-exclude-from-inheritance '("proj"))))
-            )
-           (
-            (org-tags-match-list-sublevels 'indented)))
-          ("j" "Projects list"
-           (
-            ;; (tags "+proj/-HOLD-MAYB-PASS-WAIT-CANC-DONE"; -Proj=\"ignore\"
-            (tags "+proj+DEADLINE={.+}/-DONE-CANC"
-                  ((org-agenda-overriding-header "Projects due")
-                   (org-tags-exclude-from-inheritance '("proj"))
-                   ))
-            (tags "+proj-DEADLINE={.+}/-DONE-CANC"
-                  ((org-agenda-overriding-header "Projects")
-                   (org-tags-exclude-from-inheritance '("proj"))
-                   ))
-            (tags "+proj"
-                  ((org-agenda-overriding-header "Project tasks")
-                   (org-agenda-sorting-strategy '(todo-state-up))
-                   (org-agenda-skip-function '(org-agenda-skip-entry-if 'regexp ":proj:"))
-                   ))
-            )
-           ((org-tags-match-list-sublevels 'indented)
-            (org-agenda-files (append da-agenda-files
-                                      '("~/Sync/notes/arch/emacs.org"
-                                        "~/Sync/notes/arch/archlinux.org")))
-            (org-agenda-sorting-strategy '(category-keep priority-down))
-            ;; (org-use-property-inheritance t)
-            (org-agenda-tag-filter-preset '("-WAITING" "-PASSED" "-HOLDING" "-MAYBE" "-ENDED"))
-            ))
-          ("h" "Tasks and projects on hold"
-           (
-            (tags "-proj/+HOLD"
-                  ((org-agenda-overriding-header "Tasks on hold")))
-            (tags "+proj/+HOLD"
-                  ((org-agenda-overriding-header "Projects on hold")
-                   (org-tags-exclude-from-inheritance '("proj"))))
-            (tags-todo "TIMESTAMP<=\"<now>\"")
-            )
-           (
-            (org-tags-match-list-sublevels 'indented)))
-          ("i" "Idea and hold, maybe, someday tasks and-or projects"
-           (
-            (tags "-proj-SCHEDULED={.+}-DEADLINE={.+}/+MAYB"
-                  ((org-agenda-overriding-header "Tasks for someday")
-                   ))
-            (tags "+proj/+MAYB"
-                  ((org-agenda-overriding-header "Projects for someday")
-                   (org-tags-exclude-from-inheritance '("proj"))))
-            (tags "+idea/-MAYB"
-                  ((org-agenda-overriding-header "Ideas")
-                   (org-tags-match-list-sublevels 'indented)
-                   (org-agenda-sorting-strategy '(todo-state-up priority-down category-keep tag-down))))
-            )
-           (
-            (org-agenda-sorting-strategy '(todo-state-up priority-down tag-down category-keep))
-            ))
 
           ("c" . "Contexts")
           ("ce" "@errand" tags-todo "@errand")
