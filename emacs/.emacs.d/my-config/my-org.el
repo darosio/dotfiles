@@ -37,18 +37,6 @@
         (dolist (tag tags)
           (org-toggle-tag (cdr tag) 'off)))))
 
-
-                                        ;TODO: test
-  ;; (when (member "proj" (org-get-tags nil t))
-  ;;   (let ((tag-on (cdr (assoc org-state tags))))
-  ;;     (dolist (tag tags)
-  ;;       (org-toggle-tag (cdr tag) (if (and tag-on (equal (cdr tag) tag-on) 'on 'off)))
-  ;;       (unless tag-on
-  ;;         (dolist (tag tags)
-  ;;           (org-toggle-tag (cdr tag) 'off))))))
-
-
-
   ;; Utility Functions
   (defun internet-up-p (&optional host)
     "Check internet connectivity. Default HOST is google.com."

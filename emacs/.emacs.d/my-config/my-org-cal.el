@@ -43,8 +43,13 @@
   (setq holiday-islamic-holidays nil)
   )
 
+(use-package plstore
+  :defer nil
+  :config
+  (setq plstore-encrypt-to '("8B6A39EFA290FB41")))
+
 (use-package org-gcal
-  :after (org-capture password-store)
+  :after (org-capture password-store plstore)
   :preface
   (defun my/org-timestamp-time-range-1h-or-all-day ()
     "Prompt for start and optional end date/time.
@@ -87,22 +92,22 @@ Return a valid Org timestamp string. If no time is entered, treat as all-day."
   (setq org-gcal-file-alist
         '(("danielepietroarosio@gmail.com" . "~/Sync/box/org/gcal/dpa.org")
           ("c87gevr5pc3191on8c7nh8b4nc@group.calendar.google.com" . "~/Sync/box/org/gcal/figli.org")))
-  ;;  "* %?\n  SCHEDULED: %^t\n  :PROPERTIES:\n  :ORG-GCAL-ID:\n  :LOCATION: %^{Place|}\n  :END:\n")
+  ;;  Use custom function instead of SCHEDULED: %^t\n
   (add-to-list
    'org-capture-templates
    '("gg" "Google Calendar event" entry
      (file+headline "~/Sync/box/org/gcal/dpa.org" "Inbox")
-     "* %?\n  SCHEDULED: %(my/org-timestamp-time-range-1h-or-all-day)\n  :PROPERTIES:\n  :ORG-GCAL-ID:\n  :LOCATION: %^{Place}\n  :END:\n%i\n%a\n"))
+     "* %?\n  SCHEDULED: %(my/org-timestamp-time-range-1h-or-all-day)\n  :PROPERTIES:\n  :ORG-GCAL-ID:\n  :LOCATION: \n  :END:\n:org-gcal:\n%i\n%a\n:END:\n"))
   (add-to-list
    'org-capture-templates
    '("gf" "Google Calendar event" entry
      (file+headline "~/Sync/box/org/gcal/figli.org" "Inbox")
-     "* %?\n  SCHEDULED: %(my/org-timestamp-time-range-1h-or-all-day)\n  :PROPERTIES:\n  :ORG-GCAL-ID:\n  :LOCATION: %^{Place}\n  :END:\n%i\n%a\n"))
+     "* %?\n  SCHEDULED: %(my/org-timestamp-time-range-1h-or-all-day)\n  :PROPERTIES:\n  :ORG-GCAL-ID:\n  :LOCATION: \n  :END:\n:org-gcal:\n%i\n%a\n:END:\n"))
   :bind
   ("C-c G p" . org-gcal-post-at-point) ; (add-hook 'org-capture-before-finalize-hook)
-  ("C-c G k" . org-gcal-delete-at-point)
-  ("C-c G s" . org-gcal-sync)
-  ("C-c G G" . org-gcal-fetch)
+  ("C-c G d" . org-gcal-delete-at-point)
+  ("C-c G G" . org-gcal-sync)
+  ("C-c G F" . org-gcal-fetch)
   ("C-c G g" . (lambda () (interactive) (org-gcal-sync) (org-capture nil "gg")))
   ("C-c G f" . (lambda () (interactive) (org-gcal-sync) (org-capture nil "gf"))))
 
