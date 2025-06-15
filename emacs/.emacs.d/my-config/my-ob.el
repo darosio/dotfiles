@@ -121,6 +121,11 @@
 (use-package ox-beamer :straight org :init (eval-after-load 'ox '(require 'ox-beamer)))
 (use-package ox-md :straight org :init (eval-after-load 'ox '(require 'ox-md)))
 (use-package ox-koma-letter :straight org :init (eval-after-load 'ox '(require 'ox-koma-letter)))
+(use-package ob-ditaa :straight org
+  :after org
+  :config
+  (setq org-ditaa-jar-path "/usr/share/java/ditaa/ditaa-0.11.jar")
+  )
 
 ;; --- Other packages ---
 (use-package ob-async

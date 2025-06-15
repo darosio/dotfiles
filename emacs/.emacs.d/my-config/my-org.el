@@ -681,34 +681,22 @@
 (use-package org-faces :straight org
   :after org
   :config
-  ;; Customizing Org-mode todo keywords and tags faces
-  (setq org-todo-keyword-faces
-        '(("TODO" :foreground "crimson" :weight bold :box (:line-width 2 :style released-button))
-          ("NEXT" :foreground "light blue" :weight bold :box (:line-width 2 :style released-button))
-          ;; ("APPT" :foreground "yellow" :weight bold)
-          ("WAIT" (:foreground "orange" :weight bold))
-          ("PASS" :foreground "SpringGreen" :weight bold)
-          ("HOLD" :foreground "SaddleBrown" :weight bold )
-          ("MAYB" :foreground "MediumAquamarine" :weight bold)
-          ("DONE" :foreground "forest green" :weight bold)
-          ("CANC" (:foreground "forest green" :weight bold :strike-through t))
-          ))
-  (setq org-tag-faces
-        '(("WORK" :foreground "green")
-          ("PERSONAL" :foreground "orange")
-          ("proj" :weight bold)
-          ("@fbk" :weight italic)))
-  ;; Customizing other Org-mode element faces for consistent styling
-  (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-block nil :inherit '(fixed-pitch shadow))
-  (set-face-attribute 'org-block-begin-line nil :inherit 'fixed-pitch
-                      :background "burlywood" :foreground "darkred" :underline "darkred")
-  (set-face-attribute 'org-block-end-line nil :inherit 'fixed-pitch
-                      :background "burlywood" :foreground "darkred" :overline "yellow")
-  (set-face-attribute 'org-code nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-link nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-meta-line nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-document-info-keyword nil :inherit 'fixed-pitch))
+  (let ((todo-color (face-attribute 'error :foreground nil t))
+        (next-color (face-attribute 'font-lock-function-name-face :foreground nil t)) ; Often a prominent blue/cyan
+        (done-color (face-attribute 'success :foreground nil t))
+        (wait-color (face-attribute 'warning :foreground nil t))
+        (hold-color (face-attribute 'font-lock-preprocessor-face :foreground nil t)) ; Often a muted brown/purple
+        (maybe-color (face-attribute 'font-lock-comment-face :foreground nil t))) ; Almost always a subtle grey/slate
+    (setq org-todo-keyword-faces
+          `(("TODO" :foreground ,todo-color :weight bold :box (:line-width 1.5 :style released-button))
+            ("NEXT" :foreground ,next-color :weight bold :box (:line-width 1.5 :style released-button))
+            ("WAIT" :foreground ,wait-color :weight bold)
+            ("PASS" :foreground ,done-color :weight bold)
+            ("HOLD" :foreground ,hold-color :weight bold)
+            ("MAYB" :foreground ,maybe-color :slant italic) ; Italic and muted color
+            ("DONE" :foreground ,done-color :weight bold)
+            ("CANC" :foreground ,done-color :weight bold :strike-through t))))
+  )
 
 (use-package org-lint :straight org
   :after org
@@ -728,12 +716,6 @@
   :bind (:map
          org-mode-map
          ("M-g e o" . org-lint))
-  )
-
-(use-package ob-ditaa :straight org
-  :after org
-  :config
-  (setq org-ditaa-jar-path "/usr/share/java/ditaa/ditaa-0.11.jar")
   )
 
 ;; --- Other packages ---
