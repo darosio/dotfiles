@@ -356,6 +356,27 @@
 
 (use-package org-agenda :straight org
   :after org
+  :preface
+  (defun my-archive-done-tasks ()
+    "Archive all DONE and CANCELLED tasks in all agenda files."
+    (interactive)
+    (let ((files (org-agenda-files)))
+      (dolist (file files)
+        (with-current-buffer (find-file-noselect file)
+          (message "Archiving tasks in %s..." (buffer-name))
+          (org-map-entries (lambda () (org-archive-subtree)) "/+DONE|+CANCELLED" 'file)
+          (save-buffer)))
+      (message "Archiving complete.")))
+
+  (defun my-org-clock-in-default ()
+    "Clock in to a default 'Work' task if nothing is clocked in."
+    (interactive)
+    (when (not (org-clock-is-active))
+      (with-current-buffer (find-file-noselect da-gtd) ; Assumes `da-gtd` points to your main GTD file
+        (goto-char (point-min))
+        (when (re-search-forward "^\*\* Work$") ; Searches for a heading named "Work"
+          (org-clock-in)))))
+
   :bind
   (("M-s A" . (lambda () (interactive "") (org-agenda nil "s")))
    :map org-agenda-mode-map
