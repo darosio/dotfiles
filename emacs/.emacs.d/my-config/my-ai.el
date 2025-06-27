@@ -137,21 +137,24 @@
   (gptel-make-ollama "Ollama"
     :host "localhost:11434"
     :stream t
-    :models '(mistral:latest
+    :models '(magistral:latest
               deepseek-r1:32b
-              qwen2.5:32b
+              gemma3n:latest
+              gemma3:4b-it-qat
+              mistral:latest
               phi4:latest
-              koesn/llama3-openbiollm-8b:Q5_K_M
-              dolphin-mixtral:8x22b
-              nous-hermes2-mixtral:latest
-              llama3:latest
-              ALIENTELLIGENCE/paperwriter:latest
-              qwen2.5-coder:3b
-              qwen2.5:3b
-              llama3:8b-instruct-q8_0
-              codellama:latest
               gemma3:27b
-              deepseek-r1:latest))
+              qwen2.5-coder:latest
+              qwen2.5vl:latest
+              devstral:latest
+              deepseek-r1:14b
+              deepseek-r1:latest
+              llama4:latest
+              deepseek-r1:70b
+              qwen2.5:32b
+              dolphin-mixtral:8x22b
+              qwen2.5-coder:3b
+              codellama:latest))
   )
 
 (use-package chatgpt-shell
