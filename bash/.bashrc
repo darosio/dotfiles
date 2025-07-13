@@ -32,9 +32,6 @@ done
 eval "$(dircolors -b)"
 [[ $- == *i* ]] && bind -x '"\C-l": ls -lh'
 
-# TODO: remove? Auto cd
-cd "$AUTOCD" || return
-
 export EDITOR='emacsclient -c -a=""'
 export TERMINAL=alacritty
 export HISTCONTROL=ignoredups
