@@ -84,6 +84,16 @@
 
 (use-package gptel
   :bind ("C-c C-<return>" . gptel-send)
+  :preface
+  (defun get-ollama-models ()
+    "Fetch the list of installed Ollama models."
+    (let* ((output (shell-command-to-string "ollama list"))
+           (lines (split-string output "\n" t))
+           models)
+      (dolist (line (cdr lines))  ; Skip the first line
+        (when (string-match "^\\([^[:space:]]+\\)" line)
+          (push (match-string 1 line) models)))
+      (nreverse models)))
   :commands (
              gptel-make-kagi
              gptel-make-anthropic
@@ -92,8 +102,11 @@
              gptel-make-gemini
              )
   :config
-  :config
   (setq gptel-default-mode 'org-mode)
+  (gptel-make-ollama "Ollama"
+    :host "localhost:11434"
+    :stream t
+    :models (get-ollama-models))
   (setq gptel-api-key my/openai-api-key)
   (gptel-make-kagi "Kagi"
     :key my/kagi-api-key)
@@ -134,27 +147,6 @@
                     deepseek-r1-distill-llama-70b
                     qwen-qwq-32b
                     gemma2-9b-it)))
-  (gptel-make-ollama "Ollama"
-    :host "localhost:11434"
-    :stream t
-    :models '(magistral:latest
-              deepseek-r1:32b
-              gemma3n:latest
-              gemma3:4b-it-qat
-              mistral:latest
-              phi4:latest
-              gemma3:27b
-              qwen2.5-coder:latest
-              qwen2.5vl:latest
-              devstral:latest
-              deepseek-r1:14b
-              deepseek-r1:latest
-              llama4:latest
-              deepseek-r1:70b
-              qwen2.5:32b
-              dolphin-mixtral:8x22b
-              qwen2.5-coder:3b
-              codellama:latest))
   )
 
 (use-package chatgpt-shell
