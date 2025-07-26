@@ -82,6 +82,38 @@
            :default-chat-non-standard-params '(("num_ctx" . 8192))))
   )
 
+(use-package gptel-aibo)
+(use-package inline-diff
+  :straight (:repo "https://code.tecosaur.net/tec/inline-diff")
+  :after gptel-rewrite) ;or use :defer
+
+
+;; Updated version available at https://github.com/karthink/gptel/wiki
+(use-package gptel-rewrite
+  :straight gptel
+  :bind (:map gptel-rewrite-actions-map
+              ("C-c M-d" . gptel--rewrite-inline-diff))
+  :config
+  (defun gptel--rewrite-inline-diff (&optional ovs)
+    "Start an inline-diff session on OVS."
+    (interactive (list (gptel--rewrite-overlay-at)))
+    (unless (require 'inline-diff nil t)
+      (user-error "Inline diffs require the inline-diff package."))
+    (when-let* ((ov-buf (overlay-buffer (or (car-safe ovs) ovs)))
+                ((buffer-live-p ov-buf)))
+      (with-current-buffer ov-buf
+        (cl-loop for ov in (ensure-list ovs)
+                 for ov-beg = (overlay-start ov)
+                 for ov-end = (overlay-end ov)
+                 for response = (overlay-get ov 'gptel-rewrite)
+                 do (delete-overlay ov)
+                 (inline-diff-words
+                  ov-beg ov-end response)))))
+  (when (boundp 'gptel--rewrite-dispatch-actions)
+    (add-to-list
+     'gptel--rewrite-dispatch-actions '(?i "inline-diff")
+     'append)))
+
 (use-package gptel
   :bind ("C-c C-<return>" . gptel-send)
   :preface
