@@ -60,6 +60,9 @@ fi
 # direnv is common
 eval "$(direnv hook bash)"
 
+# zoxide
+eval "$(zoxide init bash)"
+
 # GPG/SSH setup is common
 GPG_TTY=$(tty)
 export GPG_TTY

@@ -71,7 +71,9 @@ output * bg '#5C001E' solid_color
 # Basics:
 #
     # Start a terminal
-    bindsym $mod+Return exec $term
+    bindsym $mod+Shift+Return exec $term
+    bindsym $mod+Return exec kitty
+    bindsym $mod+c exec foot
 
     # Kill focused window
     bindsym $mod+q kill
@@ -315,7 +317,12 @@ bindsym $mod+u for_window [urgent="newest" ] focus
 bindsym $mod+Shift+period exec recoll
 
 # Switch to Solarized Light theme
-bindsym $mod+F12 exec alacritty --config-file ~/.config/alacritty/alacritty_light.toml
+bindsym $mod+F12 exec kitty --config ~/.config/kitty/kitty-light.conf
+bindsym $mod+Shift+F12 exec alacritty --config-file ~/.config/alacritty/alacritty_light.toml
+
+# Launch yazi
+bindsym $mod+y exec kitty -e yazi
+bindsym $mod+Shift+y exec foot -e yazi
 
 # Favorite programs
 bindsym $mod+F2 workspace 2; exec emacs
