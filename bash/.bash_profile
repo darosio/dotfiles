@@ -11,7 +11,7 @@ fi
 [[ -f ~/.progs/bash_profile ]] && . "$HOME"/.progs/bash_profile
 
 # User specific environment and startup programs
-PATH=$PATH:$HOME/.local/bin
+PATH=$HOME/.local/bin:$PATH
 export PATH
 
 set -a

@@ -1,23 +1,36 @@
 [Added Associations]
+application/epub+zip=com.github.johnfactotum.Foliate.desktop;
+
+
+[Default Applications]
+application/msword=libreoffice;
+application/vnd.openxmlformats-officedocument.wordprocessingml.document=libreoffice;
+
+application/x-extension-htm=firefox.desktop;
+application/x-extension-html=firefox.desktop;
+application/x-extension-shtml=firefox.desktop;
+application/x-extension-xht=firefox.desktop;
+application/x-extension-xhtml=firefox.desktop;
+
+application/x-ipynb+json=jupyterlab.desktop;
+application/x-zerosize=emacsclient.desktop;
+audio/*=mpv;
+image/*=imv;
+video/*=mpv;
+
+[Added Associations]
 
 [Default Applications]
 audio/ogg=rifle.desktop;
 application/x-wine-extension-opj=rifle.desktop;
 audio/x-ape=ApE.desktop;
-image/png=feh.desktop;
 application/vnd.openxmlformats-officedocument.wordprocessingml.document=rifle.desktop;
 application/msword=rifle.desktop;
 application/vnd.openxmlformats-officedocument.presentationml.presentation=rifle.desktop;
 application/vnd.ms-powerpoint=rifle.desktop;
 application/vnd.openxmlformats-officedocument.spreadsheetml.sheet=ms-excel.desktop;
 application/vnd.ms-excel=ms-excel.desktop;
-image/jpeg=feh.desktop;
-image/bmp=feh.desktop;
-application/pdf=rifle.desktop
 text/plain=rifle.desktop;
 image/tiff=ImageJ2.desktop;
 application/x-qtiplot=qtiplot.desktop;
 image/x-tga=serialcloner-2.6.1.desktop;
-x-scheme-handler/http=firefox.desktop
-x-scheme-handler/https=firefox.desktop
-text/html=firefox.desktop

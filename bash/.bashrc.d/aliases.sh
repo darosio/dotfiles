@@ -9,6 +9,8 @@ alias ea='$EDITOR $HOME/.bashrc.d/aliases.sh'
 
 # File and system Operations
 alias o='rifle'
+alias oo='handlr open'
+alias ow='handlr open --enable-selector=true'
 alias t='tree'
 alias lb='lsblk'
 alias ls='ls --color=auto'
