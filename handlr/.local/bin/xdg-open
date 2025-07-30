@@ -1,3 +1,9 @@
-#!/bin/sh
+#!/bin/bash
 
-handlr open "$@"
+if [ -d "$1" ]; then
+    swaymsg exec 'foot -a yazi-popup -e yazi "'"$1"'"' &&
+        swaymsg '[app_id="yazi-popup"] move scratchpad, scratchpad show, floating enable, resize set 1000 700'
+else
+    # exec handlr open "$1"
+    /usr/bin/xdg-open "$@"
+fi

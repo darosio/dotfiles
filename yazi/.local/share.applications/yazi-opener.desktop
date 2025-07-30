@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=Yazi Terminal Opener
+Exec=foot -e yazi %f
+Type=Application
+MimeType=inode/directory;
+NoDisplay=true

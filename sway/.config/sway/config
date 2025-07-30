@@ -71,9 +71,8 @@ output * bg '#5C001E' solid_color
 # Basics:
 #
     # Start a terminal
-    bindsym $mod+Shift+Return exec $term
-    bindsym $mod+Return exec kitty
-    bindsym $mod+c exec foot
+    bindsym $mod+Shift+Return exec foot
+    bindsym $mod+Return exec $term
 
     # Kill focused window
     bindsym $mod+q kill
@@ -164,8 +163,7 @@ output * bg '#5C001E' solid_color
     bindsym $mod+f fullscreen
 
     # Toggle the current focus between tiling and floating mode
-    # bindsym $mod+Shift+space floating toggle
-    bindsym $mod+Shift+Home floating toggle
+    bindsym $mod+Shift+space floating toggle
 
     # Swap focus between the tiling area and the floating area
     # bindsym $mod+space focus mode_toggle
@@ -181,6 +179,7 @@ output * bg '#5C001E' solid_color
 
     # Move the currently focused window to the scratchpad
     bindsym $mod+Shift+minus move scratchpad
+    bindsym $mod+plus get scratchpad
 
     # Show the next scratchpad window or hide the focused scratchpad window.
     # If there are multiple scratchpad windows, this command cycles through them.
@@ -269,8 +268,6 @@ bindsym --release Print exec "f=$(date +%Y-%m-%d:%T).png && grim ~/Sync/tmp/PrtS
 bindsym --release $mod+space exec  rofi -show drun -matching fuzzy
 bindsym $mod+Tab exec rofi -show window
 bindsym $mod+Shift+s exec rofi -show ssh
-bindsym $mod+Shift+d exec wldash
-bindsym $mod+Shift+f exec fuzzel
 
 # Set window borders to 0 pixels
 # for_window [class="^.*"] border pixel 0
@@ -318,10 +315,9 @@ bindsym $mod+Shift+period exec recoll
 
 # Switch to Solarized Light theme
 bindsym $mod+F12 exec kitty --config ~/.config/kitty/kitty-light.conf
-bindsym $mod+Shift+F12 exec alacritty --config-file ~/.config/alacritty/alacritty_light.toml
 
 # Launch yazi
-bindsym $mod+y exec kitty -e yazi
+bindsym $mod+y exec $term -e yazi
 bindsym $mod+Shift+y exec foot -e yazi
 
 # Favorite programs

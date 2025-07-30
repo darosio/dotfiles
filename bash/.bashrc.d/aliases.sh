@@ -67,7 +67,7 @@ alias mu_tags_all_rg='rg --no-filename --no-line-number "X-Keywords: \S+" ~/Mail
 alias mu_tags='mu find "" --format=json | rg ":tags" | tr -d "\n" | rg -oP ":tags\":\[\K[^\]]*" | tr -d "\"" | tr "," "\n" | tr -s " " "\n" | sort | uniq'
 alias xev_arch="xev | grep -A2 --line-buffered '^KeyRelease' | sed -n '/keycode /s/^.*keycode \([0-9]*\).* (.*, \(.*\)).*$/\1 \2/p'"
 alias xmm='xmodmap ~/.Xmodmap'
-
+alias zot='env GTK_USE_PORTAL=1 zotero'
 # WiFi Scan
 alias wifiscan='sudo iw dev wlan0 scan | grep SSID'
 
@@ -106,10 +106,10 @@ alias vigolana-data='sshfs -p 23456 vigolana:/data /media/vigolana/ -o IdentityF
 alias mmarzola='sshfs -p 23456 mmedia@marzola:/home/MM /media/marzola-mm'
 alias omero-data0='sshfs  omero:/hardmnt/data0 /media/omero0/'
 alias omero-data1='sshfs  omero:/hardmnt/data1 /media/omero1/'
-alias svigolana='alacritty --command ssh -i ~/.ssh/dan@sterzing-2013-06-03 -p 23456 vigolana &'
-alias smarzola='alacritty --command ssh -i .ssh/dan@hunza-2013-06-03 -p 23456 -l mmedia 192.168.1.10 &'
-alias smarzola='alacritty --command ssh -i ~/.ssh/dan@hunza-2013-06-03 -p 23456 -l mmedia marzola &'
-alias stresero='alacritty --command ssh -i ~/.ssh/mmedia@-2013-06-03 -p 23456 -l mmedia tresero &'
+alias svigolana='$TERMINAL -e ssh -i ~/.ssh/dan@sterzing-2013-06-03 -p 23456 vigolana &'
+alias smarzola='TERMINAL -e ssh -i .ssh/dan@hunza-2013-06-03 -p 23456 -l mmedia 192.168.1.10 &'
+alias smarzola='TERMINAL -e ssh -i ~/.ssh/dan@hunza-2013-06-03 -p 23456 -l mmedia marzola &'
+alias stresero='TERMINAL -e ssh -i ~/.ssh/mmedia@-2013-06-03 -p 23456 -l mmedia tresero &'
 alias mtresero='sshfs -p 23456 mmedia@tresero:/home/MM /mnt/tresero-mm'
 alias dpa-x='xterm -bg lightgrey -fg midnightblue -fn 10x20 -e ssh dan@192.168.1.2 &'
 alias kngur-x='nohup xterm -bg lightgreen -fn 10x20 -e ssh dan@10.0.0.2 &'

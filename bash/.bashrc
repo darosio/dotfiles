@@ -2,7 +2,7 @@
 
 # Source global definitions
 if [ -f /etc/bash.bashrc ]; then
-	source /etc/bash.bashrc
+    source /etc/bash.bashrc
 fi
 
 # Uncomment the following line if you don't like systemctl's auto-paging feature:
@@ -10,10 +10,10 @@ fi
 
 # Source additional files from .bashrc.d including user aliases and functions
 for file in ~/.bashrc.d/*.sh; do
-	if [ -r "$file" ] && [ -f "$file" ]; then
-		# shellcheck source=/dev/null
-		source "$file"
-	fi
+    if [ -r "$file" ] && [ -f "$file" ]; then
+        # shellcheck source=/dev/null
+        source "$file"
+    fi
 done
 
 # Host-specific configuration
@@ -33,7 +33,7 @@ eval "$(dircolors -b)"
 [[ $- == *i* ]] && bind -x '"\C-l": ls -lh'
 
 export EDITOR='emacsclient -c -a=""'
-export TERMINAL=alacritty
+export TERMINAL=kitty
 export HISTCONTROL=ignoredups
 export WINEARCH=win32
 export R_LIBS_USER=~/.Renviron/
@@ -51,10 +51,10 @@ eval "$(pyenv init -)"
 
 # Prompt Configuration: Check for Starship or fallback to custom
 if command -v starship &>/dev/null; then
-	eval "$(starship init bash)"
+    eval "$(starship init bash)"
 else
-	# shellcheck source=bash/.bashrc_custom_prompt.bash
-	source "$HOME/.bashrc_custom_prompt.bash"
+    # shellcheck source=bash/.bashrc_custom_prompt.bash
+    source "$HOME/.bashrc_custom_prompt.bash"
 fi
 
 # direnv is common

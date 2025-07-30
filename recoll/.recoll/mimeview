@@ -2,10 +2,14 @@ xallexcepts = application/pdf application/postscript application/x-dvi \
 application/x-fsdirectory|parentopen inode/directory \
 inode/directory|parentopen text/html|chm text/html|epub \
 text/html|gnuinfo
+
 [view]
-inode/directory = alacritty --command ranger %f
-inode/directory|parentopen = alacritty --command ranger %f
+# Open directories in Foot + Yazi
+inode/directory       = foot -e yazi %f
+inode/directory|parentopen = foot -e yazi %f
 
-# application/pdf  = okular --page=%p %f
+# PDFs with Okular (or your preferred viewer)
+application/pdf       = okular --page=%p %f
 
-application/x-all = xdg-open %u
+# Fallback: Use system default (xdg-open) for everything else
+application/x-all     = xdg-open %u

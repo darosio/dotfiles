@@ -26,7 +26,7 @@ set menu-complete-display-prefix On
 
 
 "\C-o": "ranger_cd\C-m"
-"\C-f": "rifle `fzf -e`\C-m"
+"\C-f": "fzf_open\C-m"
 "\ey": "y\C-m"
 "\es": "frga\C-m"
 "\ek": "fkill\C-m"
