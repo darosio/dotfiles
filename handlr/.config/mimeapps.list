@@ -2,6 +2,7 @@
 application/pdf=okularApplication_pdf.desktop;mupdf.desktop;com.github.xournalpp.xournalpp.desktop;
 application/vnd.openxmlformats-officedocument.wordprocessingml.document=libreoffice-writer.desktop;
 application/x-ipynb+json=jupyterlab.desktop;
+application/x-xopp=com.github.xournalpp.xournalpp.desktop;
 application/xhtml+xml=firefox.desktop;
 image/*=imv-dir.desktop;gimp.desktop;lesspipe;
 text/html=firefox.desktop;emacsclient.desktop;
