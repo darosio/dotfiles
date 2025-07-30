@@ -23,5 +23,10 @@ use = "yazi-rs/plugins:toggle-pane"
 rev = "de53d90"
 hash = "d6f60c24d8c0cf57a855bf46115b2502"
 
+[[plugin.deps]]
+use = "macydnah/office"
+rev = "33cc61a"
+hash = "d7e31c616cc6c8a1f05fdff7c47dae98"
+
 [flavor]
 deps = []
