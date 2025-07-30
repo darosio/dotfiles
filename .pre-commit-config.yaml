@@ -19,12 +19,14 @@ repos:
       - id: check-toml
       - id: debug-statements
       - id: end-of-file-fixer
+        exclude: (^|/)yazi/plugins/
       - id: mixed-line-ending
       - id: name-tests-test
         args: [--pytest-test-first]
       - id: requirements-txt-fixer
       - id: detect-private-key
       - id: trailing-whitespace
+        exclude: (^|/)yazi/plugins/
       - id: pretty-format-json
         args: [--autofix, --indent, "4", --no-sort-keys]
         exclude: \.ipynb$
@@ -45,7 +47,7 @@ repos:
       - id: mdformat
         additional_dependencies:
           - mdformat-gfm
-        exclude: CHANGELOG\.md$
+        exclude: '(^CHANGELOG\.md$)|(^.*yazi/plugins/)'
 
   - repo: https://github.com/ComPWA/taplo-pre-commit
     rev: v0.9.3
@@ -115,6 +117,7 @@ repos:
     hooks:
       # Choose one of:
       - id: shfmt # prebuilt upstream executable
+        args: ["-i", "4", "-ci", "-sr"] # 4 spaces, indent case, simplify redirects
         # - id: shfmt-src     # build from source (requires/installs Go to build)
         # - id: shfmt-docker  # Docker image (requires Docker to run)
 

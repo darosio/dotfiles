@@ -6,3 +6,14 @@ show_symlink = false
 
 [plugin]
 prepend_previewers = [{ mime = "text/csv", run = "miller" }]
+
+
+[[plugin.prepend_fetchers]]
+id = "git"
+name = "*"
+run = "git"
+
+[[plugin.prepend_fetchers]]
+id = "git"
+name = "*/"
+run = "git"
