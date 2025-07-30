@@ -1456,6 +1456,9 @@
 ;; (use-package flycheck
 ;;   :init (global-flycheck-mode))
 
+;; Treat files with a shell shebang but no extension as shell scripts
+(add-to-list 'auto-mode-alist '("\\(ba\\|z\\)?sh\\'" . sh-mode))
+
 (use-package eglot
   :straight (:type built-in)
   :hook
@@ -1474,21 +1477,18 @@
          ("C-c r a" . eglot-code-actions)
          ("C-c r r" . eglot-rename)
          ("C-c r f" . eglot-format)))
+
 (use-package flymake
   :straight (:type built-in)
-  :bind
-  (("M-g e l" . flymake-show-buffer-diagnostics)
-   ("M-g e p" . flymake-show-project-diagnostics)
-   ;; :map flymake-mode-map
-   ;; ("q" . delete-window)
-   )
+  :bind (("M-g e l" . flymake-show-buffer-diagnostics)
+         ("M-g e p" . flymake-show-project-diagnostics))
   :hook ((gitignore-mode . flymake-mode)
          (markdown-mode . flymake-mode)
-         (prog-mode . flymake-mode)
          ;; (org-mode . flymake-mode) ; Uncomment if you want flymake in Org-mode
          ;; (text-mode . flymake-mode) ; Uncomment if you want flymake in text-mode
          ;; (yaml-mode . flymake-mode) ; If you want flymake for YAML without LSP
-         ))
+         (prog-mode . flymake-mode)))
+
 ;; --- Additional modes ---
 (straight-use-package 'markdown-mode)
 (straight-use-package 'sphinx-mode)

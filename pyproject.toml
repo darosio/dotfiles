@@ -240,6 +240,7 @@ arosio = "Arosio"
 viw = "viw" # unfortunate script name
 tilda = "tilda" # drop down terminal in rifle
 Ket = "Ket" # supermarKet in emacs init
+ba = "ba"
 
 [tool.typos.files]
 extend-exclude = [
