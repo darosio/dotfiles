@@ -251,4 +251,5 @@ extend-exclude = [
   "emacs/.emacs.d/mk/mk-text.el",
   "gvim/.vim/syntax/ijmacro.vim",
   "**/ranger/rc.conf",
+  "**/yazi/plugins",
 ]

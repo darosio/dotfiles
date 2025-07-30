@@ -1,0 +1,9 @@
+[[mgr.prepend_keymap]]
+on = ["g", "d"]
+run = "cd /home/dati/"
+desc = "Cd to /home/dati"
+
+[[mgr.prepend_keymap]]
+on = ["g", "w"]
+run = "cd ~/workspace"
+desc = "Cd to ~/workspace"

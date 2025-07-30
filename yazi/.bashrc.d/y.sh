@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
-#
-y() {
-    local tmp
+function y() {
+    local tmp cwd
     tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
     yazi "$@" --cwd-file="$tmp"
     IFS= read -r -d '' cwd <"$tmp"

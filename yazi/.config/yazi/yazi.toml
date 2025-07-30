@@ -5,7 +5,28 @@ linemode = "size"
 show_symlink = false
 
 [plugin]
-prepend_previewers = [{ mime = "text/csv", run = "miller" }]
+prepend_previewers = [
+  # Replace magick, image, video with mediainfo
+  { mime = "{audio,video,image}/*", run = "mediainfo" },
+  { mime = "application/subrip", run = "mediainfo" },
+  # Adobe Illustrator, Adobe Photoshop is image/adobe.photoshop, already handled above
+  { mime = "application/postscript", run = "mediainfo" },
+  { name = "*.csv", run = 'piper -- bat --color=always --style=grid,numbers "$1"' },
+  # { name = "*.csv", run = 'piper -- csvlens --color-columns "$1"' },
+  { name = "*/", run = 'piper -- eza -TL=3 --color=always --icons=always --group-directories-first --no-quotes "$1"' },
+  { name = "*.tar*", run = 'piper --format=url -- tar tf "$1"' },
+  { name = "*.odt", run = 'piper -- pandoc -t org "$1"' },
+  { name = "*.doc?", run = 'piper -- pandoc -t org "$1"' },
+  { name = "*.xls?", run = 'piper -- xlsx2csv "$1"' },
+]
+
+prepend_preloaders = [
+  # Replace magick, image, video with mediainfo
+  { mime = "{audio,video,image}/*", run = "mediainfo" },
+  { mime = "application/subrip", run = "mediainfo" },
+  # Adobe Illustrator, Adobe Photoshop is image/adobe.photoshop, already handled above
+  { mime = "application/postscript", run = "mediainfo" },
+]
 
 
 [[plugin.prepend_fetchers]]
