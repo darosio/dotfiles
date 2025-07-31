@@ -13,5 +13,15 @@ use = "yazi-rs/plugins:piper"
 rev = "de53d90"
 hash = "2143a53182dbbe935a1abd1623424aa5"
 
+[[plugin.deps]]
+use = "yazi-rs/plugins:smart-paste"
+rev = "de53d90"
+hash = "a8050052e59f3952abe0b3e27a5843de"
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:toggle-pane"
+rev = "de53d90"
+hash = "d6f60c24d8c0cf57a855bf46115b2502"
+
 [flavor]
 deps = []

@@ -11,7 +11,9 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: CPython",
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
-dependencies = []
+dependencies = [
+  "html2text>=2025.4.15",
+]
 description = 'My dotfiles including emacs, vim, etc.'
 keywords = []
 license = "BSD-3-Clause"
@@ -27,7 +29,7 @@ dev = [
   "mdformat-gfm==0.4.1",
   "pylsp-mypy==0.7.0",
   "ruff==0.12.7",
-  "ruff-lsp==0.0.62",
+  "python-lsp-ruff==2.2.2",
 ]
 lint = [
   "pre-commit==4.2.0",
@@ -123,7 +125,6 @@ profile = "black"
 [tool.mypy]
 enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
 exclude = "src/clophfit/old"
-plugins = ["numpy.typing.mypy_plugin"]
 pretty = true
 show_column_numbers = true
 show_error_codes = true
@@ -206,7 +207,7 @@ select = [
   "SLF", # private self
   "SLOT", # __slot__
   "T10", # debugger
-  "T20", # print
+  # "T20", # print
   "TC", # TYPE_CHECKING
   "TCH", # TYPE_CHECKING
   "TID", # tidy-imports

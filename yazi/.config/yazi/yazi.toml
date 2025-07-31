@@ -17,7 +17,11 @@ prepend_previewers = [
   { name = "*.tar*", run = 'piper --format=url -- tar tf "$1"' },
   { name = "*.odt", run = 'piper -- pandoc -t org "$1"' },
   { name = "*.doc?", run = 'piper -- pandoc -t org "$1"' },
+  { name = "*.epub", run = 'piper -- pandoc -t org "$1"' },
+  { name = "*.eml", run = 'piper -- view_mail_html.py "$1"' },
+  { mime = "message/rfc822", run = 'piper -- mu view -- "$1"' },
   { name = "*.xls?", run = 'piper -- xlsx2csv "$1"' },
+  { name = "/remote/**", run = 'noop' },
 ]
 
 prepend_preloaders = [
