@@ -51,12 +51,6 @@ ranger_cd() {
     rm -f -- "$tempfile"
 }
 
-fzf_open() {
-    local file
-    file=$(fzf -e)
-    [[ -n $file ]] && xdg-open "$file"
-}
-
 pdf_myReduce() {
     gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dNOPAUSE -dQUIET -dBATCH -dPDFSETTINGS=/ebook -sOutputFile="$2" "$1"
 }
