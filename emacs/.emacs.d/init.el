@@ -190,10 +190,8 @@
     (put 'narrow-to-region 'disabled nil) ; narrow to region =C-x n n=
     (fset 'yes-or-no-p 'y-or-n-p)
     :bind
-    (("C-M-s-/" . hippie-expand)
-     ("C-M-s-;" . comment-box)
-     ("C-M-s-<backspace>" . kill-whole-line)
-     ("C-M-s-\\" . indent-region)
+    (
+     ("C-M-;" . comment-box)
      ("C-c t A" . auto-revert-mode)
      ("C-c t o e" . org-toggle-pretty-entities)
      ("C-c t d" . toggle-debug-on-error)
@@ -891,6 +889,7 @@
     (setq-default abbrev-mode t)
     :bind
     ("C-c t a" . abbrev-mode)
+    ("M-/" . hippie-expand)        ;; in place of `dabbrev-expand`
     )
   (use-package dabbrev
     ;; Swap M-/ and C-M-/
