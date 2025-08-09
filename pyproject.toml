@@ -32,7 +32,7 @@ dev = [
   "python-lsp-ruff==2.2.2",
 ]
 lint = [
-  "pre-commit==4.2.0",
+  "pre-commit==4.3.0",
 ]
 hatch = [
   "hatch==1.14.1",
