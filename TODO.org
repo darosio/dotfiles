@@ -1,35 +1,48 @@
 For Calibre just remember: /Sync/media/books
 
-- [ ] define and save appropriate orgzly setting (e.le.2d or s.today) ad.2 o.e
+* TODO Complete yazi setup [0/4]
+- [ ] compress / atool
+- [ ] epub (preview)
+- [ ] attach file and send mail
+- [ ] =, ,= for =, M=
+
+* calendar and orgzly
+- [ ] define and save appropriate orgzly setting (e.le.2d or s.today)
+  ad.2 o.e
 - [ ] archive (or not archive) past events automatically
 - [ ] capture in calfw
 - [ ] links
 
-In general store:
 
-```
+* In general store:
+
+#+begin_example
 .local/share/applications/***.desktop
 .config/***
-```
+#+end_example
 
-MAYBE:
-
-cat > .git/hooks/post-commit: #!/usr/bin/env sh git push origin master
-
-# ApE
-
+* ApE
+:PROPERTIES:
+:CUSTOM_ID: ape
+:END:
 .ApE/ApE_Defaults.txt .ApE/DNA_ladders.txt
 
-# pcmanfm
-
+* pcmanfm
+:PROPERTIES:
+:CUSTOM_ID: pcmanfm
+:END:
 .config/libfm/libfm.conf
 
-# thunderbird
-
+* thunderbird
+:PROPERTIES:
+:CUSTOM_ID: thunderbird
+:END:
 .thunderbird/
 
-# VirtualBox
-
+* VirtualBox
+:PROPERTIES:
+:CUSTOM_ID: virtualbox
+:END:
 .VirtualBox VMs/XP32-2015/XP32-2015.vbox .VirtualBox
 VMs/XP32-2015/XP32-2015.vbox-prev .VirtualBox
 VMs/XP32-MO2007_Origin7/XP32-MO2007_Origin7.vbox .VirtualBox
@@ -38,6 +51,9 @@ VMs/old64/old64.vbox .VirtualBox VMs/old64/old64.vbox-prev
 .config/VirtualBox/VirtualBox.xml .config/VirtualBox/VirtualBox.xml-prev
 .config/VirtualBox/compreg.dat .config/VirtualBox/xpti.dat
 
-## and ignore:
-
-.config/VirtualBox/_.log .config/VirtualBox/_.log.\_ .VirtualBox\\ VMs/\_/Logs/\*
+** and ignore:
+:PROPERTIES:
+:CUSTOM_ID: and-ignore
+:END:
+.config/VirtualBox//.log .config/VirtualBox//.log._ .VirtualBox\
+VMs/_/Logs/*
