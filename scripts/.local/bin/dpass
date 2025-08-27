@@ -15,6 +15,9 @@ if [[ -n $word ]]; then
         if [[ $word == "${match#*/}" ]]; then
             /usr/bin/pass show "$match" 2>/dev/null | tail --lines=+2
             /usr/bin/pass show -c "$match" 2>/dev/null
+            password=$(/usr/bin/pass show "$match" 2>/dev/null | head -1)
+            hash=$(echo -n "$password" | iconv -t utf16le | openssl dgst -md4 -provider legacy)
+            echo "$hash"
         fi
     done
 fi >/tmp/pp
