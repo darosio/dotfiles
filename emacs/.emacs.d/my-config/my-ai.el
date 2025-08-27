@@ -87,7 +87,6 @@
   :straight (:repo "https://code.tecosaur.net/tec/inline-diff")
   :after gptel-rewrite) ;or use :defer
 
-
 ;; Updated version available at https://github.com/karthink/gptel/wiki
 (use-package gptel-rewrite
   :straight gptel
@@ -98,7 +97,7 @@
     "Start an inline-diff session on OVS."
     (interactive (list (gptel--rewrite-overlay-at)))
     (unless (require 'inline-diff nil t)
-      (user-error "Inline diffs require the inline-diff package."))
+      (user-error "Inline diffs require the inline-diff package"))
     (when-let* ((ov-buf (overlay-buffer (or (car-safe ovs) ovs)))
                 ((buffer-live-p ov-buf)))
       (with-current-buffer ov-buf
@@ -126,60 +125,63 @@
         (when (string-match "^\\([^[:space:]]+\\)" line)
           (push (match-string 1 line) models)))
       (nreverse models)))
-  :commands (
-             gptel-make-kagi
-             gptel-make-anthropic
-             gptel-make-openai
-             gptel-make-ollama
-             gptel-make-gemini
-             )
   :config
+  (require 'gptel-integrations)
   (setq gptel-default-mode 'org-mode)
-  (gptel-make-ollama "Ollama"
-    :host "localhost:11434"
-    :stream t
-    :models (get-ollama-models))
   (setq gptel-api-key my/openai-api-key)
-  (gptel-make-kagi "Kagi"
-    :key my/kagi-api-key)
-  (gptel-make-anthropic "Claude"
-    :stream t
-    :key my/claude-api-key)
-  (gptel-make-gemini "Gemini"
-    :key my/gemini-api-key
-    :stream t)
-  (gptel-make-openai "DeepSeek"
-    :host "api.deepseek.com"
-    :endpoint "/v1/chat/completions"
-    :stream t
-    :key my/deepseek-api-key
-    :models '(deepseek-chat
-              deepseek-reasoner
-              deepseek-coder))
-  (gptel-make-openai "OpenRouter"
-    :host "openrouter.ai"
-    :endpoint "/api/v1/chat/completions"
-    :stream t
-    :key my/openrouter-api-key
-    :models '(openai/gpt-3.5-turbo
-              mistralai/mixtral-8x7b-instruct
-              meta-llama/codellama-34b-instruct
-              codellama/codellama-70b-instruct
-              google/palm-2-codechat-bison-32k
-              deepseek/deepseek-r1-0528:free))
-  (setq gptel-model 'llama-3.3-70b-versatile)
-  (setq gptel-backend
-        ;; Groq offers an OpenAI compatible API
-        (gptel-make-openai "Groq"
-          :host "api.groq.com"
-          :endpoint "/openai/v1/chat/completions"
-          :stream t
-          :key my/groq-api-key
-          :models '(llama-3.3-70b-versatile
-                    deepseek-r1-distill-llama-70b
-                    qwen-qwq-32b
-                    gemma2-9b-it)))
+  ;; (setq gptel-backend
+  ;; (setq gptel-model 'gemini-2.5-flash)
+  (gptel-make-ollama "Ollama" :stream t :host "localhost:11434" :models (get-ollama-models))
+  (gptel-make-gh-copilot "Copilot")
+  (gptel-make-kagi "Kagi" :key my/kagi-api-key)
+  (gptel-make-gemini "Gemini" :stream t :key my/gemini-api-key)
+  (gptel-make-anthropic "Claude" :stream t :key my/claude-api-key)
+  (gptel-make-deepseek "DeepSeek" :stream t :key my/deepseek-api-key)
+  (gptel-make-openai "OpenRouter" :stream t :key my/openrouter-api-key
+                     :host "openrouter.ai"
+                     :endpoint "/api/v1/chat/completions"
+                     :models '(openai/gpt-3.5-turbo
+                               mistralai/mixtral-8x7b-instruct
+                               meta-llama/codellama-34b-instruct
+                               codellama/codellama-70b-instruct
+                               google/palm-2-codechat-bison-32k
+                               deepseek/deepseek-r1-0528:free))
+  (gptel-make-openai "Groq" :stream t :key my/groq-api-key
+                     :host "api.groq.com"
+                     :endpoint "/openai/v1/chat/completions"
+                     :models '(llama-3.3-70b-versatile
+                               deepseek-r1-distill-llama-70b
+                               qwen-qwq-32b
+                               gemma2-9b-it))
   )
+
+(use-package mcp
+  :after gptel
+  :custom (mcp-hub-servers
+           `(
+             ("filesystem" . (:command "npx" :args ("-y" "@modelcontextprotocol/server-filesystem" ,(getenv "HOME"))))
+             ("fetch" . (:command "uvx" :args ("mcp-server-fetch")))
+             ("github" . (:command "docker"
+                                   :args ("run" "-i" "--rm"
+                                          "-e" "GITHUB_PERSONAL_ACCESS_TOKEN"
+                                          "ghcr.io/github/github-mcp-server")
+                                   :env (:GITHUB_PERSONAL_ACCESS_TOKEN
+                                         ,(string-trim
+                                           (shell-command-to-string "pass cloud/github_mcp.el")))))
+             ("duckduckgo" . (:command "uvx" :args ("duckduckgo-mcp-server")))
+             ("nixos" . (:command "uvx" :args ("mcp-nixos")))
+             ("sequential-thinking" . (:command "npx" :args ("-y" "@modelcontextprotocol/server-sequential-thinking")))
+             ("context7" . (:command "npx" :args ("-y" "@upstash/context7-mcp") :env (:DEFAULT_MINIMUM_TOKENS "6000")))
+             ;; ("qdrant" . (:url "http://localhost:8000/sse"))
+             ("graphlit" . (
+                            :command "npx"
+                            :args ("-y" "graphlit-mcp-server")
+                            :env (
+                                  :GRAPHLIT_ORGANIZATION_ID "b2821f53-fda4-4ac1-8c25-5312d4807139"
+                                  :GRAPHLIT_ENVIRONMENT_ID "e48c582c-3523-4833-9e5f-037d87cf510b"
+                                  :GRAPHLIT_JWT_SECRET "PjpJX7IRDdsMjQkc8pDxjHbF4LkyO8tBLTFTK/S1IqI=")))))
+  :config (require 'mcp-hub)
+  :hook (after-init . mcp-hub-start-all-server))
 
 (use-package chatgpt-shell
   :custom
