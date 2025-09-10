@@ -33,7 +33,7 @@ eval "$(dircolors -b)"
 [[ $- == *i* ]] && bind -x '"\C-l": ls -lh'
 
 export EDITOR='emacsclient -c -a=""'
-export TERMINAL=kitty
+export TERMINAL=foot
 export HISTCONTROL=ignoredups
 export WINEARCH=win32
 export R_LIBS_USER=~/.Renviron/

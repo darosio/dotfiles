@@ -71,7 +71,7 @@ output * bg '#5C001E' solid_color
 # Basics:
 #
     # Start a terminal
-    bindsym $mod+Shift+Return exec foot
+    bindsym $mod+Shift+Return exec kitty
     bindsym $mod+Return exec $term
 
     # Kill focused window
