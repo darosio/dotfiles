@@ -40,9 +40,9 @@ with open(args["FILE"]) as fp:  # noqa: PTH123
             line = fp.readline()
 print(f"{N} lines skipped")
 if comma:
-    df = pd.read_csv(args["FILE"], skiprows=N)  # noqa: PD901
+    df = pd.read_csv(args["FILE"], skiprows=N)
 else:
-    df = pd.read_csv(args["FILE"], skiprows=N, sep="\t")  # noqa: PD901
+    df = pd.read_csv(args["FILE"], skiprows=N, sep="\t")
 df.set_index(df.columns[0], inplace=True)  # noqa: PD002
 print(df.head())
 df.plot(grid=True)
