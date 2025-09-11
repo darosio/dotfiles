@@ -1,0 +1,6 @@
+[sshd]
+# This enables the SSH daemon jail
+enabled = true
+
+# This tells fail2ban to look for failed logins on your custom port
+port = 23456

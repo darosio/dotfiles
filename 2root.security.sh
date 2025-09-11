@@ -20,6 +20,8 @@ yay -S --noconfirm fail2ban
 sudo systemctl enable fail2ban
 sudo systemctl start fail2ban
 
+sudo stow -t / 2root.security
+
 # . Enable Firewalld (or add additional rules to nftables)
 # yay -S --noconfirm firewalld
 # sudo systemctl enable firewalld
@@ -43,13 +45,26 @@ sudo sysctl -p /etc/sysctl.d/99-sysctl.conf
 
 # . Audit logging
 yay -S --noconfirm audit
+# cd /etc/audit/rules.d
+# sudo curl -O https://raw.githubusercontent.com/linux-audit/audit-userspace/master/rules/30-stig.rules
+# ❯     sudo auditctl -D
+# ❯     sudo augenrules
+# ❯     sudo auditctl -R /etc/audit/audit.rules
+sudo augenrules
 sudo systemctl enable auditd
 sudo systemctl start auditd
+# Use:
+# ❯ sudo aureport
+# ❯ sudo aureport --failed -au -i
+# ❯ sudo aureport --syscall --failed
+# ❯ sudo ausearch -sv no -i | tail -n 20
+# ❯ sudo aureport -a
 
 # . Configure Secure Boot (if supported by your hardware)
 
 # . Check for Vulnerabilities
 yay -S --noconfirm lynis
+# Use:
 # sudo lynis audit system
 
 # . Restrict USB Access
@@ -60,3 +75,18 @@ yay -S --noconfirm rkhunter
 sudo rkhunter --propupd
 sudo rkhunter --update
 # rkhunter --check-all --sk --rwo
+# Append the custom whitelist configuration for Arch Linux
+sudo tee -a /etc/rkhunter.conf <<'EOF'
+# --- START OF CUSTOM CONFIGURATION ---
+# Whitelist modern compatibility scripts on Arch Linux
+SCRIPTWHITELIST=/usr/bin/egrep
+SCRIPTWHITELIST=/usr/bin/fgrep
+SCRIPTWHITELIST=/usr/bin/ldd
+# Allow known benign hidden files
+ALLOWHIDDENFILE=/etc/.updated
+ALLOWHIDDENFILE=/usr/share/man/man5/.k5identity.5.gz
+ALLOWHIDDENFILE=/usr/share/man/man5/.k5login.5.gz
+# My SSH config is handled by a systemd drop-in, so skip the static file check.
+DISABLE_TESTS="system_configs_ssh"
+# --- END OF CUSTOM CONFIGURATION ---
+EOF
