@@ -14,6 +14,10 @@ sudo rm /etc/sudoers.d/clamav
 sudo cp 2root.clamav/etc/sudoers.d/clamav /etc/sudoers.d/clamav
 sudo chown root:root /etc/sudoers.d/clamav
 
+sudo touch /var/log/clamav/freshclam.log
+sudo chown clamav:clamav /var/log/clamav/freshclam.log
+sudo chmod 640 /var/log/clamav/freshclam.log
+
 sudo freshclam
 sudo systemctl enable clamav-daemon.service
 sudo systemctl start clamav-daemon.service
