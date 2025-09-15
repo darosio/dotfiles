@@ -51,3 +51,8 @@ desc = "Maximize or restore the preview pane"
 [[mgr.prepend_keymap]]
 on = "<C-m>"
 run = "execute --block emacsclient --no-wait $@"
+
+[[mgr.prepend_keymap]]
+on = ["C"]
+run = "plugin ouch"
+desc = "Compress with ouch"

@@ -28,5 +28,10 @@ use = "macydnah/office"
 rev = "33cc61a"
 hash = "d7e31c616cc6c8a1f05fdff7c47dae98"
 
+[[plugin.deps]]
+use = "ndtoan96/ouch"
+rev = "0742fff"
+hash = "2bd799b42b8e42b8ef100310be71f8d1"
+
 [flavor]
 deps = []
