@@ -1605,6 +1605,16 @@
 (straight-use-package 'chatgpt-shell)
 (require 'my-ai)
 
+(use-package eee
+  :straight (:type git :host github :repo "eval-exec/eee.el"
+                   :files (:defaults "*.el" "*.sh"))
+  :bind-keymap
+  ("C-M-s-e" . ee-keymap)
+  :config
+  (setq ee-terminal-command "foot")
+  (define-key ee-keymap (kbd "R") 'ee-rga)
+  )
+
 (setq debug-on-error nil)
 (setq debug-on-quit nil)
 (let ((elapsed (float-time (time-subtract (current-time) emacs-start-time))))
