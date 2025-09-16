@@ -1602,7 +1602,7 @@
 ;; --- AI LLM ---
 (straight-use-package 'ellama)
 (straight-use-package 'gptel)
-(straight-use-package 'chatgpt-shell)
+;; (straight-use-package 'chatgpt-shell)
 (require 'my-ai)
 
 (use-package eee

@@ -183,28 +183,28 @@
   :config (require 'mcp-hub)
   :hook (after-init . mcp-hub-start-all-server))
 
-(use-package chatgpt-shell
-  :custom
-  (chatgpt-shell-openai-key my/openai-api-key)
-  (dall-e-shell-openai-key my/openai-api-key)
-  (chatgpt-shell-google-key my/gemini-api-key)
-  (chatgpt-shell-deepseek-key my/deepseek-api-key)
-  (chatgpt-shell-openrouter-key my/openrouter-api-key)
-  (chatgpt-shell-kagi-key my/kagi-api-key)
-  (chatgpt-shell-anthropic-key my/claude-api-key)
-  (ollama-shell-buffer-name "*ollama-shell*")
-  (chatgpt-shell-chat-buffer-name "*chatgpt-shell*")
-  (gemini-shell-buffer-name "*gemini-shell*")
-  (openrouter-shell-buffer-name "*openrouter-shell*")
-  (kagi-shell-buffer-name "*kagi-shell*")
-  (anthropic-shell-buffer-name "*anthropic-shell*")
-  ;; (chatgpt-shell-model-version "gpt-4.1-mini")
-  (chatgpt-shell-model-version "gemini-2.0-flash"))
+;; (use-package chatgpt-shell
+;;   :custom
+;;   (chatgpt-shell-openai-key my/openai-api-key)
+;;   (dall-e-shell-openai-key my/openai-api-key)
+;;   (chatgpt-shell-google-key my/gemini-api-key)
+;;   (chatgpt-shell-deepseek-key my/deepseek-api-key)
+;;   (chatgpt-shell-openrouter-key my/openrouter-api-key)
+;;   (chatgpt-shell-kagi-key my/kagi-api-key)
+;;   (chatgpt-shell-anthropic-key my/claude-api-key)
+;;   (ollama-shell-buffer-name "*ollama-shell*")
+;;   (chatgpt-shell-chat-buffer-name "*chatgpt-shell*")
+;;   (gemini-shell-buffer-name "*gemini-shell*")
+;;   (openrouter-shell-buffer-name "*openrouter-shell*")
+;;   (kagi-shell-buffer-name "*kagi-shell*")
+;;   (anthropic-shell-buffer-name "*anthropic-shell*")
+;;   ;; (chatgpt-shell-model-version "gpt-4.1-mini")
+;;   (chatgpt-shell-model-version "gemini-2.0-flash"))
 
-(use-package ob-chatgpt-shell
-  :after org
-  :hook (org-mode-hook . (lambda () (require 'ob-chatgpt-shell)))
-  :custom (chatgpt-shell-openai-key my/openai-api-key))
+;; (use-package ob-chatgpt-shell
+;;   :after org
+;;   :hook (org-mode-hook . (lambda () (require 'ob-chatgpt-shell)))
+;;   :custom (chatgpt-shell-openai-key my/openai-api-key))
 
 (provide 'my-ai)
 ;;; my-ai.el ends here
