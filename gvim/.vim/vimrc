@@ -316,5 +316,6 @@ set t_Co=256
 set background=dark	" often used with dark bg
 colorscheme solarized
 call togglebg#map("<F12>")
+Plugin 'yukimura1227/vim-yazi'
 " }}}
 " vim:foldmethod=marker:foldlevel=0
