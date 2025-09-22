@@ -33,6 +33,7 @@
 
 (use-package json-mode
   :config
+  (setq js-indent-level 2)
   (add-to-list 'auto-mode-alist '("\\.ipynb\\'" . js-mode)))
 
 (use-package ssh-config-mode)
