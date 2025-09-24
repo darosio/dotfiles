@@ -35,7 +35,7 @@ lint = [
   "pre-commit==4.3.0",
 ]
 hatch = [
-  "hatch==1.14.1",
+  "hatch==1.14.2",
 ]
 
 [project.urls]
