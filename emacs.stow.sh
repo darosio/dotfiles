@@ -25,7 +25,6 @@ yay -S --noconfirm plocate
 sudo updatedb
 
 yay -S --noconfirm mypy
-yay -S --noconfirm ruff-lsp
 yay -S --noconfirm python-lsp-server
 yay -S --noconfirm jupyter-console
 yay -S --noconfirm jupyterlab
