@@ -1,0 +1,22 @@
+{
+    "template": "https://github.com/darosio/cookiecutter-python.git",
+    "commit": "575ac3c05e2d115e025e3d2d435e733a9ffacd56",
+    "checkout": "575ac3c",
+    "context": {
+        "cookiecutter": {
+            "project_type": "Python Project",
+            "author_name": "Daniele Arosio",
+            "email": "darosio@duck.com",
+            "project_name": "dotfiles",
+            "project_slug": "dotfiles",
+            "project_short_description": "My dotfiles including emacs, vim, etc.",
+            "date": "2025-10-01",
+            "year": "2021",
+            "version": "3.20.1",
+            "cliname": "cliname",
+            "_template": "https://github.com/darosio/cookiecutter-python.git",
+            "_commit": "575ac3c05e2d115e025e3d2d435e733a9ffacd56"
+        }
+    },
+    "directory": null
+}
