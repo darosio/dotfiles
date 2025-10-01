@@ -1439,6 +1439,7 @@
   (add-to-list 'apheleia-formatters '(taplo "taplo" "fmt")) ; Call 'taplo fmt' executable
   (add-to-list 'apheleia-mode-alist '(toml-mode . taplo)) ; Link toml-mode to taplo formatter
   ;; Add the shfmt for sh files [shfmt] (lsp: bash-language-server)
+  (add-to-list 'apheleia-formatters '(shfmt . ("shfmt" "-i" "4" "-ci" "-sr" "-mn")))
   (add-to-list 'apheleia-mode-alist '(sh-mode . shfmt)) ; Link toml-mode to taplo formatter
 
   ;; Replace default (black) to use ruff for sorting import and formatting.

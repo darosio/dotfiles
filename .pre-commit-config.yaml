@@ -3,6 +3,7 @@ default_install_hook_types:
   - commit-msg
 
 repos:
+
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:
@@ -28,7 +29,7 @@ repos:
       - id: trailing-whitespace
         exclude: (^|/)yazi/plugins/
       - id: pretty-format-json
-        args: [--autofix, --indent, "4", --no-sort-keys]
+        args: [--autofix, --indent, "2", --no-sort-keys]
         exclude: \.ipynb$
 
   - repo: https://github.com/google/yamlfmt
@@ -86,11 +87,11 @@ repos:
   - repo: https://github.com/pre-commit/pygrep-hooks
     rev: v1.10.0
     hooks:
-      - id: python-use-type-annotations
       - id: rst-backticks
       - id: rst-directive-colons
       - id: rst-inline-touching-normal
 
+  # should be replaced in the future ref https://github.com/astral-sh/ruff/issues/458
   - repo: https://github.com/jsh9/pydoclint
     rev: 0.7.3
     hooks:
@@ -107,7 +108,7 @@ repos:
         stages: [commit-msg]
 
   - repo: https://github.com/shellcheck-py/shellcheck-py
-    rev: v0.10.0.1
+    rev: v0.11.0.1
     hooks:
       - id: shellcheck
         args: [-x, --severity=style] # Show errors, warnings, info and style
@@ -115,17 +116,16 @@ repos:
   - repo: https://github.com/scop/pre-commit-shfmt
     rev: v3.11.0-1
     hooks:
-      # Choose one of:
       - id: shfmt # prebuilt upstream executable
-        args: ["-i", "4", "-ci", "-sr"] # 4 spaces, indent case, simplify redirects
-        # - id: shfmt-src     # build from source (requires/installs Go to build)
-        # - id: shfmt-docker  # Docker image (requires Docker to run)
+        args: ["-i", "4", "-ci", "-sr", "-mn"] # 4 spaces, indent case, simplify redirects
 
   - repo: https://github.com/astral-sh/uv-pre-commit
     rev: 0.8.22
     hooks:
       - id: uv-lock
         stages: [pre-commit]
+        always_run: true
+        pass_filenames: false
 
   - repo: https://github.com/compilerla/conventional-pre-commit
     rev: v4.2.0
@@ -133,3 +133,11 @@ repos:
       - id: conventional-pre-commit
         stages: [commit-msg]
         args: []
+
+  - repo: local
+    hooks:
+      - id: debug-filenames
+        name: Debug Filenames
+        language: system
+        entry: bash -c 'echo "Hook was passed the following files:"; printf " - %s\n" "$@"' --
+        files: '\.sh' # This will match all your .sh files

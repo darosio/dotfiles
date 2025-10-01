@@ -1,6 +1,6 @@
 # Repository for $HOME/.dotfiles
 
-Version: "3.19.0"
+\[!\[CI\](https://github.com/darosio/{{ cookiecutter.project_slug }}/actions/workflows/ci.yml/badge.svg)\](https://github.com/darosio/{{ cookiecutter.project_slug }}/actions/workflows/ci.yml)
 
 ## Requirements
 
