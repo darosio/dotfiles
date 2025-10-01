@@ -185,7 +185,7 @@ wheels = [
 
 [[package]]
 name = "dotfiles"
-version = "3.20.1"
+version = "3.21.0"
 source = { editable = "." }
 dependencies = [
     { name = "html2text" },

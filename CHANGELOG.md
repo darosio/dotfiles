@@ -1,5 +1,94 @@
 # Changelog
 
+## [3.21.0] - 2025-10-01
+
+### 🚀 Features
+
+- Add emacs update workflow
+- Add zotero config
+- *(zotero)* Add papersgpt and Actions and Tags C-l into emacs
+- *(emacs)* Add gemini API to ellama, gptel and chatgpt-shell
+- *(emacs)* Add deepseek to ai.el
+- *(emacs)* Drop lsp-mode+flycheck in favor of eglot+flymake
+- *(emacs)* Add consult-todo; drop transient
+- *(emacs)* Add my-archive-done-tasks
+- *(emacs)* Gptel read ollama list automatically
+- *(emacs)* Add gptel-aibo and inline-diff
+- Add zoxide, yazi, foot and kitty
+- Drop xdg-utils in favor of handlr
+- *(yazi)* Git plugin
+- *(yazi)* Piper and mediainfo plugin
+- Add fzf_open(); cleanup fuzzel wldash
+- *(yazi)* Smart-paste toggle-pane smart-tab; eml view; symlinks
+- *(yazi)* Office plugin
+- Xdg-desktop-portal
+- Add TODO.org
+- Dpass output hashed passwd
+- *(emacs)* Add mcp
+- Adopt foot as default terminal
+- Add ouch Compress to yazi
+- *(vim)* Add yazi `,y`
+- *(emacs)* Add eee for yazi
+- *(emacs)* Drop chatgpt-shell
+- Override smartd service
+
+### 🐛 Bug Fixes
+
+- *(emacs)* Vertico, …, corfu with cape
+- *(emacs)* Consult-repeat and mu4e attachment actions
+- *(emacs)* Transpose-frame keybind; drop ace-windows
+- *(emacs)* Flymake linting elisp
+- *(emacs)* Bootstrap and lint
+- *(emacs)* Consistent use of TAB M-TAB ...
+- *(emacs)* Org-gcal and review captures
+- *(emacs)* Gcal capture templates
+- Shellcheck-py manual update
+- *(emacs)* Gcal capture templates
+- *(emacs)* Review capture templates
+- *(emacs)* Gcal capture templates
+- Remove $AUTOCD from bashrc
+- *(emacs)* Key bind to comment-box `C-M-;` and hippie-expand `M-/`
+- Nftables.conf; allow mDNS, Syncthing, ...
+- Security
+- Foot font xdpi
+- Clamav
+
+### 🚜 Refactor
+
+- Emacs init.el
+- *(emacs)* Drop hydra and affe
+- *(emacs)* Drop mk-utils mk-text
+- *(emacs)* Mu4e
+- *(emacs)* Drop calfw
+- *(emacs)* Ellama
+- *(emacs)* My-modes
+- *(emacs)* Python
+- *(emacs)* Bind f7 s/S for spell checks
+- *(emacs)* Drop typo and org-noter in conflict with org-mode
+- *(emacs)* Spell and prose and -hook
+- *(emacs)* My-org
+- *(emacs)* Mu4e
+- *(emacs)* Org
+- *(emacs)* Drop pdf-tools and org-noter
+- *(emacs)* Tune vertico &co
+- *(emacs)* Agenda views
+- *(emacs)* Org-faces
+- Fzf
+
+### 📚 Documentation
+
+- Adjust Readme
+
+### 🎨 Styling
+
+- Shfmt -i 2 -ci -sr
+
+### 🦾 Build
+
+- *(emacs)* Update packages
+- Add cruft
+- Cruft update
+
 ## [3.20.1] - 2025-05-23
 
 ### 🐛 Bug Fixes
