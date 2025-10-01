@@ -216,7 +216,7 @@ dev = [
     { name = "mdformat-gfm", specifier = ">=0.4.1" },
     { name = "pylsp-mypy", specifier = ">=0.7.0" },
     { name = "python-lsp-ruff", specifier = ">=2.3.0" },
-    { name = "ruff", specifier = ">=0.13.1" },
+    { name = "ruff", specifier = ">=0.13.2" },
 ]
 lint = [{ name = "pre-commit", specifier = "==4.3.0" }]
 
