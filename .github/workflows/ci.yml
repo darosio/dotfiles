@@ -61,7 +61,10 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pull-requests: write
     steps:
+      # - name: Checkout code
+      #   uses: actions/checkout@v5
       - name: Merge PR
         uses: pascalgn/automerge-action@v0.16.4
         env:
