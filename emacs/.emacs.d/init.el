@@ -1302,7 +1302,7 @@
     (defengine google-maps
       "http://maps.google.com/maps?q=%s"
       :keybinding "m"
-      :docstring "Mappin' it up.")
+      :docstring "Mapping' it up.")
     (defengine project-gutenberg
       "http://www.gutenberg.org/ebooks/search/?query=%s"
       :keybinding "u")

@@ -107,7 +107,7 @@
 - wl-clipboard
 - wayland with multiple monitors
 - nftables
-- screnshots
+- screenshots
 - run ranger.stow in isolated environment
 - sshd override
 - switch off ipv6LL
