@@ -4,8 +4,8 @@ hostname=$(cat /proc/sys/kernel/hostname) # Get the hostname from /proc
 
 # Check if the argument (service unit name) is provided
 if [ -z "$1" ]; then
-	echo "Usage: $0 <service_unit_name>"
-	exit 1
+  echo "Usage: $0 <service_unit_name>"
+  exit 1
 fi
 
 # Service unit name (passed as an argument)
@@ -23,14 +23,14 @@ LOG_FILE="/var/log/failure-notification.log"
 
 # Send email using sendmail
 if {
-	echo "From: systemd@$hostname"
-	echo "To: $RECIPIENT"
-	echo "Subject: $SUBJECT"
-	echo "Content-Transfer-Encoding: 8bit"
-	echo ""
-	echo -e "$MESSAGE"
+  echo "From: systemd@$hostname"
+  echo "To: $RECIPIENT"
+  echo "Subject: $SUBJECT"
+  echo "Content-Transfer-Encoding: 8bit"
+  echo ""
+  echo -e "$MESSAGE"
 } | sendmail -t; then
-	echo "$TIMESTAMP: Failure notification for '$SERVICE_UNIT' sent to $RECIPIENT." >>"$LOG_FILE"
+  echo "$TIMESTAMP: Failure notification for '$SERVICE_UNIT' sent to $RECIPIENT." >> "$LOG_FILE"
 else
-	echo "$TIMESTAMP: Failed to send notification for '$SERVICE_UNIT'." >>"$LOG_FILE"
+  echo "$TIMESTAMP: Failed to send notification for '$SERVICE_UNIT'." >> "$LOG_FILE"
 fi

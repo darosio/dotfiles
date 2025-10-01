@@ -117,7 +117,8 @@ repos:
     rev: v3.11.0-1
     hooks:
       - id: shfmt # prebuilt upstream executable
-        args: ["-i", "4", "-ci", "-sr", "-mn"] # 4 spaces, indent case, simplify redirects
+        args: ["-w", "-i", "2", "-ci", "-sr"] # 2 spaces, indent case, simplify redirects
+        exclude: '(^.*ranger/scope.sh)'
 
   - repo: https://github.com/astral-sh/uv-pre-commit
     rev: 0.8.22
@@ -133,11 +134,3 @@ repos:
       - id: conventional-pre-commit
         stages: [commit-msg]
         args: []
-
-  - repo: local
-    hooks:
-      - id: debug-filenames
-        name: Debug Filenames
-        language: system
-        entry: bash -c 'echo "Hook was passed the following files:"; printf " - %s\n" "$@"' --
-        files: '\.sh' # This will match all your .sh files

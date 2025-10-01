@@ -76,7 +76,7 @@ sudo rkhunter --propupd
 sudo rkhunter --update
 # rkhunter --check-all --sk --rwo
 # Append the custom whitelist configuration for Arch Linux
-sudo tee -a /etc/rkhunter.conf <<'EOF'
+sudo tee -a /etc/rkhunter.conf << 'EOF'
 # --- START OF CUSTOM CONFIGURATION ---
 # Whitelist modern compatibility scripts on Arch Linux
 SCRIPTWHITELIST=/usr/bin/egrep

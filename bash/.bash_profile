@@ -2,8 +2,8 @@
 
 # Get the aliases and functions
 if [ -f ~/.bashrc ]; then
-	# shellcheck source=/dev/null
-	. "$HOME"/.bashrc
+  # shellcheck source=/dev/null
+  . "$HOME"/.bashrc
 fi
 # shellcheck source=/dev/null
 [[ -f ~/.profile ]] && source "$HOME"/.profile
@@ -25,5 +25,5 @@ systemctl --user import-environment PATH
 # 	startx
 # fi
 if [ -z "$WAYLAND_DISPLAY" ] && [ -n "$XDG_VTNR" ] && [ "$XDG_VTNR" -eq 1 ]; then
-	exec sway
+  exec sway
 fi
