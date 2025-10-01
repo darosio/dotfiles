@@ -1,6 +1,8 @@
-# Repository for $HOME/.dotfiles
+# Dotfiles Repository
 
-\[!\[CI\](https://github.com/darosio/{{ cookiecutter.project_slug }}/actions/workflows/ci.yml/badge.svg)\](https://github.com/darosio/{{ cookiecutter.project_slug }}/actions/workflows/ci.yml)
+[![CI](https://github.com/darosio/dotfiles/actions/workflows/ci.yml/badge.svg)](https://github.com/darosio/dotfiles/actions/workflows/ci.yml)
+
+A centralized repository for managing and version-controlling your `$HOME/.dotfiles` configuration files.
 
 ## Requirements
 
@@ -11,13 +13,13 @@
 Initialize pre-commit hooks:
 
 ```
-hatch run init
+make init
 ```
 
 When bump version
 
 ```
-hatch run bump
+make bump
 git push
 git push --tags
 ```
