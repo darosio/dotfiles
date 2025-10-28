@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SOURCE="$HOME/vigolana-MM/jpg-20190825"
+SOURCE="$HOME/vigolana-MM/PHOTOs/PICTURE-fino09/PIETRO/selAGO09"
 DESTINATION="$HOME/FamilyMedia"
 
 mkdir -p "$DESTINATION/Movies" "$DESTINATION/Photos"
