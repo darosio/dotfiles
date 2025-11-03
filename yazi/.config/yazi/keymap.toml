@@ -1,4 +1,19 @@
 [[mgr.prepend_keymap]]
+on = ["g", "a"]
+run = 'search --via=rga'
+desc = "Search file contents recursively (rga)"
+
+[[mgr.prepend_keymap]]
+on = ["g", "f"]
+run = 'search_do --via=fd --args="-tf -d3"'
+desc = "Search and switch to a flat view (max depth 3)"
+
+[[mgr.prepend_keymap]]
+on = [",", ","]
+run = ["sort mtime --reverse"]
+desc = "Sort by modified time (reverse)"
+
+[[mgr.prepend_keymap]]
 on = ["g", "d"]
 run = "cd /home/dati/"
 desc = "Cd to /home/dati"
