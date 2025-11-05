@@ -28,7 +28,7 @@ yay -S --noconfirm ouch # for previews
 yay -S --noconfirm trash-cli
 
 mkdir -p "$HOME"/.bashrc.d
-mkdir -p "$HOME"/.config/yazi
+mkdir -p "$HOME"/.config/yazi/plugins
 mkdir -p "$HOME"/.local/share/applications
 stow -t "$HOME" yazi
 
