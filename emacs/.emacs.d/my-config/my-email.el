@@ -338,5 +338,26 @@
 (use-package mu4e-jump-to-list
   :after mu4e)
 
+;;; Corrected Elisp function for Yazi/emacsclient
+(eval-after-load 'mu4e
+  '(progn
+     (defun mu4e-compose-new-with-attachments (paths)
+       "Compose a new mu4e message with files specified in the comma-separated string PATHS.
+        This function is intended to be called by emacsclient."
+       (interactive "sAttachments (comma-separated): ")
+       (let* ((attachment-list (split-string paths "," t))
+              (attachment-paths (mapcar (lambda (p) (expand-file-name (string-trim p))) attachment-list)))
+         ;; 1. Compose a new message (this sets up the subject, etc.)
+         (mu4e-compose-new)
+         ;; 2. Attach each file individually using the standard message-mode function
+         (dolist (file attachment-paths)
+           (if (file-exists-p file)
+               ;; mml-attach-file takes the file name and attaches it to the current buffer
+               (mml-attach-file file nil nil "attachment")
+             (message "Attachment not found: %s" file)))
+         ;; 3. Bring the frame to the front
+         (raise-frame)))
+     ))
+
 (provide 'my-email)
 ;;; my-email.el ends here
