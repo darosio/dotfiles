@@ -11,9 +11,6 @@ unset PYTHONPATH
 
 yay -S --noconfirm yazi
 
-yay -S --noconfirm imv
-yay -S --noconfirm bat
-yay -S --noconfirm eza
 yay -S --noconfirm zoxide
 yay -S --noconfirm ffmpegthumbnailer
 yay -S --noconfirm imagemagick
@@ -22,6 +19,12 @@ yay -S --noconfirm poppler
 yay -S --noconfirm jq
 yay -S --noconfirm resvg
 yay -S --noconfirm mediainfo
+yay -S --noconfirm imv
+yay -S --noconfirm bat  # for piper
+yay -S --noconfirm eza  # for piper
+yay -S --noconfirm 7zip # for decompressing
+yay -S --noconfirm ouch # for previews
+
 yay -S --noconfirm trash-cli
 
 mkdir -p "$HOME"/.bashrc.d
