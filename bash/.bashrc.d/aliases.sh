@@ -31,9 +31,8 @@ alias pandoc='pandoc --pdf-engine=xelatex'
 alias impress='impressive -t none --nologo'
 
 # Package Management
-alias pyp='sudo pacmatic -Syu'
-alias pya='pacaur -Syua'
-alias pyu='sudo pacmatic -Syu; pya'
+alias pacman_orphan='sudo pacman -Qtdq'
+alias pacman_pending='sudo pacman -Qu'
 
 # Git
 alias g='git st; git in; git out'
