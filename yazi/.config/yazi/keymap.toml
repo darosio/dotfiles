@@ -72,16 +72,66 @@ on = ["C"]
 run = "plugin ouch"
 desc = "Compress with ouch"
 
-# [[manager.keymap]]
-[[mgr.prepend_keymap]]
-on = ["U"]
-run = "show_annex_size"
-desc = "Show git-annex total size"
+# [[mgr.prepend_keymap]]
+# on = ["<A-TAB>"]
+# run = "shell -- git annex info --bytes --fast $@| awk '/local annex size/ {print $4/1024/1024}' | xargs zenity --info --text"
+# desc = "Show Git-Annex total size"
 
+# [[mgr.prepend_keymap]]
+# on = ["<A-TAB>"]
+# run = "shell -- bash -c 'size=$(git annex info --bytes --fast 2>/dev/null | awk \"/local annex size/ {print \\$4/1024/1024}\"); if [ -n \"$size\" ]; then zenity --progress --text=\"Git Annex Size: ${size} MB\" --percentage=100 --auto-close; else zenity --error --text=\"Not in a git annex repository\"; fi'"
+# desc = "Show Git-Annex total size with progress bar"
+# [[mgr.prepend_keymap]]
+# on = ["<A-TAB>"]
+# run = "shell -- { GIT_OUTPUT=$(git annex info --bytes --fast $@ 2>/dev/null); SIZE_MIB=$(echo \"$GIT_OUTPUT\" | awk '/local annex size/ {printf \"%.2f MiB\", $4/1024/1024}'); zenity --info --title='Git-Annex Total Size' --text=\"Total annexed size: $SIZE_MIB\"; } || zenity --error --title='Git-Annex Error' --text='Not a valid Git Annex repository or command failed.' "
+# desc = "Show Git-Annex total size (MiB)"
+# [[mgr.prepend_keymap]]
+# on = ["<A-TAB>"]
+# run = '''
+# shell -- bash -c '
+# size=$(git annex info --bytes --fast 2>/dev/null |
+#         awk -F: "/local annex size/ {gsub(/ /, \"\", \$2); print \$2/1024/1024}") &&
+# if [ -n "$size" ]; then
+#     zenity --info --title="Git Annex Info" \
+#            --text="📦 Annex size: $(printf "%.2f" "$size") MB" \
+#            --width=300
+# else
+#     zenity --warning --title="Git Annex Info" \
+#            --text="No annexed content found or not a git-annex repo."
+# fi'
+# '''
+# desc = "Show Git-Annex total size"
+# [[mgr.prepend_keymap]]
+# on = ["<A-TAB>"]
+# run = "shell -- git annex info --fast --bytes . |
+#        awk '/local annex size:/{size=$5} END{
+#          if(!size) exit 1
+#          split(\"Ki Mi Gi Ti\",u)
+#          for(i=1;i<=4;i++){ if(size<1024^(i+1)){ printf \"%.2f %sB\",size/1024^i,u[i]; exit }}
+#          printf \"%.2f B\",size
+#        }' |
+#        xargs -I{} zenity --info --width=340 --title='Git-Annex Total' --text='Total annexed data in this repo:\n\n<b>{}</b>' --html"
+# desc = "Pop-up Git-Annex total size (human + bold)"
 [[mgr.prepend_keymap]]
-on = ["g", "s"]
-run = "plugin git-annex-utils"
-desc = "Show Git-Annex total size"
+on = ["<A-TAB>"]
+run = '''shell --
+{
+  # 1. Run git annex info, suppress errors, capture output
+  GIT_OUTPUT=$(git annex info --bytes --fast "$@" 2>/dev/null);
+
+  # 2. Extract the byte size and convert it to human-readable format (e.g., 2.2G)
+  #    `numfmt` is the standard GNU tool for this and is more reliable than awk/printf for unit conversion.
+  SIZE_BYTES=$(echo "$GIT_OUTPUT" | awk '/local annex size/ {print $4}');
+  HUMAN_SIZE=$(echo "$SIZE_BYTES" | numfmt --to=iec --suffix=B);
+
+  # 3. Check for a valid size and display the result via Zenity
+  if [[ -z "$SIZE_BYTES" || "$SIZE_BYTES" == "0" ]]; then
+    zenity --warning --title="Git-Annex Info" --text="Not a Git-Annex repository, or no annexed content found."
+  else
+    zenity --info --title="Git-Annex Total Size" --text="Total annexed size: \n${HUMAN_SIZE}"
+  fi
+}'''
+desc = "Show Git-Annex total size (Human Readable)"
 
 # email selected files
 [[mgr.prepend_keymap]]
