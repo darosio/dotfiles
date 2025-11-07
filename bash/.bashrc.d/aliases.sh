@@ -29,6 +29,7 @@ alias grep='grep --color'
 alias stow='stow -t ~/'
 alias pandoc='pandoc --pdf-engine=xelatex'
 alias impress='impressive -t none --nologo'
+alias 2md='uvx markitdown'
 
 # Package Management
 alias pacman_orphan='sudo pacman -Qtdq'
