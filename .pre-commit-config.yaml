@@ -121,7 +121,7 @@ repos:
         exclude: '(^.*ranger/scope.sh)'
 
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.9.7
+    rev: 0.9.8
     hooks:
       - id: uv-lock
         stages: [pre-commit]
