@@ -717,6 +717,7 @@
             ("MAYB" :foreground ,maybe-color :slant italic) ; Italic and muted color
             ("DONE" :foreground ,done-color :weight bold)
             ("CANC" :foreground ,done-color :weight bold :strike-through t))))
+  (set-face-attribute 'org-table nil :inherit '(shadow fixed-pitch))
   )
 
 (use-package org-lint :straight org
