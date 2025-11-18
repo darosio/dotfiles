@@ -1,7 +1,14 @@
 ;;; my-ai.el --- To use LLM -*- lexical-binding: t; -*-
 ;;
 ;;; Commentary:
-;; Binding keys reserved to user are: "C-c C-<return>" "C-c e"
+;; This configuration provides a comprehensive AI-powered development environment
+;; within Emacs, integrating local and cloud-based LLMs with advanced tools.
+;;
+;; Key bindings:
+;; - C-c C-<return> : Send text to AI (gptel)
+;; - C-c e          : Start ellama session
+;; - C-c C-i        : Apply inline diff from gptel-rewrite
+;;
 ;;; Code:
 
 ;; --- Define API Keys ---
@@ -33,23 +40,23 @@
   (require 'llm-ollama)
   (require 'llm-openai)
   (require 'llm-gemini)
-  ;; Naming new sessions with llm
+  ;; Session naming provider
   (setopt ellama-naming-provider
           (make-llm-ollama
            :chat-model "gemma3:4b-it-qat"
            :embedding-model "nomic-embed-text"
            :default-chat-non-standard-params '(("stop" . ("\n")))))
   (setopt ellama-naming-scheme 'ellama-generate-name-by-llm)
-  ;; Customize display buffer behavior
+  ;; Display behavior
   (setopt ellama-chat-display-action-function #'display-buffer-full-frame)
   (setopt ellama-instant-display-action-function #'display-buffer-at-bottom)
-  ;; Show ellama context/session in header line
+  ;; Show context/session in header line
   (ellama-context-header-line-global-mode +1)
   (ellama-session-header-line-global-mode +1)
-  ;; Handle scrolling events (optional, keep if you find it useful)
+  ;; Scrolling behavior
   (advice-add 'pixel-scroll-precision :before #'ellama-disable-scroll)
   (advice-add 'end-of-buffer :after #'ellama-enable-scroll)
-  ;; --- Define Providers ---
+  ;; AI Providers Configuration
   (setopt ellama-providers
           `(("Ollama gemma3" . ,(make-llm-ollama
                                  :chat-model "gemma3:4b-it-qat"
@@ -82,39 +89,24 @@
            :default-chat-non-standard-params '(("num_ctx" . 8192))))
   )
 
-(use-package gptel-aibo)
-(use-package inline-diff
-  :straight (:repo "https://code.tecosaur.net/tec/inline-diff")
-  :after gptel-rewrite) ;or use :defer
-
-;; Updated version available at https://github.com/karthink/gptel/wiki
-(use-package gptel-rewrite
-  :straight gptel
-  :bind (:map gptel-rewrite-actions-map
-              ("C-c M-d" . gptel--rewrite-inline-diff))
-  :config
-  (defun gptel--rewrite-inline-diff (&optional ovs)
-    "Start an inline-diff session on OVS."
-    (interactive (list (gptel--rewrite-overlay-at)))
-    (unless (require 'inline-diff nil t)
-      (user-error "Inline diffs require the inline-diff package"))
-    (when-let* ((ov-buf (overlay-buffer (or (car-safe ovs) ovs)))
-                ((buffer-live-p ov-buf)))
-      (with-current-buffer ov-buf
-        (cl-loop for ov in (ensure-list ovs)
-                 for ov-beg = (overlay-start ov)
-                 for ov-end = (overlay-end ov)
-                 for response = (overlay-get ov 'gptel-rewrite)
-                 do (delete-overlay ov)
-                 (inline-diff-words
-                  ov-beg ov-end response)))))
-  (when (boundp 'gptel--rewrite-dispatch-actions)
-    (add-to-list
-     'gptel--rewrite-dispatch-actions '(?i "inline-diff")
-     'append)))
-
 (use-package gptel
   :bind ("C-c C-<return>" . gptel-send)
+  ("<Launch5> <Launch5>" . gptel-send)
+  ("<Launch5> g" . gptel)
+  ("<Launch5> m" . gptel-menu)
+  ("<Launch5> M" . gptel-mcp-connect)
+  ("<Launch5> r" . gptel-rewrite)
+  ("<Launch5> t" . gptel-tools)
+  ("<Launch5> c a" . gptel-add)
+  ("<Launch5> c A" . gptel-add-file)
+  ("<Launch5> c c" . gptel-context-add)
+  ("<Launch5> c n" . gptel-context-next)
+  ("<Launch5> c p" . gptel-context-previous)
+  ("<Launch5> h" . gptel-highlight-mode)
+  ("<Launch5> o" . gptel-mode)
+  ("<Launch5> O" . gptel-aibo-mode)
+  ("<Launch5> a" . gptel-aibo)
+  ("<Launch5> s" . gptel-aibo-summon)
   :preface
   (defun get-ollama-models ()
     "Fetch the list of installed Ollama models."
@@ -125,18 +117,41 @@
         (when (string-match "^\\([^[:space:]]+\\)" line)
           (push (match-string 1 line) models)))
       (nreverse models)))
+
+  (defun codel-edit-buffer (buffer-name old-string new-string)
+    "In BUFFER-NAME, replace OLD-STRING with NEW-STRING."
+    (with-current-buffer buffer-name
+      (let ((case-fold-search nil))  ;; Case-sensitive search
+        (save-excursion
+          (goto-char (point-min))
+          (let ((count 0))
+            (while (search-forward old-string nil t)
+              (setq count (1+ count)))
+            (if (= count 0)
+                (format "Error: Could not find text to replace in buffer %s" buffer-name)
+              (if (> count 1)
+                  (format "Error: Found %d matches for the text to replace in buffer %s" count buffer-name)
+                (goto-char (point-min))
+                (search-forward old-string)
+                (replace-match new-string t t)
+                (format "Successfully edited buffer %s" buffer-name))))))))
   :config
   (require 'gptel-integrations)
-  (setq gptel-default-mode 'org-mode)
-  (setq gptel-api-key my/openai-api-key)
-  ;; (setq gptel-backend
-  ;; (setq gptel-model 'gemini-2.5-flash)
-  (gptel-make-ollama "Ollama" :stream t :host "localhost:11434" :models (get-ollama-models))
+  ;; Default settings
+  (setq gptel-default-mode 'org-mode
+        gptel-api-key my/openai-api-key
+        gptel-post-response-functions  'gptel-end-of-response
+        gptel-expert-commands t
+        gptel-track-media t
+        gptel-log-level 'info
+        gptel-model 'mistral:latest ;; or 'deepseek-reasoner
+        gptel-backend
+        (gptel-make-ollama "Ollama" :stream t :host "localhost:11434" :models (get-ollama-models)))
+  (gptel-make-deepseek "DeepSeek" :stream t :key my/deepseek-api-key)
   (gptel-make-gh-copilot "Copilot")
   (gptel-make-kagi "Kagi" :key my/kagi-api-key)
   (gptel-make-gemini "Gemini" :stream t :key my/gemini-api-key)
   (gptel-make-anthropic "Claude" :stream t :key my/claude-api-key)
-  (gptel-make-deepseek "DeepSeek" :stream t :key my/deepseek-api-key)
   (gptel-make-openai "OpenRouter" :stream t :key my/openrouter-api-key
                      :host "openrouter.ai"
                      :endpoint "/api/v1/chat/completions"
@@ -153,7 +168,56 @@
                                deepseek-r1-distill-llama-70b
                                qwen-qwq-32b
                                gemma2-9b-it))
+  ;; Enable tool use
+  (setq gptel-use-tools nil)
+  ;; Add a tool to gptel-tools
+  (add-to-list 'gptel-tools
+               (gptel-make-tool
+                :name "read_buffer"
+                :function (lambda (buffer)
+                            (unless (buffer-live-p (get-buffer buffer))
+                              (error "Error: buffer %s is not live." buffer))
+                            (with-current-buffer buffer
+                              (buffer-substring-no-properties (point-min) (point-max))))
+                :description "Return the contents of an Emacs buffer"
+                :args (list '(:name "buffer"
+                                    :type string
+                                    :description "The name of the buffer whose contents are to be retrieved"))
+                :category "emacs")
+               (gptel-make-tool
+                :name "EditBuffer"
+                :function #'codel-edit-buffer
+                :description "Edits Emacs buffers"
+                :args '((:name "buffer_name"
+                               :type string
+                               :description "Name of the buffer to modify"
+                               :required t)
+                        (:name "old_string"
+                               :type string
+                               :description "Text to replace (must match exactly)"
+                               :required t)
+                        (:name "new_string"
+                               :type string
+                               :description "Text to replace old_string with"
+                               :required t))
+                :category "edit")
+               )
+  (gptel-make-preset 'coding
+                     :description "A preset optimized for coding tasks"
+                     :backend "Ollama"                     ;gptel backend or backend name
+                     :model 'qwen3-coder:latest
+                     :system "You are an expert coding assistant. Your role is to provide high-quality code solutions, refactorings, and explanations."
+                     :tools '("read_buffer" "EditBuffer"))
+  :hook
+  ;; (gptel-mode-hook . visual-line-mode)  ;; The chats can have long lines.
+  (gptel-post-stream-hook . gptel-auto-scroll)  ;; And can be pages long.
   )
+
+(use-package gptel-aibo
+  :after gptel
+  :config
+  (setq gptel-aibo-default-mode 'markdown-mode)
+  (setq gptel-aibo-max-buffer-count 55))
 
 (use-package mcp
   :after gptel
@@ -183,28 +247,35 @@
   :config (require 'mcp-hub)
   :hook (after-init . mcp-hub-start-all-server))
 
-;; (use-package chatgpt-shell
-;;   :custom
-;;   (chatgpt-shell-openai-key my/openai-api-key)
-;;   (dall-e-shell-openai-key my/openai-api-key)
-;;   (chatgpt-shell-google-key my/gemini-api-key)
-;;   (chatgpt-shell-deepseek-key my/deepseek-api-key)
-;;   (chatgpt-shell-openrouter-key my/openrouter-api-key)
-;;   (chatgpt-shell-kagi-key my/kagi-api-key)
-;;   (chatgpt-shell-anthropic-key my/claude-api-key)
-;;   (ollama-shell-buffer-name "*ollama-shell*")
-;;   (chatgpt-shell-chat-buffer-name "*chatgpt-shell*")
-;;   (gemini-shell-buffer-name "*gemini-shell*")
-;;   (openrouter-shell-buffer-name "*openrouter-shell*")
-;;   (kagi-shell-buffer-name "*kagi-shell*")
-;;   (anthropic-shell-buffer-name "*anthropic-shell*")
-;;   ;; (chatgpt-shell-model-version "gpt-4.1-mini")
-;;   (chatgpt-shell-model-version "gemini-2.0-flash"))
+(use-package inline-diff
+  :straight (:repo "https://code.tecosaur.net/tec/inline-diff")
+  :after gptel-rewrite) ;or use :defer
 
-;; (use-package ob-chatgpt-shell
-;;   :after org
-;;   :hook (org-mode-hook . (lambda () (require 'ob-chatgpt-shell)))
-;;   :custom (chatgpt-shell-openai-key my/openai-api-key))
+;; Updated version available at https://github.com/karthink/gptel/wiki
+(use-package gptel-rewrite
+  :straight gptel
+  :bind (:map gptel-rewrite-actions-map
+              ("C-c C-i" . gptel--rewrite-inline-diff))
+  :config
+  (defun gptel--rewrite-inline-diff (&optional ovs)
+    "Start an inline-diff session on OVS."
+    (interactive (list (gptel--rewrite-overlay-at)))
+    (unless (require 'inline-diff nil t)
+      (user-error "Inline diffs require the inline-diff package"))
+    (when-let* ((ov-buf (overlay-buffer (or (car-safe ovs) ovs)))
+                ((buffer-live-p ov-buf)))
+      (with-current-buffer ov-buf
+        (cl-loop for ov in (ensure-list ovs)
+                 for ov-beg = (overlay-start ov)
+                 for ov-end = (overlay-end ov)
+                 for response = (overlay-get ov 'gptel-rewrite)
+                 do (delete-overlay ov)
+                 (inline-diff-words
+                  ov-beg ov-end response)))))
+  (when (boundp 'gptel--rewrite-dispatch-actions)
+    (add-to-list
+     'gptel--rewrite-dispatch-actions '(?i "inline-diff")
+     'append)))
 
 (provide 'my-ai)
 ;;; my-ai.el ends here
