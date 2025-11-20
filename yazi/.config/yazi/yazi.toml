@@ -20,16 +20,26 @@ prepend_previewers = [
   { mime = "{audio,video,image}/*", run = "mediainfo" },
   { mime = "application/subrip", run = "mediainfo" },
   { name = "*.csv", run = 'piper -- bat --color=always --style=grid,numbers "$1"' },
+  # HTML preview
+  { name = "*.{html,htm,xhtml}", run = 'piper -- sh -c "w3m -dump -T text/html \"$1\" 2>/dev/null || pandoc -t plain -- \"$1\" 2>/dev/null || echo \"No HTML preview available\""' },
+  # # DJVU preview
+  # { name = "*.{djvu,djv}", run = "djvu-view" },
+  { name = "*.chm", run = 'piper -- extract_chmLib "$1" --' },
   { name = "*/", run = 'piper -- eza -TL=3 --color=always --icons=always --group-directories-first --no-quotes "$1"' },
-  { name = "*.epub", run = 'piper -- pandoc -t org "$1"' },
+  # { name = "*.epub", run = 'piper -- pandoc -t org "$1"' },
+  # { name = "*.epub", run = 'ebook-meta --get-cover -- "$1"' },
+  # { name = "*.epub", run = 'piper -- sh -c "pandocc -t markdown -- \"$1\" 2>/dev/null || ebook-meta --get-cover -- \"$1\""' },
+  # { name = "*.epub", run = 'ebook-meta --get-cover -- "$1" 2>/dev/null' },
   { name = "*.eml", run = 'piper -- view_mail_html.py "$1"' },
   { mime = "message/rfc822", run = 'piper -- mu view -- "$1"' },
+  { name = "*.cab", run = 'piper -- bsdtar --list --file "$1"' },
   # Office Documents
   { mime = "application/openxmlformats-officedocument.*", run = "office" },
   { mime = "application/oasis.opendocument.*", run = "office" },
   { mime = "application/ms-*", run = "office" },
   { mime = "application/msword", run = "office" },
   { name = "*.docx", run = "office" },
+  { name = "*.sxw", run = "office" },
   # Archive previewer
   { mime = "application/*zip", run = "ouch" },
   { mime = "application/*tar", run = "ouch" },

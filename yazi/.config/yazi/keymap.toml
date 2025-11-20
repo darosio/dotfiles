@@ -19,12 +19,17 @@ run = "cd /home/dati/"
 desc = "Cd to /home/dati"
 
 [[mgr.prepend_keymap]]
+on = ["g", "n"]
+run = "cd ~/Sync/notes"
+desc = "~/Sync/notes"
+
+[[mgr.prepend_keymap]]
 on = ["g", "w"]
 run = "cd ~/workspace"
 desc = "Cd to ~/workspace"
 
 [[mgr.prepend_keymap]]
-on = "'"
+on = "q"
 for = "unix"
 run = 'shell "$SHELL" --block'
 desc = "Open $SHELL here"
@@ -47,7 +52,7 @@ desc = "Create a tab and enter the hovered directory"
 
 # Confirm before quitting if multiple tabs are open
 [[mgr.prepend_keymap]]
-on = "q"
+on = "Q"
 run = "plugin confirm-quit"
 
 # Hide/Show preview:
