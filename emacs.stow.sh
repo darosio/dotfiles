@@ -53,3 +53,5 @@ yay -S --noconfirm actionlint # for gh workflow
 yay -S --noconfirm graphviz
 yay -S --noconfirm plantuml
 yay -S --noconfirm gnuplot
+
+yay -S --noconfirm gcr # for pinentry-gnome3
