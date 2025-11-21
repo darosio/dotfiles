@@ -5,13 +5,22 @@ linemode = "size"
 show_symlink = false
 
 [opener]
+jupyter = [{ run = '${TERM} bash -c jupyter-lab "$@"', block = false, orphan = true, desc = "jupyter" }]
 csvlens = [
   { run = 'csvlens "$@"', block = true, desc = "csvlens" },
+]
+edit = [
+  { run = '$EDITOR "$@"', block = false, for = "unix" },
+]
+open = [
+  { run = 'handlr open "$@"', desc = "Open" },
+  { run = 'handlr open -e true "$@"', desc = "Open menu" },
 ]
 
 [open]
 prepend_rules = [
   { name = "*.csv", use = ["csvlens"] },
+  { name = "*.ipynb", use = ["jupyter"] },
 ]
 
 [plugin]
@@ -26,13 +35,9 @@ prepend_previewers = [
   # { name = "*.{djvu,djv}", run = "djvu-view" },
   { name = "*.chm", run = 'piper -- extract_chmLib "$1" --' },
   { name = "*/", run = 'piper -- eza -TL=3 --color=always --icons=always --group-directories-first --no-quotes "$1"' },
-  # { name = "*.epub", run = 'piper -- pandoc -t org "$1"' },
-  # { name = "*.epub", run = 'ebook-meta --get-cover -- "$1"' },
-  # { name = "*.epub", run = 'piper -- sh -c "pandocc -t markdown -- \"$1\" 2>/dev/null || ebook-meta --get-cover -- \"$1\""' },
-  # { name = "*.epub", run = 'ebook-meta --get-cover -- "$1" 2>/dev/null' },
   { name = "*.eml", run = 'piper -- view_mail_html.py "$1"' },
   { mime = "message/rfc822", run = 'piper -- mu view -- "$1"' },
-  { name = "*.cab", run = 'piper -- bsdtar --list --file "$1"' },
+  { name = "*.cab", run = 'piper -- sh -c "bsdtar --list --file \"$1\" 2>/dev/null || file -bL \"$1\""' },
   # Office Documents
   { mime = "application/openxmlformats-officedocument.*", run = "office" },
   { mime = "application/oasis.opendocument.*", run = "office" },
@@ -65,6 +70,11 @@ prepend_preloaders = [
   { mime = "application/ms-*", run = "office" },
   { mime = "application/msword", run = "office" },
   { name = "*.docx", run = "office" },
+]
+
+append_previewers = [
+  # My fallback previewer
+  { name = "*", run = "binary" },
 ]
 
 [[plugin.prepend_fetchers]]

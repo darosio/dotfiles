@@ -1,4 +1,5 @@
 [Default Applications]
+application/epub+zip=foliate;com.github.johnfactotum.Foliate;com.github.johnfactotum.Foliate.desktop;
 application/pdf=okularApplication_pdf.desktop;mupdf.desktop;com.github.xournalpp.xournalpp.desktop;
 application/vnd.openxmlformats-officedocument.wordprocessingml.document=libreoffice-writer.desktop;
 application/x-ipynb+json=jupyterlab.desktop;
