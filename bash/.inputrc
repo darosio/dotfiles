@@ -32,6 +32,6 @@ set menu-complete-display-prefix On
 "\es": "frga\C-m"
 "\ek": "fkill\C-m"
 # Bind new terminal to <F12>
-"\e[24~": "$TERM &\n"
+"\e[24": "$TERM &\n"
 
 # End of ~/.inputrc
