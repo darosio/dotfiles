@@ -98,7 +98,7 @@ repos:
       - id: pydoclint
 
   - repo: https://github.com/crate-ci/typos
-    rev: v1.39.2
+    rev: v1.40.0
     hooks:
       - id: typos
         # args: [] # Turn off automatic fixing
@@ -121,7 +121,7 @@ repos:
         exclude: '(^.*ranger/scope.sh)'
 
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.9.12
+    rev: 0.9.13
     hooks:
       - id: uv-lock
         stages: [pre-commit]
