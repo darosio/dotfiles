@@ -5,7 +5,7 @@ linemode = "size"
 show_symlink = false
 
 [opener]
-jupyter = [{ run = '${TERM} bash -c jupyter-lab "$@"', block = false, orphan = true, desc = "jupyter" }]
+jupyter = [{ run = '${TERM} bash -c "jupyter-lab \"$1\""', block = false, orphan = true, desc = "jupyter" }]
 csvlens = [
   { run = 'csvlens "$@"', block = true, desc = "csvlens" },
 ]
