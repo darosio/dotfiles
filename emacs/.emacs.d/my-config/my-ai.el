@@ -168,6 +168,7 @@
                                deepseek-r1-distill-llama-70b
                                qwen-qwq-32b
                                gemma2-9b-it))
+  (gptel-make-gh-copilot "Copilot")
   ;; Enable tool use
   (setq gptel-use-tools nil)
   ;; Add a tool to gptel-tools
@@ -276,6 +277,10 @@
     (add-to-list
      'gptel--rewrite-dispatch-actions '(?i "inline-diff")
      'append)))
+
+(use-package copilot
+  :straight (:host github :repo "copilot-emacs/copilot.el" :files ("*.el"))
+  :ensure t)
 
 (provide 'my-ai)
 ;;; my-ai.el ends here
