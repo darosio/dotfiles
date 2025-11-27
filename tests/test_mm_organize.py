@@ -11,7 +11,10 @@ import tempfile
 from datetime import datetime
 from pathlib import Path
 
-# Ensure the scripts directory is in the path for imports
+# NOTE: We use sys.path manipulation to import from the scripts directory because
+# the scripts in scripts/.local/bin/ are standalone executables designed to be
+# deployed to a user's ~/.local/bin directory, not as a Python package. This is
+# the pragmatic approach for testing such scripts in a dotfiles repository.
 _scripts_path = str(Path(__file__).parent.parent / "scripts" / ".local" / "bin")
 if _scripts_path not in sys.path:
     sys.path.insert(0, _scripts_path)
