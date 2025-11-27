@@ -124,6 +124,30 @@ Remember:
 gh pr merge --squash --delete-branch -t “feat(emacs): …”
 ```
 
+### Testing
+
+This repository includes a test suite for Python scripts. To run tests:
+
+```bash
+# Run all tests
+make test
+
+# Run tests with coverage
+uv run pytest tests/ -v --cov=scripts --cov-report=term-missing
+
+# Run specific test file
+uv run pytest tests/test_update_changelog.py -v
+```
+
+The test infrastructure includes:
+
+- **pytest** for test execution
+- **coverage** for code coverage reporting
+- Tests for `scripts/update_changelog.py` (changelog management)
+- Tests for `scripts/.local/bin/mm_organize.py` (media file organization)
+
+Tests are automatically run in CI on every pull request.
+
 ## Applications [optional] requirements
 
 ### Ranger

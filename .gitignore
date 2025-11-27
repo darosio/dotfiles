@@ -14,3 +14,15 @@ __pycache__/
 *.spacemacs.env
 # Flycheck
 .flycheck_*.el
+
+# Coverage files
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+
+# pytest cache
+.pytest_cache/
+
+# mypy cache
+.mypy_cache/

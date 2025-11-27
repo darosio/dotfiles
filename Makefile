@@ -44,7 +44,7 @@ lint:  ## Lints the codebase using pre-commit.
 
 # Testing
 test:  ## Runs tests using pytest and coverage
-	$(COVERAGE) run -p -m pytest -v
+	$(UV_RUN) pytest tests/ -v --cov=scripts --cov-report=term-missing
 
 cov:  ## Generates a coverage report in multiple formats (report, xml).
 	$(COVERAGE) combine
@@ -52,12 +52,12 @@ cov:  ## Generates a coverage report in multiple formats (report, xml).
 	$(COVERAGE) xml
 
 type:  ## Checks the type annotations of Python files using mypy.
-	$(MYPY) src tests docs/conf.py
+	$(MYPY) scripts tests
 
 xdoc:  ## Runs xdoctest on the project.
 	$(XDOCTEST) dotfiles all
 
-test-all: test type xdoc cov  ## Runs all tests: testing, type checking, xdoctesting, and generating coverage reports.
+test-all: test type cov  ## Runs all tests: testing, type checking, and generating coverage reports.
 
 
 # Release management

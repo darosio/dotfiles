@@ -48,9 +48,32 @@ jobs:
         run: |
           make lint
 
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+      - name: Sync project with test deps
+        run: uv sync --locked --group test
+      - name: Run tests with coverage
+        run: |
+          uv run pytest tests/ -v --cov=scripts --cov-report=xml --cov-report=term-missing
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          files: ./coverage.xml
+          fail_ci_if_error: false
+        continue-on-error: true
+
   auto_merge_deps:
     name: Auto Merge dependencies labeled PRs
-    needs: [pre-commit]
+    needs: [pre-commit, test]
     # Run only on pull_request labeled "dependencies"
     if: >
       github.event_name == 'pull_request' &&

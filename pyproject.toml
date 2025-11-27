@@ -36,6 +36,13 @@ dev = [
 lint = [
   "pre-commit==4.5.0",
 ]
+test = [
+  "pytest>=9.0.0",
+  "pytest-cov>=6.1.0",
+  "coverage[toml]>=7.0.0",
+  "click>=8.1.0",
+  "python-dateutil>=2.9.0",
+]
 
 [project.urls]
 Documentation = "https://github.com/unknown/dotfiles#readme"
@@ -61,6 +68,12 @@ skip_covered = true
 branch = true
 omit = ["*__init__.py", "types.py"]
 source = ["scripts"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-v --tb=short"
+filterwarnings = ["ignore::DeprecationWarning"]
 
 # needed to avoid hatch error
 [tool.hatch.build.targets.wheel]
@@ -185,6 +198,7 @@ max-complexity = 12
 "__init__.py" = ["I002"] # don't need annotations
 "scripts/*" = ["ANN201", "LOG", "T20"]
 "ranger/.local/bin/*" = ["LOG", "T20"]
+"tests/*" = ["S101", "PLR2004", "DTZ001"]  # Allow assert, magic values, and naive datetimes in tests
 
 [tool.ruff.lint.pydocstyle]
 convention = "numpy"
