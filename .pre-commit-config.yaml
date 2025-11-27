@@ -48,7 +48,7 @@ repos:
       - id: mdformat
         additional_dependencies:
           - mdformat-gfm
-        exclude: '(^CHANGELOG\.md$)|(^.*yazi/plugins/)'
+        exclude: '(^CHANGELOG\.md$)|(^.*yazi/plugins/)|(.agent.md$)'
 
   - repo: https://github.com/ComPWA/taplo-pre-commit
     rev: v0.9.3
