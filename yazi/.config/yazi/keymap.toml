@@ -166,3 +166,8 @@ run = '''shell --block --
     emacsclient -c -n -e "(mu4e-compose-new-with-attachments \"$elisp_paths\")"
 '''
 desc = "Compose mu4e message with selected file attachments"
+
+[[input.prepend_keymap]]
+on = "<C-g>"
+run = "close"
+desc = "Cancel input"
