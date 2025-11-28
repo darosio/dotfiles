@@ -34,7 +34,7 @@ prepend_previewers = [
   # # DJVU preview
   # { name = "*.{djvu,djv}", run = "djvu-view" },
   { name = "*.chm", run = 'piper -- extract_chmLib "$1" --' },
-  { name = "*/", run = 'piper -- eza -TL=3 --color=always --icons=always --group-directories-first --no-quotes "$1"' },
+  { name = "*/", run = 'piper -- eza -TL=3 --color=always --icons=always --group-directories-first --no-quotes --all "$1"' },
   { name = "*.eml", run = 'piper -- view_mail_html.py "$1"' },
   { mime = "message/rfc822", run = 'piper -- mu view -- "$1"' },
   { name = "*.cab", run = 'piper -- sh -c "bsdtar --list --file \"$1\" 2>/dev/null || file -bL \"$1\""' },
