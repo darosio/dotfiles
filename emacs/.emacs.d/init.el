@@ -682,7 +682,7 @@
 
   ;; Vertico Repeat: repeat last minibuffer session
   (use-package vertico-repeat
-    :straight vertico
+    :ensure nil
     :after vertico
     :hook (minibuffer-setup . vertico-repeat-save)
     :bind (("C-;" . vertico-repeat)
@@ -690,7 +690,7 @@
 
   ;; Vertico Multiform: per-command/category layout configuration
   (use-package vertico-multiform
-    :straight vertico
+    :ensure nil
     :after vertico
     :init (vertico-multiform-mode)
     :custom
@@ -900,7 +900,7 @@
     (dabbrev-ignored-buffer-regexps '("\\.\\(?:pdf\\|jpe?g\\|png\\)\\'")))
 
   (use-package corfu
-    :straight (corfu :files (:defaults "extensions/*")
+    :ensure (corfu :files (:defaults "extensions/*")
                      :includes (corfu-info corfu-history))
     :config
     (setq corfu-popupinfo-delay 0)
@@ -1043,7 +1043,7 @@
     (setq org-roam-completion-everywhere t)
     (org-roam-db-autosync-mode)
     (use-package org-roam-protocol
-      :straight org-roam
+      :ensure nil
       ;; as possible alternative consider https://github.com/alphapapa/org-protocol-capture-html
       ;; REMEMBER to execute:
       ;; xdg-mime default org-protocol.desktop x-scheme-handler/org-protocol
@@ -1055,8 +1055,7 @@
       ))
 
   (use-package org-roam-ui
-    :straight
-    (:host github :repo "org-roam/org-roam-ui" :branch "main" :files ("*.el" "out"))
+    :ensure (org-roam-ui :host github :repo "org-roam/org-roam-ui" :branch "main" :files ("*.el" "out"))
     :after (org-roam)
     ;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
     ;;         a hookable mode anymore, you're advised to pick something yourself
@@ -1088,7 +1087,7 @@
           deft-use-filter-string-for-filename t))
 
   (use-package consult-notes
-    :straight (:type git :host github :repo "mclear-tools/consult-notes")
+    :ensure (consult-notes :host github :repo "mclear-tools/consult-notes")
     :commands (consult-notes
                consult-notes-search-in-all-notes
                consult-notes-org-roam-find-node
@@ -1240,7 +1239,7 @@
     :init (citar-embark-mode))
 
   (use-package oc
-    :straight org
+    :ensure nil
     :after (org)
     :config
     (setq org-cite-global-bibliography completion-bibliography)
@@ -1250,12 +1249,12 @@
             (t csl)))
     )
 
-  (use-package oc-biblatex :straight org :after oc)
+  (use-package oc-biblatex :ensure nil :after oc)
 
-  (use-package oc-csl :straight org :after (oc)
+  (use-package oc-csl :ensure nil :after (oc)
     :init (setq org-cite-csl-styles-dir "~/Zotero/styles"))
 
-  (use-package oc-natbib :straight org :after oc)
+  (use-package oc-natbib :ensure nil :after oc)
 
 
   (declare-function keymap-set "compat-29")
@@ -1588,8 +1587,8 @@
   ;; (add-to-list 'bibtex-completion-bibliography calibredb-ref-default-bibliography)
   )
 
-(straight-use-package
- '(seqel :type git :host github :repo "RNAer/seqel"))
+(use-package seqel
+  :ensure (seqel :host github :repo "RNAer/seqel"))
 
 (use-package emacs
   :straight nil
@@ -1607,7 +1606,7 @@
 (require 'my-ai)
 
 (use-package eee
-  :straight (:type git :host github :repo "eval-exec/eee.el"
+  :ensure (eee :host github :repo "eval-exec/eee.el"
                    :files (:defaults "*.el" "*.sh"))
   :bind-keymap
   ("C-M-s-e" . ee-keymap)
