@@ -5,6 +5,7 @@
 ;;; Code:
 
 (use-package ispell
+  :ensure nil
   :hook ((text-mode-hook . flyspell-mode)
          (org-mode-hook . flyspell-mode)
          (prog-mode-hook . flyspell-prog-mode)
@@ -19,6 +20,7 @@
   (add-to-list 'ispell-skip-region-alist '("^From:" . "line--$")))
 
 (use-package flyspell
+  :ensure nil
   :after ispell
   :hook ((text-mode-hook . flyspell-mode)
          (org-mode-hook . flyspell-mode)
