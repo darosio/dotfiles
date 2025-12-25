@@ -601,6 +601,7 @@
     :hook (prog-mode . hs-minor-mode))
 
   (use-package calc
+    :ensure nil
     :bind ("M-g M-a c" . calc))
 
   (use-package dired
