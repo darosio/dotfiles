@@ -58,7 +58,7 @@
 ;;           '("jupyter-python" "jupyter-julia" "jupyter-R"))))
 
 (use-package prog-mode
-  :straight (:type built-in)
+  :ensure nil
   :config
   (setq-default prettify-symbols-alist '(("#+begin_src" . "➙")
                                          ("#+end_src" . "∎")
@@ -70,7 +70,7 @@
 
 ;; --- Org packages ---
 (use-package ox-latex
-  :straight nil
+  :ensure nil
   :defer t ;; XXX: https://orgmode.org/worg/org-contrib/babel/languages/ob-doc-LaTeX.html
   :config
   (setq org-latex-remove-logfiles t)
@@ -118,10 +118,10 @@
                  ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
   )
 
-(use-package ox-beamer :straight org :init (eval-after-load 'ox '(require 'ox-beamer)))
-(use-package ox-md :straight org :init (eval-after-load 'ox '(require 'ox-md)))
-(use-package ox-koma-letter :straight org :init (eval-after-load 'ox '(require 'ox-koma-letter)))
-(use-package ob-ditaa :straight org
+(use-package ox-beamer :ensure org :init (eval-after-load 'ox '(require 'ox-beamer)))
+(use-package ox-md :ensure org :init (eval-after-load 'ox '(require 'ox-md)))
+(use-package ox-koma-letter :ensure org :init (eval-after-load 'ox '(require 'ox-koma-letter)))
+(use-package ob-ditaa :ensure org
   :after org
   :config
   (setq org-ditaa-jar-path "/usr/share/java/ditaa/ditaa-0.11.jar")
@@ -158,14 +158,14 @@
   ("\\.latex\\'" . TeX-latex-mode)
   :config
   (use-package tex
-    :straight auctex
+    :ensure auctex
     :config
     (setq TeX-auto-save t)
     (setq TeX-parse-self t)
     ;; (setq TeX-PDF-mode t))
     (setq-default TeX-master nil))
   (use-package tex-buf
-    :straight auctex
+    :ensure auctex
     :config
     (setq TeX-save-query nil))
   )

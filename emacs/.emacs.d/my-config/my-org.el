@@ -5,7 +5,6 @@
 ;;; Code:
 
 (use-package org
-  :straight (:type built-in)
   :ensure nil
   :commands (org-capture-finalize org-speed-move-safe org-narrow-to-subtree org-clock-in)
   :functions (org-read-date org-get-tags org-entry-delete org-entry-put org-toggle-tag)
@@ -172,12 +171,12 @@
         org-use-property-inheritance nil                              ;; default
         )
 
-  (use-package org-archive :straight org
+  (use-package org-archive :ensure org
     :config
     (setq org-archive-file-header-format "#+FILETAGS: ARCHIVE\nArchived entries from file %s\n"))
 
   ;; (3) Refile
-  (use-package org-refile :straight org
+  (use-package org-refile :ensure org
     :bind
     (:map org-mode-map ("M-g ; :" . org-refile-goto-last-stored))
     :config
@@ -223,7 +222,7 @@
   (setq org-tags-column -82)
   (setq org-support-shift-select t)       ;do not change state with left right arrow
 
-  ;; (use-package org-clock :straight org
+  ;; (use-package org-clock :ensure org
   ;;   :config
   ;;   (setq org-clock-out-remove-zero-time-clocks t) ; Removes clocked tasks with 0:00 duration
   ;;   (setq org-clock-auto-clock-resolution (quote when-no-clock-is-running))   ; Enable auto clock resolution for finding open clocks
@@ -233,7 +232,7 @@
                                       ("STYLE_ALL" . "habit"))))
   )
 
-(use-package org-capture :straight org
+(use-package org-capture :ensure org
   :after org
   :preface
   (defun my-daily-review ()
@@ -354,7 +353,7 @@
    ("C-c R w" . my-weekly-review))
   )
 
-(use-package org-agenda :straight org
+(use-package org-agenda :ensure org
   :after org
   :preface
   (defun my-archive-done-tasks ()
@@ -699,7 +698,7 @@
           ))
   )
 
-(use-package org-faces :straight org
+(use-package org-faces :ensure org
   :after org
   :config
   (let ((todo-color (face-attribute 'error :foreground nil t))
@@ -720,7 +719,7 @@
   (set-face-attribute 'org-table nil :inherit '(shadow fixed-pitch))
   )
 
-(use-package org-lint :straight org
+(use-package org-lint :ensure org
   :after org
   :preface
   (defun da-org-lint-critical ()
