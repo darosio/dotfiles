@@ -95,33 +95,33 @@
 
 ;; *** 5. Load first packages ***
 ;; ;; Install org built-in via straight to shadow Emacs's version (good practice)
-(use-package org :ensure nil :straight (:type built-in))
+(use-package org :ensure nil)
 ;; This tells straight.el to always treat org as built-in, even if a package requests it.
-(add-to-list 'straight-built-in-pseudo-packages 'org)
+;; (add-to-list 'straight-built-in-pseudo-packages 'org)
 ;; Prevent using the built-in transient https://github.com/magit/magit/discussions/4997
-;; This often gets fixed by `:straight t` which fetches the latest version.
+;; This often gets fixed by `:ensure t` which fetches the latest version.
 (use-package magit)
 
 (progn                                  ; UI base setting
 
   (use-package bookmark
-    :straight (:type built-in)
+    :ensure nil
     :custom
     (bookmark-default-file "~/.emacs.d/bookmarks")
     (bookmark-save-flag 2))
 
   (use-package browse-url
-    :straight (:type built-in)
+    :ensure nil
     :custom
     (browse-url-browser-function 'browse-url-generic)
     (browse-url-generic-program "firefox"))
 
   (use-package comint
-    :straight (:type built-in)
+    :ensure nil
     :bind ("C-c <tab>" . comint-dynamic-complete-filename))
 
   (use-package ediff
-    :straight (:type built-in)
+    :ensure nil
     :custom
     (ediff-window-setup-function 'ediff-setup-windows-plain)
     (ediff-split-window-function (if (> (frame-width) 150)
@@ -211,7 +211,7 @@
     )
 
   (use-package files
-    :straight (:type built-in)
+    :ensure nil
     :preface
     ;; Revert buffer without prompting
     (defun my-revert-buffer (&rest _)
@@ -249,12 +249,12 @@
     (after-save . executable-make-buffer-file-executable-if-script-p))
 
   (use-package isearch
-    :straight (:type built-in)
+    :ensure nil
     :config
     (setq isearch-allow-scroll t))
 
   (use-package simple
-    :straight (:type built-in)
+    :ensure nil
     :init
     (setq blink-matching-delay 0.5
           blink-matching-paren 'jump-offscreen
@@ -283,7 +283,7 @@
     )
 
   (use-package window
-    :straight (:type built-in)
+    :ensure nil
     :preface
     (defvar prot/window-configuration nil
       "Current window-monocle configuration.")
@@ -326,19 +326,19 @@
            ("C-M-s-<right>" . windmove-right)))
 
   (use-package electric
-    :straight (:type built-in)
+    :ensure nil
     :config
     (electric-indent-mode 0)
     ;; python is excluded by aggressive indent because of not absolute indentation
     :hook (python-mode . electric-indent-mode))
 
   (use-package lpr
-    :straight (:type built-in)
+    :ensure nil
     :custom
     (lpr-command "lpr")
     (printer-name "HP_LaserJet_CM1415fn"))
   (use-package ps-print
-    :straight (:type built-in)
+    :ensure nil
     :custom
     (ps-print-header nil)
     (ps-print-footer nil)
@@ -372,7 +372,7 @@
 
   ;; Themes and fonts
   (use-package faces
-    :straight (:type built-in)
+    :ensure nil
     :config
     (set-face-attribute 'default nil
                         :family "IBM Plex mono"
@@ -390,7 +390,7 @@
                         :weight 'normal
                         :width 'normal))
   (use-package face-remap
-    :straight (:type built-in)
+    :ensure nil
     :config
     (setq text-scale-mode-step 1.05))
   (use-package spacemacs-theme
@@ -576,7 +576,7 @@
     :bind ("C-=" . er/expand-region))
 
   (use-package hideshow ;; for folding
-    :straight (:type built-in)
+    :ensure nil
     :bind (("C-c t f" . hs-minor-mode)
            (:map prog-mode-map
                  ("M-<tab>" . hs-toggle-hiding)
@@ -590,7 +590,7 @@
     :bind ("M-g M-a c" . calc))
 
   (use-package dired
-    :straight (:type built-in)
+    :ensure nil
     :functions (dired-get-filename
                 dired-next-line
                 dired-previous-line)
@@ -625,7 +625,7 @@
            ("e" . mk-dired-open-external)))
 
   (use-package dired-x
-    :straight nil
+    :ensure nil
     :init (setq dired-clean-up-buffers-too t))
 
   (use-package wdired
@@ -728,7 +728,7 @@
 
   ;; CRM: Configure completing-read-multiple prompt
   (use-package crm
-    :straight (:type built-in)
+    :ensure nil
     :init
     (when (< emacs-major-version 31)
       (advice-add #'completing-read-multiple :filter-args
@@ -882,7 +882,7 @@
 
   ;; Use Dabbrev with Corfu!
   (use-package abbrev
-    :straight (:type built-in)
+    :ensure nil
     :config
     (setq abbrev-file-name "~/.emacs.d/abbrev_defs"
           save-abbrevs 'silent)
@@ -1043,7 +1043,7 @@
     (setq org-roam-completion-everywhere t)
     (org-roam-db-autosync-mode)
     (use-package org-roam-protocol
-      :ensure nil
+      :ensure org-roam
       ;; as possible alternative consider https://github.com/alphapapa/org-protocol-capture-html
       ;; REMEMBER to execute:
       ;; xdg-mime default org-protocol.desktop x-scheme-handler/org-protocol
@@ -1239,7 +1239,7 @@
     :init (citar-embark-mode))
 
   (use-package oc
-    :ensure nil
+    :ensure org
     :after (org)
     :config
     (setq org-cite-global-bibliography completion-bibliography)
@@ -1249,12 +1249,12 @@
             (t csl)))
     )
 
-  (use-package oc-biblatex :ensure nil :after oc)
+  (use-package oc-biblatex :ensure org :after oc)
 
-  (use-package oc-csl :ensure nil :after (oc)
+  (use-package oc-csl :ensure org :after (oc)
     :init (setq org-cite-csl-styles-dir "~/Zotero/styles"))
 
-  (use-package oc-natbib :ensure nil :after oc)
+  (use-package oc-natbib :ensure org :after oc)
 
 
   (declare-function keymap-set "compat-29")
@@ -1400,7 +1400,7 @@
 
 ;; --- Project ---
 (use-package project
-  :straight (:type built-in)
+  :ensure nil
   :config
   (setq project-switch-commands #'project-find-file))
 (use-package consult-project-extra
@@ -1459,7 +1459,7 @@
 (add-to-list 'auto-mode-alist '("\\(ba\\|z\\)?sh\\'" . sh-mode))
 
 (use-package eglot
-  :straight (:type built-in)
+  :ensure nil
   :hook
   (prog-mode . (lambda () (unless (eq major-mode 'emacs-lisp-mode) (eglot-ensure))))
   (yaml-mode . eglot-ensure)
@@ -1478,7 +1478,7 @@
          ("C-c r f" . eglot-format)))
 
 (use-package flymake
-  :straight (:type built-in)
+  :ensure nil
   :bind (("M-g e l" . flymake-show-buffer-diagnostics)
          ("M-g e p" . flymake-show-project-diagnostics))
   :hook ((gitignore-mode . flymake-mode)
@@ -1509,7 +1509,7 @@
 (progn                                  ; python
 
   (use-package python
-    :straight (:type built-in)
+    :ensure nil
     :bind   (("C-c t m p" . python-mode)
              (:map python-mode-map
                    ;; ("<backtab>" . hs-toggle-hiding) ; orig. python-indent-dedent-line
@@ -1591,7 +1591,7 @@
   :ensure (seqel :host github :repo "RNAer/seqel"))
 
 (use-package emacs
-  :straight nil
+  :ensure nil
   :preface
   (defun my-org-zotero-open (path _)
     (call-process "xdg-open" nil nil nil (concat "zotero:" path)))
