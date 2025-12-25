@@ -5,7 +5,7 @@
 ;;; Code:
 
 (use-package mu4e                       ; mu4e
-  :straight (:type built-in)            ; in AUR/mu
+  :ensure nil                           ; in AUR/mu
   :commands (mu4e mu4e-compose-new)
   :preface
   (defun replace-duck-emails-in-buffer ()
@@ -137,7 +137,7 @@
 
 (use-package mu4e-context
   :after mu4e
-  :straight mu4e
+  :ensure nil
   :config
   (setq mu4e-contexts
         `( ,(make-mu4e-context
@@ -173,7 +173,7 @@
 
 (use-package mu4e-icalendar
   :after mu4e
-  :straight mu4e
+  :ensure nil
   :init
   (setq gnus-icalendar-org-capture-file "~/Sync/box/org/gtd.org")
   (setq gnus-icalendar-org-capture-headline '("Calendar"))
@@ -184,7 +184,7 @@
 
 (use-package mu4e-headers
   :after mu4e
-  :straight mu4e
+  :ensure nil
   ;; :functions (
   ;;             mu4e~headers-goto-docid)
   :config
@@ -199,7 +199,7 @@
   (setq mu4e-headers-visible-lines 10))
 
 (use-package message
-  :straight (:type built-in)
+  :ensure nil
   ;; :functions (message-sendmail-envelope-from
   ;;             message-add-header
   ;;             message-remove-header)
@@ -214,7 +214,7 @@
         message-citation-line-function 'message-insert-formatted-citation-line))
 
 (use-package sendmail
-  :straight (:type built-in)
+  :ensure nil
   :config
   (setq mail-specify-envelope-from t
         mail-envelope-from 'header
@@ -222,7 +222,7 @@
 
 (use-package mu4e-mark ; Tags and personal archive
   :after mu4e
-  :straight mu4e
+  :ensure nil
   :bind (:map
          mu4e-headers-mode-map
          ("M-z" . mu4e-headers-mark-for-tag)
@@ -262,7 +262,7 @@
 
 (use-package mu4e-org
   :after mu4e
-  :straight mu4e
+  :ensure nil
   :config
   (setq mu4e-org-link-query-in-headers-mode t ; `C-c l` store query
         org-mu4e-convert-to-html t))
