@@ -44,6 +44,7 @@
   )
 
 (use-package plstore
+  :ensure nil
   :defer nil
   :config
   (setq plstore-encrypt-to '("8B6A39EFA290FB41")))
