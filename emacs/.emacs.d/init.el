@@ -44,49 +44,54 @@
 
 (setenv "GPG_TTY" (or (getenv "GPG_TTY") "/dev/tty")) ;store gpg for gcal
 
-;; --- Package Management (straight.el and use-package) ---
-;; Use 'setq-default' instead of custom-set or setq to set variables
-(setq-default straight-vc-git-default-clone-depth '1) ;full
-(setq-default straight-recipes-gnu-elpa-use-mirror t)
+;; --- Package Management (Elpaca) ---
 
-;; *** 1. Straight Bootstrap ***
-(defvar bootstrap-version)
-(let ((bootstrap-file
-       (expand-file-name
-        "straight/repos/straight.el/bootstrap.el"
-        (or (bound-and-true-p straight-base-dir)
-            user-emacs-directory)))
-      (bootstrap-version 7))
-  (unless (file-exists-p bootstrap-file)
-    (with-current-buffer
-        (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
-         'silent 'inhibit-cookies)
-      (goto-char (point-max))
-      (eval-print-last-sexp)))
-  (load bootstrap-file nil 'nomessage))
+(defvar elpaca-installer-version 0.8)
+(defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
+(defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
+(defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
+(defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
+                              :ref nil
+                              :files (:defaults "elpaca-test.el" (:exclude "extensions"))
+                              :build (:not elpaca--activate-package)))
+(let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
+       (build (expand-file-name "elpaca/" elpaca-builds-directory))
+       (order (cdr elpaca-order))
+       (default-directory repo))
+  (add-to-list 'load-path (if (file-exists-p build) build repo))
+  (unless (file-exists-p repo)
+    (make-directory repo t)
+    (when (< emacs-major-version 28) (require 'subr-x))
+    (condition-case-unless-debug err
+        (if-let ((buffer (url-retrieve-synchronously
+                          (plist-get order :repo) t)))
+            (unwind-protect
+                (with-current-buffer buffer
+                  (goto-char (point-max))
+                  (eval-print-last-sexp))
+              (kill-buffer buffer))
+          (error "Hook provider (url-retrieve-synchronously) failed"))
+      (error
+       (delete-directory elpaca-directory t)
+       (error (format "Could not install Elpaca: %s" err) err))))
+  (when (require 'elpaca nil t)
+    (elpaca-generate-autoloads "elpaca" repo)
+    (load (expand-file-name "elpaca-autoloads" repo) nil t)
+    (elpaca-process-queues)))
+(elpaca `(,@elpaca-order))
 
-;; *** 2. Straight Configuration ***
-;; Declare straight.el variables to silence Flymake warnings
-(eval-when-compile
-  (defvar straight-use-package-by-default)
-  (defvar straight-cache-autoloads)
-  (defvar straight-check-for-modifications)
-  (declare-function straight-use-package "straight.el"))
-;; Enable straight.el for all use-package calls by default
-(setq straight-use-package-by-default t)
-;; Enable autoload caching and modification checks for straight.el
-(setq straight-cache-autoloads t
-      straight-check-for-modifications '(check-on-startup find-when-checking))
+;; Install use-package support
+(elpaca elpaca-use-package
+  ;; Enable :ensure use-package support.
+  (elpaca-use-package-mode)
+  ;; Assume :ensure t unless otherwise specified.
+  (setq use-package-always-ensure t))
 
-;; *** 3. Crucial fix for the recognition of Use-Package Keywords ***
-;; = nil t = as arguments means: not generating error if not found, and not recharging if already loaded.
-(eval-when-compile
-  (require 'use-package nil t))
+;; Block until current queue processed.
+(elpaca-wait)
 
-;; *** 4. Use-package configuration ***
 (use-package use-package
-  :straight t
+  :ensure nil
   :init
   (setq use-package-always-defer (not is-daemon)
         use-package-compute-statistics t
