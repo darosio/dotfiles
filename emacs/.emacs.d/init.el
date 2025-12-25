@@ -682,7 +682,7 @@
 
   ;; Vertico Repeat: repeat last minibuffer session
   (use-package vertico-repeat
-    :ensure nil
+    :ensure vertico
     :after vertico
     :hook (minibuffer-setup . vertico-repeat-save)
     :bind (("C-;" . vertico-repeat)
@@ -690,7 +690,7 @@
 
   ;; Vertico Multiform: per-command/category layout configuration
   (use-package vertico-multiform
-    :ensure nil
+    :ensure vertico
     :after vertico
     :init (vertico-multiform-mode)
     :custom
