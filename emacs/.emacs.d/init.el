@@ -93,6 +93,9 @@
   ;; Assume :ensure t unless otherwise specified.
   (setq use-package-always-ensure t))
 
+;; Ensure transient is installed from ELPA/MELPA, not built-in
+(elpaca transient)
+
 ;; Block until current queue processed.
 (elpaca-wait)
 
@@ -539,9 +542,9 @@
     :commands nerd-icons-install-fonts
     :config
     ;; Check for font existence more robustly
-    (unless (or (find-font (font-spec :family "Symbols Nerd Font Mono"))
-                (file-exists-p "~/.local/share/fonts/NFM.ttf"))
-      (nerd-icons-install-fonts))
+    ;; (unless (or (find-font (font-spec :family "Symbols Nerd Font Mono"))
+    ;;             (file-exists-p "~/.local/share/fonts/NFM.ttf"))
+    ;;   (nerd-icons-install-fonts))
     :custom
     (nerd-icons-font-family "Symbols Nerd Font Mono"))
 

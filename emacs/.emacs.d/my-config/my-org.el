@@ -108,7 +108,8 @@
   (setq org-link-keep-stored-after-insertion t)
   (org-link-set-parameters "mpv" :follow (lambda (path) (browse-url-xdg-open path)))
 
-  (consult-customize da-consult-org :preview-key "<right>")
+  (with-eval-after-load 'consult
+    (consult-customize da-consult-org :preview-key "<right>"))
   ;; babel
   (setq ;;org-src-preserve-indentation t           ; indentation in src blocks
    ;;org-edit-src-content-indentation 2         ; default
