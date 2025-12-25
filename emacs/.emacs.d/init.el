@@ -721,6 +721,7 @@
 
   ;; Save minibuffer history across sessions
   (use-package savehist
+    :ensure nil
     :init (savehist-mode))
 
   ;; Emacs minibuffer tuning
