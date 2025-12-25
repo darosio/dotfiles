@@ -44,49 +44,63 @@
 
 (setenv "GPG_TTY" (or (getenv "GPG_TTY") "/dev/tty")) ;store gpg for gcal
 
-;; --- Package Management (straight.el and use-package) ---
-;; Use 'setq-default' instead of custom-set or setq to set variables
-(setq-default straight-vc-git-default-clone-depth '1) ;full
-(setq-default straight-recipes-gnu-elpa-use-mirror t)
+;; --- Package Management (Elpaca) ---
 
-;; *** 1. Straight Bootstrap ***
-(defvar bootstrap-version)
-(let ((bootstrap-file
-       (expand-file-name
-        "straight/repos/straight.el/bootstrap.el"
-        (or (bound-and-true-p straight-base-dir)
-            user-emacs-directory)))
-      (bootstrap-version 7))
-  (unless (file-exists-p bootstrap-file)
-    (with-current-buffer
-        (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
-         'silent 'inhibit-cookies)
-      (goto-char (point-max))
-      (eval-print-last-sexp)))
-  (load bootstrap-file nil 'nomessage))
+(defvar elpaca-installer-version 0.11)
+(defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
+(defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
+(defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
+(defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
+                              :ref nil :depth 1 :inherit ignore
+                              :files (:defaults "elpaca-test.el" (:exclude "extensions"))
+                              :build (:not elpaca--activate-package)))
+(let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
+       (build (expand-file-name "elpaca/" elpaca-builds-directory))
+       (order (cdr elpaca-order))
+       (default-directory repo))
+  (add-to-list 'load-path (if (file-exists-p build) build repo))
+  (unless (file-exists-p (expand-file-name "elpaca.el" repo))
+    (when (file-exists-p repo) (delete-directory repo t))
+    (make-directory repo t)
+    (when (<= emacs-major-version 28) (require 'subr-x))
+    (condition-case-unless-debug err
+        (if-let* ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
+                  ((zerop (apply #'call-process `("git" nil ,buffer t "clone"
+                                                  ,@(when-let* ((depth (plist-get order :depth)))
+                                                      (list (format "--depth=%d" depth) "--no-single-branch"))
+                                                  ,(plist-get order :repo) ,repo))))
+                  ((zerop (call-process "git" nil buffer t "checkout"
+                                        (or (plist-get order :ref) "--"))))
+                  (emacs (concat invocation-directory invocation-name))
+                  ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
+                                        "--eval" "(byte-recompile-directory \".\" 0 'force)")))
+                  ((require 'elpaca))
+                  ((elpaca-generate-autoloads "elpaca" repo)))
+            (progn (message "%s" (buffer-string)) (kill-buffer buffer))
+          (error "%s" (with-current-buffer buffer (buffer-string))))
+      ((error) (warn "%s" err) (delete-directory repo 'recursive))))
+  (unless (require 'elpaca-autoloads nil t)
+    (require 'elpaca)
+    (elpaca-generate-autoloads "elpaca" repo)
+    (let ((load-source-file-function nil)) (load "./elpaca-autoloads"))))
+(add-hook 'after-init-hook #'elpaca-process-queues)
+(elpaca `(,@elpaca-order))
 
-;; *** 2. Straight Configuration ***
-;; Declare straight.el variables to silence Flymake warnings
-(eval-when-compile
-  (defvar straight-use-package-by-default)
-  (defvar straight-cache-autoloads)
-  (defvar straight-check-for-modifications)
-  (declare-function straight-use-package "straight.el"))
-;; Enable straight.el for all use-package calls by default
-(setq straight-use-package-by-default t)
-;; Enable autoload caching and modification checks for straight.el
-(setq straight-cache-autoloads t
-      straight-check-for-modifications '(check-on-startup find-when-checking))
+;; Install use-package support
+(elpaca elpaca-use-package
+  ;; Enable :ensure use-package support.
+  (elpaca-use-package-mode)
+  ;; Assume :ensure t unless otherwise specified.
+  (setq use-package-always-ensure t))
 
-;; *** 3. Crucial fix for the recognition of Use-Package Keywords ***
-;; = nil t = as arguments means: not generating error if not found, and not recharging if already loaded.
-(eval-when-compile
-  (require 'use-package nil t))
+;; Ensure transient is installed from ELPA/MELPA, not built-in
+(elpaca transient)
 
-;; *** 4. Use-package configuration ***
+;; Block until current queue processed.
+(elpaca-wait)
+
 (use-package use-package
-  :straight t
+  :ensure nil
   :init
   (setq use-package-always-defer (not is-daemon)
         use-package-compute-statistics t
@@ -95,33 +109,33 @@
 
 ;; *** 5. Load first packages ***
 ;; ;; Install org built-in via straight to shadow Emacs's version (good practice)
-(use-package org :ensure nil :straight (:type built-in))
+(use-package org :ensure nil)
 ;; This tells straight.el to always treat org as built-in, even if a package requests it.
-(add-to-list 'straight-built-in-pseudo-packages 'org)
+;; (add-to-list 'straight-built-in-pseudo-packages 'org)
 ;; Prevent using the built-in transient https://github.com/magit/magit/discussions/4997
-;; This often gets fixed by `:straight t` which fetches the latest version.
+;; This often gets fixed by `:ensure t` which fetches the latest version.
 (use-package magit)
 
 (progn                                  ; UI base setting
 
   (use-package bookmark
-    :straight (:type built-in)
+    :ensure nil
     :custom
     (bookmark-default-file "~/.emacs.d/bookmarks")
     (bookmark-save-flag 2))
 
   (use-package browse-url
-    :straight (:type built-in)
+    :ensure nil
     :custom
     (browse-url-browser-function 'browse-url-generic)
     (browse-url-generic-program "firefox"))
 
   (use-package comint
-    :straight (:type built-in)
+    :ensure nil
     :bind ("C-c <tab>" . comint-dynamic-complete-filename))
 
   (use-package ediff
-    :straight (:type built-in)
+    :ensure nil
     :custom
     (ediff-window-setup-function 'ediff-setup-windows-plain)
     (ediff-split-window-function (if (> (frame-width) 150)
@@ -130,6 +144,7 @@
     (ediff-diff-options "-w"))
 
   (use-package emacs
+    :ensure nil
     :preface
     ;; Go to change fonts
     (defun mk-set-font (font &optional height)
@@ -211,7 +226,7 @@
     )
 
   (use-package files
-    :straight (:type built-in)
+    :ensure nil
     :preface
     ;; Revert buffer without prompting
     (defun my-revert-buffer (&rest _)
@@ -249,12 +264,12 @@
     (after-save . executable-make-buffer-file-executable-if-script-p))
 
   (use-package isearch
-    :straight (:type built-in)
+    :ensure nil
     :config
     (setq isearch-allow-scroll t))
 
   (use-package simple
-    :straight (:type built-in)
+    :ensure nil
     :init
     (setq blink-matching-delay 0.5
           blink-matching-paren 'jump-offscreen
@@ -283,7 +298,7 @@
     )
 
   (use-package window
-    :straight (:type built-in)
+    :ensure nil
     :preface
     (defvar prot/window-configuration nil
       "Current window-monocle configuration.")
@@ -326,19 +341,19 @@
            ("C-M-s-<right>" . windmove-right)))
 
   (use-package electric
-    :straight (:type built-in)
+    :ensure nil
     :config
     (electric-indent-mode 0)
     ;; python is excluded by aggressive indent because of not absolute indentation
     :hook (python-mode . electric-indent-mode))
 
   (use-package lpr
-    :straight (:type built-in)
+    :ensure nil
     :custom
     (lpr-command "lpr")
     (printer-name "HP_LaserJet_CM1415fn"))
   (use-package ps-print
-    :straight (:type built-in)
+    :ensure nil
     :custom
     (ps-print-header nil)
     (ps-print-footer nil)
@@ -372,7 +387,7 @@
 
   ;; Themes and fonts
   (use-package faces
-    :straight (:type built-in)
+    :ensure nil
     :config
     (set-face-attribute 'default nil
                         :family "IBM Plex mono"
@@ -390,7 +405,7 @@
                         :weight 'normal
                         :width 'normal))
   (use-package face-remap
-    :straight (:type built-in)
+    :ensure nil
     :config
     (setq text-scale-mode-step 1.05))
   (use-package spacemacs-theme
@@ -421,6 +436,7 @@
     (html-mode . aggressive-indent-mode))
 
   (use-package delsel
+    :ensure nil
     :init (delete-selection-mode 1))
 
   (use-package fix-word
@@ -498,6 +514,7 @@
     (move-text-default-bindings))  ;; Binds M-<up>/<down> automatically
 
   (use-package recentf
+    :ensure nil
     :init (recentf-mode t))
 
   (use-package transpose-frame
@@ -525,9 +542,9 @@
     :commands nerd-icons-install-fonts
     :config
     ;; Check for font existence more robustly
-    (unless (or (find-font (font-spec :family "Symbols Nerd Font Mono"))
-                (file-exists-p "~/.local/share/fonts/NFM.ttf"))
-      (nerd-icons-install-fonts))
+    ;; (unless (or (find-font (font-spec :family "Symbols Nerd Font Mono"))
+    ;;             (file-exists-p "~/.local/share/fonts/NFM.ttf"))
+    ;;   (nerd-icons-install-fonts))
     :custom
     (nerd-icons-font-family "Symbols Nerd Font Mono"))
 
@@ -576,7 +593,7 @@
     :bind ("C-=" . er/expand-region))
 
   (use-package hideshow ;; for folding
-    :straight (:type built-in)
+    :ensure nil
     :bind (("C-c t f" . hs-minor-mode)
            (:map prog-mode-map
                  ("M-<tab>" . hs-toggle-hiding)
@@ -587,10 +604,11 @@
     :hook (prog-mode . hs-minor-mode))
 
   (use-package calc
+    :ensure nil
     :bind ("M-g M-a c" . calc))
 
   (use-package dired
-    :straight (:type built-in)
+    :ensure nil
     :functions (dired-get-filename
                 dired-next-line
                 dired-previous-line)
@@ -625,10 +643,11 @@
            ("e" . mk-dired-open-external)))
 
   (use-package dired-x
-    :straight nil
+    :ensure nil
     :init (setq dired-clean-up-buffers-too t))
 
   (use-package wdired
+    :ensure nil
     :after dired
     :init (setq wdired-allow-to-change-permissions t)
     :bind (:map
@@ -682,7 +701,7 @@
 
   ;; Vertico Repeat: repeat last minibuffer session
   (use-package vertico-repeat
-    :straight vertico
+    :ensure vertico
     :after vertico
     :hook (minibuffer-setup . vertico-repeat-save)
     :bind (("C-;" . vertico-repeat)
@@ -690,7 +709,7 @@
 
   ;; Vertico Multiform: per-command/category layout configuration
   (use-package vertico-multiform
-    :straight vertico
+    :ensure vertico
     :after vertico
     :init (vertico-multiform-mode)
     :custom
@@ -705,10 +724,12 @@
 
   ;; Save minibuffer history across sessions
   (use-package savehist
+    :ensure nil
     :init (savehist-mode))
 
   ;; Emacs minibuffer tuning
   (use-package emacs
+    :ensure nil
     :custom
     (enable-recursive-minibuffers t)
     (read-extended-command-predicate #'command-completion-default-include-p) ;only commands working in current mode
@@ -728,7 +749,7 @@
 
   ;; CRM: Configure completing-read-multiple prompt
   (use-package crm
-    :straight (:type built-in)
+    :ensure nil
     :init
     (when (< emacs-major-version 31)
       (advice-add #'completing-read-multiple :filter-args
@@ -882,7 +903,7 @@
 
   ;; Use Dabbrev with Corfu!
   (use-package abbrev
-    :straight (:type built-in)
+    :ensure nil
     :config
     (setq abbrev-file-name "~/.emacs.d/abbrev_defs"
           save-abbrevs 'silent)
@@ -892,6 +913,7 @@
     ("M-/" . hippie-expand)        ;; in place of `dabbrev-expand`
     )
   (use-package dabbrev
+    :ensure nil
     ;; Swap M-/ and C-M-/
     :bind (("C-M-/" . dabbrev-completion)
            ("M-/" . dabbrev-expand))
@@ -900,7 +922,7 @@
     (dabbrev-ignored-buffer-regexps '("\\.\\(?:pdf\\|jpe?g\\|png\\)\\'")))
 
   (use-package corfu
-    :straight (corfu :files (:defaults "extensions/*")
+    :ensure (corfu :files (:defaults "extensions/*")
                      :includes (corfu-info corfu-history))
     :config
     (setq corfu-popupinfo-delay 0)
@@ -959,47 +981,47 @@
   :bind ("M-s y" . consult-yasnippet))
 
 ;; --- Spell and Translate ---
-(straight-use-package 'ispell)          ;;TODO: remove
-(straight-use-package 'flyspell)
-(straight-use-package 'flyspell-correct) ;;TODO: remove
-(straight-use-package 'consult-flyspell)
-(straight-use-package 'guess-language)
-(straight-use-package 'sdcv)
-(straight-use-package 'wordnut)
-(straight-use-package 'powerthesaurus)
+(use-package ispell :ensure nil)          ;;TODO: remove
+(use-package flyspell :ensure nil)
+(use-package flyspell-correct) ;;TODO: remove
+(use-package consult-flyspell)
+(use-package guess-language)
+(use-package sdcv)
+(use-package wordnut)
+(use-package powerthesaurus)
 (require 'my-spell)
 
 ;; --- Prose ---
-(straight-use-package 'cm-mode) ;; critic markup
-(straight-use-package 'langtool)
-(straight-use-package 'academic-phrases)
-(straight-use-package 'writegood-mode)
+(use-package cm-mode) ;; critic markup
+(use-package langtool)
+(use-package academic-phrases)
+(use-package writegood-mode)
 (require 'my-prose)
 
 ;; --- Mail ---
-(straight-use-package 'org-msg)
-(straight-use-package 'org-mime)
-(straight-use-package 'mu4e-jump-to-list)
+(use-package org-msg)
+(use-package org-mime)
+(use-package mu4e-jump-to-list)
 (require 'my-email)
 
 ;; --- Org ---
-(straight-use-package 'jupyter)
-(straight-use-package 'ob-async)
-(straight-use-package 'ox-rst)
-(straight-use-package 'ox-pandoc)
-(straight-use-package 'ox-twbs)
-(straight-use-package 'auctex)
-(straight-use-package 'cdlatex)
-(straight-use-package 'ox-reveal)
+(use-package jupyter)
+(use-package ob-async)
+(use-package ox-rst)
+(use-package ox-pandoc)
+(use-package ox-twbs)
+(use-package auctex)
+(use-package cdlatex)
+(use-package ox-reveal)
 (require 'my-ob)
-;; (straight-use-package 'org)
-(straight-use-package 'org-autolist)
-(straight-use-package 'org-download)
-(straight-use-package 'org-cliplink)
-(straight-use-package 'org-modern)
-(straight-use-package 'spacious-padding)
+;; (use-package org)
+(use-package org-autolist)
+(use-package org-download)
+(use-package org-cliplink)
+(use-package org-modern)
+(use-package spacious-padding)
 (require 'my-org)
-(straight-use-package 'org-gcal)
+(use-package org-gcal)
 (require 'my-org-cal)
 
 (progn                                  ; org-roam and notes
@@ -1043,7 +1065,7 @@
     (setq org-roam-completion-everywhere t)
     (org-roam-db-autosync-mode)
     (use-package org-roam-protocol
-      :straight org-roam
+      :ensure org-roam
       ;; as possible alternative consider https://github.com/alphapapa/org-protocol-capture-html
       ;; REMEMBER to execute:
       ;; xdg-mime default org-protocol.desktop x-scheme-handler/org-protocol
@@ -1055,8 +1077,7 @@
       ))
 
   (use-package org-roam-ui
-    :straight
-    (:host github :repo "org-roam/org-roam-ui" :branch "main" :files ("*.el" "out"))
+    :ensure (org-roam-ui :host github :repo "org-roam/org-roam-ui" :branch "main" :files ("*.el" "out"))
     :after (org-roam)
     ;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
     ;;         a hookable mode anymore, you're advised to pick something yourself
@@ -1088,7 +1109,7 @@
           deft-use-filter-string-for-filename t))
 
   (use-package consult-notes
-    :straight (:type git :host github :repo "mclear-tools/consult-notes")
+    :ensure (consult-notes :host github :repo "mclear-tools/consult-notes")
     :commands (consult-notes
                consult-notes-search-in-all-notes
                consult-notes-org-roam-find-node
@@ -1139,6 +1160,7 @@
 (progn ;; Bibliography
 
   (use-package bibtex
+    :ensure nil
     :bind (:map bibtex-mode-map
                 ("M-<tab>" . hs-toggle-hiding)
                 ("C-M-s-z" . hs-hide-all)
@@ -1240,7 +1262,7 @@
     :init (citar-embark-mode))
 
   (use-package oc
-    :straight org
+    :ensure org
     :after (org)
     :config
     (setq org-cite-global-bibliography completion-bibliography)
@@ -1250,12 +1272,12 @@
             (t csl)))
     )
 
-  (use-package oc-biblatex :straight org :after oc)
+  (use-package oc-biblatex :ensure org :after oc)
 
-  (use-package oc-csl :straight org :after (oc)
+  (use-package oc-csl :ensure org :after (oc)
     :init (setq org-cite-csl-styles-dir "~/Zotero/styles"))
 
-  (use-package oc-natbib :straight org :after oc)
+  (use-package oc-natbib :ensure org :after oc)
 
 
   (declare-function keymap-set "compat-29")
@@ -1401,7 +1423,7 @@
 
 ;; --- Project ---
 (use-package project
-  :straight (:type built-in)
+  :ensure nil
   :config
   (setq project-switch-commands #'project-find-file))
 (use-package consult-project-extra
@@ -1460,7 +1482,7 @@
 (add-to-list 'auto-mode-alist '("\\(ba\\|z\\)?sh\\'" . sh-mode))
 
 (use-package eglot
-  :straight (:type built-in)
+  :ensure nil
   :hook
   (prog-mode . (lambda () (unless (eq major-mode 'emacs-lisp-mode) (eglot-ensure))))
   (yaml-mode . eglot-ensure)
@@ -1479,7 +1501,7 @@
          ("C-c r f" . eglot-format)))
 
 (use-package flymake
-  :straight (:type built-in)
+  :ensure nil
   :bind (("M-g e l" . flymake-show-buffer-diagnostics)
          ("M-g e p" . flymake-show-project-diagnostics))
   :hook ((gitignore-mode . flymake-mode)
@@ -1490,27 +1512,27 @@
          (prog-mode . flymake-mode)))
 
 ;; --- Additional modes ---
-(straight-use-package 'markdown-mode)
-(straight-use-package 'sphinx-mode)
-(straight-use-package 'plantuml-mode)
-(straight-use-package 'graphviz-dot-mode)
-(straight-use-package 'gnuplot)
-(straight-use-package 'ess)
-(straight-use-package 'json-mode)
-(straight-use-package 'ssh-config-mode)
-(straight-use-package 'pkgbuild-mode)
-(straight-use-package 'web-mode)
-(straight-use-package 'vimrc-mode)
-(straight-use-package 'yaml-mode)
-(straight-use-package 'toml-mode)
-(straight-use-package 'csv-mode)
-(straight-use-package 'dna-mode)
+(use-package markdown-mode)
+(use-package sphinx-mode)
+(use-package plantuml-mode)
+(use-package graphviz-dot-mode)
+(use-package gnuplot)
+(use-package ess)
+(use-package json-mode)
+(use-package ssh-config-mode)
+(use-package pkgbuild-mode)
+(use-package web-mode)
+(use-package vimrc-mode)
+(use-package yaml-mode)
+(use-package toml-mode)
+(use-package csv-mode)
+(use-package dna-mode)
 (require 'my-modes)
 
 (progn                                  ; python
 
   (use-package python
-    :straight (:type built-in)
+    :ensure nil
     :bind   (("C-c t m p" . python-mode)
              (:map python-mode-map
                    ;; ("<backtab>" . hs-toggle-hiding) ; orig. python-indent-dedent-line
@@ -1588,11 +1610,12 @@
   ;; (add-to-list 'bibtex-completion-bibliography calibredb-ref-default-bibliography)
   )
 
-(straight-use-package
- '(seqel :type git :host github :repo "RNAer/seqel"))
+(use-package seqel
+  :ensure (seqel :host github :repo "RNAer/seqel"))
 
 (use-package emacs
-  :straight nil
+  :ensure nil
+  :after org
   :preface
   (defun my-org-zotero-open (path _)
     (call-process "xdg-open" nil nil nil (concat "zotero:" path)))
@@ -1601,13 +1624,13 @@
   )
 
 ;; --- AI LLM ---
-(straight-use-package 'ellama)
-(straight-use-package 'gptel)
-;; (straight-use-package 'chatgpt-shell)
+(use-package ellama)
+(use-package gptel)
+;; (use-package chatgpt-shell)
 (require 'my-ai)
 
 (use-package eee
-  :straight (:type git :host github :repo "eval-exec/eee.el"
+  :ensure (eee :host github :repo "eval-exec/eee.el"
                    :files (:defaults "*.el" "*.sh"))
   :bind-keymap
   ("C-M-s-e" . ee-keymap)

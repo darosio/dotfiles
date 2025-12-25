@@ -249,12 +249,12 @@
   :hook (after-init . mcp-hub-start-all-server))
 
 (use-package inline-diff
-  :straight (:repo "https://code.tecosaur.net/tec/inline-diff")
+  :ensure (inline-diff :repo "https://code.tecosaur.net/tec/inline-diff")
   :after gptel-rewrite) ;or use :defer
 
 ;; Updated version available at https://github.com/karthink/gptel/wiki
 (use-package gptel-rewrite
-  :straight gptel
+  :ensure gptel
   :bind (:map gptel-rewrite-actions-map
               ("C-c C-i" . gptel--rewrite-inline-diff))
   :config
@@ -279,8 +279,7 @@
      'append)))
 
 (use-package copilot
-  :straight (:host github :repo "copilot-emacs/copilot.el" :files ("*.el"))
-  :ensure t)
+  :ensure (copilot :host github :repo "copilot-emacs/copilot.el" :files ("*.el")))
 
 (provide 'my-ai)
 ;;; my-ai.el ends here

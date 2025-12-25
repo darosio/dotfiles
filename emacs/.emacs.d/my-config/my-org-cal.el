@@ -5,12 +5,12 @@
 ;;; Code:
 
 (use-package calendar                 ; calendars
-  :straight (:type built-in)
+  :ensure nil
   :hook
   (calendar-today-visible . calendar-mark-today))
 
 (use-package solar                    ; sunrise and sunset
-  :straight (:type built-in)
+  :ensure nil
   :config
   (setq calendar-latitude 46.067270 ; Borino
         calendar-longitude 11.166153
@@ -18,7 +18,7 @@
         calendar-time-zone 60))
 
 (use-package holidays                 ; Holidays
-  :straight (:type built-in)
+  :ensure nil
   :config
   (setq holiday-general-holidays
         '((holiday-fixed 1 1 "Capodanno")
@@ -44,6 +44,7 @@
   )
 
 (use-package plstore
+  :ensure nil
   :defer nil
   :config
   (setq plstore-encrypt-to '("8B6A39EFA290FB41")))
