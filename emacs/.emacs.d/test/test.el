@@ -1,5 +1,8 @@
 ;;; test.el --- Emacs smoke test for dotfiles CI
 
+;; Wait for Elpaca to finish processing its queue
+(elpaca-wait)
+
 ;; load core packages
 ;; (require 'org)
 (require 'magit)
