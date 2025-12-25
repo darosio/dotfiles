@@ -1612,6 +1612,7 @@
 
 (use-package emacs
   :ensure nil
+  :after org
   :preface
   (defun my-org-zotero-open (path _)
     (call-process "xdg-open" nil nil nil (concat "zotero:" path)))
