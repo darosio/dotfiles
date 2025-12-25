@@ -644,6 +644,7 @@
     :init (setq dired-clean-up-buffers-too t))
 
   (use-package wdired
+    :ensure nil
     :after dired
     :init (setq wdired-allow-to-change-permissions t)
     :bind (:map
@@ -908,6 +909,7 @@
     ("M-/" . hippie-expand)        ;; in place of `dabbrev-expand`
     )
   (use-package dabbrev
+    :ensure nil
     ;; Swap M-/ and C-M-/
     :bind (("C-M-/" . dabbrev-completion)
            ("M-/" . dabbrev-expand))
@@ -975,47 +977,47 @@
   :bind ("M-s y" . consult-yasnippet))
 
 ;; --- Spell and Translate ---
-(straight-use-package 'ispell)          ;;TODO: remove
-(straight-use-package 'flyspell)
-(straight-use-package 'flyspell-correct) ;;TODO: remove
-(straight-use-package 'consult-flyspell)
-(straight-use-package 'guess-language)
-(straight-use-package 'sdcv)
-(straight-use-package 'wordnut)
-(straight-use-package 'powerthesaurus)
+(use-package ispell :ensure nil)          ;;TODO: remove
+(use-package flyspell :ensure nil)
+(use-package flyspell-correct) ;;TODO: remove
+(use-package consult-flyspell)
+(use-package guess-language)
+(use-package sdcv)
+(use-package wordnut)
+(use-package powerthesaurus)
 (require 'my-spell)
 
 ;; --- Prose ---
-(straight-use-package 'cm-mode) ;; critic markup
-(straight-use-package 'langtool)
-(straight-use-package 'academic-phrases)
-(straight-use-package 'writegood-mode)
+(use-package cm-mode) ;; critic markup
+(use-package langtool)
+(use-package academic-phrases)
+(use-package writegood-mode)
 (require 'my-prose)
 
 ;; --- Mail ---
-(straight-use-package 'org-msg)
-(straight-use-package 'org-mime)
-(straight-use-package 'mu4e-jump-to-list)
+(use-package org-msg)
+(use-package org-mime)
+(use-package mu4e-jump-to-list)
 (require 'my-email)
 
 ;; --- Org ---
-(straight-use-package 'jupyter)
-(straight-use-package 'ob-async)
-(straight-use-package 'ox-rst)
-(straight-use-package 'ox-pandoc)
-(straight-use-package 'ox-twbs)
-(straight-use-package 'auctex)
-(straight-use-package 'cdlatex)
-(straight-use-package 'ox-reveal)
+(use-package jupyter)
+(use-package ob-async)
+(use-package ox-rst)
+(use-package ox-pandoc)
+(use-package ox-twbs)
+(use-package auctex)
+(use-package cdlatex)
+(use-package ox-reveal)
 (require 'my-ob)
-;; (straight-use-package 'org)
-(straight-use-package 'org-autolist)
-(straight-use-package 'org-download)
-(straight-use-package 'org-cliplink)
-(straight-use-package 'org-modern)
-(straight-use-package 'spacious-padding)
+;; (use-package org)
+(use-package org-autolist)
+(use-package org-download)
+(use-package org-cliplink)
+(use-package org-modern)
+(use-package spacious-padding)
 (require 'my-org)
-(straight-use-package 'org-gcal)
+(use-package org-gcal)
 (require 'my-org-cal)
 
 (progn                                  ; org-roam and notes
@@ -1154,6 +1156,7 @@
 (progn ;; Bibliography
 
   (use-package bibtex
+    :ensure nil
     :bind (:map bibtex-mode-map
                 ("M-<tab>" . hs-toggle-hiding)
                 ("C-M-s-z" . hs-hide-all)
@@ -1505,21 +1508,21 @@
          (prog-mode . flymake-mode)))
 
 ;; --- Additional modes ---
-(straight-use-package 'markdown-mode)
-(straight-use-package 'sphinx-mode)
-(straight-use-package 'plantuml-mode)
-(straight-use-package 'graphviz-dot-mode)
-(straight-use-package 'gnuplot)
-(straight-use-package 'ess)
-(straight-use-package 'json-mode)
-(straight-use-package 'ssh-config-mode)
-(straight-use-package 'pkgbuild-mode)
-(straight-use-package 'web-mode)
-(straight-use-package 'vimrc-mode)
-(straight-use-package 'yaml-mode)
-(straight-use-package 'toml-mode)
-(straight-use-package 'csv-mode)
-(straight-use-package 'dna-mode)
+(use-package markdown-mode)
+(use-package sphinx-mode)
+(use-package plantuml-mode)
+(use-package graphviz-dot-mode)
+(use-package gnuplot)
+(use-package ess)
+(use-package json-mode)
+(use-package ssh-config-mode)
+(use-package pkgbuild-mode)
+(use-package web-mode)
+(use-package vimrc-mode)
+(use-package yaml-mode)
+(use-package toml-mode)
+(use-package csv-mode)
+(use-package dna-mode)
 (require 'my-modes)
 
 (progn                                  ; python
@@ -1616,9 +1619,9 @@
   )
 
 ;; --- AI LLM ---
-(straight-use-package 'ellama)
-(straight-use-package 'gptel)
-;; (straight-use-package 'chatgpt-shell)
+(use-package ellama)
+(use-package gptel)
+;; (use-package chatgpt-shell)
 (require 'my-ai)
 
 (use-package eee
