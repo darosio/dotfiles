@@ -1,0 +1,10 @@
+version: "3.8"
+services:
+  perplexica:
+    image: docker.io/itzcrazykns1337/perplexica:latest
+    container_name: perplexica
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+    restart: unless-stopped

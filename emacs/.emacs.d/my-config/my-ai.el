@@ -204,11 +204,11 @@
                 :category "edit")
                )
   (gptel-make-preset 'coding
-    :description "A preset optimized for coding tasks"
-    :backend "Ollama"                     ;gptel backend or backend name
-    :model 'qwen3-coder:latest
-    :system "You are an expert coding assistant. Your role is to provide high-quality code solutions, refactorings, and explanations."
-    :tools '("read_buffer" "EditBuffer"))
+                     :description "A preset optimized for coding tasks"
+                     :backend "Ollama"                     ;gptel backend or backend name
+                     :model 'qwen3-coder:latest
+                     :system "You are an expert coding assistant. Your role is to provide high-quality code solutions, refactorings, and explanations."
+                     :tools '("read_buffer" "EditBuffer"))
   :hook
   (gptel-mode . visual-line-mode)  ;; The chats can have long lines.
   (gptel-post-stream-hook . gptel-auto-scroll)  ;; And can be pages long.
@@ -223,7 +223,9 @@
 (use-package mcp
   :after gptel
   :custom (mcp-hub-servers
-           `(
+           `(;; Local custom scripts
+             ("searxng" . (:command "python3" :args ("/home/dan/.local/bin/searxng-mcp.py")))
+             ;; Official & Community Servers
              ("filesystem" . (:command "npx" :args ("-y" "@modelcontextprotocol/server-filesystem" ,(getenv "HOME"))))
              ("fetch" . (:command "uvx" :args ("mcp-server-fetch")))
              ("github" . (:command "docker"
