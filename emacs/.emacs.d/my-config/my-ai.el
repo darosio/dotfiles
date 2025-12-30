@@ -170,7 +170,7 @@
                                gemma2-9b-it))
   (gptel-make-gh-copilot "Copilot")
   ;; Enable tool use
-  (setq gptel-use-tools nil)
+  (setq gptel-use-tools t)
   ;; Add a tool to gptel-tools
   (add-to-list 'gptel-tools
                (gptel-make-tool
@@ -224,7 +224,7 @@
   :after gptel
   :custom (mcp-hub-servers
            `(;; Local custom scripts
-             ("searxng" . (:command "python3" :args ("/home/dan/.local/bin/searxng-mcp.py")))
+             ("searxng" . (:command "podman" :args ("attach" "--sig-proxy=false" "mcp-searxng")))
              ;; Official & Community Servers
              ("filesystem" . (:command "npx" :args ("-y" "@modelcontextprotocol/server-filesystem" ,(getenv "HOME"))))
              ("fetch" . (:command "uvx" :args ("mcp-server-fetch")))

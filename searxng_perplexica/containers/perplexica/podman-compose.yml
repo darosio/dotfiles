@@ -1,4 +1,3 @@
-version: "3.8"
 services:
   perplexica:
     image: docker.io/itzcrazykns1337/perplexica:latest

@@ -8,8 +8,34 @@ server:
   allowed_media_types:
     - text/html
     - application/json
+engines:
+  - name: google_scholar
+    disabled: false
+  - name: pubmed
+    disabled: false
+  - name: semantic_scholar
+    disabled: false
+  - name: arxiv
+    disabled: false
+  - name: crossref
+    disabled: false
+  - name: wolframalpha
+    disabled: false
+  - name: ahmia
+    disabled: true
+  - name: torch
+    disabled: true
+  - name: wikidata
+    disabled: true
+categories_as_tabs:
+  scientific:
+    - pubmed
+    - google_scholar
+    - semantic_scholar
+    - arxiv
 search:
+  safe_search: 0
+  autocomplete: ""
   formats:
     - html
     - json
-  safe_search: 0
