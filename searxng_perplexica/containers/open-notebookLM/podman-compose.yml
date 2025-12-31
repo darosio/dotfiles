@@ -1,0 +1,22 @@
+services:
+  open_notebook:
+    image: docker.io/lfnovo/open_notebook:v1-latest-single
+    container_name: open-notebookLM
+    ports:
+      - "8502:8502" # Web UI
+      - "5055:5055" # API
+    environment:
+      OPENAI_API_KEY: your_key_here
+      OLLAMA_API_BASE: http://localhost:11434
+      API_URL: http://localhost:5055
+
+      # 👇 MUST point to embedded DB
+      SURREAL_URL: ws://localhost:8000/rpc
+      SURREAL_USER: root
+      SURREAL_PASSWORD: root
+      SURREAL_NAMESPACE: open_notebook
+      SURREAL_DATABASE: production
+    volumes:
+      - ./notebook_data:/app/data
+      - ./surreal_data:/home/dati/notebookLM
+    restart: unless-stopped

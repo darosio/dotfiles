@@ -69,6 +69,7 @@ alias mu_tags='mu find "" --format=json | rg ":tags" | tr -d "\n" | rg -oP ":tag
 alias xev_arch="xev | grep -A2 --line-buffered '^KeyRelease' | sed -n '/keycode /s/^.*keycode \([0-9]*\).* (.*, \(.*\)).*$/\1 \2/p'"
 alias xmm='xmodmap ~/.Xmodmap'
 alias zot='env GTK_USE_PORTAL=1 zotero'
+alias ollamal='OLLAMA_HOST=0.0.0.0 ollama serve'
 # WiFi Scan
 alias wifiscan='sudo iw dev wlan0 scan | grep SSID'
 
