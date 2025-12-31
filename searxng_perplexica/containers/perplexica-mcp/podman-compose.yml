@@ -1,0 +1,18 @@
+services:
+  perplexica-mcp:
+    image: docker.io/python:3.12-slim
+    container_name: perplexica-mcp
+    stdin_open: true
+    tty: true
+    working_dir: /app
+    command: >
+      sh -c "pip install --quiet perplexica-mcp &&
+             perplexica-mcp stdio"
+    environment:
+      PERPLEXICA_BACKEND_URL: http://host.containers.internal:3000/api/search
+      PERPLEXICA_CHAT_MODEL_PROVIDER: ollama
+      PERPLEXICA_CHAT_MODEL_NAME: qwen3
+      PERPLEXICA_EMBEDDING_MODEL_PROVIDER: ollama
+      PERPLEXICA_EMBEDDING_MODEL_NAME: nomic-embed-text
+      PERPLEXICA_READ_TIMEOUT: "120"
+    restart: unless-stopped

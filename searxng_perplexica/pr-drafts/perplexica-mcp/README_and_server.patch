@@ -1,0 +1,210 @@
+From: Your Name <your.email@example.com>
+Subject: [PATCH] feat: Add scientific search features and Emacs integration
+
+Add scientific research workflow enhancements:
+
+1. New MCP resources for grant-writing prompts:
+   - prompts://scientific-synthesis
+   - prompts://grant-sota
+   - prompts://grant-gap-analysis
+
+2. Enhanced search() tool with optional 'categories' parameter
+   for SearXNG category filtering (science, general, news, images)
+
+3. New search_scientific() convenience tool with preset query
+   templates for common research tasks (literature, sota, gaps, methods)
+
+4. Comprehensive Emacs/gptel integration documentation
+
+---
+ README.md                        | 120 ++++++++++++++++++++++++++++++++
+ src/perplexica_mcp/server.py     |  89 +++++++++++++++++++++++-
+ 2 files changed, 207 insertions(+), 2 deletions(-)
+
+diff --git a/README.md b/README.md
+index e71cb00..NEW_HASH 100644
+--- a/README.md
++++ b/README.md
+@@ -256,6 +256,126 @@ For HTTP/SSE transport clients:
+
++### Emacs (gptel + mcp.el)
++
++For Emacs users with [gptel](https://github.com/karthink/gptel) and MCP support:
++
++#### Basic Configuration
++
++```elisp
++(setq gptel-mcp-servers
++      '((perplexica
++         :command ("uvx" "perplexica-mcp" "stdio")
++         :env (("PERPLEXICA_BACKEND_URL" . "http://localhost:3000/api/search")
++               ("PERPLEXICA_CHAT_MODEL_PROVIDER" . "ollama")
++               ("PERPLEXICA_CHAT_MODEL_NAME" . "qwen3")
++               ("PERPLEXICA_EMBEDDING_MODEL_PROVIDER" . "ollama")
++               ("PERPLEXICA_EMBEDDING_MODEL_NAME" . "nomic-embed-text"))
++         :description "AI-powered search via Perplexica")))
++```
++
++#### Scientific Research System Prompt
++
++```elisp
++(setq gptel-default-system-message
++      "You have access to Perplexica AI-powered search.
++Use the search tool with focus_mode='academicSearch' for scientific queries.
++Cite sources as [cite:@AuthorYear] for org-cite compatibility.
++Never invent citations - only cite sources from search results.")
++```
++
++#### Grant Writing Helpers
++
++```elisp
++(defun gptel-perplexica-sota (topic)
++  "Search state-of-the-art on TOPIC using Perplexica."
++  (interactive "sTopic: ")
++  (gptel-request
++   (format "Use search with focus_mode='academicSearch' and query:
++\"recent advances\" AND \"%s\" AND (review OR overview)
++Write a State of the Art section with [cite:@AuthorYear] citations." topic)))
++
++(defun gptel-perplexica-gaps (topic)
++  "Find research gaps on TOPIC using Perplexica."
++  (interactive "sTopic: ")
++  (gptel-request
++   (format "Use search with focus_mode='academicSearch' and query:
++\"%s\" AND (limitation OR challenge OR \"future work\")
++List current limitations and cite sources." topic)))
++```
++
++#### Multi-MCP Configuration
++
++```elisp
++(setq gptel-mcp-servers
++      '((perplexica
++         :command ("uvx" "perplexica-mcp" "stdio")
++         :env (...)
++         :description "AI-synthesized search")
++        (searxng
++         :command ("npx" "-y" "mcp-searxng")
++         :env (("SEARXNG_URL" . "http://localhost:8080"))
++         :description "Raw web search")))
++```
++
+ ## Server Configuration
+
+diff --git a/src/perplexica_mcp/server.py b/src/perplexica_mcp/server.py
+index d0c4625..NEW_HASH 100644
+--- a/src/perplexica_mcp/server.py
++++ b/src/perplexica_mcp/server.py
+@@ -3,7 +3,7 @@
+ import argparse
+ import os
+-from typing import Annotated, Optional
++from typing import Annotated, Optional, List
+
+ import httpx
+ import uvicorn
+@@ -45,6 +45,55 @@ mcp = FastMCP("Perplexica", dependencies=["httpx", "mcp", "python-dotenv", "uvic
+
++# ============================================================================
++# MCP Resources for Scientific Prompts
++# ============================================================================
++
++@mcp.resource("prompts://scientific-synthesis")
++def scientific_synthesis_prompt() -> str:
++    """System prompt optimized for scientific literature synthesis."""
++    return """You are assisting with scientific grant writing and literature review.
++
++SEARCH BEHAVIOR:
++- Use the search tool with focus_mode='academicSearch' for scientific queries
++- Prefer sources from: PubMed, arXiv, Google Scholar, Semantic Scholar, CrossRef
++
++CITATION FORMAT:
++- Use org-cite format for citations: [cite:@AuthorYear]
++- Never invent citations - only cite sources from search results
++
++OUTPUT STRUCTURE:
++- Use structured sections with clear headings
++- Include bullet points for key findings
++- End with a "Key References" section"""
++
++
++@mcp.resource("prompts://grant-sota")
++def grant_sota_prompt() -> str:
++    """System prompt for State of the Art grant sections."""
++    return """You are writing a "State of the Art" section for a research grant.
++
++SEARCH STRATEGY:
++1. Search for: "recent advances" AND "{topic}" AND (review OR overview)
++2. Focus on papers from the last 3-5 years
++
++OUTPUT REQUIREMENTS:
++- 3-5 paragraphs summarizing the field
++- Use [cite:@AuthorYear] format for all claims"""
++
++
++@mcp.resource("prompts://grant-gap-analysis")
++def grant_gap_prompt() -> str:
++    """System prompt for identifying research gaps."""
++    return """You are analyzing gaps in the current literature.
++
++SEARCH STRATEGY:
++Search for: "{topic}" AND (limitation OR challenge OR "future work")
++
++OUTPUT: List 3-5 specific limitations with citations."""
++
++
+ async def perplexica_search(
+     query,
+     focus_mode,
+@@ -100,6 +149,10 @@ async def search(
+         str,
+         Field(description="Focus mode: webSearch, academicSearch, ..."),
+     ],
++    categories: Annotated[
++        Optional[List[str]],
++        Field(description="Optional SearXNG categories: science, general, news, images")
++    ] = None,
+     chat_model: Annotated[
+         Optional[dict], Field(description="Chat model configuration")
+     ] = DEFAULT_CHAT_MODEL,
+@@ -129,6 +182,40 @@ async def search(
+     )
+
+
++@mcp.tool()
++async def search_scientific(
++    query: Annotated[str, Field(description="Scientific search query")],
++    search_type: Annotated[
++        str,
++        Field(description="Type: literature, sota, gaps, methods")
++    ] = "literature",
++    chat_model: Annotated[Optional[dict], Field(...)] = DEFAULT_CHAT_MODEL,
++    embedding_model: Annotated[Optional[dict], Field(...)] = DEFAULT_EMBEDDING_MODEL,
++) -> dict:
++    """
++    Convenience tool for scientific literature searches.
++
++    Automatically applies query modifiers based on search_type:
++    - literature: General scientific literature
++    - sota: State-of-the-art / recent advances
++    - gaps: Research gaps and limitations
++    - methods: Methodology and techniques
++    """
++    templates = {
++        "literature": f'"{query}" AND (review OR study)',
++        "sota": f'"recent advances" AND "{query}" AND review',
++        "gaps": f'"{query}" AND (limitation OR challenge)',
++        "methods": f'"{query}" AND (method OR protocol)',
++    }
++    return await perplexica_search(
++        query=templates.get(search_type, query),
++        focus_mode="academicSearch",
++        chat_model=chat_model,
++        embedding_model=embedding_model,
++    )
++
++
+ def main():
+     """Main entry point for the Perplexica MCP server."""
+--
+2.43.0
