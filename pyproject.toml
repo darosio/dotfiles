@@ -38,10 +38,10 @@ lint = [
 ]
 
 [project.urls]
-Documentation = "https://github.com/unknown/dotfiles#readme"
-Source = "https://github.com/unknown/dotfiles"
-"Bug Tracker" = "https://github.com/darosio/ClopHfit/issues"
-Changelog = "https://github.com/darosio/ClopHfit/blob/main/CHANGELOG.md"
+Documentation = "https://github.com/darosio/dotfiles#readme"
+Source = "https://github.com/darosio/dotfiles"
+"Bug Tracker" = "https://github.com/darosio/dotfiles/issues"
+Changelog = "https://github.com/darosio/dotfiles/blob/main/CHANGELOG.md"
 
 [tool.coverage.paths]
 source = ["src", "*/site-packages"]

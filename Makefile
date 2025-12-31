@@ -5,71 +5,50 @@ UV ?= uv
 UV_RUN := $(UV) run
 
 # Tool shims that always run inside the project env
-PYTHON      := $(UV_RUN) python
-COVERAGE    := $(UV_RUN) coverage
-MYPY        := $(UV_RUN) mypy
-PRECOMMIT   := $(UV_RUN) pre-commit
-SPHINXBUILD := $(UV_RUN) sphinx-build
-XDOCTEST    := $(UV_RUN) python -m xdoctest
+PYTHON    := $(UV_RUN) python
+COVERAGE  := $(UV_RUN) coverage
+MYPY      := $(UV_RUN) mypy
+PRECOMMIT := $(UV_RUN) pre-commit
 
-# SPHINXOPTS ?= -W
-SPHINXOPTS ?=
-DOCS_SRC   := docs
-DOCS_OUT   := docs/_build
-ARGS       ?=
+ARGS ?=
 
-.PHONY: docs docs-clean docs-serve lint test cov type xdoc all ch bump clean
+.PHONY: init lint type test cov check ch bump clean help
 
+##@ Development
 
-# Documentation
-docs:  ## Build docs
-	$(SPHINXBUILD) $(SPHINXOPTS) $(DOCS_SRC) $(DOCS_OUT)
-
-docs-clean:  ## Cleans the documentation build directory
-	rm -rf $(DOCS_OUT)
-
-docs-serve:  ## Serves the documentation locally
-	$(PYTHON) -m http.server 8000 -d $(DOCS_OUT)
-
-
-# Development setup
-init:  ## Installs pre-commit hooks for version control.
+init:  ## Install pre-commit hooks
 	$(PRECOMMIT) install
 
-
-# Code quality
-lint:  ## Lints the codebase using pre-commit.
+lint:  ## Lint codebase with pre-commit
 	$(PRECOMMIT) run --all-files --show-diff-on-failure $(ARGS)
 
+type:  ## Type-check Python scripts with mypy
+	$(MYPY) scripts/
 
-# Testing
-test:  ## Runs tests using pytest and coverage
+##@ Testing
+
+test:  ## Run tests with pytest and coverage
 	$(COVERAGE) run -p -m pytest -v
 
-cov:  ## Generates a coverage report in multiple formats (report, xml).
+cov:  ## Generate coverage report
 	$(COVERAGE) combine
 	$(COVERAGE) report
 	$(COVERAGE) xml
 
-type:  ## Checks the type annotations of Python files using mypy.
-	$(MYPY) src tests docs/conf.py
+##@ Quality
 
-xdoc:  ## Runs xdoctest on the project.
-	$(XDOCTEST) dotfiles all
+check: lint type test cov  ## Run all checks (lint + type + test + cov)
 
-test-all: test type xdoc cov  ## Runs all tests: testing, type checking, xdoctesting, and generating coverage reports.
+##@ Release
 
-
-# Release management
-ch:  ## Bumps the project version number and tags it in Git.
+ch:  ## Update CHANGELOG.md with unreleased changes
 	set -euo pipefail; \
 	git cliff --bump --unreleased -o RELEASE.md; \
-	$(UV) run python scripts/update_changelog.py --raw RELEASE.md --changelog CHANGELOG.md; \
+	$(PYTHON) scripts/update_changelog.py --raw RELEASE.md --changelog CHANGELOG.md; \
 	rm -f RELEASE.md; \
 	echo "CHANGELOG.md updated."
-	# git cliff --bump --unreleased --prepend CHANGELOG.md
 
-bump:  ## Bumps the project version number and tags it in Git. It also runs the ch target to create a new release note.
+bump:  ## Bump version, update changelog, and tag release
 	set -euo pipefail; \
 	NEXT_VERSION=$$(git cliff --bumped-version); \
 	echo "Bumping to $$NEXT_VERSION"; \
@@ -79,16 +58,14 @@ bump:  ## Bumps the project version number and tags it in Git. It also runs the 
 	$(MAKE) ch; \
 	if ! git diff --quiet; then git add -A && git commit -m "chore: release $$NEXT_VERSION"; else echo "No changes to commit"; fi; \
 	git tag -a "$$NEXT_VERSION" -m "Release $$NEXT_VERSION"
-	# git push; \
-	# git push --tags
 
+##@ Maintenance
 
-# Project cleanup
-clean:  ## Project cleanup
-	rm -rf ./build .coverage ./__pycache__ ./.mypy_cache ./.pytest_cache ./docs/_build ./tests/__pycache__ ./dist ./src/dotfiles/__pycache__
+clean:  ## Remove temporary and cache files
+	rm -rf ./__pycache__ ./.mypy_cache ./.pytest_cache ./.ruff_cache .coverage
 
+##@ Help
 
-# Help target to show all available commands
-help: ## Show this help message.
+help:  ## Show this help
 	@echo "Available targets:"
-	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)

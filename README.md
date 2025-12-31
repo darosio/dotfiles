@@ -26,6 +26,16 @@ git push --tags
 
 ## Usage
 
+### Quick Start
+
+```bash
+./install.sh --list    # See available packages
+./install.sh --all     # Install all user packages
+./install.sh emacs.stow.sh gh.stow.sh  # Install specific packages
+```
+
+### Manual Stow Usage
+
 To create symlink into $HOME:
 
 ```
@@ -52,12 +62,21 @@ Better practice is to use specialized scripts e.g.:
 
 ```
 gh.stow.sh
-psd.stow.sh
+psd_firefox.stow.sh
 emacs.stow.sh
 rclone.stow.sh
 recoll.stow.sh
 goldendict.stow.sh
 ```
+
+## Script Naming Convention
+
+| Prefix       | Description                        | Example         |
+| ------------ | ---------------------------------- | --------------- |
+| `0*.stow.sh` | Bootstrap/init scripts (run first) | `0init.stow.sh` |
+| `2root.*.sh` | Root/system configs (require sudo) | `2root.sshd.sh` |
+| `*.stow.sh`  | User stow scripts for `$HOME`      | `emacs.stow.sh` |
+| `*.sh`       | Standalone setup scripts           | `audio.sh`      |
 
 Plan to use machine-specific git branches is on hold.
 
