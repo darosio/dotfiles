@@ -81,7 +81,7 @@ def extract_text_mime(file_path: str) -> str:
         if content_disposition and "attachment" in content_disposition:
             print(f"[Attachment: {part.get_filename()}]")
 
-    return text_content if text_content else html_content
+    return text_content or html_content
 
 
 if __name__ == "__main__":
