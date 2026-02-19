@@ -1,9 +1,15 @@
 #!/usr/bin/env sh
 #
-out=/tmp/$(basename "$0")-$(date +%d%H%M%S)
-REPOSITORY=/data/borg
-SRC=/data/Sync
-EXCLUDE_FILE=$HOME/.local/bin/borg.exclude.txt
+# --- Configuration ---
+out="/tmp/$(basename "$0")-$(date +%d%H%M%S)"
+# Point this to your new nested mount or subvolume path
+REPOSITORY="/data/borg"
+# Use the subvolume path directly
+SRC_SUBVOL="/data/Sync"
+# Temporary location for the snapshot
+SNAP_PATH="/data/.sync_snapshot"
+
+EXCLUDE_FILE="$HOME/.local/bin/borg.exclude.txt"
 thishost=$(uname -n)
 
 {
@@ -11,15 +17,26 @@ thishost=$(uname -n)
   echo "From: $thishost"
   echo "Subject: borg backup on $thishost"
 
-  echo "Backing up .."
+  # 1. Create a Read-Only Snapshot (Atomic & Instant)
+  echo "Creating Btrfs snapshot..."
+  sudo btrfs subvolume snapshot -r "$SRC_SUBVOL" "$SNAP_PATH"
+
+  echo "Backing up from snapshot.."
+  # Note: we use the snapshot path for SRC, but --paths-from allows
+  # Borg to store the original /data/Sync paths in the archive.
   borg create -v -C zlib --stat \
-    "$REPOSITORY::dan-$(date +%Y-%m-%d)" $SRC \
+    "$REPOSITORY::dan-$(date +%Y-%m-%d)" "$SNAP_PATH" \
     --exclude-from "$EXCLUDE_FILE"
 
-  # --prefix dan- is very important to limit prune's operation
+  # 2. Delete the Snapshot immediately after
+  echo "Removing snapshot..."
+  sudo btrfs subvolume delete "$SNAP_PATH"
+
   echo "Pruning archives .."
+  # --prefix dan- is very important to limit prune's operation
   borg prune -v --list --stats --keep-daily=4 --keep-weekly=2 \
-    --keep-monthly=6 --keep-yearly=10 --prefix dan- $REPOSITORY
+    --keep-monthly=6 --keep-yearly=10 --prefix dan- "$REPOSITORY"
+
 } > "$out" 2>&1
 
-cat < "$out" | msmtp daniele.arosio@cnr.it
+msmtp daniele.arosio@cnr.it < "$out"

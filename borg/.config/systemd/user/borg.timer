@@ -1,9 +1,12 @@
 [Unit]
-Description=daily borg backup.
+Description=Daily Borg Backup Timer
 
 [Timer]
-Persistent=true
+# Runs every day at 00:00 (midnight)
 OnCalendar=daily
+# If the machine was off, run it immediately on boot
+Persistent=true
+# The service file this timer triggers
 Unit=borg.service
 
 [Install]

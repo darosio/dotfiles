@@ -1,7 +1,16 @@
 [Unit]
-Description=borg
+Description=Borg Backup Service (Btrfs Atomic)
+# Sends an email if the backup fails
 OnFailure=status-email-user@%n.service
 
 [Service]
-;Type=oneshot
+Type=oneshot
+# Safety: remove stale snapshot if it exists from a crash
+ExecStartPre=-/usr/bin/sudo /usr/bin/btrfs subvolume delete /data/.Sync_backup_snap
+# Run the main backup script
 ExecStart=/home/dan/.local/bin/borg.sh
+# Ensure long backups aren't killed by systemd timeout
+TimeoutStartSec=0
+
+[Install]
+WantedBy=default.target
