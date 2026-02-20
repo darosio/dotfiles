@@ -1,4 +1,8 @@
-/data/Sync/tmp
-*/Maildir/*/tmp
-*/.stversions
-*.pyc
+# Matches 'tmp' specifically at the root of the snapshot
+tmp/
+# Matches any Maildir tmp folder anywhere in the tree
+**/Maildir/**/tmp/
+# Matches Syncthing version folders anywhere
+**/.stversions
+# Matches python bytecode anywhere
+**/*.pyc

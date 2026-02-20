@@ -17,20 +17,23 @@ thishost=$(uname -n)
   echo "From: $thishost"
   echo "Subject: borg backup on $thishost"
 
-  # 1. Create a Read-Only Snapshot (Atomic & Instant)
+  # 1. Take snapshot
   echo "Creating Btrfs snapshot..."
-  sudo btrfs subvolume snapshot -r "$SRC_SUBVOL" "$SNAP_PATH"
+  btrfs subvolume snapshot -r "$SRC_SUBVOL" "$SNAP_PATH"
 
+  # 2. CD into the snapshot so the paths look "standard" to Borg
+  cd "$SNAP_PATH"
+
+  # 3. Back up the CURRENT directory (.)
   echo "Backing up from snapshot.."
-  # Note: we use the snapshot path for SRC, but --paths-from allows
-  # Borg to store the original /data/Sync paths in the archive.
   borg create -v -C zlib --stat \
-    "$REPOSITORY::dan-$(date +%Y-%m-%d)" "$SNAP_PATH" \
+    "$REPOSITORY::dan-$(date +%Y-%m-%d)" . \
     --exclude-from "$EXCLUDE_FILE"
 
-  # 2. Delete the Snapshot immediately after
+  # 4. Cleanup
   echo "Removing snapshot..."
-  sudo btrfs subvolume delete "$SNAP_PATH"
+  cd /
+  btrfs subvolume delete "$SNAP_PATH"
 
   echo "Pruning archives .."
   # --prefix dan- is very important to limit prune's operation
@@ -40,3 +43,4 @@ thishost=$(uname -n)
 } > "$out" 2>&1
 
 msmtp daniele.arosio@cnr.it < "$out"
+

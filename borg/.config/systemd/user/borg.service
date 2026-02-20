@@ -6,7 +6,7 @@ OnFailure=status-email-user@%n.service
 [Service]
 Type=oneshot
 # Safety: remove stale snapshot if it exists from a crash
-ExecStartPre=-/usr/bin/sudo /usr/bin/btrfs subvolume delete /data/.Sync_backup_snap
+ExecStartPre=-/usr/bin/sudo /usr/bin/btrfs subvolume delete /data/.sync_snapshot
 # Run the main backup script
 ExecStart=/home/dan/.local/bin/borg.sh
 # Ensure long backups aren't killed by systemd timeout
