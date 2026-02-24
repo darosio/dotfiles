@@ -3,6 +3,12 @@ name: Emacs CI
 
 on:
   workflow_dispatch:
+    inputs:
+      update_packages:
+        description: 'Pull and freeze straight.el packages'
+        required: false
+        default: 'false'
+        type: boolean
   push:
     branches: [main]
     paths:
@@ -18,10 +24,12 @@ jobs:
       CI: true
     permissions:
       contents: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
+          persist-credentials: false
       - name: Prepare Emacs configuration directory
         run: |
           mkdir -p ~/Sync/proj
@@ -49,3 +57,43 @@ jobs:
       - name: Run Emacs smoke tests
         run: |
           emacs --batch -l ~/.emacs.d/init.el -l ~/.emacs.d/test/test.el
+
+      - name: Update and freeze packages
+        if: inputs.update_packages == 'true'
+        run: |
+          emacs --batch -l ~/.emacs.d/init.el \
+              --eval "(progn
+                        (message \"Pulling all packages...\")
+                        (straight-pull-all)
+                        (message \"Freezing versions...\")
+                        (straight-freeze-versions)
+                        (message \"Package update and freeze complete.\"))"
+
+      - name: Create PR if versions changed
+        if: inputs.update_packages == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.PAT_WORKFLOWS || secrets.GITHUB_TOKEN }}
+        run: |
+          VERSIONS_FILE="emacs/.emacs.d/straight/versions/default.el"
+          if git diff --quiet "$VERSIONS_FILE"; then
+            echo "No version changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          gh auth setup-git
+          BRANCH="chore/update-emacs-packages"
+          git checkout -B "$BRANCH"
+          git add "$VERSIONS_FILE"
+          git commit -m "bump(emacs): update straight.el package versions"
+          git push -f origin "$BRANCH"
+          if gh pr view "$BRANCH" --json state -q .state 2>/dev/null | grep -q "OPEN"; then
+            echo "PR already exists, updated branch."
+          else
+            gh pr create \
+              --base main \
+              --head "$BRANCH" \
+              --title "bump(emacs): update straight.el package versions" \
+              --body "Automated straight.el package update. Smoke tests passed before creating this PR." \
+              --label "dependencies"
+          fi
