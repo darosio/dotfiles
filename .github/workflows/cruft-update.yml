@@ -15,17 +15,15 @@ concurrency:
 
 jobs:
   update-template:
-    # if: ${{ hashFiles('.cruft.json') != '' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Install uv
-        run: |
-          curl -LsSf https://astral.sh/uv/install.sh | sh
-          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+        uses: astral-sh/setup-uv@v7
 
       - name: Sync dev tools (installs cruft from dev group)
         run: uv sync --group dev
@@ -35,23 +33,35 @@ jobs:
           CRUFT_NO_INPUT: "1"
         run: |
           set -e
-          if ! uv run cruft check; then
-            git switch -c chore/template-update || git switch chore/template-update
-            uv run cruft update -y
-            if ! git diff --quiet; then
-              git add -A
-              git -c user.name="github-actions[bot]" \
-                  -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
-                  commit -m "chore(template): apply latest cookiecutter updates via Cruft"
-            fi
+          if uv run cruft check; then
+            echo "Template is up to date."
+            exit 0
           fi
+          uv run cruft update -y
 
-      - name: Create PR
-        if: ${{ !cancelled() && !failure() }}
-        uses: peter-evans/create-pull-request@v8
-        with:
-          branch: "chore/template-update"
-          title: "chore(template): apply latest template updates"
-          commit-message: "chore(template): apply latest template updates"
-          body: "Automated Cruft update."
-          delete-branch: true
+      - name: Create PR if changed
+        env:
+          GH_TOKEN: ${{ secrets.PAT_WORKFLOWS || secrets.GITHUB_TOKEN }}
+        run: |
+          if git diff --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          gh auth setup-git
+          BRANCH="chore/update-template"
+          git checkout -B "$BRANCH"
+          git add -A
+          git commit -m "chore(template): apply cookiecutter updates via Cruft"
+          git push -f origin "$BRANCH"
+          if gh pr view "$BRANCH" --json state -q .state 2>/dev/null | grep -q "OPEN"; then
+            echo "PR already exists, updated branch."
+          else
+            gh pr create \
+              --base main \
+              --head "$BRANCH" \
+              --title "chore(template): apply latest cookiecutter updates" \
+              --body "Automated Cruft update from cookiecutter template." \
+              --label "update-template"
+          fi
