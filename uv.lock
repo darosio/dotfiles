@@ -327,7 +327,7 @@ test = [
     { name = "coverage", extras = ["toml"], specifier = ">=7.0.0" },
     { name = "pytest", specifier = ">=9.0.0" },
     { name = "pytest-cov", specifier = ">=6.1.0" },
-    { name = "python-dateutil", specifier = ">=2.9.0" },
+    { name = "python-dateutil", specifier = ">=2.9.0.post0" },
 ]
 
 [[package]]
