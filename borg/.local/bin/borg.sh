@@ -22,7 +22,7 @@ thishost=$(uname -n)
   btrfs subvolume snapshot -r "$SRC_SUBVOL" "$SNAP_PATH"
 
   # 2. CD into the snapshot so the paths look "standard" to Borg
-  cd "$SNAP_PATH"
+  cd "$SNAP_PATH" || exit
 
   # 3. Back up the CURRENT directory (.)
   echo "Backing up from snapshot.."
@@ -43,4 +43,3 @@ thishost=$(uname -n)
 } > "$out" 2>&1
 
 msmtp daniele.arosio@cnr.it < "$out"
-
