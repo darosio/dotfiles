@@ -3,9 +3,12 @@ name: Emacs CI
 
 on:
   workflow_dispatch:
-  # schedule:
-  #   - cron: '0 5 * * 1'  # every Monday at 05:00 UTC
-  #   - cron: '0 * * * *'
+  push:
+    branches: [main]
+    paths:
+      - 'emacs/**'
+      # schedule:
+      #   - cron: '0 5 * * 1'  # every Monday at 05:00 UTC
 
 jobs:
 
@@ -39,47 +42,10 @@ jobs:
           path: |
             ~/.emacs.d/straight
             ~/.emacs.d/build
-          key: ${{ runner.os }}-straight-${{ hashFiles('~/.emacs.d/straight/versions/default.el') }}
+          key: ${{ runner.os }}-straight-${{ hashFiles('emacs/.emacs.d/straight/versions/default.el') }}
+          restore-keys: |
+            ${{ runner.os }}-straight-
 
-      # TODO: update pdf-tools and chatgpt-shell too!!!
-      # - name: Update and Freeze Packages
-      #   run: |
-      #     emacs --batch -l ~/.emacs.d/init.el \
-      #         --eval "(progn \
-      #                   (message \"Pulling all packages...\") \
-      #                   (straight-pull-all) \
-      #                   (message \"Checking all packages...\") \
-      #                   (straight-check-all) \
-      #                   (message \"Freezing versions...\") \
-      #                   (straight-freeze-versions) \
-      #                   (message \"Package update and freeze complete.\"))"
-
-      - name: Run Emacs smoke test
+      - name: Run Emacs smoke tests
         run: |
           emacs --batch -l ~/.emacs.d/init.el -l ~/.emacs.d/test/test.el
-
-    # - name: Commit and Push Version Changes
-    #   # if: passes()
-    #   env:
-    #     GH_HEAD_REF: ${{ github.head_ref }}
-    #     GH_REF: ${{ github.ref }}
-    #   run: |
-    #     git config --global user.name 'GitHub Actions CI'
-    #     git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-    #     VERSIONS_FILE="${{ github.workspace }}/emacs/.emacs.d/straight/versions/default.el"
-    #     echo "Checking for changes in $VERSIONS_FILE"
-    #     if ! git diff --quiet "$VERSIONS_FILE"; then
-    #       echo "Changes detected in $VERSIONS_FILE. Committing..."
-    #       git add "$VERSIONS_FILE"
-    #       git commit -m "bump(emacs): update straight.el versions"
-    #       # Only push if on the main branch to avoid pushes from PR builds by external contributors
-    #       if [ "$GH_REF" = "refs/heads/main" ]; then
-    #         echo "Pushing changes to main branch..."
-    #         git push
-    #       else
-    #         echo "Not on main branch (ref: $GH_REF), skipping push."
-    #         echo "If this was a PR from the main repo, changes would be pushed to the PR branch."
-    #       fi
-    #     else
-    #       echo "No version changes to commit in $VERSIONS_FILE."
-    #     fi
