@@ -326,7 +326,7 @@ test = [
     { name = "click", specifier = ">=8.1.0" },
     { name = "coverage", extras = ["toml"], specifier = ">=7.13.4" },
     { name = "pytest", specifier = ">=9.0.2" },
-    { name = "pytest-cov", specifier = ">=6.1.0" },
+    { name = "pytest-cov", specifier = ">=6.3.0" },
     { name = "python-dateutil", specifier = ">=2.9.0.post0" },
 ]
 
