@@ -72,11 +72,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-straight-
 
-      - name: Update and freeze packages
-        run: make update-emacs
-
-      - name: Run Emacs smoke tests
-        run: make test-emacs
+      - name: Update packages and run smoke tests
+        run: make upgrade-emacs
 
       - name: Create PR if versions changed
         env:

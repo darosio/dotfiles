@@ -12,7 +12,7 @@ PRECOMMIT := $(UV_RUN) pre-commit
 
 ARGS ?=
 
-.PHONY: init lint type test cov check ch bump test-emacs update-emacs thaw-emacs clean help
+.PHONY: init lint type test cov check ch bump test-emacs update-emacs upgrade-emacs thaw-emacs clean help
 
 ##@ Development
 
@@ -77,6 +77,8 @@ test-emacs:  ## Run Emacs smoke tests
 
 update-emacs:  ## Pull, normalize, freeze, thaw, check packages
 	$(EMACS_BATCH) --eval '(progn $(STRAIGHT_BATCH_ADVICE) (straight-pull-all) (straight-normalize-all) (straight-freeze-versions) (straight-thaw-versions) (straight-check-all))'
+
+upgrade-emacs: update-emacs test-emacs  ## Full upgrade: update + smoke tests
 
 thaw-emacs:  ## Restore straight.el repos to match lockfile
 	$(EMACS_BATCH) --eval '(progn $(STRAIGHT_BATCH_ADVICE) (straight-thaw-versions) (straight-check-all))'
