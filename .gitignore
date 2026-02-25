@@ -14,3 +14,12 @@ __pycache__/
 *.spacemacs.env
 # Flycheck
 .flycheck_*.el
+
+# Emacs runtime artifacts
+emacs/.emacs.d/history
+emacs/.emacs.d/recentf
+emacs/.emacs.d/org-roam.db
+emacs/.emacs.d/straight/build-cache.el
+emacs/.emacs.d/straight/build/
+emacs/.emacs.d/straight/modified/
+emacs/.emacs.d/straight/repos/

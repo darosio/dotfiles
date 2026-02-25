@@ -55,19 +55,11 @@ jobs:
             ${{ runner.os }}-straight-
 
       - name: Run Emacs smoke tests
-        run: |
-          emacs --batch -l ~/.emacs.d/init.el -l ~/.emacs.d/test/test.el
+        run: make test-emacs
 
       - name: Update and freeze packages
         if: inputs.update_packages == 'true'
-        run: |
-          emacs --batch -l ~/.emacs.d/init.el \
-              --eval "(progn
-                        (message \"Pulling all packages...\")
-                        (straight-pull-all)
-                        (message \"Freezing versions...\")
-                        (straight-freeze-versions)
-                        (message \"Package update and freeze complete.\"))"
+        run: make update-emacs
 
       - name: Create PR if versions changed
         if: inputs.update_packages == 'true'

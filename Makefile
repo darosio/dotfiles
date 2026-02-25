@@ -12,7 +12,7 @@ PRECOMMIT := $(UV_RUN) pre-commit
 
 ARGS ?=
 
-.PHONY: init lint type test cov check ch bump clean help
+.PHONY: init lint type test cov check ch bump test-emacs update-emacs clean help
 
 ##@ Development
 
@@ -58,6 +58,14 @@ bump:  ## Bump version, update changelog, and tag release
 	$(MAKE) ch; \
 	if ! git diff --quiet; then git add -A && git commit -m "chore: release $$NEXT_VERSION"; else echo "No changes to commit"; fi; \
 	git tag -a "$$NEXT_VERSION" -m "Release $$NEXT_VERSION"
+
+##@ Emacs
+
+test-emacs:  ## Run Emacs smoke tests
+	emacs --batch -l ~/.emacs.d/init.el -l ~/.emacs.d/test/test.el
+
+update-emacs:  ## Pull and freeze straight.el packages
+	emacs --batch -l ~/.emacs.d/init.el --eval '(progn (advice-add (quote straight--popup-raw) :override (lambda (msg actions) (message "BATCH: %s" msg) (let ((yes (assoc "y" actions)) (cancel (or (assoc "c" actions) (assoc "C-g" actions)))) (cond (yes (funcall (nth 2 yes))) (cancel (funcall (nth 2 cancel))) (t (signal (quote quit) (list msg))))))) (straight-pull-all) (straight-freeze-versions))'
 
 ##@ Maintenance
 
