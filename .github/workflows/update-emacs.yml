@@ -3,12 +3,6 @@ name: Emacs CI
 
 on:
   workflow_dispatch:
-    inputs:
-      update_packages:
-        description: 'Pull and freeze straight.el packages'
-        required: false
-        default: 'false'
-        type: boolean
   push:
     branches: [main]
     paths:
@@ -18,18 +12,12 @@ on:
 
 jobs:
 
-  straight-update:
+  smoke-tests:
     runs-on: ubuntu-latest
     env:
       CI: true
-    permissions:
-      contents: write
-      pull-requests: write
     steps:
       - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-          persist-credentials: false
       - name: Prepare Emacs configuration directory
         run: |
           mkdir -p ~/Sync/proj
@@ -57,12 +45,47 @@ jobs:
       - name: Run Emacs smoke tests
         run: make test-emacs
 
+  update-packages:
+    if: github.event_name == 'workflow_dispatch'
+    needs: smoke-tests
+    runs-on: ubuntu-latest
+    env:
+      CI: true
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Prepare Emacs configuration directory
+        run: |
+          mkdir -p ~/Sync/proj
+          mkdir -p ~/Sync/box/org/gcal
+          mkdir -p ~/Sync/notes/arch
+          mkdir -p ~/Sync/notes/org-roam
+          mkdir -p ~/Sync/biblio
+          mkdir -p ~/Sync/media
+          ln -s "$GITHUB_WORKSPACE/emacs/.emacs.d" ~/.emacs.d
+      - name: Set up Emacs
+        uses: purcell/setup-emacs@master
+        with:
+          version: 30.1
+      - name: Cache Straight.el
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/.emacs.d/straight
+            ~/.emacs.d/build
+          key: ${{ runner.os }}-straight-${{ hashFiles('emacs/.emacs.d/straight/versions/default.el') }}
+          restore-keys: |
+            ${{ runner.os }}-straight-
+
       - name: Update and freeze packages
-        if: inputs.update_packages == 'true'
         run: make update-emacs
 
       - name: Create PR if versions changed
-        if: inputs.update_packages == 'true'
         env:
           GH_TOKEN: ${{ secrets.PAT_WORKFLOWS || secrets.GITHUB_TOKEN }}
         run: |

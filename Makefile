@@ -12,7 +12,7 @@ PRECOMMIT := $(UV_RUN) pre-commit
 
 ARGS ?=
 
-.PHONY: init lint type test cov check ch bump test-emacs update-emacs clean help
+.PHONY: init lint type test cov check ch bump test-emacs update-emacs thaw-emacs clean help
 
 ##@ Development
 
@@ -66,6 +66,9 @@ test-emacs:  ## Run Emacs smoke tests
 
 update-emacs:  ## Pull and freeze straight.el packages
 	emacs --batch -l ~/.emacs.d/init.el --eval '(progn (advice-add (quote straight--popup-raw) :override (lambda (msg actions) (message "BATCH: %s" msg) (let ((yes (assoc "y" actions)) (cancel (or (assoc "c" actions) (assoc "C-g" actions)))) (cond (yes (funcall (nth 2 yes))) (cancel (funcall (nth 2 cancel))) (t (signal (quote quit) (list msg))))))) (straight-pull-all) (straight-freeze-versions))'
+
+thaw-emacs:  ## Restore straight.el repos to match lockfile
+	emacs --batch -l ~/.emacs.d/init.el --eval '(straight-thaw-versions)'
 
 ##@ Maintenance
 
