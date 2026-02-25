@@ -13,6 +13,7 @@ on:
 jobs:
 
   smoke-tests:
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     env:
       CI: true
@@ -20,14 +21,9 @@ jobs:
       - uses: actions/checkout@v6
       - name: Prepare Emacs configuration directory
         run: |
-          mkdir -p ~/Sync/proj
-          mkdir -p ~/Sync/box/org/gcal
-          mkdir -p ~/Sync/notes/arch
-          mkdir -p ~/Sync/notes/org-roam
-          mkdir -p ~/Sync/biblio
-          mkdir -p ~/Sync/media
+          mkdir -p ~/Sync/proj ~/Sync/box/org/gcal ~/Sync/notes/arch
+          mkdir -p ~/Sync/notes/org-roam ~/Sync/biblio ~/Sync/media
           ln -s "$GITHUB_WORKSPACE/emacs/.emacs.d" ~/.emacs.d
-          tree ~/.emacs.d
       - name: Set up Emacs
         uses: purcell/setup-emacs@master
         with:
@@ -41,13 +37,11 @@ jobs:
           key: ${{ runner.os }}-straight-${{ hashFiles('emacs/.emacs.d/straight/versions/default.el') }}
           restore-keys: |
             ${{ runner.os }}-straight-
-
       - name: Run Emacs smoke tests
         run: make test-emacs
 
   update-packages:
     if: github.event_name == 'workflow_dispatch'
-    needs: smoke-tests
     runs-on: ubuntu-latest
     env:
       CI: true
@@ -61,12 +55,8 @@ jobs:
           persist-credentials: false
       - name: Prepare Emacs configuration directory
         run: |
-          mkdir -p ~/Sync/proj
-          mkdir -p ~/Sync/box/org/gcal
-          mkdir -p ~/Sync/notes/arch
-          mkdir -p ~/Sync/notes/org-roam
-          mkdir -p ~/Sync/biblio
-          mkdir -p ~/Sync/media
+          mkdir -p ~/Sync/proj ~/Sync/box/org/gcal ~/Sync/notes/arch
+          mkdir -p ~/Sync/notes/org-roam ~/Sync/biblio ~/Sync/media
           ln -s "$GITHUB_WORKSPACE/emacs/.emacs.d" ~/.emacs.d
       - name: Set up Emacs
         uses: purcell/setup-emacs@master
@@ -84,6 +74,12 @@ jobs:
 
       - name: Update and freeze packages
         run: make update-emacs
+
+      - name: Thaw to match frozen lockfile
+        run: make thaw-emacs
+
+      - name: Run Emacs smoke tests
+        run: make test-emacs
 
       - name: Create PR if versions changed
         env:
