@@ -61,14 +61,25 @@ bump:  ## Bump version, update changelog, and tag release
 
 ##@ Emacs
 
-test-emacs:  ## Run Emacs smoke tests
-	emacs --batch -l ~/.emacs.d/init.el -l ~/.emacs.d/test/test.el
+# Advice to auto-resolve interactive prompts in batch mode:
+# "y" (yes/confirm) → accept, "c" (cancel/skip) → skip, else quit.
+STRAIGHT_BATCH_ADVICE := (advice-add (quote straight--popup-raw) :override \
+  (lambda (msg actions) (message "BATCH: %s" msg) \
+    (let ((yes (assoc "y" actions)) \
+          (cancel (or (assoc "c" actions) (assoc "C-g" actions)))) \
+      (cond (yes (funcall (nth 2 yes))) \
+            (cancel (funcall (nth 2 cancel))) \
+            (t (signal (quote quit) (list msg)))))))
+EMACS_BATCH = emacs --batch -l ~/.emacs.d/init.el
 
-update-emacs:  ## Pull and freeze straight.el packages
-	emacs --batch -l ~/.emacs.d/init.el --eval '(progn (advice-add (quote straight--popup-raw) :override (lambda (msg actions) (message "BATCH: %s" msg) (let ((yes (assoc "y" actions)) (cancel (or (assoc "c" actions) (assoc "C-g" actions)))) (cond (yes (funcall (nth 2 yes))) (cancel (funcall (nth 2 cancel))) (t (signal (quote quit) (list msg))))))) (straight-pull-all) (straight-freeze-versions))'
+test-emacs:  ## Run Emacs smoke tests
+	$(EMACS_BATCH) -l ~/.emacs.d/test/test.el
+
+update-emacs:  ## Pull, normalize, freeze, thaw, check packages
+	$(EMACS_BATCH) --eval '(progn $(STRAIGHT_BATCH_ADVICE) (straight-pull-all) (straight-normalize-all) (straight-freeze-versions) (straight-thaw-versions) (straight-check-all))'
 
 thaw-emacs:  ## Restore straight.el repos to match lockfile
-	emacs --batch -l ~/.emacs.d/init.el --eval '(progn (advice-add (quote straight--popup-raw) :override (lambda (msg actions) (message "BATCH: %s" msg) (let ((yes (assoc "y" actions)) (cancel (or (assoc "c" actions) (assoc "C-g" actions)))) (cond (yes (funcall (nth 2 yes))) (cancel (funcall (nth 2 cancel))) (t (signal (quote quit) (list msg))))))) (straight-thaw-versions))'
+	$(EMACS_BATCH) --eval '(progn $(STRAIGHT_BATCH_ADVICE) (straight-thaw-versions) (straight-check-all))'
 
 ##@ Maintenance
 

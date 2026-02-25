@@ -75,9 +75,6 @@ jobs:
       - name: Update and freeze packages
         run: make update-emacs
 
-      - name: Thaw to match frozen lockfile
-        run: make thaw-emacs
-
       - name: Run Emacs smoke tests
         run: make test-emacs
 
