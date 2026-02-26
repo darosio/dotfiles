@@ -2,6 +2,7 @@
 
 [![CI](https://github.com/darosio/dotfiles/actions/workflows/ci.yml/badge.svg)](https://github.com/darosio/dotfiles/actions/workflows/ci.yml)
 [![Emacs CI](https://github.com/darosio/dotfiles/actions/workflows/update-emacs.yml/badge.svg)](https://github.com/darosio/dotfiles/actions/workflows/update-emacs.yml)
+[![](https://img.shields.io/badge/Pages-blue?logo=github)](https://darosio.github.io/dotfiles/)
 
 Configuration files for a Linux desktop managed with
 [GNU Stow](https://www.gnu.org/software/stow/) and versioned with Git. Includes
