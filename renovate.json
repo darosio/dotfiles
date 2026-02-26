@@ -17,7 +17,7 @@
     "dependencies"
   ],
   "pre-commit": {
-    "enabled": true,
+    "enabled": false,
     "managerFilePatterns": [
       "/^\\.pre-commit-config\\.yaml$/"
     ],
@@ -26,24 +26,66 @@
   },
   "packageRules": [
     {
-      "matchPackageNames": [
-        "sphinx"
+      "description": "Disable GitHub Actions updates - managed by cookiecutter template",
+      "matchManagers": [
+        "github-actions"
       ],
-      "allowedVersions": "<8.2",
-      "rangeStrategy": "update-lockfile",
       "enabled": false
     },
     {
-      "matchPackageNames": [
-        "sphinx-autodoc-typehints"
+      "description": "Disable dev/lint/test/docs dependency updates - managed by cookiecutter template",
+      "matchFileNames": [
+        "**/pyproject.toml"
       ],
-      "allowedVersions": "<3.2",
-      "rangeStrategy": "update-lockfile",
+      "matchDepTypes": [
+        "project.optional-dependencies",
+        "dependency-groups"
+      ],
+      "matchDepNames": [
+        "git-cliff",
+        "mdformat",
+        "mdformat-gfm",
+        "pylsp-mypy",
+        "ruff",
+        "python-lsp-ruff",
+        "cruft",
+        "pre-commit",
+        "coverage",
+        "mypy",
+        "pandas-stubs",
+        "pygments",
+        "pytest",
+        "scipy-stubs",
+        "types-click",
+        "types-setuptools",
+        "xdoctest",
+        "autodocsumm",
+        "graphviz",
+        "ipykernel",
+        "jupyter",
+        "myst-nb",
+        "pydata-sphinx-theme",
+        "sphinx-autodoc-typehints",
+        "sphinx-click",
+        "sphinx",
+        "sphinxcontrib-plantuml"
+      ],
+      "enabled": false
+    },
+    {
+      "description": "Disable click updates - managed by cookiecutter template",
+      "matchFileNames": [
+        "**/pyproject.toml"
+      ],
+      "matchDepNames": [
+        "click"
+      ],
       "enabled": false
     },
     {
       "matchDepTypes": [
-        "project.optional-dependencies"
+        "project.optional-dependencies",
+        "dependency-groups"
       ],
       "groupName": "optional dependencies",
       "labels": [
