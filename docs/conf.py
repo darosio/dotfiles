@@ -6,6 +6,10 @@ copyright = f"2024, {author}"  # noqa: A001
 
 extensions = [
     "myst_parser",
+    "autodocsumm",
+    "sphinx.ext.autodoc",
+    "sphinx.ext.napoleon",
+    "sphinx_autodoc_typehints",
     "sphinx_copybutton",
 ]
 
@@ -18,7 +22,7 @@ myst_enable_extensions = [
 templates_path = ["_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
-html_theme = "furo"
+html_theme = "pydata_sphinx_theme"
 html_title = "dotfiles"
 
 # Source file suffixes

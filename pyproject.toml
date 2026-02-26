@@ -24,6 +24,18 @@ readme = "README.md"
 requires-python = ">=3.13"
 version = "3.21.0"
 
+[project.optional-dependencies]
+docs = [
+  "autodocsumm>=0.2.14",
+  "myst-parser>=4.0",
+  "pydata-sphinx-theme>=0.16.1",
+  "pygments>=2.19.2",
+  "sphinx-autodoc-typehints>=3.5.2",
+  "sphinx-click>=6.2.0",
+  "sphinx-copybutton>=0.5",
+  "sphinx>=8.2.3",
+]
+
 [dependency-groups]
 dev = [
   "git-cliff>=2.12.0",
@@ -33,12 +45,6 @@ dev = [
   "ruff>=0.15.2",
   "python-lsp-ruff>=2.3.0",
   "cruft>=2.16.0",
-]
-docs = [
-  "furo>=2024.8",
-  "myst-parser>=4.0",
-  "sphinx>=8.2",
-  "sphinx-copybutton>=0.5",
 ]
 lint = [
   "pre-commit==4.5.1",
