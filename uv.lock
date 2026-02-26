@@ -384,7 +384,7 @@ docs = [
     { name = "furo", specifier = ">=2024.8" },
     { name = "myst-parser", specifier = ">=4.0" },
     { name = "sphinx", specifier = ">=8.2" },
-    { name = "sphinx-copybutton", specifier = ">=0.5" },
+    { name = "sphinx-copybutton", specifier = ">=0.5.2" },
 ]
 lint = [{ name = "pre-commit", specifier = "==4.5.1" }]
 tests = [

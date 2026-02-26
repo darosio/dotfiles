@@ -38,7 +38,7 @@ docs = [
   "furo>=2024.8",
   "myst-parser>=4.0",
   "sphinx>=8.2",
-  "sphinx-copybutton>=0.5",
+  "sphinx-copybutton>=0.5.2",
 ]
 lint = [
   "pre-commit==4.5.1",
