@@ -27,12 +27,12 @@ version = "3.21.0"
 [project.optional-dependencies]
 docs = [
   "autodocsumm>=0.2.14",
-  "myst-parser>=4.0",
+  "myst-parser>=4.0.1",
   "pydata-sphinx-theme>=0.16.1",
   "pygments>=2.19.2",
   "sphinx-autodoc-typehints>=3.5.2",
   "sphinx-click>=6.2.0",
-  "sphinx-copybutton>=0.5",
+  "sphinx-copybutton>=0.5.2",
   "sphinx>=8.2.3",
 ]
 

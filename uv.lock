@@ -389,13 +389,13 @@ tests = [
 requires-dist = [
     { name = "autodocsumm", marker = "extra == 'docs'", specifier = ">=0.2.14" },
     { name = "html2text", specifier = ">=2025.4.15" },
-    { name = "myst-parser", marker = "extra == 'docs'", specifier = ">=4.0" },
+    { name = "myst-parser", marker = "extra == 'docs'", specifier = ">=4.0.1" },
     { name = "pydata-sphinx-theme", marker = "extra == 'docs'", specifier = ">=0.16.1" },
     { name = "pygments", marker = "extra == 'docs'", specifier = ">=2.19.2" },
     { name = "sphinx", marker = "extra == 'docs'", specifier = ">=8.2.3" },
     { name = "sphinx-autodoc-typehints", marker = "extra == 'docs'", specifier = ">=3.5.2" },
     { name = "sphinx-click", marker = "extra == 'docs'", specifier = ">=6.2.0" },
-    { name = "sphinx-copybutton", marker = "extra == 'docs'", specifier = ">=0.5" },
+    { name = "sphinx-copybutton", marker = "extra == 'docs'", specifier = ">=0.5.2" },
 ]
 provides-extras = ["docs"]
 
