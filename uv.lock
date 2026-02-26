@@ -382,7 +382,7 @@ dev = [
 ]
 docs = [
     { name = "furo", specifier = ">=2024.8" },
-    { name = "myst-parser", specifier = ">=4.0" },
+    { name = "myst-parser", specifier = ">=5.0.0" },
     { name = "sphinx", specifier = ">=8.2" },
     { name = "sphinx-copybutton", specifier = ">=0.5" },
 ]
