@@ -77,7 +77,7 @@ jobs:
 
       - name: Create PR if versions changed
         env:
-          GH_TOKEN: ${{ secrets.PAT_WORKFLOWS || secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.PAT_WORKFLOWS }}
         run: |
           VERSIONS_FILE="emacs/.emacs.d/straight/versions/default.el"
           if git diff --quiet "$VERSIONS_FILE"; then
