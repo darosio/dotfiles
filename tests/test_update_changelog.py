@@ -10,7 +10,7 @@ import tempfile
 from pathlib import Path
 
 from scripts.update_changelog import (
-    PAT,
+    PAT_BUMP,
     condense_bumps,
     insert_section_at_top,
     norm_tuple,
@@ -59,12 +59,12 @@ class TestNormTuple:
 
 
 class TestPATRegex:
-    """Tests for the PAT regex pattern."""
+    """Tests for the PAT_BUMP regex pattern."""
 
     def test_matches_deps_bump(self) -> None:
         """Test matching a deps bump line."""
         line = "- *(deps)* Bump xmltodict from 1.0.0 to 1.0.2 (#123)"
-        match = PAT.match(line)
+        match = PAT_BUMP.match(line)
         assert match is not None
         groups = match.groups()
         assert groups[2] == "deps"  # tag
@@ -75,7 +75,7 @@ class TestPATRegex:
     def test_matches_action_bump(self) -> None:
         """Test matching an action bump line."""
         line = "- *(deps)* Bump actions/checkout action from v4 to v5 (#1187)"
-        match = PAT.match(line)
+        match = PAT_BUMP.match(line)
         assert match is not None
         groups = match.groups()
         assert groups[2] == "deps"
@@ -89,7 +89,7 @@ class TestPATRegex:
             "- *(hooks)* Bump pre-commit hook executablebooks/mdformat "
             "from 0.7.17 to 0.7.22 (#1065)"
         )
-        match = PAT.match(line)
+        match = PAT_BUMP.match(line)
         assert match is not None
         groups = match.groups()
         assert groups[2] == "hooks"
@@ -100,7 +100,7 @@ class TestPATRegex:
     def test_does_not_match_non_bump_line(self) -> None:
         """Test that non-bump lines don't match."""
         line = "- *(feat)* Add new feature"
-        match = PAT.match(line)
+        match = PAT_BUMP.match(line)
         assert match is None
 
 
