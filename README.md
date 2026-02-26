@@ -1,240 +1,128 @@
-# Dotfiles Repository
+# Dotfiles
 
 [![CI](https://github.com/darosio/dotfiles/actions/workflows/ci.yml/badge.svg)](https://github.com/darosio/dotfiles/actions/workflows/ci.yml)
+[![Emacs CI](https://github.com/darosio/dotfiles/actions/workflows/update-emacs.yml/badge.svg)](https://github.com/darosio/dotfiles/actions/workflows/update-emacs.yml)
 
-A centralized repository for managing and version-controlling your `$HOME/.dotfiles` configuration files.
+Configuration files for a Linux desktop managed with
+[GNU Stow](https://www.gnu.org/software/stow/) and versioned with Git. Includes
+Emacs (straight.el), shell, git, and application configs plus Python utility
+scripts.
 
-## Requirements
+## Quick Start
 
-1. GNU stow
-2. watchexec – for emacs package management with straight
-3. hatch – install using `pipx install hatch`
-
-Initialize pre-commit hooks:
-
-```
-make init
-```
-
-When bump version
-
-```
-make bump
-git push
-git push --tags
-```
-
-## Usage
-
-### Quick Start
+**Prerequisites:** [uv](https://docs.astral.sh/uv/),
+[direnv](https://direnv.net/), [GNU Stow](https://www.gnu.org/software/stow/)
 
 ```bash
-./install.sh --list    # See available packages
-./install.sh --all     # Install all user packages
-./install.sh emacs.stow.sh gh.stow.sh  # Install specific packages
+git clone https://github.com/darosio/dotfiles.git ~/workspace/dotfiles
+cd ~/workspace/dotfiles
+direnv allow                          # creates venv, installs deps
+make init                             # installs pre-commit hooks
 ```
 
-### Manual Stow Usage
+### Installing Packages
 
-To create symlink into $HOME:
-
-```
-cd ~/workspace/dotfiles # or new location of dotfiles/
-stow package-version
-```
-
-when target is for example =/home use:
-
-```
-stow -t /home mr
+```bash
+./install.sh --list                   # see available packages
+./install.sh --all                    # install all user packages
+./install.sh emacs.stow.sh gh.stow.sh  # install specific packages
 ```
 
-for some packages a folder must be created first, e.g.:
+Or use `stow` directly:
 
-```
-mkdir ~/.vim
-then ~/.vim/bundle/Vundle.vim
-```
-
-pick package-version as needed.
-
-Better practice is to use specialized scripts e.g.:
-
-```
-gh.stow.sh
-psd_firefox.stow.sh
-emacs.stow.sh
-rclone.stow.sh
-recoll.stow.sh
-goldendict.stow.sh
+```bash
+stow emacs                            # symlinks emacs/ into $HOME
+stow -t /home mr                      # custom target directory
 ```
 
-## Script Naming Convention
+### Script Naming Convention
 
 | Prefix       | Description                        | Example         |
 | ------------ | ---------------------------------- | --------------- |
 | `0*.stow.sh` | Bootstrap/init scripts (run first) | `0init.stow.sh` |
-| `2root.*.sh` | Root/system configs (require sudo) | `2root.sshd.sh` |
 | `*.stow.sh`  | User stow scripts for `$HOME`      | `emacs.stow.sh` |
+| `2root.*.sh` | Root/system configs (require sudo) | `2root.sshd.sh` |
 | `*.sh`       | Standalone setup scripts           | `audio.sh`      |
-
-Plan to use machine-specific git branches is on hold.
-
-Update using `mr`:
-
-```
-cd workspace/repo
-mr register
-```
-
-## add new submodules
-
-```
-git submodule add -b <branch> <repository> [<submodule-path>]
-git submodule update --remote
-```
-
-## remove submodules
-
-```
-Delete the relevant section from the .gitmodules file.
-Stage the .gitmodules changes git add .gitmodules
-Delete the relevant section from .git/config.
-Run git rm --cached path_to_submodule (no trailing slash).
-Run rm -rf .git/modules/path_to_submodule
-Commit git commit -m "Removed submodule <name>"
-Delete the now untracked submodule files
-rm -rf path_to_submodule
-```
-
-## submodule problem
-
-I had once and solved the detached head problem following:
-<https://stackoverflow.com/questions/18770545/why-is-my-git-submodule-head-detached-from-master>
-
-```
-git branch -u refs/remotes/origin/master master
-git co master
-```
-
-check .gitmodule .git/config or:
-
-```
-cd <submodule-path>
-git checkout <branch>
-cd <parent-repo-path> # relative to parent repo root without starting path separator
-git config -f .gitmodules submodule.<submodule-path>.branch <branch>
-```
 
 ## Development
 
-Commit following commitizen but consider this is a repository of configurations
-e.g. when updating emacs packages
+The project uses [uv](https://docs.astral.sh/uv/) for Python dependency
+management and [direnv](https://direnv.net/) for automatic environment
+activation.
+
+### Make Targets
+
+Run `make help` for the full list:
 
 ```
-feat(emacs): Update packages
+  init            Install pre-commit hooks
+  lint            Lint codebase with pre-commit
+  type            Type-check Python scripts with mypy
+  test            Run tests with pytest and coverage
+  check           Run all checks (lint + type + test + cov)
+  bump            Bump version, update changelog, and tag release
+  test-emacs      Run Emacs smoke tests
+  upgrade-emacs   Full upgrade: update + smoke tests
+  thaw-emacs      Restore straight.el repos to match lockfile
+  clean           Remove temporary and cache files
 ```
 
-what would normally called `build: Update dependencies`.
+### Commit Conventions
 
-Remember:
-
-```
-gh pr merge --squash --delete-branch -t “feat(emacs): …”
-```
-
-## Applications [optional] requirements
-
-### Ranger
-
-- xls2csv
-- xlsx2csv
-- feh
-- reformime from mailcap
-
-## emacs
-
-TODO: [notes](/home/dan/Sync/notes/arch/emacs.org "emacs")
-
-Keybinding reserved to users are: C-c \<letter> and F5 to F9.
-
-Package management useful commands:
+Follow [Conventional Commits](https://www.conventionalcommits.org/). Scopes
+reflect the configuration domain:
 
 ```
-straight-remove-unused-repos
-straight-prune-build
-straight-pull-all
-straight-check-all
-straight-freeze-versions
+feat(emacs): add consult-ripgrep binding
+fix(git): correct delta pager config
+chore(deps): update uv.lock
 ```
 
-### To check
+### Testing
 
-- mu4e
-  - send and get email using mbsync
-  - Reply to all with duck hack
-- org-roam-protocol
-- consult-notes
-- lsp
-  - go to definition
-  - hatch direnv …
+```bash
+make test                              # Python script tests
+make test-emacs                        # Emacs smoke tests (~70 checks)
+make check                             # lint + type + test + coverage
+```
 
-### List of configured packages
+## Emacs Package Management
 
-- Use-package, straight, async and which-key.
-- Imenu with `F9` and `C-F9` overloading.
-- Mu4e and calendar <https://jherrlin.github.io/posts/emacs-mu4e/>.
-- Deft with native insert mode; can create new ./proj/file.
-- Org-roam-note and consult-note e.g. `M-s M-n`.
-- Counsel recoll.
-- Completion with vertico and yasnippet `M-s y`.
-- Consult-project-extra, magit and magit-todos.
-- Org babel, graphviz, plantuml, markdown, criticmarkup and typo mode `F14 t T`.
-- Text scale increase/decrease `C-x C-0`.
-- Gtklp for printing using cups.
-- Expand-region `C-=`.
-- Smartparens `C-backspace` `H-b` `H-f` `H-h` `H-d` `H-k` `H-t` `H-()` `H-{}`
-  etc.
-- Hideshow for folding..
-- Electric and aggressive indent.
-- Visual fill column also for distraction free behavior.
-- Slack with a hydra.
-- nov.
-- Maximize window `H-m` . prot/window-single-toggle.
-- ace-win.
-- calendars with calfw-org
-- org
-  - org-lint
-  - org-bullet org-attach org-download org-cliplink org-pdftools org-autolist
-    org-indent
-  - ox-rst -pandoc -twbs -beamer -md -koma-letter
-  - org-compat for mpv links
-  - org-agenda views with daily and weekly review using org-super-agenda and
-    org-ql.
-    - shopping and weight captures
-    - plantuml graphviz ditaa Jupyter
-- org-mime for mu4e compose.
-- auctex cdlatex
-- python
-  - py-isort manually
-  - numydoc
-  - envrc to support direnv
-- org-noter with precise insertion
-- csv-mode `C-c C-a`.
-- `C-c o a` mu4e-compose-attach-captured-message.
-- Apheleia in place of blacken support black and prettier.
+Emacs packages are managed with
+[straight.el](https://github.com/radian-software/straight.el) and pinned via
+`emacs/.emacs.d/straight/versions/default.el`.
 
-#### Vanilla emacs
+### Upgrading Packages
 
-Using emacs as editor serving also the following purposes:
+**Locally:**
 
-- PIM
-  - GTD (org, superagenda, …)
-  - email (mu4e)
-  - notes (deft)
-- bibliography manager
-  - importing and searching (org-ref, doi, web XXX)
-  - managing .bib db (bibtex, ivy-bibtex, org-ref)
-  - notes (org-noter, ORB)
-- writing (latex, pandoc, org-ref)
-- git (magit)
+```bash
+make upgrade-emacs    # pull → normalize → freeze → thaw → check → smoke tests
+# review changes to emacs/.emacs.d/straight/versions/default.el
+git add -A && git commit -m "bump(emacs): update straight.el packages"
+git push
+```
+
+**Via CI:** trigger the *Emacs CI* workflow manually (`workflow_dispatch`). It
+runs `make upgrade-emacs` and creates a PR if versions changed.
+
+**After merging a CI-created PR:**
+
+```bash
+git pull
+make thaw-emacs       # checkout pinned commits + rebuild
+```
+
+## CI / Automation
+
+| Workflow              | Trigger          | Purpose                                 |
+| --------------------- | ---------------- | --------------------------------------- |
+| `ci.yml`              | push, PR         | pre-commit lint, pytest, auto-merge     |
+| `update-emacs.yml`    | dispatch, push   | Emacs smoke tests / package update + PR |
+| `cruft-update.yml`    | weekly, dispatch | Apply cookiecutter template updates     |
+| `lockfile-update.yml` | weekly, dispatch | `uv lock --upgrade` + PR                |
+| `release.yml`         | tag push         | Publish release                         |
+
+## License
+
+[BSD-3-Clause](LICENSE.txt)
