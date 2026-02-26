@@ -66,10 +66,10 @@ class UTF8Mbox(mailbox.mbox):
         target.write(msg_bytes + b"\n")
 
 
-def maildir2mailbox(maildirname: str, mboxfilename: str) -> None:
+def maildir2mailbox(maildirname: str | Path, mboxfilename: str | Path) -> None:
     """Convert maildir to mbox format."""
     # open the existing maildir and the target mbox file
-    maildir = mailbox.Maildir(maildirname, custom_message_from_file)
+    maildir = mailbox.Maildir(maildirname, custom_message_from_file)  # type: ignore[arg-type]
     mbox = UTF8Mbox(mboxfilename)
     # lock the mbox
     mbox.lock()
@@ -90,15 +90,17 @@ maildir2mailbox(dirname, mboxname)
 if not mboxdirname.exists():
     mboxdirname.mkdir(parents=True)
 
-listofdirs = [dn for dn in dirname.iterdir() if dn.name not in ["new", "cur", "tmp"]]
+listofdirs = [dn for dn in dirname.iterdir() if dn.name not in {"new", "cur", "tmp"}]
 
 for curfold in listofdirs:
-    curlist = [mboxname, *curfold.split(".")]
-    curpath = Path("/").joinpath(*[dn + ".sbd" for dn in curlist if dn])
-    curpath_obj = Path(curpath)  # convert string path to Path
+    foldname = curfold.name
+    curlist = [str(mboxname), *foldname.split(".")]
+    curpath = str(Path("/").joinpath(*[dn + ".sbd" for dn in curlist if dn]))
+    curpath_mbox = curpath[:-4]
+    curpath_obj = Path(curpath)
     if not curpath_obj.exists():
         curpath_obj.mkdir(parents=True, exist_ok=True)
-    print("| " + curfold + " -> " + curpath[:-4])
-    maildir2mailbox(dirname / curfold, curpath[:-4])
+    print(f"| {foldname} -> {curpath_mbox}")
+    maildir2mailbox(dirname / foldname, curpath_mbox)
 
 print("Done")

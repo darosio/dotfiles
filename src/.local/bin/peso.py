@@ -12,7 +12,7 @@ import pandas as pd
 import seaborn as sns
 
 
-def linearfit(days, val):  # noqa: ANN001
+def linearfit(days: object, val: object) -> tuple[float, str]:
     """Fit line."""
     slope, _intercept = np.polyfit(days, val, 1)
     fit_label = f" grams/week ({slope * 7000:.1f}) "

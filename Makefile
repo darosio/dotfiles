@@ -9,57 +9,81 @@ PYTHON    := $(UV_RUN) python
 COVERAGE  := $(UV_RUN) coverage
 MYPY      := $(UV_RUN) mypy
 PRECOMMIT := $(UV_RUN) pre-commit
+SPHINXBUILD := $(UV_RUN) sphinx-build
+XDOCTEST    := $(UV_RUN) python -m xdoctest
 
+# SPHINXOPTS ?= -W
+SPHINXOPTS ?=
+DOCS_SRC   := docs
+DOCS_OUT   := docs/_build
 ARGS ?=
 
-.PHONY: init lint type test cov check ch bump test-emacs update-emacs upgrade-emacs thaw-emacs clean help
+.PHONY: init lint type test cov check ch bump test-emacs update-emacs upgrade-emacs thaw-emacs clean help docs docs-clean docs-serve
 
-##@ Development
 
-init:  ## Install pre-commit hooks
+# Documentation
+docs:  ## Build docs
+	$(SPHINXBUILD) $(SPHINXOPTS) $(DOCS_SRC) $(DOCS_OUT)
+
+docs-clean:  ## Cleans the documentation build directory
+	rm -rf $(DOCS_OUT)
+
+docs-serve:  ## Serves the documentation locally
+	$(PYTHON) -m http.server 8000 -d $(DOCS_OUT)
+
+
+# Development setup
+init:  ## Installs pre-commit hooks for version control.
 	$(PRECOMMIT) install
 
-lint:  ## Lint codebase with pre-commit
+
+# Code quality
+lint:  ## Lints the codebase using pre-commit.
 	$(PRECOMMIT) run --all-files --show-diff-on-failure $(ARGS)
 
-type:  ## Type-check Python scripts with mypy
-	$(MYPY) scripts/
 
-##@ Testing
-
-test:  ## Run tests with pytest and coverage
+# Testing
+test:  ## Runs tests using pytest and coverage
 	$(COVERAGE) run -p -m pytest -v
 
-cov:  ## Generate coverage report
+cov:  ## Generates a coverage report in multiple formats (report, xml).
 	$(COVERAGE) combine
 	$(COVERAGE) report
 	$(COVERAGE) xml
 
-##@ Quality
+type:  ## Checks the type annotations of Python files using mypy.
+	$(MYPY) src/.local/bin tests
+
+xdoc:  ## Runs xdoctest on the project.
+	$(XDOCTEST) src/.local/bin/mm_organize.py all
 
 check: lint type test cov  ## Run all checks (lint + type + test + cov)
 
-##@ Release
 
-ch:  ## Update CHANGELOG.md with unreleased changes
+# Release management
+ch:  ## Updates CHANGELOG.md with condensed release notes.
 	set -euo pipefail; \
 	git cliff --bump --unreleased -o RELEASE.md; \
-	$(PYTHON) scripts/update_changelog.py --raw RELEASE.md --changelog CHANGELOG.md; \
+	$(UV) run python scripts/update_changelog.py --raw RELEASE.md --changelog CHANGELOG.md; \
 	rm -f RELEASE.md; \
 	echo "CHANGELOG.md updated."
 
-bump:  ## Bump version, update changelog, and tag release
+bump:  ## Bumps version, updates changelog, commits and tags.
+	@if ! git diff --quiet || ! git diff --cached --quiet; then \
+		echo "Error: working tree is dirty. Commit or stash changes first." >&2; exit 1; \
+	fi
 	set -euo pipefail; \
 	NEXT_VERSION=$$(git cliff --bumped-version); \
 	echo "Bumping to $$NEXT_VERSION"; \
 	$(UV) version "$$NEXT_VERSION"; \
 	$(UV) lock; \
-	$(UV) sync --locked --all-groups; \
 	$(MAKE) ch; \
-	if ! git diff --quiet; then git add -A && git commit -m "chore: release $$NEXT_VERSION"; else echo "No changes to commit"; fi; \
+	git add -u && git commit -m "chore: release $$NEXT_VERSION"; \
 	git tag -a "$$NEXT_VERSION" -m "Release $$NEXT_VERSION"
+	# git push; \
+	# git push --tags
 
-##@ Emacs
+# Emacs
 
 # Advice to auto-resolve interactive prompts in batch mode:
 # "y" (yes/confirm) → accept, "c" (cancel/skip) → skip, else quit.
@@ -83,13 +107,13 @@ upgrade-emacs: update-emacs test-emacs  ## Full upgrade: update + smoke tests
 thaw-emacs:  ## Restore straight.el repos to match lockfile
 	$(EMACS_BATCH) --eval '(progn $(STRAIGHT_BATCH_ADVICE) (straight-thaw-versions) (straight-check-all))'
 
-##@ Maintenance
 
-clean:  ## Remove temporary and cache files
-	rm -rf ./__pycache__ ./.mypy_cache ./.pytest_cache ./.ruff_cache .coverage
+# Project cleanup
+clean:  ## Project cleanup
+	rm -rf ./build .coverage ./__pycache__ ./.mypy_cache ./.ruff_cache ./.pytest_cache ./docs/_build ./tests/__pycache__ ./dist ./src/{{ cookiecutter.project_slug }}/__pycache__
 
-##@ Help
 
-help:  ## Show this help
+# Help target to show all available commands
+help: ## Show this help message.
 	@echo "Available targets:"
-	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)

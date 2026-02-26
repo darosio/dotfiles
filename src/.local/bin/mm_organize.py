@@ -30,7 +30,25 @@ EXIFTOOL: str | None = shutil.which("exiftool") or next(
 # Date-parsing helpers
 # ----------------------------------------------------------------------
 def _parse_exif_dt(s: str | None) -> datetime | None:
-    """Parse a string that may contain an EXIF timestamp using dateutil."""
+    """Parse a string that may contain an EXIF timestamp using dateutil.
+
+    Parameters
+    ----------
+    s : str | None
+        String containing an EXIF timestamp, or None.
+
+    Returns
+    -------
+    datetime | None
+        Parsed datetime or None if parsing fails.
+
+    Examples
+    --------
+    >>> _parse_exif_dt("2024:03:15 10:30:45")
+    datetime.datetime(2024, 3, 15, 10, 30, 45)
+    >>> _parse_exif_dt(None) is None
+    True
+    """
     if not s:
         return None
     s = s.strip()
@@ -125,7 +143,24 @@ def get_exif_datetime(file_path: Path) -> datetime | None:
 # Miscellaneous utilities
 # ----------------------------------------------------------------------
 def _format_parts(dt: datetime) -> tuple[str, str]:
-    """Return ``(YYYY-MM, YYYY-MM-DD_HHMMSS)`` tuple."""
+    """Return ``(YYYY-MM, YYYY-MM-DD_HHMMSS)`` tuple.
+
+    Parameters
+    ----------
+    dt : datetime
+        The datetime to format.
+
+    Returns
+    -------
+    tuple[str, str]
+        A ``(YYYY-MM, YYYY-MM-DD_HHMMSS)`` tuple.
+
+    Examples
+    --------
+    >>> from datetime import datetime
+    >>> _format_parts(datetime(2024, 3, 15, 10, 30, 45))
+    ('2024-03', '2024-03-15_103045')
+    """
     return dt.strftime("%Y-%m"), dt.strftime("%Y-%m-%d_%H%M%S")
 
 

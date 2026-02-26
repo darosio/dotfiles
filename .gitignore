@@ -8,6 +8,11 @@
 # anacron
 **/.anacron/spool
 
+# Unit test / coverage reports
+htmlcov/
+.coverage*
+coverage.xml
+
 #*.elc
 __pycache__/
 
@@ -23,3 +28,4 @@ emacs/.emacs.d/straight/build-cache.el
 emacs/.emacs.d/straight/build/
 emacs/.emacs.d/straight/modified/
 emacs/.emacs.d/straight/repos/
+docs/_build/

@@ -14,7 +14,7 @@ import pandas as pd
 from docopt import docopt
 
 
-def convert_to_number(w) -> bool:  # noqa: ANN001
+def convert_to_number(w: str | float) -> bool:
     """Convert argument into float."""
     try:
         float(w)
@@ -25,7 +25,7 @@ def convert_to_number(w) -> bool:  # noqa: ANN001
 
 
 args = docopt(__doc__)
-with open(args["FILE"]) as fp:  # noqa: PTH123
+with open(args["FILE"], encoding="utf-8") as fp:  # noqa: PTH123
     "skip lines that contain at least 1 (alpha)word"
     N = 0
     line = fp.readline()

@@ -10,8 +10,6 @@ on:
       - "docs/**"
       - "*.md"
   push:
-    branches:
-      - main
     paths-ignore:
       - "*.md"
 
@@ -48,11 +46,16 @@ jobs:
         run: |
           make lint
 
-  test:
-    name: Test
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
+
+  tests:
+    name: ${{ matrix.tests }} py-${{ matrix.python }} on ${{ startsWith(matrix.os, 'macos-') && 'macOS' || startsWith(matrix.os, 'windows-') && 'Windows' || 'Linux' }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python: ["3.14", "3.13"]
+        tests: [test, type, xdoc]
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v6
@@ -61,16 +64,90 @@ jobs:
         with:
           enable-cache: true
           cache-dependency-glob: uv.lock
-      - name: Sync project with test deps
-        run: uv sync --locked --group test
-      - name: Run tests with coverage
+          python-version: ${{ matrix.python }}
+      - name: Sync project with tests deps
+        run: uv sync --locked --group tests
+      - name: Run test and coverage
+        if: matrix.tests == 'test'
         run: |
-          uv run pytest tests/ -v --cov=scripts --cov-report=xml --cov-report=term-missing
+          make test
+          make cov
+      - name: Upload coverage report
+        if: matrix.tests == 'test'
+        uses: codecov/codecov-action@v5.5.2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+      - name: Run mypy
+        if: matrix.tests == 'type'
+        run: |
+          make type
+      - name: Run xdoctest
+        if: matrix.tests == 'xdoc'
+        run: |
+          make xdoc
+
+  docs_build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install binaries for docs
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y plantuml libopenblas-dev
+      - uses: r-lib/actions/setup-pandoc@v2
+        with:
+          pandoc-version: "3.1.12"
+      - run: echo "# Test" | pandoc -t html
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+      - name: Sync project with docs deps
+        run: uv sync --locked --extra docs
+      - name: Cache Jupyter-Cache
+        uses: actions/cache@v5
+        with:
+          path: docs/.jupyter_cache
+          key: ${{ runner.os }}-jupyter-${{ hashFiles('uv.lock', '**/*.ipynb', 'src/**/*.py') }}
+      - name: Build docs
+        run: |
+          mkdir -p docs/.jupyter_cache
+          make docs
+        env:
+          NB_EXECUTION_MODE: cache
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          name: github-pages
+          path: ./docs/_build
+
+  docs_deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/heads/main' }}
+    needs: [docs_build]
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: github-pages
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
 
   auto_merge_deps:
-    name: Auto Merge dependencies labeled PRs
-    needs: [pre-commit, test]
-    # Run only on pull_request labeled "dependencies"
+    name: Auto Merge dependencies and template updates
+    needs: [pre-commit, tests, docs_build]
+    # Run only on pull_request labeled "dependencies" or template updates
     if: >
       github.event_name == 'pull_request' &&
       (
@@ -83,11 +160,11 @@ jobs:
       contents: write
       pull-requests: write
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
       - name: Merge PR
-        uses: pascalgn/automerge-action@v0.16.4
         env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-          MERGE_LABELS: ""
-          MERGE_METHOD: squash
-          DELETE_BRANCH_AFTER_MERGE: true
-          LOG: "TRACE" # or DEBUG
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: |
+          gh pr merge --auto --squash --delete-branch "$PR_URL"

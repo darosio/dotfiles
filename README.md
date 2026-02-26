@@ -6,7 +6,7 @@
 Configuration files for a Linux desktop managed with
 [GNU Stow](https://www.gnu.org/software/stow/) and versioned with Git. Includes
 Emacs (straight.el), shell, git, and application configs plus Python utility
-scripts.
+scripts under `src/`.
 
 ## Quick Start
 
@@ -126,3 +126,13 @@ make thaw-emacs       # checkout pinned commits + rebuild
 ## License
 
 [BSD-3-Clause](LICENSE.txt)
+
+## Documentation
+
+Full documentation (Emacs packages, submodule management, scripts reference) is
+available in the `docs/` directory. Build locally with:
+
+```bash
+make docs
+make docs-serve       # http://localhost:8000
+```

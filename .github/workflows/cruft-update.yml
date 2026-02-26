@@ -2,9 +2,8 @@ name: Template update (Cruft)
 
 on:
   schedule:
-    - cron: "0 3 * * 1" # weekly, Mondays 03:00 UTC
+    - cron: "0 18 * * 5" # 18:00 UTC (19:00 Europe/Rome) on Fridays
   workflow_dispatch:
-
 permissions:
   contents: write
   pull-requests: write
@@ -29,27 +28,36 @@ jobs:
         run: uv sync --group dev
 
       - name: Check and update from template
+        id: cruft_update
         env:
           CRUFT_NO_INPUT: "1"
         run: |
           set -e
-          if uv run cruft check; then
-            echo "Template is up to date."
-            exit 0
+          echo "has_changes=false" >> "$GITHUB_OUTPUT"
+          if ! uv run cruft check; then
+            uv run cruft update -y --allow-untracked-files
+            # Remove any leftover .rej files from conflicts
+            find . -name "*.rej" -type f -delete
+            # Regenerate lock file if pyproject.toml changed
+            if git diff --quiet pyproject.toml; then
+              echo "No pyproject.toml changes"
+            else
+              echo "pyproject.toml changed, regenerating lock file"
+              uv lock
+            fi
+            if ! git diff --quiet; then
+              echo "has_changes=true" >> "$GITHUB_OUTPUT"
+            fi
           fi
-          uv run cruft update -y
 
-      - name: Create PR if changed
+      - name: Create Pull Request
+        if: ${{ steps.cruft_update.outputs.has_changes == 'true' }}
         env:
-          GH_TOKEN: ${{ secrets.PAT_WORKFLOWS || secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.PAT_WORKFLOWS || github.token }}
         run: |
-          if git diff --quiet; then
-            echo "No changes to commit."
-            exit 0
-          fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          gh auth setup-git
+          git remote set-url origin "https://darosio:${GH_TOKEN}@github.com/${{ github.repository }}.git"
           BRANCH="chore/update-template"
           git checkout -B "$BRANCH"
           git add -A

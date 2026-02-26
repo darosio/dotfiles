@@ -60,7 +60,7 @@ repos:
     rev: v0.1.11
     hooks:
       - id: ripsecrets
-        exclude: .goldendict/config
+        exclude: (.goldendict/config|\.github/workflows/cruft-update\.yml|\.github/workflows/lockfile-update\.yml)
 
   - repo: https://github.com/gitleaks/gitleaks
     rev: v8.30.0

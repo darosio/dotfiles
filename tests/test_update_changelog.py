@@ -192,7 +192,9 @@ class TestFileOperations:
 
     def test_read_write_roundtrip(self) -> None:
         """Test reading and writing files."""
-        with tempfile.NamedTemporaryFile(mode="w", suffix=".txt", delete=False) as f:
+        with tempfile.NamedTemporaryFile(
+            encoding="utf-8", mode="w", suffix=".txt", delete=False
+        ) as f:
             f.write("line 1\nline 2\nline 3\n")
             temp_path = f.name
 
