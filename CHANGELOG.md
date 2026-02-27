@@ -1,5 +1,88 @@
 # Changelog
 
+## [3.22.0] - 2026-02-27
+
+### 🚀 Features
+
+- Add mm_organize script
+- Add mm_organize.py
+- Update mm_organize
+- Add starship prompt to yazi
+- Add 2md alias for markitdown
+- *(emacs)* Add copilot
+- Add wifite and sniffnet
+- Add searxng and perplexica
+- Add open-notebookLM
+- Add overall install.sh
+- Update borg for btrfs snapshot
+- Add upgrade-emacs target (update + smoke tests)
+
+### 🐛 Bug Fixes
+
+- Rmlintt and rm aliases
+- Yazi preview
+- Yazi local plugins
+- Yazi email selected files as attachments with `C-m`
+- Package management aliases
+- Yazi size spotter for git-annex
+- *(emacs)* Tables fixed pitch
+- Gpg-agent
+- Yazi previews and keybindings
+- Yazi and handlr open menu
+- F12 new terminal
+- Jupyter-lab from yazi
+- Mcp-searxng
+- Msmtp on servers
+- Borg with btrfs (raid1)
+- Run smoke tests after update+thaw in workflow
+- Use PAT_WORKFLOWS for PR creation in update-emacs
+- Docs
+- Tests update_changelog
+
+### 💼 Other
+
+- *(emacs)* Update straight.el package versions (#414)
+
+### 🚜 Refactor
+
+- Yazi install and plugins
+- *(emacs)* My-ai
+- DRY update-emacs workflow with Makefile targets
+- Simplify update-emacs workflow, add thaw-emacs
+- Add normalize/check-all to update-emacs pipeline
+
+### 📚 Documentation
+
+- Rewrite README for uv/direnv/make workflow
+
+### 🧪 Testing
+
+- *(emacs)* Expand smoke tests to cover ~70 package checks
+- Add pytest tests for mm_organize and update_changelog scripts
+
+### 🦾 Build
+
+- *(deps)* Bump ruff from 0.13.2 to 0.15.2
+- *(deps)* Bump astral-sh/setup-uv from v6 to v7
+- *(deps)* Bump python Docker tag to v3.14 (#292)
+- *(deps)* Bump mdformat-gfm from 0.4.1 to 1.0.0
+- *(deps)* Bump mdformat from 0.7.22 to 1.0.0
+- *(deps)* Bump pre-commit from 4.3.0 to 4.5.1
+- *(emacs)* Update packages
+- *(deps)* Bump actions/checkout from v5 to v6
+- *(deps)* Bump peter-evans/create-pull-request from v7 to v8
+- *(deps)* Bump actions/cache from v4 to v5
+- *(deps)* Bump git-cliff from 2.10.1 to 2.12.0
+- Update packages
+- *(deps)* Bump pylsp-mypy from 0.7.0 to 0.7.1
+- *(deps)* Bump click from 8.2.1 to 8.3.1
+- Update to cookiecutter
+
+### 🐙 CI/CD
+
+- *(emacs)* Add package update with PR creation flow
+- Add lockfile-update workflow, fix cruft-update auth
+
 ## [3.21.0] - 2025-10-01
 
 ### 🚀 Features
