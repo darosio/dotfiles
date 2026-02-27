@@ -410,7 +410,7 @@
 (progn ;; single packages
 
   (use-package unfill
-    :ensure t
+    :straight t
     :bind ("C-c M-q" . unfill-toggle))
 
   (use-package aggressive-indent
@@ -724,7 +724,11 @@
     (completion-category-defaults nil)
     (completion-category-overrides '((file (styles orderless partial-completion))
                                      (buffer (styles orderless partial-completion))
-                                     (command (styles orderless partial-completion)))))
+                                     (command (styles orderless partial-completion))
+                                     (info-menu (styles orderless))
+                                     (consult-grep (styles orderless))
+                                     (embark-collect (styles orderless))
+                                     (minibuffer-completion-table (styles orderless partial-completion)))))
 
   ;; CRM: Configure completing-read-multiple prompt
   (use-package crm
@@ -744,9 +748,9 @@
     :commands (marginalia-mode)
     :defines marginalia-annotators
     :init (marginalia-mode)
-    ;; :custom FIXME: is empty
-    ;; (marginalia-annotators
-    ;;  '(marginalia-annotators-heavy marginalia-annotators-light nil))
+    :custom
+    (marginalia-truncate 80)
+    (marginalia-align 'right)
     :bind (:map minibuffer-local-map
                 ("M-A" . marginalia-cycle)))
 
@@ -901,14 +905,18 @@
 
   (use-package corfu
     :straight (corfu :files (:defaults "extensions/*")
-                     :includes (corfu-info corfu-history))
+                     :includes (corfu-info corfu-history corfu-capf-super))
     :config
-    (setq corfu-popupinfo-delay 0)
+    (setq corfu-popupinfo-delay 0
+          corfu-auto t
+          corfu-auto-prefix 2
+          corfu-minimum-prefix-length 1)
     :custom
     (text-mode-ispell-word-completion nil)
     :init
     (global-corfu-mode)
-    (corfu-popupinfo-mode))
+    (corfu-popupinfo-mode)
+    (corfu-history-mode))
 
   (use-package cape
     :commands (cape-dabbrev
@@ -917,17 +925,13 @@
                cape-dict
                cape-keyword
                cape-capf-super)
-    ;; Bind prefix keymap providing all Cape commands under a mnemonic key.
-    ;; Press C-c p ? to for help.
-    :bind ("C-M-s-<tab>" . cape-prefix-map) ;; Alternative key: M-<tab>, M-p, M-+
+    :bind ("C-M-s-<tab>" . cape-prefix-map)
     :init
     (add-hook 'completion-at-point-functions #'cape-dabbrev)
     (add-hook 'completion-at-point-functions #'cape-file)
     (add-hook 'completion-at-point-functions #'cape-elisp-block)
-    ;; (add-hook 'completion-at-point-functions #'cape-history)
     (setq-local completion-at-point-functions
-                (list (cape-capf-super #'cape-dabbrev #'cape-dict #'cape-file #'cape-keyword)))
-    )
+                (list (cape-capf-super #'cape-dabbrev #'cape-dict #'cape-file #'cape-keyword))))
   )
 
 (use-package yasnippet
@@ -959,47 +963,76 @@
   :bind ("M-s y" . consult-yasnippet))
 
 ;; --- Spell and Translate ---
-(straight-use-package 'ispell)          ;;TODO: remove
-(straight-use-package 'flyspell)
-(straight-use-package 'flyspell-correct) ;;TODO: remove
-(straight-use-package 'consult-flyspell)
-(straight-use-package 'guess-language)
-(straight-use-package 'sdcv)
-(straight-use-package 'wordnut)
-(straight-use-package 'powerthesaurus)
+(use-package ispell
+  :straight t)
+(use-package flyspell
+  :straight t)
+(use-package flyspell-correct
+  :straight t)
+(use-package consult-flyspell
+  :straight t)
+(use-package guess-language
+  :straight t)
+(use-package sdcv
+  :straight t)
+(use-package wordnut
+  :straight t)
+(use-package powerthesaurus
+  :straight t)
 (require 'my-spell)
 
 ;; --- Prose ---
-(straight-use-package 'cm-mode) ;; critic markup
-(straight-use-package 'langtool)
-(straight-use-package 'academic-phrases)
-(straight-use-package 'writegood-mode)
+(use-package cm-mode
+  :straight t)
+(use-package langtool
+  :straight t)
+(use-package academic-phrases
+  :straight t)
+(use-package writegood-mode
+  :straight t)
 (require 'my-prose)
 
 ;; --- Mail ---
-(straight-use-package 'org-msg)
-(straight-use-package 'org-mime)
-(straight-use-package 'mu4e-jump-to-list)
+(use-package org-msg
+  :straight t)
+(use-package org-mime
+  :straight t)
+(use-package mu4e-jump-to-list
+  :straight t)
 (require 'my-email)
 
 ;; --- Org ---
-(straight-use-package 'jupyter)
-(straight-use-package 'ob-async)
-(straight-use-package 'ox-rst)
-(straight-use-package 'ox-pandoc)
-(straight-use-package 'ox-twbs)
-(straight-use-package 'auctex)
-(straight-use-package 'cdlatex)
-(straight-use-package 'ox-reveal)
+(use-package jupyter
+  :straight t)
+(use-package ob-async
+  :straight t)
+(use-package ox-rst
+  :straight t)
+(use-package ox-pandoc
+  :straight t)
+(use-package ox-twbs
+  :straight t)
+(use-package auctex
+  :straight t)
+(use-package cdlatex
+  :straight t)
+(use-package ox-reveal
+  :straight t)
 (require 'my-ob)
 ;; (straight-use-package 'org)
-(straight-use-package 'org-autolist)
-(straight-use-package 'org-download)
-(straight-use-package 'org-cliplink)
-(straight-use-package 'org-modern)
-(straight-use-package 'spacious-padding)
+(use-package org-autolist
+  :straight t)
+(use-package org-download
+  :straight t)
+(use-package org-cliplink
+  :straight t)
+(use-package org-modern
+  :straight t)
+(use-package spacious-padding
+  :straight t)
 (require 'my-org)
-(straight-use-package 'org-gcal)
+(use-package org-gcal
+  :straight t)
 (require 'my-org-cal)
 
 (progn                                  ; org-roam and notes
@@ -1490,21 +1523,36 @@
          (prog-mode . flymake-mode)))
 
 ;; --- Additional modes ---
-(straight-use-package 'markdown-mode)
-(straight-use-package 'sphinx-mode)
-(straight-use-package 'plantuml-mode)
-(straight-use-package 'graphviz-dot-mode)
-(straight-use-package 'gnuplot)
-(straight-use-package 'ess)
-(straight-use-package 'json-mode)
-(straight-use-package 'ssh-config-mode)
-(straight-use-package 'pkgbuild-mode)
-(straight-use-package 'web-mode)
-(straight-use-package 'vimrc-mode)
-(straight-use-package 'yaml-mode)
-(straight-use-package 'toml-mode)
-(straight-use-package 'csv-mode)
-(straight-use-package 'dna-mode)
+(use-package markdown-mode
+  :straight t)
+(use-package sphinx-mode
+  :straight t)
+(use-package plantuml-mode
+  :straight t)
+(use-package graphviz-dot-mode
+  :straight t)
+(use-package gnuplot
+  :straight t)
+(use-package ess
+  :straight t)
+(use-package json-mode
+  :straight t)
+(use-package ssh-config-mode
+  :straight t)
+(use-package pkgbuild-mode
+  :straight t)
+(use-package web-mode
+  :straight t)
+(use-package vimrc-mode
+  :straight t)
+(use-package yaml-mode
+  :straight t)
+(use-package toml-mode
+  :straight t)
+(use-package csv-mode
+  :straight t)
+(use-package dna-mode
+  :straight t)
 (require 'my-modes)
 
 (progn                                  ; python
@@ -1588,8 +1636,8 @@
   ;; (add-to-list 'bibtex-completion-bibliography calibredb-ref-default-bibliography)
   )
 
-(straight-use-package
- '(seqel :type git :host github :repo "RNAer/seqel"))
+(use-package seqel
+  :straight (:type git :host github :repo "RNAer/seqel"))
 
 (use-package emacs
   :straight nil
@@ -1601,8 +1649,10 @@
   )
 
 ;; --- AI LLM ---
-(straight-use-package 'ellama)
-(straight-use-package 'gptel)
+(use-package ellama
+  :straight t)
+(use-package gptel
+  :straight t)
 ;; (straight-use-package 'chatgpt-shell)
 (require 'my-ai)
 
@@ -1635,113 +1685,3 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(safe-local-variable-values '((org-download-image-dir . "./WORK/"))))
-
-
-;; Here is a revision that simplifies your init.el by removing redundant or less-used packages, consolidates similar functionality, and transitions to some better-maintained or recommended alternatives. The goal is to keep your core workflow intact but reduce complexity and maintenance effort:
-
-;; ---
-
-
-;; - Removed `hungry-delete` and some commented out printing settings that aren't in use.
-;; - Removed `gscholar-bibtex` (outdated) in favor of `citar` for bibliography, which you already use.
-;; - Removed duplicative or lesser-used packages like `transpose-frame`, `tzc`, `numpydoc` (the latter can be reconsidered if you want but adds complexity).
-;; - Removed `engine-mode`: mostly replaced by minibuffer search with Consult + Embark which you have configured.
-;; - Consolidated built-in package uses to fewer `use-package` blocks with `:straight (:type built-in)` as appropriate.
-;; - For spell/translation: keep only essential `flyspell`, `consult-flyspell`, `guess-language`.
-;; - For completion, rely on `vertico`, `orderless`, `consult`, `embark` — already well set up.
-
-;; ### Recommended transitions
-
-;; - For snippet support: continue with `yasnippet` and `yasnippet-snippets` (well maintained).
-;; - For LSP: use `eglot` (which you have) but add minimal configuration only.
-;; - Use `apheleia` for formatters, keep it tuned to your existing setup.
-;; - Use `doom-modeline` + `nerd-icons` + `minions` as your modeline stack.
-
-;; ### Example of cleaned and simplified snippet for core packages:
-
-;; ```elisp
-
-;; ;; Completion & minibuffer: vertico + orderless + consult + embark
-;; (use-package vertico
-;;   :init (vertico-mode)
-;;   :custom (vertico-count 20) (vertico-cycle t))
-
-;; (use-package orderless
-;;   :custom (completion-styles '(orderless partial-completion basic)))
-
-;; (use-package consult
-;;   :bind (("C-/" . consult-line)
-;;          ("C-x b" . consult-buffer)
-;;          ;; Add other preferred consult bindings
-;;          ))
-
-;; (use-package embark
-;;   :bind (("C-." . embark-act)
-;;          ("C-|" . embark-dwim)))
-
-;; (use-package marginalia
-;;   :init (marginalia-mode))
-
-;; ;; Snippets
-;; (use-package yasnippet
-;;   :init (yas-global-mode 1)
-;;   :config
-;;   (setq yas-snippet-dirs '("~/.emacs.d/yasnippets")))
-
-;; (use-package yasnippet-snippets
-;;   :after yasnippet)
-
-;; ;; Modeline and icons
-;; (use-package nerd-icons
-;;   :config
-;;   (unless (find-font (font-spec :family "Symbols Nerd Font Mono"))
-;;     (nerd-icons-install-fonts))
-;;   (setq nerd-icons-font-family "Symbols Nerd Font Mono"))
-
-;; (use-package doom-modeline
-;;   :hook (after-init . doom-modeline-mode))
-
-;; (use-package minions
-;;   :hook (after-init . minions-mode))
-
-;; ;; Programming editing
-;; (use-package smartparens
-;;   :hook (prog-mode . smartparens-mode)
-;;   :config (smartparens-global-mode 1))
-
-;; (use-package hideshow
-;;   :hook (prog-mode . hs-minor-mode)
-;;   :bind (:map prog-mode-map
-;;               ("M-<tab>" . hs-toggle-hiding)))
-
-;; ;; Git
-;; (use-package magit
-;;   :bind (("C-c g g" . magit-status))
-;;   :config
-;;   (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1))
-
-;; (use-package git-modes)
-;; (use-package browse-at-remote)
-
-;; ;; Org Roam / Notes stack remains, but consider trimming users to only needed packages.
-
-;; ;; Spell check minimal
-;; (use-package flyspell)
-;; (use-package consult-flyspell)
-;; (use-package guess-language)
-
-;; ;; Formatter
-;; (use-package apheleia
-;;   :config (apheleia-global-mode +1))
-
-;; ;; LSP
-;; (use-package eglot
-;;   :hook (prog-mode . eglot-ensure)
-;;   :custom (eglot-autoshutdown t))
-
-;; ;; Misc essentials only; remove obsolete/unnecessary packages for simplicity.
-;; ```
-
-;; ---
-
-;; If you want, I can prepare a fully annotated cleaned init.el based on this or help identify specific packages to remove or replace with alternatives that have better support or simpler configs. The above approach reduces package count, duplicates, and unused legacy configs while keeping your experience familiar and efficient.

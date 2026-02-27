@@ -281,8 +281,7 @@
      'append)))
 
 (use-package copilot
-  :straight (:host github :repo "copilot-emacs/copilot.el" :files ("*.el"))
-  :ensure t)
+  :straight (:host github :repo "copilot-emacs/copilot.el" :files ("*.el")))
 
 (provide 'my-ai)
 ;;; my-ai.el ends here
