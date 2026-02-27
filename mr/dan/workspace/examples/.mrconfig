@@ -129,3 +129,6 @@ checkout = git clone 'https://github.com/biophotlumin/mint.git' 'mint'
 
 [reveal.js]
 checkout = git clone 'https://github.com/hakimel/reveal.js.git' 'reveal.js'
+
+[python-for-biologists]
+checkout = hg clone 'ssh://hg@bitbucket.org/krother/python-for-biologists' 'python-for-biologists'
