@@ -29,3 +29,7 @@ emacs/.emacs.d/straight/build/
 emacs/.emacs.d/straight/modified/
 emacs/.emacs.d/straight/repos/
 docs/_build/
+
+# Sphinx documentation
+docs/_build/
+docs/autoapi/
