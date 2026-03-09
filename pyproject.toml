@@ -29,7 +29,6 @@ docs = [
   "myst-parser>=5.0.0",
   "pydata-sphinx-theme>=0.16.1",
   "pygments>=2.19.2",
-  "sphinx-autodoc-typehints>=3.9.7",
   "sphinx-autoapi>=3.8.0",
   "sphinx-click>=6.2.0",
   "sphinx-copybutton>=0.5.2",
