@@ -1666,19 +1666,18 @@
   (define-key ee-keymap (kbd "R") 'ee-rga)
   )
 
-(use-package khoj
-  :after org
-  ;; :pin melpa-stable
-  :bind ("M-s M-k" . 'khoj)
-  :config
-  (setq khoj-server-url "http://127.0.0.1:42110"
-        khoj-index-directories '("~/Sync/Grants/" "~/Sync/notes/" "~/Sync/arte/")
-        khoj-index-files '("~/Sync/todo-khoj.org"))
-  ;; :config (setq khoj-api-key "YOUR_KHOJ_CLOUD_API_KEY"
-  ;;               khoj-server-url "https://app.khoj.dev"
-  ;;               khoj-index-directories '("~/docs/org-roam" "~/docs/notes")
-  ;;               khoj-index-files '("~/docs/todo.org" "~/docs/work.org"))
-  )
+;; (use-package khoj
+;;   :after org
+;;   :bind ("M-s M-k" . 'khoj)
+;;   :config
+;;   (setq khoj-server-url "http://127.0.0.1:42110"
+;;         khoj-index-directories '("~/Sync/Grants/" "~/Sync/notes/" "~/Sync/arte/")
+;;         khoj-index-files '("~/Sync/todo-khoj.org"))
+;;   ;; :config (setq khoj-api-key "YOUR_KHOJ_CLOUD_API_KEY"
+;;   ;;               khoj-server-url "https://app.khoj.dev"
+;;   ;;               khoj-index-directories '("~/docs/org-roam" "~/docs/notes")
+;;   ;;               khoj-index-files '("~/docs/todo.org" "~/docs/work.org"))
+;;   )
 
 (setq debug-on-error nil)
 (setq debug-on-quit nil)
