@@ -52,6 +52,14 @@
   (setopt ellama-instant-display-action-function #'display-buffer-at-bottom)
   ;; Show context/session in header line
   (ellama-context-header-line-global-mode +1)
+  ;; Hide session info from header line when no session is active
+  (advice-add 'ellama-session-line :around
+              (lambda (orig-fn)
+                (if (or ellama--current-session
+                        ellama--current-session-id
+                        ellama--current-session-uid)
+                    (funcall orig-fn)
+                  "")))
   (ellama-session-header-line-global-mode +1)
   ;; Scrolling behavior
   (advice-add 'pixel-scroll-precision :before #'ellama-disable-scroll)

@@ -163,10 +163,7 @@
     (setq TeX-auto-save t)
     (setq TeX-parse-self t)
     ;; (setq TeX-PDF-mode t))
-    (setq-default TeX-master nil))
-  (use-package tex-buf
-    :straight auctex
-    :config
+    (setq-default TeX-master nil)
     (setq TeX-save-query nil))
   )
 
