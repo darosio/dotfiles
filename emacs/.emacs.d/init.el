@@ -963,76 +963,47 @@
   :bind ("M-s y" . consult-yasnippet))
 
 ;; --- Spell and Translate ---
-(use-package ispell
-  :straight t)
-(use-package flyspell
-  :straight t)
-(use-package flyspell-correct
-  :straight t)
-(use-package consult-flyspell
-  :straight t)
-(use-package guess-language
-  :straight t)
-(use-package sdcv
-  :straight t)
-(use-package wordnut
-  :straight t)
-(use-package powerthesaurus
-  :straight t)
+(straight-use-package 'ispell)
+(straight-use-package 'flyspell)
+(straight-use-package 'flyspell-correct)
+(straight-use-package 'consult-flyspell)
+(straight-use-package 'guess-language)
+(straight-use-package 'sdcv)
+(straight-use-package 'wordnut)
+(straight-use-package 'powerthesaurus)
 (require 'my-spell)
 
 ;; --- Prose ---
-(use-package cm-mode
-  :straight t)
-(use-package langtool
-  :straight t)
-(use-package academic-phrases
-  :straight t)
-(use-package writegood-mode
-  :straight t)
+(straight-use-package 'cm-mode)
+(straight-use-package 'langtool)
+(straight-use-package 'academic-phrases)
+(straight-use-package 'writegood-mode)
 (require 'my-prose)
 
 ;; --- Mail ---
-(use-package org-msg
-  :straight t)
-(use-package org-mime
-  :straight t)
-(use-package mu4e-jump-to-list
-  :straight t)
+(straight-use-package 'org-msg)
+(straight-use-package 'org-mime)
+(straight-use-package 'mu4e-jump-to-list)
 (require 'my-email)
 
 ;; --- Org ---
-(use-package jupyter
-  :straight t)
-(use-package ob-async
-  :straight t)
-(use-package ox-rst
-  :straight t)
-(use-package ox-pandoc
-  :straight t)
-(use-package ox-twbs
-  :straight t)
-(use-package auctex
-  :straight t)
-(use-package cdlatex
-  :straight t)
-(use-package ox-reveal
-  :straight t)
+(straight-use-package 'jupyter)
+(straight-use-package 'ob-async)
+(straight-use-package 'ox-rst)
+(straight-use-package 'ox-pandoc)
+(straight-use-package 'ox-twbs)
+(straight-use-package 'auctex)
+(straight-use-package 'cdlatex)
+(straight-use-package 'ox-reveal)
 (require 'my-ob)
 ;; (straight-use-package 'org)
-(use-package org-autolist
-  :straight t)
-(use-package org-download
-  :straight t)
-(use-package org-cliplink
-  :straight t)
-(use-package org-modern
-  :straight t)
-(use-package spacious-padding
-  :straight t)
+(straight-use-package 'org-autolist)
+(straight-use-package 'org-download)
+(straight-use-package 'org-cliplink)
+(straight-use-package 'org-modern)
+(straight-use-package 'spacious-padding)
 (require 'my-org)
-(use-package org-gcal
-  :straight t)
+(straight-use-package 'org-gcal)
 (require 'my-org-cal)
 
 (progn                                  ; org-roam and notes
@@ -1523,36 +1494,21 @@
          (prog-mode . flymake-mode)))
 
 ;; --- Additional modes ---
-(use-package markdown-mode
-  :straight t)
-(use-package sphinx-mode
-  :straight t)
-(use-package plantuml-mode
-  :straight t)
-(use-package graphviz-dot-mode
-  :straight t)
-(use-package gnuplot
-  :straight t)
-(use-package ess
-  :straight t)
-(use-package json-mode
-  :straight t)
-(use-package ssh-config-mode
-  :straight t)
-(use-package pkgbuild-mode
-  :straight t)
-(use-package web-mode
-  :straight t)
-(use-package vimrc-mode
-  :straight t)
-(use-package yaml-mode
-  :straight t)
-(use-package toml-mode
-  :straight t)
-(use-package csv-mode
-  :straight t)
-(use-package dna-mode
-  :straight t)
+(straight-use-package 'markdown-mode)
+(straight-use-package 'sphinx-mode)
+(straight-use-package 'plantuml-mode)
+(straight-use-package 'graphviz-dot-mode)
+(straight-use-package 'gnuplot)
+(straight-use-package 'ess)
+(straight-use-package 'json-mode)
+(straight-use-package 'ssh-config-mode)
+(straight-use-package 'pkgbuild-mode)
+(straight-use-package 'web-mode)
+(straight-use-package 'vimrc-mode)
+(straight-use-package 'yaml-mode)
+(straight-use-package 'toml-mode)
+(straight-use-package 'csv-mode)
+(straight-use-package 'dna-mode)
 (require 'my-modes)
 
 (progn                                  ; python
@@ -1649,10 +1605,8 @@
   )
 
 ;; --- AI LLM ---
-(use-package ellama
-  :straight t)
-(use-package gptel
-  :straight t)
+(straight-use-package 'ellama)
+(straight-use-package 'gptel)
 ;; (straight-use-package 'chatgpt-shell)
 (require 'my-ai)
 

@@ -79,14 +79,12 @@ Return a valid Org timestamp string. If no time is entered, treat as all-day."
         ;; all-day event
         (format "<%s>" (format-time-string "%Y-%m-%d %a" start-time)))))
 
-  :commands (org-gcal-reload-client-id-secret)
   :init
   (which-key-add-key-based-replacements "C-c G" "Gcal")
-  (setq org-gcal-client-id (password-store-get "org-gcal/client-id")
-        org-gcal-client-secret (password-store-get "org-gcal/client-secret"))
-  (org-gcal-reload-client-id-secret)
   ;; Auto cache GPG key
   (setq plstore-cache-passphrase-for-symmetric-encryption t)
+  (setq org-gcal-client-id (password-store-get "org-gcal/client-id")
+        org-gcal-client-secret (password-store-get "org-gcal/client-secret"))
   :config
   (setq org-gcal-auto-archive t)
   (setq org-gcal-file-alist
