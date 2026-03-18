@@ -71,6 +71,33 @@ print('\n'.join(p.get_text() for p in doc))
 " "$1" | llm "${@:2}" #  -m qwen3.5:27b
 }
 
+pdffabric() {
+  local pattern="extract_wisdom" model="qwen3.5:35b-a3b"
+  local OPTIND opt
+  while getopts "p:m:h" opt; do
+    case "$opt" in
+      p) pattern="$OPTARG" ;;
+      m) model="$OPTARG" ;;
+      *)
+        echo "Usage: pdffabric [-p pattern] [-m model] <file.pdf>"
+        echo "  -p  fabric pattern (default: extract_wisdom)"
+        echo "  -m  model (default: qwen3.5:35b-a3b)"
+        return 1
+        ;;
+    esac
+  done
+  shift $((OPTIND - 1))
+  if [ -z "$1" ]; then
+    echo "Usage: pdffabric [-p pattern] [-m model] <file.pdf>"
+    return 1
+  fi
+  python -c "
+import sys, pymupdf
+doc = pymupdf.open(sys.argv[1])
+print('\n'.join(p.get_text() for p in doc))
+" "$1" | fabric --model "$model" --pattern "$pattern"
+}
+
 tree_size() {
   if [ -z "$1" ]; then
     echo "Usage: tree-size <level>"

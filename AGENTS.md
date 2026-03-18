@@ -280,17 +280,13 @@ ______________________________________________________________________
 
 ## 7. Tool quick-reference
 
-| Tool                 | Install                                    | Primary use               |
-| -------------------- | ------------------------------------------ | ------------------------- |
-| `llm` + `llm-ollama` | `uv tool install llm --with llm-ollama`    | Shell LLM pipelines       |
-| `fabric`             | `uv tool install fabric`                   | Named prompt patterns     |
-| `pymupdf`            | `uv add pymupdf`                           | PDF text extraction       |
-| `gptel`              | Emacs package                              | In-editor LLM chat        |
-| `copilot.el`         | Emacs package                              | Inline completion         |
-| `khoj`               | `podman-compose up`                        | RAG over local docs + web |
-| Perplexica           | Docker/Podman                              | Grounded web search       |
-| Claude Code          | `npm install -g @anthropic-ai/claude-code` | Agentic coding            |
-| OpenCode             | `npm install -g opencode-ai`               | Agentic coding (local)    |
+| Tool         | Install                                    | Primary use               |
+| ------------ | ------------------------------------------ | ------------------------- |
+| `copilot.el` | Emacs package                              | Inline completion         |
+| `khoj`       | `podman-compose up`                        | RAG over local docs + web |
+| Perplexica   | Docker/Podman                              | Grounded web search       |
+| Claude Code  | `npm install -g @anthropic-ai/claude-code` | Agentic coding            |
+| OpenCode     | `npm install -g opencode-ai`               | Agentic coding (local)    |
 
 ## 8. Consolidated daily map
 
@@ -307,7 +303,7 @@ ______________________________________________________________________
 | Current web info         | Perplexica                | Gemini CLI (1M context)          |
 | OCR on scanned PDFs      | deepseek-ocr via Ollama   | pymupdf                          |
 
-The one thing worth doing immediately is setting up the gptel-directives presets and the pdfllm shell alias — those two alone cover a large fraction of your daily reading and writing needs with zero friction.
+The one thing worth doing immediately is setting up the gptel-directives presets.
 
 ______________________________________________________________________
 
