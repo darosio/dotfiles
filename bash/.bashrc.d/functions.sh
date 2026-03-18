@@ -59,6 +59,18 @@ pdf_myReduce2() {
   gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.5 -dFILTERIMAGE -dNOPAUSE -dQUIET -dBATCH -dPDFSETTINGS=/screen -sOutputFile="$2" "$1"
 }
 
+pdfllm() {
+  if [ -z "$1" ]; then
+    echo "Usage: pdfllm <file.pdf> [prompt]"
+    return 1
+  fi
+  python -c "
+import sys, pymupdf
+doc = pymupdf.open(sys.argv[1])
+print('\n'.join(p.get_text() for p in doc))
+" "$1" | llm "${@:2}" #  -m qwen3.5:27b
+}
+
 tree_size() {
   if [ -z "$1" ]; then
     echo "Usage: tree-size <level>"
