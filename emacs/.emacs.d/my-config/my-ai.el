@@ -220,29 +220,29 @@
           (coding     . "You are an expert coding assistant. Provide high-quality code solutions, refactorings, and explanations. Prefer clarity over cleverness.")))
 
   (gptel-make-preset 'coding
-                     :description "Coding with qwen3.5:27b + buffer tools"
-                     :backend "Ollama"
-                     :model 'qwen3.5:27b
-                     :tools '("read_buffer" "EditBuffer"))
+    :description "Coding with qwen3.5:27b + buffer tools"
+    :backend "Ollama"
+    :model 'qwen3.5:27b
+    :tools '("read_buffer" "EditBuffer"))
   (gptel-make-preset 'reasoning
-                     :description "Deep reasoning with deepseek-r1:32b"
-                     :backend "Ollama"
-                     :model 'deepseek-r1:32b)
+    :description "Deep reasoning with deepseek-r1:32b"
+    :backend "Ollama"
+    :model 'deepseek-r1:32b)
   (gptel-make-preset 'fast
-                     :description "Fast iteration with qwen3.5:35b-a3b MoE"
-                     :backend "Ollama"
-                     :model 'qwen3.5:35b-a3b)
+    :description "Fast iteration with qwen3.5:35b-a3b MoE"
+    :backend "Ollama"
+    :model 'qwen3.5:35b-a3b)
   (gptel-make-preset 'math
-                     :description "Math/science with phi4-reasoning:plus"
-                     :backend "Ollama"
-                     :model 'phi4-reasoning:plus)
+    :description "Math/science with phi4-reasoning:plus"
+    :backend "Ollama"
+    :model 'phi4-reasoning:plus)
   (gptel-make-preset 'vision
-                     :description "Multimodal/vision with qwen3-vl:32b"
-                     :backend "Ollama"
-                     :model 'qwen3-vl:32b)
+    :description "Multimodal/vision with qwen3-vl:32b"
+    :backend "Ollama"
+    :model 'qwen3-vl:32b)
   (gptel-make-preset 'copilot
-                     :description "GitHub Copilot cloud backend"
-                     :backend "Copilot")
+    :description "GitHub Copilot cloud backend"
+    :backend "Copilot")
   :hook
   (gptel-mode . visual-line-mode)  ;; The chats can have long lines.
   (gptel-post-stream-hook . gptel-auto-scroll)  ;; And can be pages long.
@@ -283,6 +283,32 @@
                                   :GRAPHLIT_JWT_SECRET "PjpJX7IRDdsMjQkc8pDxjHbF4LkyO8tBLTFTK/S1IqI=")))))
   :config (require 'mcp-hub)
   :hook (after-init . mcp-hub-start-all-server))
+
+(use-package khoj
+  :after org
+  :bind ("M-s M-k" . #'khoj)
+  :custom
+  (khoj-server-url "http://127.0.0.1:42110")
+  (khoj-server-is-local nil)
+  (khoj-auto-setup nil)
+  (khoj-auto-index nil)
+  (khoj-index-directories '("~/Sync/Grants/" "~/Sync/notes/" "~/Sync/arte/"))
+  (khoj-index-files '("~/Sync/todo-khoj.org"))
+  :config
+  ;; khoj.el 2.x bug: server returns null/empty-array for onlineContext sub-fields.
+  ;; :null → (-map f :null) throws "sequencep"; [] → (elt [] 0) throws "Args out of range".
+  ;; Strip both before khoj--extract-online-references processes them.
+  (advice-add 'khoj--extract-online-references :filter-args
+              (lambda (args)
+                (list (car args)
+                      (mapcar (lambda (query-pair)
+                                (cons (car query-pair)
+                                      (seq-remove (lambda (r)
+                                                    (or (eq (cdr r) :null)
+                                                        (and (arrayp (cdr r))
+                                                             (= (length (cdr r)) 0))))
+                                                  (cdr query-pair))))
+                              (cadr args))))))
 
 (use-package inline-diff
   :straight (:repo "https://code.tecosaur.net/tec/inline-diff")
