@@ -1,5 +1,49 @@
 # shellcheck shell=bash
 
+# AI containers (~/ai-containers/{searxng,vane,khoj,...})
+aic() {
+  local base="$HOME/ai-containers"
+  local services="searxng vane khoj mcp-searxng"
+  local action="${1:-help}" svc="${2:-}"
+
+  case "$action" in
+    up)
+      for s in ${svc:-$services}; do
+        [ -f "$base/$s/podman-compose.yml" ] || continue
+        echo "Starting $s..."
+        (cd "$base/$s" && podman-compose up -d)
+      done
+      ;;
+    down)
+      for s in ${svc:-$services}; do
+        [ -f "$base/$s/podman-compose.yml" ] || continue
+        echo "Stopping $s..."
+        (cd "$base/$s" && podman-compose down)
+      done
+      ;;
+    restart)
+      aic down "$svc"
+      aic up "$svc"
+      ;;
+    ps)
+      podman ps -a --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'
+      ;;
+    logs)
+      [ -z "$svc" ] && echo "Usage: aic logs <service>" && return 1
+      podman logs -f "$svc"
+      ;;
+    *)
+      echo "Usage: aic {up|down|restart|ps|logs} [service]"
+      echo "Services: $services"
+      echo "  aic up          — start all"
+      echo "  aic up vane     — start one"
+      echo "  aic down khoj   — stop one"
+      echo "  aic ps          — status"
+      echo "  aic logs searxng"
+      ;;
+  esac
+}
+
 cp2marzola_mm() {
   rsync -avzP -e 'ssh -p 23456' "$*" mmedia@marzola:/home/MM/
 }

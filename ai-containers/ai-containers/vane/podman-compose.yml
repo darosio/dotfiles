@@ -1,0 +1,15 @@
+# Vane (formerly Perplexica) — bundled SearxNG, config via web UI at :3000
+services:
+  vane:
+    image: docker.io/itzcrazykns1337/vane:latest
+    container_name: vane
+    ports:
+      - "3000:3000"
+    volumes:
+      - vane_data:/home/vane/data
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+
+volumes:
+  vane_data:
