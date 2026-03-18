@@ -60,15 +60,34 @@ pdf_myReduce2() {
 }
 
 pdfllm() {
+  local model="" template="" args=()
+  local OPTIND opt
+  while getopts "m:t:h" opt; do
+    case "$opt" in
+      m) model="$OPTARG" ;;
+      t) template="$OPTARG" ;;
+      *)
+        echo "Usage: pdfllm [-m model] [-t template] <file.pdf> [prompt]"
+        echo "  -m  model (default: llm default model)"
+        echo "  -t  template (e.g. fabric:extract_wisdom)"
+        return 1
+        ;;
+    esac
+  done
+  shift $((OPTIND - 1))
   if [ -z "$1" ]; then
-    echo "Usage: pdfllm <file.pdf> [prompt]"
+    echo "Usage: pdfllm [-m model] [-t template] <file.pdf> [prompt]"
     return 1
   fi
+  [ -n "$model" ] && args+=(-m "$model")
+  [ -n "$template" ] && args+=(-t "$template")
+  local pdf="$1"
+  shift
   python -c "
 import sys, pymupdf
 doc = pymupdf.open(sys.argv[1])
 print('\n'.join(p.get_text() for p in doc))
-" "$1" | llm "${@:2}" #  -m qwen3.5:27b
+" "$pdf" | llm "${args[@]}" "$@"
 }
 
 pdffabric() {
@@ -96,6 +115,85 @@ import sys, pymupdf
 doc = pymupdf.open(sys.argv[1])
 print('\n'.join(p.get_text() for p in doc))
 " "$1" | fabric --model "$model" --pattern "$pattern"
+}
+
+ragask() {
+  local model="" collection="biblio" limit=10
+  local OPTIND opt
+  while getopts "m:c:l:h" opt; do
+    case "$opt" in
+      m) model="$OPTARG" ;;
+      c) collection="$OPTARG" ;;
+      l) limit="$OPTARG" ;;
+      *)
+        echo "Usage: ragask [-m model] [-c collection] [-l chain-limit] <prompt>"
+        echo "  -m  model (default: llm default model)"
+        echo "  -c  RAG collection (default: biblio)"
+        echo "  -l  chain limit (default: 10)"
+        return 1
+        ;;
+    esac
+  done
+  shift $((OPTIND - 1))
+  if [ -z "$1" ]; then
+    echo "Usage: ragask [-m model] [-c collection] [-l chain-limit] <prompt>"
+    return 1
+  fi
+  local args=()
+  [ -n "$model" ] && args+=(-m "$model")
+  args+=(-T "RAG(\"$collection\")" --chain-limit "$limit")
+  llm "${args[@]}" "$*"
+}
+
+pdfembed() {
+  local collection="biblio" model="qwen3-embedding"
+  local OPTIND opt
+  while getopts "c:m:h" opt; do
+    case "$opt" in
+      c) collection="$OPTARG" ;;
+      m) model="$OPTARG" ;;
+      *)
+        echo "Usage: pdfembed [-c collection] [-m model] <dir|file.pdf...>"
+        echo "  -c  llm collection name (default: biblio)"
+        echo "  -m  embedding model (default: qwen3-embedding)"
+        return 1
+        ;;
+    esac
+  done
+  shift $((OPTIND - 1))
+  if [ -z "$1" ]; then
+    echo "Usage: pdfembed [-c collection] [-m model] <dir|file.pdf...>"
+    return 1
+  fi
+  local tmpfile
+  tmpfile="$(mktemp)"
+  trap 'rm -f "$tmpfile"' RETURN
+  local files=()
+  for arg in "$@"; do
+    if [ -d "$arg" ]; then
+      while IFS= read -r -d '' f; do
+        files+=("$f")
+      done < <(find "$arg" -name '*.pdf' -print0 | sort -z)
+    else
+      files+=("$arg")
+    fi
+  done
+  if [ ${#files[@]} -eq 0 ]; then
+    echo "No PDF files found"
+    return 1
+  fi
+  for f in "${files[@]}"; do
+    local id
+    id="$(basename "$f" .pdf)"
+    python -c "
+import sys, pymupdf
+doc = pymupdf.open(sys.argv[1])
+print('\n'.join(p.get_text() for p in doc))
+" "$f" > "$tmpfile"
+    llm embed "$collection" "$id" -m "$model" -i "$tmpfile" --store
+    echo "embedded: $id"
+  done
+  echo "Done — ${#files[@]} files into collection '$collection'"
 }
 
 tree_size() {

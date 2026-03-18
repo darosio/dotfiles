@@ -146,7 +146,7 @@ ______________________________________________________________________
 ### Reading & literature
 
 ```bash
-ppl models default ...
+llm models default ...
 pdfllm paper.pdf "summarize in 300 words"
 ```
 
@@ -155,14 +155,6 @@ Use **Khoj** for cross-paper retrieval across your whole manuscript collection.
 ### Writing — proposals, grant sections, ideas
 
 `gptel` in Emacs with named directives:
-
-```elisp
-(setq gptel-directives
-  '((default  . "You are a biophysicist assistant. Be precise.")
-    (proposal . "Help write a scientific grant proposal. Use formal academic language. Flag speculative claims.")
-    (brainstorm . "Creative scientific collaborator. Challenge assumptions. Think across disciplines.")
-    (review   . "Critical peer reviewer. Identify logical gaps, missing controls, unsupported claims.")))
-```
 
 - Brainstorming: `deepseek-r1:32b` (best chain-of-thought)
 - Proposal writing: `qwen3.5:27b` (best instruction following)
