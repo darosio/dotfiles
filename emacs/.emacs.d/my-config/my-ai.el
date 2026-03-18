@@ -211,12 +211,38 @@
                                :required t))
                 :category "edit")
                )
+  (setq gptel-directives
+        '((default    . "You are a helpful assistant. Be concise and precise.")
+          (biophysics . "You are a biophysicist assistant. Be precise about units, statistics, and experimental methodology.")
+          (proposal   . "Help write a scientific grant proposal. Use formal academic language. Flag speculative claims. Structure with Specific Aims, Significance, Innovation, and Approach.")
+          (brainstorm . "You are a creative scientific collaborator. Challenge assumptions. Think across disciplines. Propose unexpected connections and alternative hypotheses.")
+          (review     . "You are a critical peer reviewer. Identify logical gaps, missing controls, unsupported claims, and statistical issues. Be constructive but thorough.")
+          (coding     . "You are an expert coding assistant. Provide high-quality code solutions, refactorings, and explanations. Prefer clarity over cleverness.")))
+
   (gptel-make-preset 'coding
-                     :description "A preset optimized for coding tasks"
-                     :backend "Ollama"                     ;gptel backend or backend name
-                     :model 'qwen3-coder:latest
-                     :system "You are an expert coding assistant. Your role is to provide high-quality code solutions, refactorings, and explanations."
+                     :description "Coding with qwen3.5:27b + buffer tools"
+                     :backend "Ollama"
+                     :model 'qwen3.5:27b
                      :tools '("read_buffer" "EditBuffer"))
+  (gptel-make-preset 'reasoning
+                     :description "Deep reasoning with deepseek-r1:32b"
+                     :backend "Ollama"
+                     :model 'deepseek-r1:32b)
+  (gptel-make-preset 'fast
+                     :description "Fast iteration with qwen3.5:35b-a3b MoE"
+                     :backend "Ollama"
+                     :model 'qwen3.5:35b-a3b)
+  (gptel-make-preset 'math
+                     :description "Math/science with phi4-reasoning:plus"
+                     :backend "Ollama"
+                     :model 'phi4-reasoning:plus)
+  (gptel-make-preset 'vision
+                     :description "Multimodal/vision with qwen3-vl:32b"
+                     :backend "Ollama"
+                     :model 'qwen3-vl:32b)
+  (gptel-make-preset 'copilot
+                     :description "GitHub Copilot cloud backend"
+                     :backend "Copilot")
   :hook
   (gptel-mode . visual-line-mode)  ;; The chats can have long lines.
   (gptel-post-stream-hook . gptel-auto-scroll)  ;; And can be pages long.

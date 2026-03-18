@@ -78,6 +78,10 @@ ollama launch claude --model qwen3.5:35b-a3b
 | Fast throwaway                 | OpenCode / CLI   | `ministral-3:14b`        |
 | Large context (whole codebase) | Gemini CLI       | cloud                    |
 
+### AI agent config files
+
+**Strategy:** maintain one `CLAUDE.md` per scope, symlink everywhere. Add a `## Workflows` section as natural language triggers for Copilot/Codex/Gemini where slash commands aren't available.
+
 ______________________________________________________________________
 
 ## 4. Khoj — self-hosted RAG
@@ -137,66 +141,12 @@ llm-rag is the lighter alternative if you want to build ad-hoc collections witho
 
 ______________________________________________________________________
 
-## 5. AI agent config files
-
-### File hierarchy
-
-```
-~/.claude/CLAUDE.md              ← global, single source of truth
-~/.claude/commands/typecheck.md  ← slash command: /typecheck
-~/.claude/commands/fitreview.md  ← slash command: /fitreview
-~/.claude/commands/docstring.md  ← slash command: /docstring
-~/.codex/instructions.md         → symlink to ~/.claude/CLAUDE.md
-~/.gemini/GEMINI.md              → symlink to ~/.claude/CLAUDE.md
-
-~/project/CLAUDE.md              ← project knowledge (committed to repo)
-~/project/GEMINI.md              → symlink to CLAUDE.md
-~/project/AGENTS.md              → symlink to CLAUDE.md
-```
-
-### Cross-tool compatibility
-
-| File            | Claude Code      | Copilot               | Codex         | Gemini CLI    |
-| --------------- | ---------------- | --------------------- | ------------- | ------------- |
-| `CLAUDE.md`     | ✓ native         | ✓ reads automatically | ✓ via symlink | ✓ via symlink |
-| `AGENTS.md`     | ✓                | ✓ native              | ✓ native      | —             |
-| `GEMINI.md`     | —                | —                     | —             | ✓ native      |
-| `commands/*.md` | ✓ slash commands | ✗                     | ✗             | ✗             |
-
-**Strategy:** maintain one `CLAUDE.md` per scope, symlink everywhere. Add a `## Workflows` section as natural language triggers for Copilot/Codex/Gemini where slash commands aren't available.
-
-### Setup script
-
-```bash
-mkdir -p ~/.claude ~/.codex ~/.gemini ~/.claude/commands
-cp global_CLAUDE.md ~/.claude/CLAUDE.md
-ln -sf ~/.claude/CLAUDE.md ~/.codex/instructions.md
-ln -sf ~/.claude/CLAUDE.md ~/.gemini/GEMINI.md
-
-# per project
-cd ~/projects/chloride_fitting
-ln -sf CLAUDE.md GEMINI.md
-ln -sf CLAUDE.md AGENTS.md
-```
-
-______________________________________________________________________
-
-## 6. Daily workflow map
+## 5. Daily workflow map
 
 ### Reading & literature
 
 ```bash
-# ad-hoc PDF Q&A
-python -c "import pymupdf; doc=pymupdf.open('paper.pdf'); \
-  print('\n'.join(p.get_text() for p in doc))" \
-  | llm -m ollama/qwen3.5:27b "what controls are missing?"
-
-# shell alias
-alias pdfllm='f(){ python -c "import pymupdf; \
-  doc=pymupdf.open(\"$1\"); \
-  print(\"\n\".join(p.get_text() for p in doc))" \
-  | llm -m ollama/qwen3.5:27b "${@:2}"; }; f'
-
+ppl models default ...
 pdfllm paper.pdf "summarize in 300 words"
 ```
 
@@ -278,7 +228,7 @@ Best for: "what are recent papers on ESM3 protein design", "current best practic
 
 ______________________________________________________________________
 
-## 7. Tool quick-reference
+## 6. Tool quick-reference
 
 | Tool         | Install                                    | Primary use               |
 | ------------ | ------------------------------------------ | ------------------------- |
@@ -288,7 +238,7 @@ ______________________________________________________________________
 | Claude Code  | `npm install -g @anthropic-ai/claude-code` | Agentic coding            |
 | OpenCode     | `npm install -g opencode-ai`               | Agentic coding (local)    |
 
-## 8. Consolidated daily map
+## 7. Consolidated daily map
 
 | Activity                 | Primary tool              | Secondary                        |
 | ------------------------ | ------------------------- | -------------------------------- |
