@@ -152,9 +152,10 @@
         gptel-expert-commands t
         gptel-track-media t
         gptel-log-level 'info
-        gptel-model 'mistral:latest ;; or 'deepseek-reasoner
+        gptel-model (if (string= (system-name) "whisker") 'ministral-3:latest 'qwen3.5:35b-a3b)
         gptel-backend
-        (gptel-make-ollama "Ollama" :stream t :host "localhost:11434" :models (get-ollama-models)))
+        (gptel-make-ollama "Ollama" :stream t :host "localhost:11434" :models (get-ollama-models))
+        gptel-display-buffer-action '((display-buffer-full-frame)))
   (gptel-make-deepseek "DeepSeek" :stream t :key my/deepseek-api-key)
   (gptel-make-gh-copilot "Copilot")
   (gptel-make-kagi "Kagi" :key my/kagi-api-key)
@@ -258,11 +259,16 @@
   (gptel-make-preset 'copilot
     :description "GitHub Copilot cloud backend"
     :backend "Copilot")
+  (gptel-make-preset 'search
+    :description "Web search — SearxNG + fetch via MCP"
+    :backend "Ollama" :model 'qwen3.5:35b-a3b
+    :system "Use the provided tools to search the web for up-to-date information. Always cite sources."
+    :pre (lambda () (gptel-mcp-connect '("searxng" "fetch") 'sync))
+    :tools '(:append ("searxng_web_search" "web_url_read" "fetch")))
   ;; host-specific overrides: repoint all Ollama presets to laptop models
   (when (string= (system-name) "whisker")
-    ;; default backend + model
-    (setq gptel-model 'ministral-3:latest
-          gptel-backend (gptel-make-ollama "Ollama"
+    ;; expand available models on whisker's Ollama backend
+    (setq gptel-backend (gptel-make-ollama "Ollama"
                           :host "localhost:11434"
                           :stream t
                           :models '(ministral-3:latest
@@ -298,7 +304,12 @@
     (gptel-make-preset 'vision
       :description "Vision with gemma3 — only local multimodal option"
       :backend "Ollama" :model 'gemma3:latest)
-    )
+    (gptel-make-preset 'search
+      :description "Web search — SearxNG + fetch via MCP"
+      :backend "Ollama" :model 'ministral-3:latest
+      :system "Use the provided tools to search the web for up-to-date information. Always cite sources."
+      :pre (lambda () (gptel-mcp-connect '("searxng" "fetch") 'sync))
+      :tools '(:append ("searxng_web_search" "web_url_read" "fetch"))))
   :hook
   (gptel-mode . visual-line-mode)  ;; The chats can have long lines.
   (gptel-post-stream-hook . gptel-auto-scroll)  ;; And can be pages long.
@@ -315,7 +326,7 @@
   :after gptel
   :custom (mcp-hub-servers
            `(;; Local custom scripts
-             ("searxng" . (:command "podman" :args ("attach" "--sig-proxy=false" "mcp-searxng")))
+             ("searxng" . (:command "podman" :args ("exec" "-i" "mcp-searxng" "node" "dist/index.js")))
              ;; Official & Community Servers
              ("filesystem" . (:command "npx" :args ("-y" "@modelcontextprotocol/server-filesystem" ,(getenv "HOME"))))
              ("fetch" . (:command "uvx" :args ("mcp-server-fetch")))
@@ -339,7 +350,8 @@
                                   :GRAPHLIT_ENVIRONMENT_ID "e48c582c-3523-4833-9e5f-037d87cf510b"
                                   :GRAPHLIT_JWT_SECRET "PjpJX7IRDdsMjQkc8pDxjHbF4LkyO8tBLTFTK/S1IqI=")))))
   :config (require 'mcp-hub)
-  :hook (after-init . mcp-hub-start-all-server))
+  :hook (after-init . (lambda ()
+                        (mcp-hub-start-all-server #'gptel-mcp-connect))))
 
 (use-package khoj
   :after org
