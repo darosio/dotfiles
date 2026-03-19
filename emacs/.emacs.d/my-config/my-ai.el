@@ -214,10 +214,10 @@
   (setq gptel-directives
         '((default    . "You are a helpful assistant. Be concise and precise.")
           (biophysics . "You are a biophysicist assistant. Be precise about units, statistics, and experimental methodology.")
-          (proposal   . "Help write a scientific grant proposal. Use formal academic language. Flag speculative claims. Structure with Specific Aims, Significance, Innovation, and Approach.")
+          (proposal   . "Help write a scientific grant proposal. Use formal academic language. Flag speculative claims. Structure with Specific Aims, Significance, Innovation, and Approach. When citing sources, use org-cite format: [cite:@AuthorYEAR]. Never invent citations; if a reference is uncertain, say so.")
           (brainstorm . "You are a creative scientific collaborator. Challenge assumptions. Suggest unexpected angles. Think across disciplines. Propose unexpected connections and alternative hypotheses. Be explicit about uncertainty and speculation.")
           (review     . "You are a critical peer reviewer. Identify logical gaps, missing controls, unsupported claims, and statistical issues. Be constructive but thorough.")
-          (writing    . "You are helping a biophysicist write scientific documents. Use formal academic language. Structure arguments clearly. Flag speculative claims. Prefer precise quantitative statements over vague qualitative ones.")
+          (writing    . "You are helping a biophysicist write scientific documents. Use formal academic language. Structure arguments clearly. Flag speculative claims. Prefer precise quantitative statements over vague qualitative ones. When citing sources, use org-cite format: [cite:@AuthorYEAR]. Never invent citations; if a reference is uncertain, say so.")
           (coding     . "You are an expert coding assistant. Provide high-quality code solutions, refactorings, and explanations. Prefer clarity over cleverness.")))
 
 
@@ -263,8 +263,20 @@
     :description "Web search — SearxNG + fetch via MCP"
     :backend "Ollama" :model 'qwen3.5:35b-a3b
     :system "Use the provided tools to search the web for up-to-date information. Always cite sources."
-    :pre (lambda () (gptel-mcp-connect '("searxng" "fetch") 'sync))
-    :tools '(:append ("searxng_web_search" "web_url_read" "fetch")))
+    :pre (lambda () (gptel-mcp-connect '("searxng" "fetcher") 'sync))
+    :tools '(:append ("searxng_web_search" "web_url_read" "fetch_url")))
+  (gptel-make-preset 'search-science
+    :description "Scientific literature search — PubMed/arXiv/Scholar via MCP"
+    :backend "Ollama" :model 'qwen3.5:35b-a3b
+    :system "You are a scientific literature assistant. Use searxng_web_search to find peer-reviewed literature. Prefer PubMed, arXiv, Google Scholar, and Semantic Scholar results. Cite as (AuthorYear, Journal). Highlight knowledge gaps and translational relevance."
+    :pre (lambda () (gptel-mcp-connect '("searxng" "fetcher") 'sync))
+    :tools '(:append ("searxng_web_search" "web_url_read" "fetch_url")))
+  (gptel-make-preset 'grant
+    :description "Grant writing — lit search + structured proposal sections"
+    :backend "Ollama" :model 'qwen3.5:27b
+    :system (alist-get 'proposal gptel-directives)
+    :pre (lambda () (gptel-mcp-connect '("searxng" "fetcher") 'sync))
+    :tools '(:append ("searxng_web_search" "web_url_read" "fetch_url")))
   ;; host-specific overrides: repoint all Ollama presets to laptop models
   (when (string= (system-name) "whisker")
     ;; expand available models on whisker's Ollama backend
@@ -308,8 +320,20 @@
       :description "Web search — SearxNG + fetch via MCP"
       :backend "Ollama" :model 'ministral-3:latest
       :system "Use the provided tools to search the web for up-to-date information. Always cite sources."
-      :pre (lambda () (gptel-mcp-connect '("searxng" "fetch") 'sync))
-      :tools '(:append ("searxng_web_search" "web_url_read" "fetch"))))
+      :pre (lambda () (gptel-mcp-connect '("searxng" "fetcher") 'sync))
+      :tools '(:append ("searxng_web_search" "web_url_read" "fetch_url")))
+    (gptel-make-preset 'search-science
+      :description "Scientific literature search"
+      :backend "Ollama" :model 'ministral-3:latest
+      :system "You are a scientific literature assistant. Use searxng_web_search to find peer-reviewed literature. Prefer PubMed, arXiv, Google Scholar. Cite as (AuthorYear, Journal)."
+      :pre (lambda () (gptel-mcp-connect '("searxng" "fetcher") 'sync))
+      :tools '(:append ("searxng_web_search" "web_url_read" "fetch_url")))
+    (gptel-make-preset 'grant
+      :description "Grant writing — lit search + proposal sections"
+      :backend "Ollama" :model 'ministral-3:latest
+      :system (alist-get 'proposal gptel-directives)
+      :pre (lambda () (gptel-mcp-connect '("searxng" "fetcher") 'sync))
+      :tools '(:append ("searxng_web_search" "web_url_read" "fetch_url"))))
   :hook
   (gptel-mode . visual-line-mode)  ;; The chats can have long lines.
   (gptel-post-stream-hook . gptel-auto-scroll)  ;; And can be pages long.
@@ -327,9 +351,11 @@
   :custom (mcp-hub-servers
            `(;; Local custom scripts
              ("searxng" . (:command "podman" :args ("exec" "-i" "mcp-searxng" "node" "dist/index.js")))
+             ("pdf" . (:command "python3"
+                                :args ("/home/dan/workspace/dotfiles/scripts/pdf-mcp.py")))
              ;; Official & Community Servers
              ("filesystem" . (:command "npx" :args ("-y" "@modelcontextprotocol/server-filesystem" ,(getenv "HOME"))))
-             ("fetch" . (:command "uvx" :args ("mcp-server-fetch")))
+             ("fetcher" . (:command "npx" :args ("-y" "fetcher-mcp")))
              ("github" . (:command "docker"
                                    :args ("run" "-i" "--rm"
                                           "-e" "GITHUB_PERSONAL_ACCESS_TOKEN"

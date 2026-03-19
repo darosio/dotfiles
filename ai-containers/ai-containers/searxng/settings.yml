@@ -11,16 +11,22 @@ server:
 engines:
   - name: google_scholar
     disabled: false
+    categories: [general, science]
   - name: pubmed
     disabled: false
+    categories: [general, science]
   - name: semantic_scholar
     disabled: false
+    categories: [general, science]
   - name: arxiv
     disabled: false
+    categories: [general, science]
   - name: crossref
     disabled: false
+    categories: [general, science]
   - name: wolframalpha
     disabled: false
+    categories: [general, science]
   - name: ahmia
     disabled: true
   - name: torch
@@ -28,11 +34,14 @@ engines:
   - name: wikidata
     disabled: true
 categories_as_tabs:
-  scientific:
-    - pubmed
-    - google_scholar
-    - semantic_scholar
-    - arxiv
+  general:
+    - general
+  science:
+    - science
+  news:
+    - news
+  images:
+    - images
 search:
   safe_search: 0
   autocomplete: ""

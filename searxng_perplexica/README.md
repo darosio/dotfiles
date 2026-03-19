@@ -1,148 +1,25 @@
-6️⃣ Optional next-level upgrades
-
 If you want to go full Emacs god-mode:
 
-🔗 org-roam + Perplexica (auto-create nodes from answers)
+- Emacs client for Vale
 
-📚 BibTeX enrichment (Perplexica → DOI → bibtex)
+- Org-roam integration (auto notes + backlinks)
+  📚 BibTeX enrichment (Perplexica → DOI → bibtex)
 
-🧪 Method comparison prompts stored as templates
+- Saved prompt templates for:
 
-Tune prompts specifically for scientific / biophysics queries
-
-______________________________________________________________________
-
-NEXT STEPS (what we’ll do next)
-
-In order:
-
-Emacs client for Perplexica (real package, not snippet)
-
-Org-roam integration (auto notes + backlinks)
-
-SearXNG tuning for science (PubMed, arXiv, CrossRef)
-
-Multi-model Ollama routing (fast vs deep models)
-
-Saved prompt templates for methods / grants / reviews
+  - methods
+  - grants
+  - reviews objection template
 
 ______________________________________________________________________
-
-(defun gptel-search-paper ()
-(interactive)
-(gptel-send "Search PubMed for this topic and summarize key papers."))
-
-🧠 Merge with Open-NotebookLM MCP
-
-______________________________________________________________________
-
-1️⃣ Grant-oriented search templates (designed for reviewers)
-
-These are reviewer-aligned, not generic Google queries.
-
-🔬 State of the art (SoTA)
-"recent advances" AND "{TOPIC}" AND (review OR overview) site:pubmed.ncbi.nlm.nih.gov
-
-🧠 Gap analysis (what’s missing)
-"{TOPIC}" AND (limitation OR challenge OR drawback OR unmet) review
-
-🚀 Innovation positioning
-"{TOPIC}" AND ("novel approach" OR "new method" OR "first demonstration")
-
-🧪 Feasibility / precedent
-"{TOPIC}" AND (proof-of-concept OR validation OR demonstrated)
-
-🏛️ Funding relevance (EU / NIH style)
-"{TOPIC}" AND (translational OR clinical OR scalable OR in vivo)
-
-2️⃣ MCP-aware system prompt (critical)
-
-This forces the LLM to use SearXNG correctly.
-
-(setq gptel-default-system-message
-"You are assisting with scientific grant writing.
-You MUST use the web_search tool for factual claims.
-Return structured sections with inline citations.
-Prefer review articles and primary literature.")
-3️⃣ Emacs implementation (drop-in)
-📄 gptel-grant.el
-(defun gptel--grant-search (topic template title)
-"Run a grant-oriented web search using MCP SearXNG."
-(gptel-request
-(format
-"Use web_search to run the following query:\\n\\n%s\\n\\n\
-Then write a section titled '%s' suitable for a grant proposal.
-Include 3–5 bullet points and inline citations."
-(format template topic)
-title)))
-
-(defun gptel-grant-sota (topic)
-(interactive "sGrant topic: ")
-(gptel--grant-search
-topic
-""recent advances" AND "%s" AND (review OR overview)""
-"State of the Art"))
-
-(defun gptel-grant-gap (topic)
-(interactive "sGrant topic: ")
-(gptel--grant-search
-topic
-""%s" AND (limitation OR challenge OR unmet) review"
-"Current Limitations and Gaps"))
-
-(defun gptel-grant-innovation (topic)
-(interactive "sGrant topic: ")
-(gptel--grant-search
-topic
-""%s" AND ("novel approach" OR "new method")"
-"Innovation and Novelty"))
-
-(defun gptel-grant-feasibility (topic)
-(interactive "sGrant topic: ")
-(gptel--grant-search
-topic
-""%s" AND (proof-of-concept OR validation)"
-"Feasibility and Preliminary Evidence"))
-
-(require 'gptel-grant)
-
-______________________________________________________________________
-
-7️⃣ Next upgrades (recommended)
-
-In order of impact:
-
-🔗 Auto-convert citations → org-cite
-
-🧬 Add PubMed-only MCP
 
 📄 Add local PDF MCP (NotebookLM equivalent)
-
-🧠 Cache searches per grant
-
-📊 Add “reviewer objection” template
-
-If you want, next I can:
-
-Convert this into a full ERC proposal scaffold
 
 Add one-command literature scan
 
 Wire this into BibTeX / Zotero
 
-Just tell me which one.
-
 ______________________________________________________________________
-
-Excellent — this gives you a true local NotebookLM, but better, because it is:
-
-scriptable
-
-citation-safe
-
-Org-native
-
-MCP-based (future-proof)
 
 Below is a clean, composable design that fits your Emacs + gptel setup and your scientific writing needs.
 
@@ -179,72 +56,6 @@ filename + page numbers
 No embeddings required (keeps it simple & transparent)
 
 A2️⃣ Minimal PDF MCP server
-📄 pdf-mcp.py
-#!/usr/bin/env python3
-import sys
-import json
-from pathlib import Path
-import subprocess
-
-def extract_text(pdf):
-\# fast + reliable
-result = subprocess.run(
-["pdftotext", "-layout", pdf, "-"],
-capture_output=True,
-text=True,
-check=True,
-)
-return result.stdout
-
-def main():
-for line in sys.stdin:
-req = json.loads(line)
-
-```
-    if req["method"] == "tools/list":
-        print(json.dumps({
-            "tools": [{
-                "name": "read_pdf",
-                "description": "Read and extract text from a local PDF",
-                "input_schema": {
-                    "type": "object",
-                    "properties": {
-                        "path": {"type": "string"},
-                    },
-                    "required": ["path"]
-                }
-            }]
-        }), flush=True)
-
-    elif req["method"] == "tools/call":
-        path = req["params"]["arguments"]["path"]
-        text = extract_text(path)
-
-        print(json.dumps({
-            "content": [{
-                "type": "text",
-                "text": f"FILE: {Path(path).name}\n\n{text[:20000]}"
-            }]
-        }), flush=True)
-```
-
-if __name__ == "__main__":
-main()
-
-Dependencies:
-
-sudo pacman -S poppler
-
-A3️⃣ Register PDF MCP in gptel
-(setq gptel-mcp-servers
-\`((searxng
-:command ("python3" "/home/dan/bin/searxng-mcp.py")
-:description "Web search via SearXNG")
-(pdf
-:command ("python3" "/home/dan/bin/pdf-mcp.py")
-:description "Local PDF reader")))
-
-Restart Emacs.
 
 A4️⃣ Usage
 

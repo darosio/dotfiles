@@ -110,7 +110,99 @@ Keybindings reserved for users: `C-c <letter>` and `F5`–`F9`.
 
 ### AI
 
-- **gptel**
+- **gptel** — LLM chat and inline editing; config in `my-ai.el`
+- **ellama** — alternative LLM interface via `llm`
+- **mcp** — Model Context Protocol tool integration (SearxNG, fetcher, GitHub,
+  filesystem, sequential-thinking, context7, …)
+- **khoj** — self-hosted RAG over local documents and web (`M-s M-k`)
+- **copilot** — inline completions in `prog-mode` (TAB / M-TAB)
+
+#### gptel Presets (`C-c <return> p`)
+
+Presets select backend, model, system prompt, and tools in one step.
+Host-specific overrides apply automatically on `whisker` (laptop).
+
+| Preset           | Model                 | Notes                                                 |
+| ---------------- | --------------------- | ----------------------------------------------------- |
+| `writing`        | qwen3.5:27b           | `writing` directive — formal academic prose           |
+| `brainstorm`     | deepseek-r1:32b       | `brainstorm` directive — challenge assumptions        |
+| `coding`         | qwen3.5:27b           | `coding` directive + `read_buffer`/`EditBuffer` tools |
+| `review`         | qwen3.5:27b           | `review` directive — peer-review style critique       |
+| `reasoning`      | deepseek-r1:32b       | deep chain-of-thought, no tools                       |
+| `fast`           | qwen3.5:35b-a3b (MoE) | fast iteration                                        |
+| `math`           | phi4-reasoning:plus   | math/science reasoning                                |
+| `vision`         | qwen3-vl:32b          | multimodal / image input                              |
+| `search`         | qwen3.5:35b-a3b       | web search via SearxNG + fetcher MCP tools            |
+| `search-science` | qwen3.5:35b-a3b       | as `search` with science-focused system prompt        |
+| `grant`          | qwen3.5:27b           | `proposal` directive + MCP search (see Grant tools)   |
+| `copilot`        | —                     | GitHub Copilot cloud backend                          |
+
+#### MCP Tools
+
+MCP servers start on Emacs init and wire into gptel automatically.
+`<Launch5> M` — connect interactively.
+
+| Server                | Command                                         | Tools                                                       |
+| --------------------- | ----------------------------------------------- | ----------------------------------------------------------- |
+| `searxng`             | `podman exec -i mcp-searxng node dist/index.js` | `searxng_web_search`, `web_url_read`                        |
+| `pdf`                 | `python3 scripts/pdf-mcp.py`                    | `read_pdf` — local PDF text extraction with page markers    |
+| `fetcher`             | `npx -y fetcher-mcp`                            | `fetch_url`, `fetch_urls` (Playwright, handles JS/PDF/DOCX) |
+| `github`              | Docker `ghcr.io/github/github-mcp-server`       | PR/issue/repo tools                                         |
+| `filesystem`          | `npx @modelcontextprotocol/server-filesystem`   | file read/write                                             |
+| `sequential-thinking` | npx                                             | structured reasoning chains                                 |
+| `context7`            | npx `@upstash/context7-mcp`                     | library documentation lookup                                |
+| `duckduckgo`          | `uvx duckduckgo-mcp-server`                     | DDG web search                                              |
+| `nixos`               | `uvx mcp-nixos`                                 | NixOS/home-manager option lookup                            |
+
+#### Grant Writing Tools (`<f7> R`)
+
+Interactive functions that fire async `gptel-request` calls with the `proposal`
+system directive, collecting results in a dedicated `*Grant: TOPIC*` org buffer.
+MCP SearxNG + fetcher are connected automatically before each request.
+
+| Key | Command                      | Search strategy                                                         |
+| --- | ---------------------------- | ----------------------------------------------------------------------- |
+| `s` | `gptel-grant-sota`           | `"recent advances" AND TOPIC AND (review OR overview)`                  |
+| `g` | `gptel-grant-gap`            | `TOPIC AND (limitation OR challenge OR unmet) review`                   |
+| `i` | `gptel-grant-innovation`     | `TOPIC AND ("novel approach" OR "new method" OR "first demonstration")` |
+| `f` | `gptel-grant-feasibility`    | `TOPIC AND ("proof-of-concept" OR validation OR demonstrated)`          |
+| `r` | `gptel-grant-funding`        | `TOPIC AND (translational OR clinical OR scalable OR "in vivo")`        |
+| `a` | `gptel-grant-all`            | All five above, concurrently                                            |
+| `d` | `my/doi-to-bibtex`           | Fetch BibTeX from doi.org; copy to kill-ring (add via Zotero)           |
+| `c` | `gptel-org-insert-citations` | Normalise `(AuthorYEAR)` citations in buffer to `[cite:@AuthorYEAR]`    |
+
+`my/doi-to-bibtex` accepts a bare DOI (`10.1016/...`) or a full `doi.org` URL.
+The BibTeX is copied to the kill-ring; add to your library via **Zotero → Add Item by
+Identifier** (`Ctrl+Shift+N`) since `main.bib` is auto-generated by Zotero's BetterBibTeX
+plugin and must not be edited directly.
+
+#### PDF MCP — Local PDF Reader
+
+`scripts/pdf-mcp.py` is a minimal MCP server that exposes one tool, `read_pdf`, backed
+by **pymupdf**. It speaks JSON-RPC 2.0 over STDIO and returns extracted text with
+per-page markers (up to 30 000 chars).
+
+Enable in gptel by connecting the `pdf` server:
+
+```elisp
+(gptel-mcp-connect '("pdf") 'sync)
+```
+
+Then prompt naturally:
+
+```
+Read the PDF at ~/papers/ChlorON_review_2024.pdf.
+Summarize the key findings on pH independence and cite the paper.
+```
+
+The model calls `read_pdf`, reads the text, and cites by filename. Combine with
+SearxNG for a full NotebookLM-style workflow:
+
+```
+Search recent literature on pH-independent chloride biosensors.
+Read ~/papers/ChlorON_review_2024.pdf for my own preliminary data.
+Write a State of the Art section with [cite:@AuthorYEAR] citations.
+```
 
 ### UI & Window Management
 
