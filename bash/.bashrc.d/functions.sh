@@ -112,7 +112,7 @@ pdfllm() {
       t) template="$OPTARG" ;;
       *)
         echo "Usage: pdfllm [-m model] [-t template] <file.pdf> [prompt]"
-        echo "  -m  model (default: llm default model)"
+        echo "  -m  model (default: llm default, set with: llm models default)"
         echo "  -t  template (e.g. fabric:extract_wisdom)"
         return 1
         ;;
@@ -135,7 +135,7 @@ print('\n'.join(p.get_text() for p in doc))
 }
 
 pdffabric() {
-  local pattern="extract_wisdom" model="qwen3.5:35b-a3b"
+  local pattern="extract_wisdom" model=""
   local OPTIND opt
   while getopts "p:m:h" opt; do
     case "$opt" in
@@ -144,7 +144,7 @@ pdffabric() {
       *)
         echo "Usage: pdffabric [-p pattern] [-m model] <file.pdf>"
         echo "  -p  fabric pattern (default: extract_wisdom)"
-        echo "  -m  model (default: qwen3.5:35b-a3b)"
+        echo "  -m  model (default: fabric default, set with: fabric -d)"
         return 1
         ;;
     esac
@@ -158,7 +158,7 @@ pdffabric() {
 import sys, pymupdf
 doc = pymupdf.open(sys.argv[1])
 print('\n'.join(p.get_text() for p in doc))
-" "$1" | fabric --model "$model" --pattern "$pattern"
+" "$1" | fabric ${model:+--model "$model"} --pattern "$pattern"
 }
 
 ragask() {
