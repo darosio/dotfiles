@@ -277,6 +277,11 @@
     :system (alist-get 'proposal gptel-directives)
     :pre (lambda () (gptel-mcp-connect '("searxng" "fetcher") 'sync))
     :tools '(:append ("searxng_web_search" "web_url_read" "fetch_url")))
+  (gptel-make-preset 'pdf
+    :description "Local PDF reader — extract and discuss PDF content via MCP"
+    :backend "Ollama" :model 'qwen3.5:35b-a3b
+    :system "You have access to the read_pdf tool. When the user mentions a PDF path, call read_pdf with its absolute path first, then answer based on the extracted text. Always cite by filename."
+    :pre (lambda () (gptel-mcp-connect '("pdf") 'sync)))
   ;; host-specific overrides: repoint all Ollama presets to laptop models
   (when (string= (system-name) "whisker")
     ;; expand available models on whisker's Ollama backend
@@ -333,7 +338,12 @@
       :backend "Ollama" :model 'ministral-3:latest
       :system (alist-get 'proposal gptel-directives)
       :pre (lambda () (gptel-mcp-connect '("searxng" "fetcher") 'sync))
-      :tools '(:append ("searxng_web_search" "web_url_read" "fetch_url"))))
+      :tools '(:append ("searxng_web_search" "web_url_read" "fetch_url")))
+    (gptel-make-preset 'pdf
+      :description "Local PDF reader via MCP"
+      :backend "Ollama" :model 'ministral-3:latest
+      :system "You have access to the read_pdf tool. When the user mentions a PDF path, call read_pdf with its absolute path first, then answer based on the extracted text. Always cite by filename."
+      :pre (lambda () (gptel-mcp-connect '("pdf") 'sync))))
   :hook
   (gptel-mode . visual-line-mode)  ;; The chats can have long lines.
   (gptel-post-stream-hook . gptel-auto-scroll)  ;; And can be pages long.
@@ -351,8 +361,9 @@
   :custom (mcp-hub-servers
            `(;; Local custom scripts
              ("searxng" . (:command "podman" :args ("exec" "-i" "mcp-searxng" "node" "dist/index.js")))
-             ("pdf" . (:command "python3"
-                                :args ("~/.local/bin/pdf-mcp.py")))
+             ("pdf" . (:command "uv"
+                                :args ("run" "--with" "pymupdf"
+                                       "/home/dan/.local/bin/pdf-mcp.py")))
              ;; Official & Community Servers
              ("filesystem" . (:command "npx" :args ("-y" "@modelcontextprotocol/server-filesystem" ,(getenv "HOME"))))
              ("fetcher" . (:command "npx" :args ("-y" "fetcher-mcp")))

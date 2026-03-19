@@ -27,7 +27,7 @@ TOOLS = [
         "description": (
             "Extract text from a local PDF file with page markers. "
             f"Returns up to {_MAX_CHARS} characters. "
-            "Use the file's absolute path."
+            "Accepts absolute paths or paths starting with ~ (home directory)."
         ),
         "inputSchema": {
             "type": "object",
@@ -58,6 +58,7 @@ def extract_text(pdf_path: str, max_chars: int = _MAX_CHARS) -> str:
     str
         Extracted text with page markers, truncated at *max_chars*.
     """
+    pdf_path = str(Path(pdf_path).expanduser().resolve())
     doc = pymupdf.open(pdf_path)
     pages: list[str] = []
     total = 0

@@ -135,6 +135,7 @@ Host-specific overrides apply automatically on `whisker` (laptop).
 | `search`         | qwen3.5:35b-a3b       | web search via SearxNG + fetcher MCP tools            |
 | `search-science` | qwen3.5:35b-a3b       | as `search` with science-focused system prompt        |
 | `grant`          | qwen3.5:27b           | `proposal` directive + MCP search (see Grant tools)   |
+| `pdf`            | qwen3.5:35b-a3b       | connects `pdf` MCP, system prompt instructs read_pdf  |
 | `copilot`        | —                     | GitHub Copilot cloud backend                          |
 
 #### MCP Tools
