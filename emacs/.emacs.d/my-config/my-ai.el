@@ -179,7 +179,6 @@
   (gptel-make-gh-copilot "Copilot")
   ;; Enable tool use
   (setq gptel-use-tools t)
-  ;; Add a tool to gptel-tools
   (add-to-list 'gptel-tools
                (gptel-make-tool
                 :name "read_buffer"
@@ -192,7 +191,8 @@
                 :args (list '(:name "buffer"
                                     :type string
                                     :description "The name of the buffer whose contents are to be retrieved"))
-                :category "emacs")
+                :category "emacs"))
+  (add-to-list 'gptel-tools
                (gptel-make-tool
                 :name "EditBuffer"
                 :function #'codel-edit-buffer
@@ -209,21 +209,36 @@
                                :type string
                                :description "Text to replace old_string with"
                                :required t))
-                :category "edit")
-               )
+                :category "edit"))
   (setq gptel-directives
         '((default    . "You are a helpful assistant. Be concise and precise.")
           (biophysics . "You are a biophysicist assistant. Be precise about units, statistics, and experimental methodology.")
           (proposal   . "Help write a scientific grant proposal. Use formal academic language. Flag speculative claims. Structure with Specific Aims, Significance, Innovation, and Approach.")
-          (brainstorm . "You are a creative scientific collaborator. Challenge assumptions. Think across disciplines. Propose unexpected connections and alternative hypotheses.")
+          (brainstorm . "You are a creative scientific collaborator. Challenge assumptions. Suggest unexpected angles. Think across disciplines. Propose unexpected connections and alternative hypotheses. Be explicit about uncertainty and speculation.")
           (review     . "You are a critical peer reviewer. Identify logical gaps, missing controls, unsupported claims, and statistical issues. Be constructive but thorough.")
+          (writing    . "You are helping a biophysicist write scientific documents. Use formal academic language. Structure arguments clearly. Flag speculative claims. Prefer precise quantitative statements over vague qualitative ones.")
           (coding     . "You are an expert coding assistant. Provide high-quality code solutions, refactorings, and explanations. Prefer clarity over cleverness.")))
 
+
+  ;; presets select the right model + backend, system prompt from directives above
+  (gptel-make-preset 'writing
+    :description "Scientific writing — proposals, manuscripts"
+    :backend "Ollama" :model 'qwen3.5:27b
+    :system (alist-get 'writing gptel-directives))
+  (gptel-make-preset 'brainstorm
+    :description "Scientific ideation — explore, challenge, connect"
+    :backend "Ollama" :model 'deepseek-r1:32b
+    :system (alist-get 'brainstorm gptel-directives))
   (gptel-make-preset 'coding
     :description "Coding with qwen3.5:27b + buffer tools"
-    :backend "Ollama"
-    :model 'qwen3.5:27b
+    :backend "Ollama" :model 'qwen3.5:27b
+    :system (alist-get 'coding gptel-directives)
     :tools '("read_buffer" "EditBuffer"))
+  (gptel-make-preset 'review
+    :description "Critical peer review — gaps, controls, statistics"
+    :backend "Ollama" :model 'qwen3.5:27b
+    :system (alist-get 'review gptel-directives))
+
   (gptel-make-preset 'reasoning
     :description "Deep reasoning with deepseek-r1:32b"
     :backend "Ollama"
@@ -243,10 +258,52 @@
   (gptel-make-preset 'copilot
     :description "GitHub Copilot cloud backend"
     :backend "Copilot")
+  ;; host-specific overrides: repoint all Ollama presets to laptop models
+  (when (string= (system-name) "whisker")
+    ;; default backend + model
+    (setq gptel-model 'ministral-3:latest
+          gptel-backend (gptel-make-ollama "Ollama"
+                          :host "localhost:11434"
+                          :stream t
+                          :models '(ministral-3:latest
+                                    qwen3.5:4b
+                                    gemma3:latest)))
+    (gptel-make-preset 'writing
+      :description "Writing with gemma3 — good multilingual Italian/English"
+      :backend "Ollama" :model 'gemma3:latest
+      :system (alist-get 'writing gptel-directives))
+    (gptel-make-preset 'brainstorm
+      :description "Brainstorm with ministral-3"
+      :backend "Ollama" :model 'ministral-3:latest
+      :system (alist-get 'brainstorm gptel-directives))
+    (gptel-make-preset 'coding
+      :description "Coding with qwen3.5:4b — fastest response for completions"
+      :backend "Ollama" :model 'qwen3.5:4b
+      :system (alist-get 'coding gptel-directives)
+      :tools '("read_buffer" "EditBuffer"))
+    (gptel-make-preset 'review
+      :description "Peer review with ministral-3 — best quality locally"
+      :backend "Ollama" :model 'ministral-3:latest
+      :system (alist-get 'review gptel-directives))
+
+    (gptel-make-preset 'reasoning
+      :description "Reasoning with ministral-3"
+      :backend "Ollama" :model 'ministral-3:latest)
+    (gptel-make-preset 'fast
+      :description "Fast with qwen3.5:4b"
+      :backend "Ollama" :model 'qwen3.5:4b)
+    (gptel-make-preset 'math
+      :description "Math with ministral-3"
+      :backend "Ollama" :model 'ministral-3:latest)
+    (gptel-make-preset 'vision
+      :description "Vision with gemma3 — only local multimodal option"
+      :backend "Ollama" :model 'gemma3:latest)
+    )
   :hook
   (gptel-mode . visual-line-mode)  ;; The chats can have long lines.
   (gptel-post-stream-hook . gptel-auto-scroll)  ;; And can be pages long.
   )
+
 
 (use-package gptel-aibo
   :after gptel
