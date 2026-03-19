@@ -145,7 +145,7 @@ MCP servers start on Emacs init and wire into gptel automatically.
 | Server                | Command                                         | Tools                                                       |
 | --------------------- | ----------------------------------------------- | ----------------------------------------------------------- |
 | `searxng`             | `podman exec -i mcp-searxng node dist/index.js` | `searxng_web_search`, `web_url_read`                        |
-| `pdf`                 | `python3 scripts/pdf-mcp.py`                    | `read_pdf` — local PDF text extraction with page markers    |
+| `pdf`                 | `python3 ~/.local/bin/pdf-mcp.py`               | `read_pdf` — local PDF text extraction with page markers    |
 | `fetcher`             | `npx -y fetcher-mcp`                            | `fetch_url`, `fetch_urls` (Playwright, handles JS/PDF/DOCX) |
 | `github`              | Docker `ghcr.io/github/github-mcp-server`       | PR/issue/repo tools                                         |
 | `filesystem`          | `npx @modelcontextprotocol/server-filesystem`   | file read/write                                             |

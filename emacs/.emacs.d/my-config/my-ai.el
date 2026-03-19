@@ -352,7 +352,7 @@
            `(;; Local custom scripts
              ("searxng" . (:command "podman" :args ("exec" "-i" "mcp-searxng" "node" "dist/index.js")))
              ("pdf" . (:command "python3"
-                                :args ("/home/dan/workspace/dotfiles/scripts/pdf-mcp.py")))
+                                :args ("~/.local/bin/pdf-mcp.py")))
              ;; Official & Community Servers
              ("filesystem" . (:command "npx" :args ("-y" "@modelcontextprotocol/server-filesystem" ,(getenv "HOME"))))
              ("fetcher" . (:command "npx" :args ("-y" "fetcher-mcp")))
