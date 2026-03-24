@@ -19,10 +19,12 @@ fi
 # Sets OLLAMA_HOST, OLLAMA_MODELS, OLLAMA_CONTEXT_LENGTH (65536 on workstation, 8192 on laptop)
 sudo mkdir -p /etc/systemd/system/ollama.service.d
 if [ "$(hostname)" = "whisker" ]; then
-  sudo stow -t / 2root.ollama.whisker
+  cd 2root.ollama.whisker || return
 else
-  sudo stow -t / 2root.ollama
+  cd 2root.ollama || return
 fi
+sudo cp --parents etc/systemd/system/ollama.service.d/override.conf /
+cd ../
 
 sudo systemctl daemon-reload
 sudo systemctl enable --now ollama
