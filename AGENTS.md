@@ -250,3 +250,62 @@ The one thing worth doing immediately is setting up the gptel-directives presets
 ______________________________________________________________________
 
 *Generated from conversation — March 2026*
+
+## TOD / NEXT
+
+- Emacs client for Vane
+
+- Org-roam integration (auto notes + backlinks)
+
+🧠 Chunking + relevance filtering
+📄 Folder-level PDF ingestion
+
+\_🧠 Cache MCP outputs per project
+
+______________________________________________________________________
+
+This is state-of-the-art scientific writing infrastructure.
+
+______________________________________________________________________
+
+🧭 What we can do next
+
+Auto-expand into multiple SearXNG calls (Khoj)
+2️⃣ Local PDF MCP (NotebookLM equivalent)
+Index PDFs
+Ask questions across your own corpus
+Combine with SearXNG citations
+
+______________________________________________________________________
+
+personal ollama model like
+
+cat > ~/models/daniele-research.Modelfile \<< 'EOF'
+FROM qwen3.5:27b
+PARAMETER temperature 0.7
+PARAMETER top_p 0.9
+PARAMETER num_ctx 65536
+SYSTEM "You are a biophysicist research assistant. Be precise about units, statistics, and experimental methodology. Flag speculative claims. When citing sources use org-cite format [cite:@AuthorYEAR]. Never invent citations."
+EOF
+
+ollama create daniele-research -f ~/models/daniele-research.Modelfile
+
+cat > ~/models/daniele-proposal.Modelfile \<< 'EOF'
+FROM qwen3.5:27b
+PARAMETER temperature 0.4
+PARAMETER top_p 0.85
+PARAMETER num_ctx 65536
+SYSTEM "You are helping write a scientific grant proposal (ERC/PRIN/Horizon style). Use formal academic language. Structure with Specific Aims, Significance, Innovation, and Approach. Flag speculative claims. Prefer quantitative statements. Use org-cite format for citations."
+EOF
+
+ollama create daniele-proposal -f ~/models/daniele-proposal.Modelfile
+
+cat > ~/models/daniele-brainstorm.Modelfile \<< 'EOF'
+FROM deepseek-r1:32b
+PARAMETER temperature 0.9
+PARAMETER top_p 0.95
+PARAMETER num_ctx 65536
+SYSTEM "You are a creative scientific collaborator. Challenge assumptions. Think across disciplines. Propose unexpected connections. Be explicit about speculation vs established fact."
+EOF
+
+ollama create daniele-brainstorm -f ~/models/daniele-brainstorm.Modelfile

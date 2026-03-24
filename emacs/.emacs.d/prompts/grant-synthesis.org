@@ -1,0 +1,233 @@
+#+TITLE: Grant & Literature Synthesis Prompts
+#+AUTHOR: Daniele
+#+DESCRIPTION: Reusable gptel prompt templates for scientific writing.
+#+STARTUP: overview
+
+Use these sections as system context or inline prompts in gptel.
+Add the whole file or a single section via =<Launch5> c A= (add file) or
+=<Launch5> c a= (add region).
+
+* Literature synthesis
+
+You are writing a critical literature synthesis on a specific topic.
+
+Steps:
+1. Run 4–5 targeted searxng_web_search calls covering:
+   clinical/biological need, current technologies, key limitations,
+   competing approaches, and recent performance benchmarks
+2. For each paper found, extract the DOI and call zotero_lookup
+   - If found: cite as [cite:@Key]
+   - If not found: report DOI: 10.xxxx/xxx
+3. Group results by sensor scaffold and sensing mechanism
+4. Identify unresolved limitations and open questions
+5. Cite all factual claims
+
+Output in structured bullet points.
+Never invent citation keys.
+
+* Grant writing
+
+** State of the art
+
+Search the literature and summarize the current state of the field.
+Run separate searxng_web_search calls for:
+- "current [technology] approaches clinical performance"
+- "limitations [technology] unresolved challenges"
+- "unmet need [clinical context]"
+
+Focus on:
+- Dominant approaches and their underlying principles
+- Quantitative performance benchmarks (sensitivity, selectivity, range)
+- Unresolved technical limitations
+- Unmet clinical or translational needs
+
+Cite each claim with [cite:@Key] (zotero_lookup) or report the DOI.
+
+** Innovation
+
+Explain why current approaches fail to meet the stated need.
+Structure as:
+- Specific limitation of existing technology
+- Why it has not been solved
+- How the proposed approach addresses it
+
+Be precise and quantitative. Flag speculative claims explicitly.
+
+** Feasibility
+
+Extract prior validation data from the provided PDFs or Zotero library.
+For each data point:
+- State the source (cite with [cite:@Key])
+- Report the measured value with units and experimental conditions
+- Note robustness, reproducibility, and calibration strategy
+
+** Expected outcomes
+
+Predict performance gains quantitatively.
+For each outcome:
+- State the measurable endpoint
+- Provide a realistic target range based on prior art
+- Identify the primary risk and mitigation strategy
+
+* NIH (R01 / R21)
+
+Structure: Specific Aims → Significance → Innovation → Approach.
+Page limits: Specific Aims 1 page; Research Strategy 12 pages (R01) or 6 pages (R21).
+
+** Specific Aims
+
+One page. Structure:
+- Opening paragraph: clinical/scientific problem and its importance (2–3 sentences)
+- Gap statement: what is unknown or unresolved
+- Hypothesis: one clear, testable central hypothesis
+- Aims: 2–3 numbered aims, each with a measurable deliverable
+- Closing: expected impact if aims are achieved
+
+Do not cite more than 3–4 references. Be direct. Avoid passive voice.
+
+** Significance
+
+Search literature for disease burden, current standard of care, and unmet need.
+Run searxng_web_search for: epidemiology, clinical outcomes, current diagnostic/therapeutic gaps.
+Cite all statistics with [cite:@Key]. Quantify wherever possible (prevalence, cost, mortality).
+
+** Innovation
+
+Position the proposal relative to current state of the art.
+- What has not been done before (cite prior art)
+- Why the conceptual or technical advance is non-obvious
+- What paradigm shift this work enables
+
+** Approach
+
+Break into aims. For each aim:
+- Rationale (1 sentence)
+- Experimental design (methods, controls, sample sizes)
+- Expected results and interpretation
+- Potential pitfalls and alternative strategies
+
+* ERC (Starting / Consolidator / Advanced)
+
+Structure: Excellence → Impact → Implementation.
+ERC values: scientific excellence, novelty, and the PI's ability to execute.
+Avoid clinical framing — emphasise fundamental discovery and conceptual advance.
+
+** Excellence
+
+Describe the frontier the proposal addresses.
+- What is the open question? Why does it matter to science?
+- What is the state of knowledge? (cite 6–8 key papers)
+- What is the breakthrough idea? Why now?
+
+Run searxng_web_search for recent reviews and competing groups.
+Cite with [cite:@Key].
+
+** Impact
+
+- Scientific impact: what new knowledge is generated
+- Longer-term potential: downstream applications, cross-disciplinary relevance
+- PI track record: highlight prior results that demonstrate capability (use [cite:@Key])
+
+** Implementation
+
+- Work packages with clear milestones and deliverables
+- Risk assessment: technical risks and contingency plans
+- Resources: equipment, collaborators, time allocation per aim
+
+* Horizon Europe (Research & Innovation Action)
+
+Structure: Excellence → Impact → Implementation (same as ERC but with stronger
+emphasis on EU societal challenges, TRL progression, and consortium justification).
+
+** Excellence (Horizon)
+
+- Scientific/technical objectives clearly linked to the call topic
+- State of the art (cite 5–8 papers; use searxng_web_search)
+- Innovation beyond current TRL: specify starting and target TRL
+- Methodology: approaches, validation strategy, interdisciplinary elements
+
+** Impact (Horizon)
+
+- Expected outcomes aligned to the work programme expected outcomes
+- Quantified KPIs where possible (sensitivity, throughput, cost reduction)
+- Pathway to exploitation: IP, standards, scale-up, clinical translation
+- EU added value: why this requires a European consortium
+
+** Implementation (Horizon)
+
+- Work packages, tasks, deliverables, milestones with months
+- Gantt chart outline (describe in prose if not rendering tables)
+- Consortium: each partner's role and unique contribution
+- Risk register: likelihood × impact × mitigation for top 5 risks
+
+* Methods
+
+** Experimental methods section
+
+Write a Methods section for a primary research paper.
+For each subsystem or procedure:
+- State the purpose of the method in one sentence
+- Describe materials with supplier, catalogue number, and purity where relevant
+- Give step-by-step protocol in past tense, passive voice
+- State instrument settings (wavelengths, voltages, frame rates, etc.)
+- Describe controls and replicates (n = ?, biological vs technical)
+- Note statistical tests and software versions used
+
+Provide enough detail for independent replication.
+Never invent reagent names or catalogue numbers.
+
+** Calibration and validation
+
+Describe the calibration and validation strategy for a measurement system.
+Include:
+- Calibrant preparation (concentrations, buffers, pH range)
+- Calibration curve fitting (model, R², residuals)
+- Limit of detection and limit of quantification with calculation method
+- Selectivity: tested interferents and rejection criteria
+- Stability: storage conditions, shelf life, run-to-run CV
+- Cross-validation: reference method and agreement statistics (Bland–Altman or similar)
+
+Cite analogous validated methods from literature with [cite:@Key].
+
+** Statistical analysis
+
+Write a Statistical Analysis subsection.
+- State the software and version
+- Describe normality testing
+- Justify parametric vs non-parametric tests
+- Report sample sizes and how they were determined (power analysis if applicable)
+- Define the primary endpoint and α threshold
+- Describe correction for multiple comparisons if used
+
+* Reviewer objection simulation
+
+You are a rigorous peer reviewer for a high-impact journal (Nature Methods /
+PNAS / Analytical Chemistry). Your task is to anticipate and articulate the
+most likely reviewer objections to the manuscript or proposal I provide.
+
+For each objection:
+1. State the concern precisely as a reviewer would write it
+2. Rate severity: Major / Minor
+3. Suggest a response strategy: additional experiment, clarification, or reframing
+4. If an experiment is suggested, describe it concisely (controls, n, expected result)
+
+Cover at least:
+- Methodological concerns (controls, specificity, artefacts)
+- Statistical concerns (sample size, multiple comparisons, effect size)
+- Novelty concerns (how is this different from [prior art]?)
+- Translational concerns (clinical relevance, physiological range)
+- Reproducibility concerns (reagent availability, protocol clarity)
+
+Be specific. Do not simulate polite reviewers.
+Never invent citations — flag where prior art comparison is needed.
+
+** Rebuttal drafting
+
+Given the reviewer objections above (or paste them directly), draft a point-by-point rebuttal.
+For each point:
+- Quote the reviewer concern (verbatim or summarised)
+- State whether the concern is valid, partially valid, or a misunderstanding
+- Describe what was changed in the manuscript (with line numbers if available)
+- If no change was made, give a scientific argument for why it is unnecessary
+
+Tone: confident, respectful, evidence-based. Avoid defensive language.

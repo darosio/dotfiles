@@ -1,17 +1,16 @@
-;;; my-ai.el --- To use LLM -*- lexical-binding: t; -*-
+;;; my-ai.el --- AI/LLM configuration -*- lexical-binding: t; -*-
 ;;
 ;;; Commentary:
-;; This configuration provides a comprehensive AI-powered development environment
-;; within Emacs, integrating local and cloud-based LLMs with advanced tools.
+;; Emacs AI stack: gptel (LLM front-end), ellama, MCP tools, Khoj RAG.
 ;;
 ;; Key bindings:
-;; - C-c C-<return> : Send text to AI (gptel)
-;; - C-c e          : Start ellama session
-;; - C-c C-i        : Apply inline diff from gptel-rewrite
+;; - C-c C-<return>  : Send to AI (gptel)
+;; - C-c e           : Start ellama session
+;; - <Launch5> ...   : gptel commands (see :bind below)
 ;;
 ;;; Code:
 
-;; --- Define API Keys ---
+;; --- API Keys ---
 (defvar my/openai-api-key (lambda () (nth 0 (process-lines "pass" "show" "home/openai-dpa"))))
 (defvar my/gemini-api-key (lambda () (nth 0 (process-lines "pass" "show" "cloud/gemini_API_key"))))
 (defvar my/kagi-api-key (lambda () (nth 0 (process-lines "pass" "show" "cloud/kagi"))))
@@ -61,67 +60,62 @@
                     (funcall orig-fn)
                   "")))
   (ellama-session-header-line-global-mode +1)
-  ;; Scrolling behavior
   (advice-add 'pixel-scroll-precision :before #'ellama-disable-scroll)
   (advice-add 'end-of-buffer :after #'ellama-enable-scroll)
-  ;; AI Providers Configuration
   (setopt ellama-providers
           `(("Ollama gemma3" . ,(make-llm-ollama
                                  :chat-model "gemma3:4b-it-qat"
                                  :embedding-model "nomic-embed-text"
                                  :default-chat-non-standard-params '(("num_ctx" . 8192))))
-            ("Ollama LLaVA" . ,(make-llm-ollama ; For vision
-                                :chat-model "llava:latest" ; Or specific version like "llava:7b-v1.6-mistral-q8_0"
-                                :embedding-model "nomic-embed-text" ; Might not be used by llava for embeddings
+            ("Ollama LLaVA" . ,(make-llm-ollama
+                                :chat-model "llava:latest"
+                                :embedding-model "nomic-embed-text"
                                 :default-chat-non-standard-params '(("num_ctx" . 4096))))
             ("OpenAI o4-mini" . ,(make-llm-openai
                                   :key my/openai-api-key
                                   :chat-model "o4-mini"
                                   :embedding-model "text-embedding-ada-002"))
-            ;; ("DeepSeek Chat" . ,(make-llm-openai
-            ;;                      :api-url "https://api.deepseek.com/v1" ;; CRITICAL: DeepSeek's API endpoint
-            ;;                      :key my/deepseek-api-key
-            ;;                      ;; :embedding-model "deepseek-embed"
-            ;;                      :chat-model "deepseek-chat"))
-            ;; :host "api.deepseek.com"
-            ;; :endpoint "/v1/chat/completions"
-            ;; :chat-model "deepseek-r1-0528:free"))
             ("Gemini 2.0 Flash" . ,(make-llm-gemini
                                     :key my/gemini-api-key
                                     :chat-model "gemini-2.0-flash"))))
-  ;; Summarization provider (translation extraction)
   (setopt ellama-summarization-provider
           (make-llm-ollama
            :chat-model "gemma3:4b-it-qat"
            :embedding-model "nomic-embed-text"
-           :default-chat-non-standard-params '(("num_ctx" . 8192))))
-  )
+           :default-chat-non-standard-params '(("num_ctx" . 8192)))))
 
 (use-package gptel
-  :bind ("C-c C-<return>" . gptel-send)
-  ("<Launch5> <Launch5>" . gptel-send)
-  ("<Launch5> g" . gptel)
-  ("<Launch5> m" . gptel-menu)
-  ("<Launch5> M" . gptel-mcp-connect)
-  ("<Launch5> r" . gptel-rewrite)
-  ("<Launch5> t" . gptel-tools)
-  ("<Launch5> c a" . gptel-add)
-  ("<Launch5> c A" . gptel-add-file)
-  ("<Launch5> c c" . gptel-context-add)
-  ("<Launch5> c n" . gptel-context-next)
-  ("<Launch5> c p" . gptel-context-previous)
-  ("<Launch5> h" . gptel-highlight-mode)
-  ("<Launch5> o" . gptel-mode)
-  ("<Launch5> O" . gptel-aibo-mode)
-  ("<Launch5> a" . gptel-aibo)
-  ("<Launch5> s" . gptel-aibo-summon)
+  :bind (("C-c C-<return>" . gptel-send)
+         ("<Launch5> <Launch5>" . gptel-send)
+         ("<Launch5> g" . gptel)
+         ("<Launch5> m" . gptel-menu)
+         ("<Launch5> M" . gptel-mcp-connect)
+         ("<Launch5> r" . gptel-rewrite)
+         ("<Launch5> t" . gptel-tools)
+         ("<Launch5> c a" . gptel-add)
+         ("<Launch5> c A" . gptel-add-file)
+         ("<Launch5> c c" . gptel-context-add)
+         ("<Launch5> c n" . gptel-context-next)
+         ("<Launch5> c p" . gptel-context-previous)
+         ("<Launch5> l" . my/literature-scan)
+         ("<Launch5> h" . gptel-highlight-mode)
+         ("<Launch5> o" . gptel-mode)
+         ("<Launch5> O" . gptel-aibo-mode)
+         ("<Launch5> a" . gptel-aibo)
+         ("<Launch5> s" . gptel-aibo-summon))
   :preface
+  ;; Machine detection: used for model selection throughout this file.
+  (defconst my/on-whisker (string= (system-name) "whisker"))
+  (defun my/ollama-model (primary &optional fallback)
+    "Return PRIMARY model, or FALLBACK (default: ministral-3:latest) on whisker."
+    (if my/on-whisker (or fallback 'ministral-3:latest) primary))
+
   (defun get-ollama-models ()
     "Fetch the list of installed Ollama models."
     (let* ((output (shell-command-to-string "ollama list"))
            (lines (split-string output "\n" t))
            models)
-      (dolist (line (cdr lines))  ; Skip the first line
+      (dolist (line (cdr lines))
         (when (string-match "^\\([^[:space:]]+\\)" line)
           (push (match-string 1 line) models)))
       (nreverse models)))
@@ -129,7 +123,7 @@
   (defun codel-edit-buffer (buffer-name old-string new-string)
     "In BUFFER-NAME, replace OLD-STRING with NEW-STRING."
     (with-current-buffer buffer-name
-      (let ((case-fold-search nil))  ;; Case-sensitive search
+      (let ((case-fold-search nil))
         (save-excursion
           (goto-char (point-min))
           (let ((count 0))
@@ -138,24 +132,72 @@
             (if (= count 0)
                 (format "Error: Could not find text to replace in buffer %s" buffer-name)
               (if (> count 1)
-                  (format "Error: Found %d matches for the text to replace in buffer %s" count buffer-name)
+                  (format "Error: Found %d matches for text in buffer %s" count buffer-name)
                 (goto-char (point-min))
                 (search-forward old-string)
                 (replace-match new-string t t)
                 (format "Successfully edited buffer %s" buffer-name))))))))
+
+  (defvar gptel-zotero-bib-file "~/Sync/biblio/main.bib"
+    "Path to Zotero Better BibTeX auto-export file.")
+
+  (defun my/literature-scan (topic)
+    "Prepare a one-command literature synthesis prompt for TOPIC.
+Opens a dedicated gptel buffer pre-filled with the search-science preset
+and the literature synthesis template from grant-synthesis.org.
+Review and send with \\[gptel-send]."
+    (interactive "sTopic for literature scan: ")
+    (let* ((tpl-file (expand-file-name "prompts/grant-synthesis.org" user-emacs-directory))
+           (template
+            (when (file-readable-p tpl-file)
+              (with-temp-buffer
+                (insert-file-contents tpl-file)
+                (goto-char (point-min))
+                (when (re-search-forward "^\\* Literature synthesis" nil t)
+                  (forward-line 1)
+                  (let ((start (point))
+                        (end (or (and (re-search-forward "^\\* " nil t)
+                                      (match-beginning 0))
+                                 (point-max))))
+                    (string-trim (buffer-substring-no-properties start end)))))))
+           (body (if template
+                     (format "Topic: %s\n\n%s" topic template)
+                   (format "Topic: %s\n\nSearch 8-12 papers, call zotero_lookup per DOI, cite as [cite:@Key] or report DOI." topic)))
+           (buf (get-buffer-create (format "*literature-scan: %s*" topic))))
+      (with-current-buffer buf
+        (org-mode)
+        (gptel-mode 1)
+        (erase-buffer)
+        (insert "@search-science\n" body))
+      (pop-to-buffer buf)
+      (message "Review prompt and send with %s"
+               (substitute-command-keys "\\[gptel-send]"))))
+
   :config
   (require 'gptel-integrations)
-  ;; Default settings
+
+  ;; Core settings
   (setq gptel-default-mode 'org-mode
         gptel-api-key my/openai-api-key
-        gptel-post-response-functions  'gptel-end-of-response
+        gptel-post-response-functions 'gptel-end-of-response
         gptel-expert-commands t
         gptel-track-media t
         gptel-log-level 'info
-        gptel-model (if (string= (system-name) "whisker") 'ministral-3:latest 'qwen3.5:35b-a3b)
+        gptel-model (my/ollama-model 'qwen3.5:35b-a3b 'qwen3.5:4b)
         gptel-backend
-        (gptel-make-ollama "Ollama" :stream t :host "localhost:11434" :models (get-ollama-models))
-        gptel-display-buffer-action '((display-buffer-full-frame)))
+        (gptel-make-ollama "Ollama"
+          :stream t :host "localhost:11434"
+          :models (if my/on-whisker
+                      '(ministral-3:latest qwen3.5:4b gemma3:latest)
+                    (get-ollama-models)))
+        gptel-display-buffer-action '((display-buffer-full-frame))
+        ;; org-cite: Zotero Better BibTeX auto-export is the primary bibliography
+        org-cite-global-bibliography
+        (append (when (file-readable-p (expand-file-name gptel-zotero-bib-file))
+                  (list (expand-file-name gptel-zotero-bib-file)))
+                '("~/Sync/bib/references.bib" "~/bib/library.bib")))
+
+  ;; Cloud backends
   (gptel-make-deepseek "DeepSeek" :stream t :key my/deepseek-api-key)
   (gptel-make-gh-copilot "Copilot")
   (gptel-make-kagi "Kagi" :key my/kagi-api-key)
@@ -168,7 +210,6 @@
                                mistralai/mixtral-8x7b-instruct
                                meta-llama/codellama-34b-instruct
                                codellama/codellama-70b-instruct
-                               google/palm-2-codechat-bison-32k
                                deepseek/deepseek-r1-0528:free))
   (gptel-make-openai "Groq" :stream t :key my/groq-api-key
                      :host "api.groq.com"
@@ -177,8 +218,8 @@
                                deepseek-r1-distill-llama-70b
                                qwen-qwq-32b
                                gemma2-9b-it))
-  (gptel-make-gh-copilot "Copilot")
-  ;; Enable tool use
+
+  ;; Tools
   (setq gptel-use-tools t)
   (add-to-list 'gptel-tools
                (gptel-make-tool
@@ -189,15 +230,15 @@
                             (with-current-buffer buffer
                               (buffer-substring-no-properties (point-min) (point-max))))
                 :description "Return the contents of an Emacs buffer"
-                :args (list '(:name "buffer"
-                                    :type string
-                                    :description "The name of the buffer whose contents are to be retrieved"))
+                :args '((:name "buffer"
+                               :type string
+                               :description "The name of the buffer whose contents are to be retrieved"))
                 :category "emacs"))
   (add-to-list 'gptel-tools
                (gptel-make-tool
                 :name "EditBuffer"
                 :function #'codel-edit-buffer
-                :description "Edits Emacs buffers"
+                :description "Replace OLD-STRING with NEW-STRING in an Emacs buffer"
                 :args '((:name "buffer_name"
                                :type string
                                :description "Name of the buffer to modify"
@@ -211,144 +252,100 @@
                                :description "Text to replace old_string with"
                                :required t))
                 :category "edit"))
+
+  ;; System prompt directives (select via gptel-menu or presets below)
   (setq gptel-directives
         '((default    . "You are a helpful assistant. Be concise and precise.")
           (biophysics . "You are a biophysicist assistant. Be precise about units, statistics, and experimental methodology.")
-          (proposal   . "Help write a scientific grant proposal. Use formal academic language. Flag speculative claims. Structure with Specific Aims, Significance, Innovation, and Approach. When citing sources, use org-cite format: [cite:@AuthorYEAR]. Never invent citations; if a reference is uncertain, say so.")
+          (proposal   . "You are helping write a scientific grant proposal. Use formal academic language. Flag speculative claims. Be precise and quantitative. Follow the structure provided in the user's prompt or context — do not impose a default structure.\n\nFor citations: call zotero_lookup with the DOI — if found, cite as [cite:@Key]; if not, report: DOI: 10.xxxx/xxx (user will add it manually). Never invent citation keys.")
           (brainstorm . "You are a creative scientific collaborator. Challenge assumptions. Suggest unexpected angles. Think across disciplines. Propose unexpected connections and alternative hypotheses. Be explicit about uncertainty and speculation.")
           (review     . "You are a critical peer reviewer. Identify logical gaps, missing controls, unsupported claims, and statistical issues. Be constructive but thorough.")
-          (writing    . "You are helping a biophysicist write scientific documents. Use formal academic language. Structure arguments clearly. Flag speculative claims. Prefer precise quantitative statements over vague qualitative ones. When citing sources, use org-cite format: [cite:@AuthorYEAR]. Never invent citations; if a reference is uncertain, say so.")
+          (writing    . "You are helping a biophysicist write scientific documents. Use formal academic language. Structure arguments clearly. Flag speculative claims. Prefer precise quantitative statements over vague qualitative ones.\n\nFor citations: call zotero_lookup with the DOI — if found, cite as [cite:@Key]; if not, report: DOI: 10.xxxx/xxx (user will add it manually). Never invent citation keys.")
           (coding     . "You are an expert coding assistant. Provide high-quality code solutions, refactorings, and explanations. Prefer clarity over cleverness.")))
 
+  ;; --- Presets ---
+  ;; my/ollama-model selects the appropriate local model per machine.
 
-  ;; presets select the right model + backend, system prompt from directives above
   (gptel-make-preset 'writing
-    :description "Scientific writing — proposals, manuscripts"
-    :backend "Ollama" :model 'qwen3.5:27b
-    :system (alist-get 'writing gptel-directives))
+                     :description "Scientific writing - proposals, manuscripts"
+                     :backend "Ollama" :model (my/ollama-model 'qwen3.5:27b 'gemma3:latest)
+                     :system (alist-get 'writing gptel-directives)
+                     :pre (lambda () (gptel-mcp-connect '("pdf") 'sync))
+                     :tools '(:append ("zotero_lookup")))
+
   (gptel-make-preset 'brainstorm
-    :description "Scientific ideation — explore, challenge, connect"
-    :backend "Ollama" :model 'deepseek-r1:32b
-    :system (alist-get 'brainstorm gptel-directives))
+                     :description "Scientific ideation - explore, challenge, connect"
+                     :backend "Ollama" :model (my/ollama-model 'deepseek-r1:32b)
+                     :system (alist-get 'brainstorm gptel-directives))
+
   (gptel-make-preset 'coding
-    :description "Coding with qwen3.5:27b + buffer tools"
-    :backend "Ollama" :model 'qwen3.5:27b
-    :system (alist-get 'coding gptel-directives)
-    :tools '("read_buffer" "EditBuffer"))
+                     :description "Coding - refactor, review, buffer editing"
+                     :backend "Ollama" :model (my/ollama-model 'qwen3.5:27b 'gemma3:latest)
+                     :system (alist-get 'coding gptel-directives)
+                     :tools '("read_buffer" "EditBuffer"))
+
   (gptel-make-preset 'review
-    :description "Critical peer review — gaps, controls, statistics"
-    :backend "Ollama" :model 'qwen3.5:27b
-    :system (alist-get 'review gptel-directives))
+                     :description "Critical peer review - gaps, controls, statistics"
+                     :backend "Ollama" :model (my/ollama-model 'qwen3.5:27b 'gemma3:latest)
+                     :system (alist-get 'review gptel-directives))
 
   (gptel-make-preset 'reasoning
-    :description "Deep reasoning with deepseek-r1:32b"
-    :backend "Ollama"
-    :model 'deepseek-r1:32b)
+                     :description "Deep reasoning - chain-of-thought, hard problems"
+                     :backend "Ollama" :model (my/ollama-model 'deepseek-r1:32b))
+
   (gptel-make-preset 'fast
-    :description "Fast iteration with qwen3.5:35b-a3b MoE"
-    :backend "Ollama"
-    :model 'qwen3.5:35b-a3b)
+                     :description "Fast iteration - MoE, low latency"
+                     :backend "Ollama" :model (my/ollama-model 'qwen3.5:35b-a3b 'qwen3.5:4b))
+
   (gptel-make-preset 'math
-    :description "Math/science with phi4-reasoning:plus"
-    :backend "Ollama"
-    :model 'phi4-reasoning:plus)
+                     :description "Math / science reasoning"
+                     :backend "Ollama" :model (my/ollama-model 'phi4-reasoning:plus))
+
   (gptel-make-preset 'vision
-    :description "Multimodal/vision with qwen3-vl:32b"
-    :backend "Ollama"
-    :model 'qwen3-vl:32b)
+                     :description "Multimodal / vision"
+                     :backend "Ollama" :model (my/ollama-model 'qwen3-vl:32b 'gemma3:latest))
+
   (gptel-make-preset 'copilot
-    :description "GitHub Copilot cloud backend"
-    :backend "Copilot")
+                     :description "GitHub Copilot cloud backend"
+                     :backend "Copilot")
+
   (gptel-make-preset 'search
-    :description "Web search — SearxNG + fetch via MCP"
-    :backend "Ollama" :model 'qwen3.5:35b-a3b
-    :system "Use the provided tools to search the web for up-to-date information. Always cite sources."
-    :pre (lambda () (gptel-mcp-connect '("searxng" "fetcher") 'sync))
-    :tools '(:append ("searxng_web_search" "web_url_read" "fetch_url")))
+                     :description "Web search - SearxNG + fetch via MCP"
+                     :backend "Ollama" :model (my/ollama-model 'qwen3.5:35b-a3b 'qwen3.5:4b)
+                     :system "Use the provided tools to search the web for up-to-date information. Always cite sources with URL and title."
+                     :pre (lambda () (gptel-mcp-connect '("searxng" "fetcher") 'sync))
+                     :tools '(:append ("searxng_web_search" "web_url_read" "fetch_url")))
+
   (gptel-make-preset 'search-science
-    :description "Scientific literature search — PubMed/arXiv/Scholar via MCP"
-    :backend "Ollama" :model 'qwen3.5:35b-a3b
-    :system "You are a scientific literature assistant. Use searxng_web_search to find peer-reviewed literature. Prefer PubMed, arXiv, Google Scholar, and Semantic Scholar results. Cite as (AuthorYear, Journal). Highlight knowledge gaps and translational relevance."
-    :pre (lambda () (gptel-mcp-connect '("searxng" "fetcher") 'sync))
-    :tools '(:append ("searxng_web_search" "web_url_read" "fetch_url")))
+                     :description "Scientific literature search - PubMed / arXiv / Scholar via MCP"
+                     :backend "Ollama" :model (my/ollama-model 'qwen3.5:35b-a3b 'qwen3.5:4b)
+                     :system "You are a scientific literature assistant. Use searxng_web_search to find peer-reviewed literature. Prefer PubMed, arXiv, Google Scholar, and Semantic Scholar.\n\nFor each paper found:\n1. Extract the DOI from the result URL or metadata\n2. Call zotero_lookup with the DOI — if found, cite as [cite:@Key]\n3. If not in Zotero, report it as: DOI: 10.xxxx/xxx (user will add it to Zotero manually)\n\nHighlight knowledge gaps and translational relevance. Never invent citations."
+                     :pre (lambda () (gptel-mcp-connect '("searxng" "fetcher" "pdf") 'sync))
+                     :tools '(:append ("searxng_web_search" "web_url_read" "fetch_url" "zotero_lookup")))
+
   (gptel-make-preset 'grant
-    :description "Grant writing — lit search + structured proposal sections"
-    :backend "Ollama" :model 'qwen3.5:27b
-    :system (alist-get 'proposal gptel-directives)
-    :pre (lambda () (gptel-mcp-connect '("searxng" "fetcher") 'sync))
-    :tools '(:append ("searxng_web_search" "web_url_read" "fetch_url")))
+                     :description "Grant writing - lit search + structured proposal sections"
+                     :backend "Ollama" :model (my/ollama-model 'qwen3.5:27b 'gemma3:latest)
+                     :system (alist-get 'proposal gptel-directives)
+                     :pre (lambda () (gptel-mcp-connect '("searxng" "fetcher" "pdf") 'sync))
+                     :tools '(:append ("searxng_web_search" "web_url_read" "fetch_url" "zotero_lookup")))
+
   (gptel-make-preset 'pdf
-    :description "Local PDF reader — extract and discuss PDF content via MCP"
-    :backend "Ollama" :model 'qwen3.5:35b-a3b
-    :system "You have access to the read_pdf tool. When the user mentions a PDF path, call read_pdf with its absolute path first, then answer based on the extracted text. Always cite by filename."
-    :pre (lambda () (gptel-mcp-connect '("pdf") 'sync)))
-  ;; host-specific overrides: repoint all Ollama presets to laptop models
-  (when (string= (system-name) "whisker")
-    ;; expand available models on whisker's Ollama backend
-    (setq gptel-backend (gptel-make-ollama "Ollama"
-                          :host "localhost:11434"
-                          :stream t
-                          :models '(ministral-3:latest
-                                    qwen3.5:4b
-                                    gemma3:latest)))
-    (gptel-make-preset 'writing
-      :description "Writing with gemma3 — good multilingual Italian/English"
-      :backend "Ollama" :model 'gemma3:latest
-      :system (alist-get 'writing gptel-directives))
-    (gptel-make-preset 'brainstorm
-      :description "Brainstorm with ministral-3"
-      :backend "Ollama" :model 'ministral-3:latest
-      :system (alist-get 'brainstorm gptel-directives))
-    (gptel-make-preset 'coding
-      :description "Coding with qwen3.5:4b — fastest response for completions"
-      :backend "Ollama" :model 'qwen3.5:4b
-      :system (alist-get 'coding gptel-directives)
-      :tools '("read_buffer" "EditBuffer"))
-    (gptel-make-preset 'review
-      :description "Peer review with ministral-3 — best quality locally"
-      :backend "Ollama" :model 'ministral-3:latest
-      :system (alist-get 'review gptel-directives))
+                     :description "Local PDF reader - extract text, cite via MCP"
+                     :backend "Ollama" :model (my/ollama-model 'qwen3.5:35b-a3b 'qwen3.5:4b)
+                     :system "You have access to read_pdf, extract_doi, and zotero_lookup tools.\n\nCitation workflow:\n1. Call read_pdf with the absolute path — the header shows filename, pages, and DOI if found\n2. Call zotero_lookup with the DOI (and/or filename) to find the entry in your Zotero library\n3. If found, cite as [cite:@Key]\n4. If not found, report: DOI: 10.xxxx/xxx (user will add it to Zotero manually)\n\nNever invent citations."
+                     :pre (lambda () (gptel-mcp-connect '("pdf") 'sync)))
 
-    (gptel-make-preset 'reasoning
-      :description "Reasoning with ministral-3"
-      :backend "Ollama" :model 'ministral-3:latest)
-    (gptel-make-preset 'fast
-      :description "Fast with qwen3.5:4b"
-      :backend "Ollama" :model 'qwen3.5:4b)
-    (gptel-make-preset 'math
-      :description "Math with ministral-3"
-      :backend "Ollama" :model 'ministral-3:latest)
-    (gptel-make-preset 'vision
-      :description "Vision with gemma3 — only local multimodal option"
-      :backend "Ollama" :model 'gemma3:latest)
-    (gptel-make-preset 'search
-      :description "Web search — SearxNG + fetch via MCP"
-      :backend "Ollama" :model 'ministral-3:latest
-      :system "Use the provided tools to search the web for up-to-date information. Always cite sources."
-      :pre (lambda () (gptel-mcp-connect '("searxng" "fetcher") 'sync))
-      :tools '(:append ("searxng_web_search" "web_url_read" "fetch_url")))
-    (gptel-make-preset 'search-science
-      :description "Scientific literature search"
-      :backend "Ollama" :model 'ministral-3:latest
-      :system "You are a scientific literature assistant. Use searxng_web_search to find peer-reviewed literature. Prefer PubMed, arXiv, Google Scholar. Cite as (AuthorYear, Journal)."
-      :pre (lambda () (gptel-mcp-connect '("searxng" "fetcher") 'sync))
-      :tools '(:append ("searxng_web_search" "web_url_read" "fetch_url")))
-    (gptel-make-preset 'grant
-      :description "Grant writing — lit search + proposal sections"
-      :backend "Ollama" :model 'ministral-3:latest
-      :system (alist-get 'proposal gptel-directives)
-      :pre (lambda () (gptel-mcp-connect '("searxng" "fetcher") 'sync))
-      :tools '(:append ("searxng_web_search" "web_url_read" "fetch_url")))
-    (gptel-make-preset 'pdf
-      :description "Local PDF reader via MCP"
-      :backend "Ollama" :model 'ministral-3:latest
-      :system "You have access to the read_pdf tool. When the user mentions a PDF path, call read_pdf with its absolute path first, then answer based on the extracted text. Always cite by filename."
-      :pre (lambda () (gptel-mcp-connect '("pdf") 'sync))))
+  (gptel-make-preset 'pdf-science
+                     :description "PDF + literature search - read papers, search, cite"
+                     :backend "Ollama" :model (my/ollama-model 'qwen3.5:35b-a3b 'qwen3.5:4b)
+                     :system "You are a scientific research assistant with PDF reading and web search tools.\n\nFor PDFs:\n1. Call read_pdf to extract text (DOI appears in the header)\n2. Call zotero_lookup with the DOI and/or filename\n3. If found, cite as [cite:@Key]; if not found, report: DOI: 10.xxxx/xxx\n\nFor web search:\n1. Use searxng_web_search — prefer PubMed, arXiv, Google Scholar, Semantic Scholar\n2. Extract the DOI; call zotero_lookup — cite as [cite:@Key] if found, else report the DOI\n\nNever invent citations. Never invent citation keys."
+                     :pre (lambda () (gptel-mcp-connect '("pdf" "searxng" "fetcher") 'sync))
+                     :tools '(:append ("searxng_web_search" "web_url_read" "fetch_url" "zotero_lookup")))
+
   :hook
-  (gptel-mode . visual-line-mode)  ;; The chats can have long lines.
-  (gptel-post-stream-hook . gptel-auto-scroll)  ;; And can be pages long.
-  )
-
+  ((gptel-mode . visual-line-mode)
+   (gptel-post-stream-hook . gptel-auto-scroll)))
 
 (use-package gptel-aibo
   :after gptel
@@ -359,12 +356,13 @@
 (use-package mcp
   :after gptel
   :custom (mcp-hub-servers
-           `(;; Local custom scripts
+           `(;; Local scripts
              ("searxng" . (:command "podman" :args ("exec" "-i" "mcp-searxng" "node" "dist/index.js")))
              ("pdf" . (:command "uv"
                                 :args ("run" "--with" "pymupdf"
-                                       "/home/dan/.local/bin/pdf-mcp.py")))
-             ;; Official & Community Servers
+                                       "/home/dan/.local/bin/pdf-mcp.py")
+                                :env (:ZOTERO_BIB_FILE "~/Sync/biblio/main.bib")))
+             ;; Official & community servers
              ("filesystem" . (:command "npx" :args ("-y" "@modelcontextprotocol/server-filesystem" ,(getenv "HOME"))))
              ("fetcher" . (:command "npx" :args ("-y" "fetcher-mcp")))
              ("github" . (:command "docker"
@@ -378,17 +376,12 @@
              ("nixos" . (:command "uvx" :args ("mcp-nixos")))
              ("sequential-thinking" . (:command "npx" :args ("-y" "@modelcontextprotocol/server-sequential-thinking")))
              ("context7" . (:command "npx" :args ("-y" "@upstash/context7-mcp") :env (:DEFAULT_MINIMUM_TOKENS "6000")))
-             ;; ("qdrant" . (:url "http://localhost:8000/sse"))
-             ("graphlit" . (
-                            :command "npx"
-                            :args ("-y" "graphlit-mcp-server")
-                            :env (
-                                  :GRAPHLIT_ORGANIZATION_ID "b2821f53-fda4-4ac1-8c25-5312d4807139"
-                                  :GRAPHLIT_ENVIRONMENT_ID "e48c582c-3523-4833-9e5f-037d87cf510b"
-                                  :GRAPHLIT_JWT_SECRET "PjpJX7IRDdsMjQkc8pDxjHbF4LkyO8tBLTFTK/S1IqI=")))))
-  :config (require 'mcp-hub)
-  :hook (after-init . (lambda ()
-                        (mcp-hub-start-all-server #'gptel-mcp-connect))))
+             ("graphlit" . (:command "npx"
+                                     :args ("-y" "graphlit-mcp-server")
+                                     :env (:GRAPHLIT_ORGANIZATION_ID "b2821f53-fda4-4ac1-8c25-5312d4807139"
+                                           :GRAPHLIT_ENVIRONMENT_ID "e48c582c-3523-4833-9e5f-037d87cf510b"
+                                           :GRAPHLIT_JWT_SECRET "PjpJX7IRDdsMjQkc8pDxjHbF4LkyO8tBLTFTK/S1IqI=")))))
+  :config (require 'mcp-hub))
 
 (use-package khoj
   :after org
@@ -401,9 +394,8 @@
   (khoj-index-directories '("~/Sync/Grants/" "~/Sync/notes/" "~/Sync/arte/"))
   (khoj-index-files '("~/Sync/todo-khoj.org"))
   :config
-  ;; khoj.el 2.x bug: server returns null/empty-array for onlineContext sub-fields.
-  ;; :null → (-map f :null) throws "sequencep"; [] → (elt [] 0) throws "Args out of range".
-  ;; Strip both before khoj--extract-online-references processes them.
+  ;; khoj.el 2.x: server may return :null or [] for onlineContext sub-fields,
+  ;; causing crashes in khoj--extract-online-references. Strip them first.
   (advice-add 'khoj--extract-online-references :filter-args
               (lambda (args)
                 (list (car args)
@@ -418,9 +410,8 @@
 
 (use-package inline-diff
   :straight (:repo "https://code.tecosaur.net/tec/inline-diff")
-  :after gptel-rewrite) ;or use :defer
+  :after gptel-rewrite)
 
-;; Updated version available at https://github.com/karthink/gptel/wiki
 (use-package gptel-rewrite
   :straight gptel
   :bind (:map gptel-rewrite-actions-map
@@ -439,8 +430,7 @@
                  for ov-end = (overlay-end ov)
                  for response = (overlay-get ov 'gptel-rewrite)
                  do (delete-overlay ov)
-                 (inline-diff-words
-                  ov-beg ov-end response)))))
+                 (inline-diff-words ov-beg ov-end response)))))
   (when (boundp 'gptel--rewrite-dispatch-actions)
     (add-to-list
      'gptel--rewrite-dispatch-actions '(?i "inline-diff")

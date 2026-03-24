@@ -117,92 +117,106 @@ Keybindings reserved for users: `C-c <letter>` and `F5`–`F9`.
 - **khoj** — self-hosted RAG over local documents and web (`M-s M-k`)
 - **copilot** — inline completions in `prog-mode` (TAB / M-TAB)
 
-#### gptel Presets (`C-c <return> p`)
+#### gptel Presets
 
 Presets select backend, model, system prompt, and tools in one step.
-Host-specific overrides apply automatically on `whisker` (laptop).
+Activate via `gptel-menu` (`<Launch5> m`) or type `@preset-name` in the prompt.
+Host-specific model overrides apply automatically on `whisker` (laptop).
 
-| Preset           | Model                 | Notes                                                 |
-| ---------------- | --------------------- | ----------------------------------------------------- |
-| `writing`        | qwen3.5:27b           | `writing` directive — formal academic prose           |
-| `brainstorm`     | deepseek-r1:32b       | `brainstorm` directive — challenge assumptions        |
-| `coding`         | qwen3.5:27b           | `coding` directive + `read_buffer`/`EditBuffer` tools |
-| `review`         | qwen3.5:27b           | `review` directive — peer-review style critique       |
-| `reasoning`      | deepseek-r1:32b       | deep chain-of-thought, no tools                       |
-| `fast`           | qwen3.5:35b-a3b (MoE) | fast iteration                                        |
-| `math`           | phi4-reasoning:plus   | math/science reasoning                                |
-| `vision`         | qwen3-vl:32b          | multimodal / image input                              |
-| `search`         | qwen3.5:35b-a3b       | web search via SearxNG + fetcher MCP tools            |
-| `search-science` | qwen3.5:35b-a3b       | as `search` with science-focused system prompt        |
-| `grant`          | qwen3.5:27b           | `proposal` directive + MCP search (see Grant tools)   |
-| `pdf`            | qwen3.5:35b-a3b       | connects `pdf` MCP, system prompt instructs read_pdf  |
-| `copilot`        | —                     | GitHub Copilot cloud backend                          |
+| Preset           | Model                 | Tools                               | Notes                              |
+| ---------------- | --------------------- | ----------------------------------- | ---------------------------------- |
+| `writing`        | qwen3.5:27b           | `zotero_lookup`                     | Formal academic prose + citations  |
+| `brainstorm`     | deepseek-r1:32b       | —                                   | Challenge assumptions              |
+| `coding`         | qwen3.5:27b           | `read_buffer`, `EditBuffer`         | Refactor, review, buffer editing   |
+| `review`         | qwen3.5:27b           | —                                   | Peer-review style critique         |
+| `reasoning`      | deepseek-r1:32b       | —                                   | Deep chain-of-thought              |
+| `fast`           | qwen3.5:35b-a3b (MoE) | —                                   | Fast iteration                     |
+| `math`           | phi4-reasoning:plus   | —                                   | Math / science reasoning           |
+| `vision`         | qwen3-vl:32b          | —                                   | Multimodal / image input           |
+| `search`         | qwen3.5:35b-a3b       | SearxNG + fetcher                   | General web search                 |
+| `search-science` | qwen3.5:35b-a3b       | SearxNG + fetcher + `zotero_lookup` | PubMed/arXiv + Zotero citation     |
+| `grant`          | qwen3.5:27b           | SearxNG + fetcher + `zotero_lookup` | Grant writing, structured sections |
+| `pdf`            | qwen3.5:35b-a3b       | `read_pdf`, `zotero_lookup`         | Read + cite a local PDF            |
+| `pdf-science`    | qwen3.5:35b-a3b       | All above                           | PDF + broader literature search    |
+| `copilot`        | —                     | —                                   | GitHub Copilot cloud backend       |
 
 #### MCP Tools
 
 MCP servers start on Emacs init and wire into gptel automatically.
 `<Launch5> M` — connect interactively.
 
-| Server                | Command                                         | Tools                                                       |
-| --------------------- | ----------------------------------------------- | ----------------------------------------------------------- |
-| `searxng`             | `podman exec -i mcp-searxng node dist/index.js` | `searxng_web_search`, `web_url_read`                        |
-| `pdf`                 | `python3 ~/.local/bin/pdf-mcp.py`               | `read_pdf` — local PDF text extraction with page markers    |
-| `fetcher`             | `npx -y fetcher-mcp`                            | `fetch_url`, `fetch_urls` (Playwright, handles JS/PDF/DOCX) |
-| `github`              | Docker `ghcr.io/github/github-mcp-server`       | PR/issue/repo tools                                         |
-| `filesystem`          | `npx @modelcontextprotocol/server-filesystem`   | file read/write                                             |
-| `sequential-thinking` | npx                                             | structured reasoning chains                                 |
-| `context7`            | npx `@upstash/context7-mcp`                     | library documentation lookup                                |
-| `duckduckgo`          | `uvx duckduckgo-mcp-server`                     | DDG web search                                              |
-| `nixos`               | `uvx mcp-nixos`                                 | NixOS/home-manager option lookup                            |
+| Server                | Tools exposed                                      |
+| --------------------- | -------------------------------------------------- |
+| `searxng`             | `searxng_web_search`, `web_url_read`               |
+| `fetcher`             | `fetch_url`, `fetch_urls` (Playwright, handles JS) |
+| `pdf`                 | `read_pdf`, `extract_doi`, `zotero_lookup`         |
+| `github`              | PR / issue / repo tools                            |
+| `filesystem`          | File read / write                                  |
+| `sequential-thinking` | Structured reasoning chains                        |
+| `context7`            | Library documentation lookup                       |
+| `duckduckgo`          | DDG web search                                     |
+| `nixos`               | NixOS / home-manager option lookup                 |
 
-#### Grant Writing Tools (`<f7> R`)
+#### Citation Workflow
 
-Interactive functions that fire async `gptel-request` calls with the `proposal`
-system directive, collecting results in a dedicated `*Grant: TOPIC*` org buffer.
-MCP SearxNG + fetcher are connected automatically before each request.
+All science presets follow a consistent citation loop:
 
-| Key | Command                      | Search strategy                                                         |
-| --- | ---------------------------- | ----------------------------------------------------------------------- |
-| `s` | `gptel-grant-sota`           | `"recent advances" AND TOPIC AND (review OR overview)`                  |
-| `g` | `gptel-grant-gap`            | `TOPIC AND (limitation OR challenge OR unmet) review`                   |
-| `i` | `gptel-grant-innovation`     | `TOPIC AND ("novel approach" OR "new method" OR "first demonstration")` |
-| `f` | `gptel-grant-feasibility`    | `TOPIC AND ("proof-of-concept" OR validation OR demonstrated)`          |
-| `r` | `gptel-grant-funding`        | `TOPIC AND (translational OR clinical OR scalable OR "in vivo")`        |
-| `a` | `gptel-grant-all`            | All five above, concurrently                                            |
-| `d` | `my/doi-to-bibtex`           | Fetch BibTeX from doi.org; copy to kill-ring (add via Zotero)           |
-| `c` | `gptel-org-insert-citations` | Normalise `(AuthorYEAR)` citations in buffer to `[cite:@AuthorYEAR]`    |
-
-`my/doi-to-bibtex` accepts a bare DOI (`10.1016/...`) or a full `doi.org` URL.
-The BibTeX is copied to the kill-ring; add to your library via **Zotero → Add Item by
-Identifier** (`Ctrl+Shift+N`) since `main.bib` is auto-generated by Zotero's BetterBibTeX
-plugin and must not be edited directly.
-
-#### PDF MCP — Local PDF Reader
-
-`scripts/pdf-mcp.py` is a minimal MCP server that exposes one tool, `read_pdf`, backed
-by **pymupdf**. It speaks JSON-RPC 2.0 over STDIO and returns extracted text with
-per-page markers (up to 30 000 chars).
-
-Enable in gptel by connecting the `pdf` server:
-
-```elisp
-(gptel-mcp-connect '("pdf") 'sync)
+```
+searxng_web_search(query) or read_pdf(path)
+  → extract DOI
+  → zotero_lookup(doi)
+      found   → cite as [cite:@Key]          (org-cite)
+      missing → report DOI: 10.xxxx/xxx      (add to Zotero manually via browser connector)
 ```
 
-Then prompt naturally:
+Zotero's BetterBibTeX plugin auto-exports to `~/Sync/biblio/main.bib`.
+`org-cite-global-bibliography` is set to that file — `citar-insert-citation`
+works for any paper already in Zotero.
+
+#### One-Command Literature Scan
+
+`<Launch5> l` → `my/literature-scan` — prompts for a topic, opens a dedicated
+`*literature-scan: <topic>*` org buffer pre-filled with `@search-science` and the
+literature synthesis template. Review and send with `<Launch5> <Launch5>`.
+
+#### Prompt Library
+
+Reusable structured templates live in `~/.emacs.d/prompts/grant-synthesis.org`.
+Add as context with `<Launch5> c A` (whole file) or `<Launch5> c a` (region).
+
+| Section                         | Use for                                                |
+| ------------------------------- | ------------------------------------------------------ |
+| *Literature synthesis*          | 4–5 targeted searches, grouped by approach             |
+| *Grant writing*                 | State of the art / Innovation / Feasibility / Outcomes |
+| *NIH (R01/R21)*                 | Specific Aims / Significance / Innovation / Approach   |
+| *ERC*                           | Excellence / Impact / Implementation                   |
+| *Horizon Europe*                | Excellence / Impact / Implementation + TRL / KPIs      |
+| *Methods*                       | Experimental protocol / Calibration / Statistics       |
+| *Reviewer objection simulation* | Major/Minor objections + rebuttal drafting             |
+
+#### Example Prompts
+
+**Single PDF** (`pdf` preset):
 
 ```
 Read the PDF at ~/papers/ChlorON_review_2024.pdf.
-Summarize the key findings on pH independence and cite the paper.
+Summarize the key findings related to pH independence. Cite the paper.
 ```
 
-The model calls `read_pdf`, reads the text, and cites by filename. Combine with
-SearxNG for a full NotebookLM-style workflow:
+**State-of-the-art section** (`pdf-science` or `grant` preset):
 
 ```
 Search recent literature on pH-independent chloride biosensors.
-Read ~/papers/ChlorON_review_2024.pdf for my own preliminary data.
-Write a State of the Art section with [cite:@AuthorYEAR] citations.
+Read any relevant review PDFs I provide.
+Write a State of the Art section with org-cite citations.
+```
+
+**Multi-PDF extraction** (`pdf-science` preset — add files first with `<Launch5> c A`):
+
+```
+Read the PDFs I have added to context and extract for each:
+- sensing mechanism  - calibration strategy  - reported pH dependence
+Reference the relevant page numbers.
 ```
 
 ### UI & Window Management
