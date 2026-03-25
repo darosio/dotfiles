@@ -604,7 +604,15 @@ Review and send with \\[gptel-send]."
      'append)))
 
 (use-package copilot
-  :straight (:host github :repo "copilot-emacs/copilot.el" :files ("*.el")))
+  :straight (:host github :repo "copilot-emacs/copilot.el" :files ("*.el"))
+  :hook (prog-mode . copilot-mode)
+  :bind (:map copilot-completion-map
+              ("TAB"   . copilot-accept-completion)
+              ("M-TAB" . copilot-accept-completion-by-word)
+              ("C-g"   . copilot-clear-overlay))
+  :custom
+  (copilot-idle-delay 0.5)
+  (copilot-max-char -1))
 
 (provide 'my-ai)
 ;;; my-ai.el ends here
