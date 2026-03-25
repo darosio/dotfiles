@@ -143,9 +143,6 @@
                 (replace-match new-string t t)
                 (format "Successfully edited buffer %s" buffer-name))))))))
 
-  (defvar gptel-zotero-bib-file "~/Sync/biblio/main.bib"
-    "Path to Zotero Better BibTeX auto-export file.")
-
   ;; --- Vane (AI-powered web search) ---
   (defvar my/vane-base-url "http://localhost:3000"
     "Vane base URL (Perplexica successor).")
@@ -358,11 +355,10 @@ Review and send with \\[gptel-send]."
                       '(ministral-3:latest qwen3.5:4b gemma3:latest)
                     (get-ollama-models)))
         gptel-display-buffer-action '((display-buffer-full-frame))
-        ;; org-cite: Zotero Better BibTeX auto-export is the primary bibliography
+        ;; org-cite: all Zotero Better BibTeX auto-exports are the primary bibliography
         org-cite-global-bibliography
-        (append (when (file-readable-p (expand-file-name gptel-zotero-bib-file))
-                  (list (expand-file-name gptel-zotero-bib-file)))
-                '("~/Sync/bib/references.bib" "~/bib/library.bib")))
+        (seq-filter #'file-readable-p
+                    (mapcar #'expand-file-name completion-bibliography)))
 
   ;; Cloud backends
   (gptel-make-deepseek "DeepSeek" :stream t :key my/deepseek-api-key)
@@ -528,7 +524,7 @@ Review and send with \\[gptel-send]."
              ("pdf" . (:command "uv"
                                 :args ("run" "--with" "pymupdf"
                                        "/home/dan/.local/bin/pdf-mcp.py")
-                                :env (:ZOTERO_BIB_FILE "~/Sync/biblio/main.bib")))
+                                :env (:ZOTERO_BIB_FILES ,(mapconcat #'identity completion-bibliography ":"))))
              ;; Official & community servers
              ("filesystem" . (:command "npx" :args ("-y" "@modelcontextprotocol/server-filesystem" ,(getenv "HOME"))))
              ("fetcher" . (:command "npx" :args ("-y" "fetcher-mcp")))
@@ -603,6 +599,27 @@ Review and send with \\[gptel-send]."
      'gptel--rewrite-dispatch-actions '(?i "inline-diff")
      'append)))
 
+;; Summarize a citar-referenced PDF via pymupdf + llm CLI.
+;; Requires: pymupdf (pip install pymupdf) and llm (pip install llm).
+(defun my/citar-llm-summarize (key)
+  "Summarize the PDF for citation KEY via the llm CLI in a dedicated buffer."
+  (interactive (list (citar-select-ref)))
+  (if-let* ((ht    (citar-get-files key))
+            (files (gethash key ht))
+            (file  (car files)))
+      (async-shell-command
+       (format
+        (concat "python3 -c \""
+                "import pymupdf,sys;"
+                "doc=pymupdf.open(sys.argv[1]);"
+                "print('\\n'.join(p.get_text() for p in doc))"
+                "\" %s | llm -m qwen3.5:27b"
+                " 'Summarize in 300 words. Key findings, methods, limitations.'")
+        (shell-quote-argument file))
+       (format "*citar-summary:%s*" key))
+    (message "No PDF found for %s" key)))
+(bind-key "M-s b s" #'my/citar-llm-summarize)
+
 (use-package copilot
   :straight (:host github :repo "copilot-emacs/copilot.el" :files ("*.el"))
   :hook (prog-mode . copilot-mode)
@@ -612,7 +629,8 @@ Review and send with \\[gptel-send]."
               ("C-g"   . copilot-clear-overlay))
   :custom
   (copilot-idle-delay 0.5)
-  (copilot-max-char -1))
+  (copilot-max-char -1)
+  (copilot-indent-offset-warning-disable t))
 
 (provide 'my-ai)
 ;;; my-ai.el ends here

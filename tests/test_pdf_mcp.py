@@ -9,7 +9,11 @@ import importlib.util
 import sys
 import textwrap
 from pathlib import Path
+from typing import TYPE_CHECKING
 from unittest.mock import MagicMock
+
+if TYPE_CHECKING:
+    import pytest
 
 # pdf-mcp.py imports pymupdf at module level — stub it so tests run without it.
 _stub = MagicMock()
@@ -97,4 +101,38 @@ class TestZoteroLookup:
         bib = tmp_path / "main.bib"
         bib.write_text(_BIB)
         result = mcp.zotero_lookup(bib_path=bib)
+        assert result["found"] is False
+
+    def test_multi_bib_found_in_second_file(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Test zotero_lookup finds an entry present only in the second bib file."""
+        bib1 = tmp_path / "main.bib"
+        bib1.write_text(_BIB)
+        bib2 = tmp_path / "MY.bib"
+        bib2.write_text(
+            textwrap.dedent("""\
+            @article{Jones2020_MJ,
+              author = {Jones, Mary},
+              title  = {Chloride homeostasis},
+              doi    = {10.1016/j.celrep.2020.01.001},
+              file   = {/home/dan/Sync/biblio/MY/Jones2020_MJ.pdf},
+            }
+        """)
+        )
+        monkeypatch.setenv("ZOTERO_BIB_FILES", f"{bib1}:{bib2}")
+        result = mcp.zotero_lookup(doi="10.1016/j.celrep.2020.01.001")
+        assert result["found"] is True
+        assert result["key"] == "Jones2020_MJ"
+
+    def test_multi_bib_not_found_in_any(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Test zotero_lookup returns found=False when DOI absent from all bib files."""
+        bib1 = tmp_path / "main.bib"
+        bib1.write_text(_BIB)
+        bib2 = tmp_path / "MY.bib"
+        bib2.write_text(_BIB)
+        monkeypatch.setenv("ZOTERO_BIB_FILES", f"{bib1}:{bib2}")
+        result = mcp.zotero_lookup(doi="10.9999/absent")
         assert result["found"] is False

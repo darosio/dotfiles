@@ -5,14 +5,16 @@ Implements the Model Context Protocol over STDIO (JSON-RPC 2.0).
 Exposes tools:
   - read_pdf:       Extract text with page markers; DOI in header if found
   - extract_doi:    Extract DOI from PDF (first 3 pages only)
-  - zotero_lookup:  Check if a DOI/filename is in the Zotero BBT auto-export;
+  - zotero_lookup:  Check if a DOI/filename is in any Zotero BBT auto-export .bib;
                     returns the citation key or signals that manual import is needed
 
 Usage (from mcp-hub-servers in Emacs):
   ("pdf" . (:command "uv"
             :args ("run" "--with" "pymupdf"
                    "/home/dan/.local/bin/pdf-mcp.py")
-            :env (:ZOTERO_BIB_FILE "~/Sync/biblio/main.bib")))
+            :env (:ZOTERO_BIB_FILES
+                   "~/Sync/biblio/main.bib:~/Sync/biblio/MY.bib:\
+~/Sync/biblio/former.bib:~/Sync/biblio/books.bib")))
 """
 
 import json
@@ -212,10 +214,12 @@ def extract_doi(pdf_path: str) -> dict:
 def zotero_lookup(
     doi: str | None = None, filename: str | None = None, bib_path: Path | None = None
 ) -> dict:
-    """Find a citation key and BibTeX entry in the Zotero Better BibTeX auto-export.
+    """Find a citation key and BibTeX entry across Zotero Better BibTeX auto-exports.
 
-    Reads the .bib file configured via the ZOTERO_BIB_FILE environment variable
-    (default: ~/Sync/biblio/main.bib).  Searches by DOI first, then by PDF filename.
+    Resolves bib files from the ``ZOTERO_BIB_FILES`` environment variable
+    (colon-separated paths, e.g. ``~/Sync/biblio/main.bib:~/Sync/biblio/MY.bib``).
+    Falls back to ``ZOTERO_BIB_FILE`` (single path) for backward compatibility.
+    Searches each file in order and returns the first match found.
 
     Parameters
     ----------
@@ -224,7 +228,7 @@ def zotero_lookup(
     filename : str | None
         PDF filename (basename only) to match against BibTeX file fields.
     bib_path : Path | None
-        Override the .bib file path (used in tests; takes precedence over env var).
+        Override all env vars with a single bib file path (used in tests).
 
     Returns
     -------
@@ -232,22 +236,63 @@ def zotero_lookup(
         On success: {"found": True, "key": "Smith2023", "bibtex": "@article{...}"}
         On failure: {"found": False, "doi": ..., "filename": ..., "error": ...}
     """
-    if bib_path is None:
-        bib_path = Path(
-            os.environ.get("ZOTERO_BIB_FILE", "~/Sync/biblio/main.bib")
-        ).expanduser()
-    if not bib_path.exists():
-        return {"found": False, "error": f"BibTeX file not found: {bib_path}"}
+    if bib_path is not None:
+        bib_paths = [bib_path]
+    else:
+        env_multi = os.environ.get("ZOTERO_BIB_FILES", "")
+        if env_multi:
+            bib_paths = [Path(p).expanduser() for p in env_multi.split(":") if p]
+        else:
+            bib_paths = [
+                Path(
+                    os.environ.get("ZOTERO_BIB_FILE", "~/Sync/biblio/main.bib")
+                ).expanduser()
+            ]
 
+    missing: list[str] = []
+    for bp in bib_paths:
+        if not bp.exists():
+            missing.append(str(bp))
+            continue
+        result = _search_bib_file(bp, doi=doi, filename=filename)
+        if result is not None:
+            return {"found": True, "key": result[0], "bibtex": result[1]}
+
+    if len(missing) == len(bib_paths):
+        return {
+            "found": False,
+            "error": f"BibTeX file(s) not found: {', '.join(missing)}",
+        }
+    return {"found": False, "doi": doi, "filename": filename}
+
+
+def _search_bib_file(
+    bib_path: Path, doi: str | None, filename: str | None
+) -> tuple[str, str] | None:
+    """Search a single bib file for a DOI or filename match.
+
+    Parameters
+    ----------
+    bib_path : Path
+        Path to the .bib file to search.
+    doi : str | None
+        DOI string to search for.
+    filename : str | None
+        PDF filename (basename only) to match.
+
+    Returns
+    -------
+    tuple[str, str] | None
+        ``(cite_key, bibtex_entry)`` if found, else ``None``.
+    """
     content = bib_path.read_text(encoding="utf-8")
-    # Split into individual entries on lines that start a new @type{ block
     raw_entries = re.split(r"\n(?=@)", content)
 
     for raw_entry in raw_entries:
         entry = raw_entry.strip()
         if not entry.startswith("@"):
             continue
-        key_match = re.match(r"@\w+\{([^,]+),", entry)
+        key_match = re.match(r"@\w+\{([^,\s]+),", entry)
         if not key_match:
             continue
         key = key_match.group(1).strip()
@@ -257,9 +302,8 @@ def zotero_lookup(
             if doi_match:
                 stored = doi_match.group(1).strip().lower()
                 needle = doi.strip().lower()
-                # Accept substring match to handle https://doi.org/ prefixes
                 if needle in stored or stored in needle:
-                    return {"found": True, "key": key, "bibtex": entry}
+                    return key, entry
 
         if filename:
             file_match = re.search(r"file\s*=\s*\{([^}]+)\}", entry, re.IGNORECASE)
@@ -267,9 +311,9 @@ def zotero_lookup(
                 file_match
                 and Path(filename).name.lower() in file_match.group(1).lower()
             ):
-                return {"found": True, "key": key, "bibtex": entry}
+                return key, entry
 
-    return {"found": False, "doi": doi, "filename": filename}
+    return None
 
 
 TOOLS = [
@@ -313,8 +357,9 @@ TOOLS = [
     {
         "name": "zotero_lookup",
         "description": (
-            "Check if a paper is in your Zotero library via the Better BibTeX "
-            "auto-exported .bib file. Search by DOI (preferred) or PDF filename. "
+            "Check if a paper is in your Zotero library by searching all Better BibTeX "
+            "auto-exported .bib files (ZOTERO_BIB_FILES, colon-separated). "
+            "Search by DOI (preferred) or PDF filename. "
             "If found, returns the citation key for use as [cite:@Key] in org-cite. "
             "If not found, report the DOI so the user can add it to Zotero manually."
         ),

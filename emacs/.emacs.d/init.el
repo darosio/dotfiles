@@ -1179,8 +1179,8 @@
     "~/Sync/notes/org-roam/biblio" "Folder (or file) for notes.")
 
   (use-package citar
-    :bind (("M-s b" . citar-open)
-           ("M-s c" . citar-open-note)
+    :bind (("M-s b b" . citar-open)
+           ("M-s b n" . citar-open-note)
            ("M-s M-b" . citar-insert-citation)
            :map minibuffer-local-map
            ("M-b" . citar-insert-preset))
@@ -1230,8 +1230,26 @@
     :config
     (setq citar-notes-source 'citar-file)
     (setq citar-symbol-separator "  ")
+    (setq citar-file-open-functions
+          '(("pdf"  . citar-file-open-external)
+            ("html" . citar-file-open-external)
+            (t      . find-file)))
     )
   ;; https://github.com/bdarcus/citar/wiki/Notes-configuration
+
+  ;; parsebib-parse-bib-buffer wraps the entire entry loop in a single
+  ;; condition-case: one malformed entry (e.g. missing cite key from BBT)
+  ;; aborts the whole bibliography parse.  Advise parsebib-read-entry to
+  ;; catch the error, advance past the broken entry, and return nil so
+  ;; the loop silently skips it.
+  (with-eval-after-load 'parsebib
+    (define-advice parsebib-read-entry (:around (orig &rest args) my/skip-invalid)
+      "Skip BibTeX entries that fail to parse instead of aborting the loop."
+      (condition-case nil
+          (apply orig args)
+        (parsebib-error
+         (re-search-forward "^}" nil t)
+         nil))))
 
   (use-package citar-org-roam
     :after (citar org-roam)
