@@ -7,6 +7,9 @@
 ;; - C-c C-<return>  : Send to AI (gptel)
 ;; - C-c e           : Start ellama session
 ;; - <Launch5> ...   : gptel commands (see :bind below)
+;;   <Launch5> l     : Literature scan (search-science preset + template)
+;;   <Launch5> v     : Vane search (AI web search via /api/chat, localhost:3000)
+;;   <Launch5> n     : Save gptel buffer as org-roam AI note
 ;;
 ;;; Code:
 
@@ -98,6 +101,8 @@
          ("<Launch5> c n" . gptel-context-next)
          ("<Launch5> c p" . gptel-context-previous)
          ("<Launch5> l" . my/literature-scan)
+         ("<Launch5> v" . my/vane-search)
+         ("<Launch5> n" . my/gptel-capture-to-roam)
          ("<Launch5> h" . gptel-highlight-mode)
          ("<Launch5> o" . gptel-mode)
          ("<Launch5> O" . gptel-aibo-mode)
@@ -140,6 +145,168 @@
 
   (defvar gptel-zotero-bib-file "~/Sync/biblio/main.bib"
     "Path to Zotero Better BibTeX auto-export file.")
+
+  ;; --- Vane (AI-powered web search) ---
+  (defvar my/vane-base-url "http://localhost:3000"
+    "Vane base URL (Perplexica successor).")
+
+  (defvar my/vane-chat-model "qwen3.5:35b-a3b"
+    "Ollama chat model key to use for Vane queries.")
+
+  (defvar my/vane-embedding-model "qwen3-embedding:latest"
+    "Ollama embedding model key to use for Vane queries.")
+
+  (defvar my/vane-focus-mode "academicSearch"
+    "Vane focus mode.
+Options: webSearch, academicSearch, writingAssistant, wolframAlphaSearch.")
+
+  (defvar my/vane--provider-id-cache nil
+    "Cached Vane provider ID for `my/vane-chat-model'.")
+
+  (defun my/vane--provider-id ()
+    "Return Vane Ollama provider ID for `my/vane-chat-model', cached."
+    (or my/vane--provider-id-cache
+        (let* ((raw (shell-command-to-string
+                     (format "curl -s %s/api/config" my/vane-base-url)))
+               (cfg (ignore-errors
+                      (let ((json-object-type 'alist))
+                        (json-read-from-string raw))))
+               (providers (alist-get 'modelProviders (alist-get 'values cfg))))
+          (setq my/vane--provider-id-cache
+                (catch 'found
+                  (seq-do (lambda (p)
+                            (when (seq-some (lambda (m)
+                                              (equal (alist-get 'key m)
+                                                     my/vane-chat-model))
+                                            (alist-get 'chatModels p))
+                              (throw 'found (alist-get 'id p))))
+                          (or providers []))
+                  nil)))))
+
+  (defun my/vane--parse-ndjson (raw)
+    "Parse Vane NDJSON streaming RAW into (MESSAGE . SOURCES).
+Only `text'-type blocks are collected; non-string block data (subSteps,
+images, etc.) is silently ignored.  sources events carry citations."
+    (let ((blocks (make-hash-table :test 'equal))
+          sources)
+      (dolist (line (split-string raw "\n"))
+        (let ((d (ignore-errors
+                   (let ((json-object-type 'alist))
+                     (json-read-from-string line)))))
+          (when d
+            (pcase (alist-get 'type d)
+              ("block"
+               (let ((b (alist-get 'block d)))
+                 ;; Only store text blocks — other block types carry arrays/alists
+                 (when (equal (alist-get 'type b) "text")
+                   (puthash (alist-get 'id b) (or (alist-get 'data b) "") blocks))))
+              ("updateBlock"
+               (seq-do (lambda (patch)
+                         (when (and (equal (alist-get 'op patch) "replace")
+                                    (equal (alist-get 'path patch) "/data"))
+                           (let ((val (alist-get 'value patch)))
+                             ;; Only update if we already have this block (text type)
+                             ;; and the new value is a string
+                             (when (and (gethash (alist-get 'blockId d) blocks)
+                                        (stringp val))
+                               (puthash (alist-get 'blockId d) val blocks)))))
+                       (alist-get 'patch d)))
+              ("sources"
+               (setq sources (alist-get 'data d)))))))
+      (let (texts)
+        (maphash (lambda (_k v) (when (stringp v) (push v texts))) blocks)
+        (cons (string-trim (mapconcat #'identity (nreverse texts) "\n\n"))
+              sources))))
+
+  (defun my/vane-search (query)
+    "Search Vane with QUERY; display results in an org buffer.
+Requires Vane running at `my/vane-base-url' (default: localhost:3000).
+Results include the answer and a clickable sources list."
+    (interactive "sVane search: ")
+    (let ((provider-id (my/vane--provider-id)))
+      (unless provider-id
+        (user-error "Vane: provider for %s not found — is Vane running?"
+                    my/vane-chat-model))
+      (let* ((buf (get-buffer-create (format "*vane: %s*" query)))
+             (payload (json-encode
+                       `(("message" . (("messageId" . ,(format "%d" (abs (random))))
+                                       ("chatId"    . ,(format "%d" (abs (random))))
+                                       ("content"   . ,query)))
+                         ("history" . [])
+                         ("focusMode" . ,my/vane-focus-mode)
+                         ("optimizationMode" . "balanced")
+                         ("chatModel"
+                          . (("providerId" . ,provider-id)
+                             ("key"        . ,my/vane-chat-model)))
+                         ("embeddingModel"
+                          . (("providerId" . ,provider-id)
+                             ("key"        . ,my/vane-embedding-model)))))))
+        (with-current-buffer buf
+          (org-mode)
+          (erase-buffer)
+          (insert (format "* Vane: %s\n\n/Searching…/\n" query)))
+        (pop-to-buffer buf)
+        (make-process
+         :name "vane-search"
+         :buffer (generate-new-buffer " *vane-raw*")
+         :command (list "curl" "-s" "-X" "POST"
+                        "-H" "Content-Type: application/json"
+                        "-d" payload
+                        (concat my/vane-base-url "/api/chat"))
+         :sentinel
+         (lambda (proc _event)
+           (when (eq (process-status proc) 'exit)
+             (let ((raw (with-current-buffer (process-buffer proc)
+                          (buffer-string))))
+               (kill-buffer (process-buffer proc))
+               (pcase-let ((`(,message . ,sources) (my/vane--parse-ndjson raw)))
+                 (with-current-buffer buf
+                   (erase-buffer)
+                   (org-mode)
+                   (insert (format "* Vane: %s\n\n" query))
+                   (insert (if (string-empty-p message)
+                               "/No response — check Vane logs: aic logs vane/\n"
+                             message))
+                   (when (and sources (> (length sources) 0))
+                     (insert "\n\n** Sources\n\n")
+                     (seq-do (lambda (src)
+                               (let* ((meta  (alist-get 'metadata src))
+                                      (title (or (alist-get 'title meta) "Unknown"))
+                                      (url   (or (alist-get 'url meta) "#")))
+                                 (insert (format "- [[%s][%s]]\n" url title))))
+                             sources)))))))))))
+
+  ;; --- Org-roam capture from gptel buffers ---
+  (defun my/gptel-capture-to-roam (title)
+    "Save current buffer content as a new org-roam AI note titled TITLE.
+Creates the file in `org-roam-directory'/ai-notes/ with `:ai:' filetag.
+[cite:@Key] citations in the content automatically become backlinks in
+the org-roam graph via `citar-org-roam-mode' (already enabled)."
+    (interactive
+     (list (read-string "Roam note title: "
+                        (when (string-match "\\*\\(.+?\\)\\*" (buffer-name))
+                          (match-string 1 (buffer-name))))))
+    (require 'org-roam)
+    (let* ((content (buffer-substring-no-properties (point-min) (point-max)))
+           (slug (downcase (replace-regexp-in-string "[^a-z0-9]+" "-" title)))
+           (date (format-time-string "%Y%m%d"))
+           (file (expand-file-name
+                  (format "ai-notes/%s-%s.org" date slug)
+                  org-roam-directory))
+           (id (org-id-new)))
+      (make-directory (file-name-directory file) t)
+      (with-current-buffer (find-file-noselect file)
+        (erase-buffer)
+        (insert ":PROPERTIES:\n:ID: " id "\n:END:\n"
+                "#+title: " title "\n"
+                "#+filetags: :ai:\n"
+                "#+date: [" (format-time-string "%Y-%m-%d") "]\n\n"
+                content)
+        (save-buffer)
+        (when (fboundp 'org-roam-db-update-file)
+          (org-roam-db-update-file)))
+      (find-file file)
+      (message "Saved org-roam note: %s" (file-name-nondirectory file))))
 
   (defun my/literature-scan (topic)
     "Prepare a one-command literature synthesis prompt for TOPIC.
@@ -379,8 +546,8 @@ Review and send with \\[gptel-send]."
              ("graphlit" . (:command "npx"
                                      :args ("-y" "graphlit-mcp-server")
                                      :env (:GRAPHLIT_ORGANIZATION_ID "b2821f53-fda4-4ac1-8c25-5312d4807139"
-                                           :GRAPHLIT_ENVIRONMENT_ID "e48c582c-3523-4833-9e5f-037d87cf510b"
-                                           :GRAPHLIT_JWT_SECRET "PjpJX7IRDdsMjQkc8pDxjHbF4LkyO8tBLTFTK/S1IqI=")))))
+                                                                     :GRAPHLIT_ENVIRONMENT_ID "e48c582c-3523-4833-9e5f-037d87cf510b"
+                                                                     :GRAPHLIT_JWT_SECRET "PjpJX7IRDdsMjQkc8pDxjHbF4LkyO8tBLTFTK/S1IqI=")))))
   :config (require 'mcp-hub))
 
 (use-package khoj
