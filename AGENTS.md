@@ -251,16 +251,11 @@ ______________________________________________________________________
 
 *Generated from conversation — March 2026*
 
-## TOD / NEXT
+## TODO / NEXT
 
 - Emacs client for Vane
 
 - Org-roam integration (auto notes + backlinks)
-
-🧠 Chunking + relevance filtering
-📄 Folder-level PDF ingestion
-
-\_🧠 Cache MCP outputs per project
 
 ______________________________________________________________________
 

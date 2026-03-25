@@ -28,9 +28,51 @@ except ImportError:
 
 _MAX_CHARS = 30000
 _DOI_SEARCH_PAGES = 3
+_CACHE_DIR = Path("~/.cache/pdf-mcp").expanduser()
+_CACHE_FILE = _CACHE_DIR / "cache.json"
 
 # DOI regex pattern (simplified but effective)
 DOI_PATTERN = re.compile(r'(https?://doi\.org/)?(10\.\d{4,}/[^\s"<>]+)', re.IGNORECASE)
+
+
+def _cache_load() -> dict:
+    """Load the on-disk cache, returning an empty dict on any error.
+
+    Returns
+    -------
+    dict
+        Cached entries keyed by ``path@mtime``.
+    """
+    try:
+        return json.loads(_CACHE_FILE.read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        return {}
+
+
+def _cache_save(cache: dict) -> None:
+    """Persist *cache* to disk, silently ignoring write errors."""
+    try:
+        _CACHE_DIR.mkdir(parents=True, exist_ok=True)
+        _CACHE_FILE.write_text(json.dumps(cache), encoding="utf-8")
+    except Exception:  # noqa: S110, BLE001
+        pass
+
+
+def _cache_key(path: str) -> str:
+    """Return a cache key: absolute path + mtime, invalidating on file change.
+
+    Parameters
+    ----------
+    path : str
+        Absolute path to the file.
+
+    Returns
+    -------
+    str
+        String of the form ``/abs/path@1234567890.0``.
+    """
+    p = Path(path)
+    return f"{path}@{p.stat().st_mtime}"
 
 
 def extract_doi_from_text(text: str) -> str | None:
@@ -57,6 +99,9 @@ def extract_doi_from_text(text: str) -> str | None:
 def extract_text_with_metadata(pdf_path: str, max_chars: int = _MAX_CHARS) -> dict:
     """Open *pdf_path* and return text with metadata including DOI.
 
+    Results are cached to ``~/.cache/pdf-mcp/cache.json`` keyed by path and
+    mtime, so repeated calls on the same unchanged file skip pymupdf entirely.
+
     Parameters
     ----------
     pdf_path : str
@@ -70,6 +115,10 @@ def extract_text_with_metadata(pdf_path: str, max_chars: int = _MAX_CHARS) -> di
         Dictionary with 'text', 'doi', 'pages', 'filename', 'path'.
     """
     pdf_path = str(Path(pdf_path).expanduser().resolve())
+    key = _cache_key(pdf_path)
+    cache = _cache_load()
+    if key in cache:
+        return cache[key]
     doc = pymupdf.open(pdf_path)
     pages: list[str] = []
     total = 0
@@ -99,13 +148,16 @@ def extract_text_with_metadata(pdf_path: str, max_chars: int = _MAX_CHARS) -> di
         header += f"\nDOI: {doi}"
     header += "\n\n"
 
-    return {
+    result = {
         "filename": Path(pdf_path).name,
         "path": pdf_path,
         "pages": len(doc),
         "doi": doi,
         "text": header + "\n".join(pages),
     }
+    cache[key] = result
+    _cache_save(cache)
+    return result
 
 
 def extract_text(pdf_path: str, max_chars: int = _MAX_CHARS) -> str:
