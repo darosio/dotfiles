@@ -1,0 +1,238 @@
+{
+  "item-tree-main-default": {
+    "title": {
+      "dataKey": "title",
+      "ordinal": 0,
+      "hidden": false,
+      "width": 724.5
+    },
+    "firstCreator": {
+      "dataKey": "firstCreator",
+      "ordinal": 1,
+      "hidden": false,
+      "width": 169
+    },
+    "itemType": {
+      "dataKey": "itemType",
+      "width": "40",
+      "ordinal": 6,
+      "hidden": true
+    },
+    "date": {
+      "dataKey": "date",
+      "ordinal": 7,
+      "hidden": true
+    },
+    "year": {
+      "dataKey": "year",
+      "ordinal": 2,
+      "hidden": false,
+      "width": 88
+    },
+    "publisher": {
+      "dataKey": "publisher",
+      "ordinal": 8,
+      "hidden": true
+    },
+    "publicationTitle": {
+      "dataKey": "publicationTitle",
+      "ordinal": 9,
+      "hidden": true
+    },
+    "journalAbbreviation": {
+      "dataKey": "journalAbbreviation",
+      "ordinal": 10,
+      "hidden": true
+    },
+    "language": {
+      "dataKey": "language",
+      "ordinal": 11,
+      "hidden": true
+    },
+    "accessDate": {
+      "dataKey": "accessDate",
+      "ordinal": 12,
+      "hidden": true
+    },
+    "libraryCatalog": {
+      "dataKey": "libraryCatalog",
+      "ordinal": 13,
+      "hidden": true
+    },
+    "callNumber": {
+      "dataKey": "callNumber",
+      "ordinal": 14,
+      "hidden": true
+    },
+    "rights": {
+      "dataKey": "rights",
+      "ordinal": 15,
+      "hidden": true
+    },
+    "dateAdded": {
+      "dataKey": "dateAdded",
+      "ordinal": 4,
+      "hidden": false,
+      "width": 96.5
+    },
+    "dateModified": {
+      "dataKey": "dateModified",
+      "ordinal": 16,
+      "hidden": true
+    },
+    "archive": {
+      "dataKey": "archive",
+      "ordinal": 17,
+      "hidden": true
+    },
+    "archiveLocation": {
+      "dataKey": "archiveLocation",
+      "ordinal": 18,
+      "hidden": true
+    },
+    "place": {
+      "dataKey": "place",
+      "ordinal": 19,
+      "hidden": true
+    },
+    "volume": {
+      "dataKey": "volume",
+      "ordinal": 20,
+      "hidden": true
+    },
+    "edition": {
+      "dataKey": "edition",
+      "ordinal": 21,
+      "hidden": true
+    },
+    "number": {
+      "dataKey": "number",
+      "ordinal": 22,
+      "hidden": true
+    },
+    "pages": {
+      "dataKey": "pages",
+      "ordinal": 23,
+      "hidden": true
+    },
+    "issue": {
+      "dataKey": "issue",
+      "ordinal": 24,
+      "hidden": true
+    },
+    "series": {
+      "dataKey": "series",
+      "ordinal": 25,
+      "hidden": true
+    },
+    "seriesTitle": {
+      "dataKey": "seriesTitle",
+      "ordinal": 26,
+      "hidden": true
+    },
+    "court": {
+      "dataKey": "court",
+      "ordinal": 27,
+      "hidden": true
+    },
+    "medium": {
+      "dataKey": "medium",
+      "ordinal": 28,
+      "hidden": true
+    },
+    "type": {
+      "dataKey": "type",
+      "ordinal": 29,
+      "hidden": true
+    },
+    "system": {
+      "dataKey": "system",
+      "ordinal": 30,
+      "hidden": true
+    },
+    "shortTitle": {
+      "dataKey": "shortTitle",
+      "ordinal": 31,
+      "hidden": true
+    },
+    "extra": {
+      "dataKey": "extra",
+      "ordinal": 32,
+      "hidden": true
+    },
+    "hasAttachment": {
+      "dataKey": "hasAttachment",
+      "ordinal": 5,
+      "hidden": false
+    },
+    "numNotes": {
+      "dataKey": "numNotes",
+      "width": "26",
+      "ordinal": 33,
+      "hidden": true
+    },
+    "better-bibtex-iris-advies-com-citationKey": {
+      "dataKey": "better-bibtex-iris-advies-com-citationKey",
+      "ordinal": 43,
+      "hidden": true
+    },
+    "frlars21-github-com-citationcounts": {
+      "dataKey": "frlars21-github-com-citationcounts",
+      "ordinal": 4,
+      "hidden": false,
+      "width": 70
+    },
+    "justin-justinribeiro-com-gsccCount": {
+      "dataKey": "justin-justinribeiro-com-gsccCount",
+      "ordinal": 45,
+      "hidden": true
+    },
+    "justin-justinribeiro-com-gsccCountUpdated": {
+      "dataKey": "justin-justinribeiro-com-gsccCountUpdated",
+      "ordinal": 46,
+      "hidden": true
+    },
+    "justin-justinribeiro-com-gsccRelevanceScore": {
+      "dataKey": "justin-justinribeiro-com-gsccRelevanceScore",
+      "ordinal": 47,
+      "hidden": true
+    },
+    "reading-list-hotmail-com-readstatus": {
+      "dataKey": "reading-list-hotmail-com-readstatus",
+      "ordinal": 5,
+      "hidden": false,
+      "width": 100
+    },
+    "reading-list\\@hotmail\\.com-readstatus": {
+      "dataKey": "reading-list\\@hotmail\\.com-readstatus",
+      "ordinal": 49,
+      "hidden": true
+    },
+    "better-bibtex\\@iris-advies\\.com-citationKey": {
+      "dataKey": "better-bibtex\\@iris-advies\\.com-citationKey",
+      "ordinal": 34,
+      "hidden": true
+    },
+    "reading_list_at_hotmail_com_readstatus": {
+      "dataKey": "reading_list_at_hotmail_com_readstatus",
+      "ordinal": 35,
+      "hidden": true
+    },
+    "justin\\@justinribeiro\\.com-gsccCount": {
+      "dataKey": "justin\\@justinribeiro\\.com-gsccCount",
+      "ordinal": 3,
+      "hidden": false,
+      "width": 67.11666870117188
+    },
+    "justin\\@justinribeiro\\.com-gsccCountUpdated": {
+      "dataKey": "justin\\@justinribeiro\\.com-gsccCountUpdated",
+      "ordinal": 36,
+      "hidden": true
+    },
+    "justin\\@justinribeiro\\.com-gsccRelevanceScore": {
+      "dataKey": "justin\\@justinribeiro\\.com-gsccRelevanceScore",
+      "ordinal": 37,
+      "hidden": true
+    }
+  }
+}

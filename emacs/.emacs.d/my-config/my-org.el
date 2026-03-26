@@ -108,6 +108,12 @@
   ;; Org Link Settings
   (setq org-link-keep-stored-after-insertion t)
   (org-link-set-parameters "mpv" :follow (lambda (path) (browse-url-xdg-open path)))
+  (org-link-set-parameters "zotero" :follow (lambda (path)
+                                             (let ((url (if (string-prefix-p "//" path)
+                                                            (concat "zotero:" path)
+                                                          (concat "zotero://" path))))
+                                               (message "Opening Zotero link: %s" url)
+                                               (browse-url-xdg-open url))))
 
   (consult-customize da-consult-org :preview-key "<right>")
   ;; babel

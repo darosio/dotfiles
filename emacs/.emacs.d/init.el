@@ -1167,18 +1167,26 @@
 
   (defvar completion-bibliography
     '("~/Sync/biblio/main.bib"
-      "~/Sync/biblio/MY.bib"
       "~/Sync/biblio/former.bib"
-      "~/Sync/biblio/books.bib") "List of bib files.")
+      "~/Sync/biblio/MY.bib") "List of bib files.")
   (defvar completion-library-path
     '("~/Sync/biblio/main/"
-      "~/Sync/biblio/MY/"
       "~/Sync/biblio/former/"
-      "~/Sync/biblio/books/") "List of folders containing pdf and other documents.")
+      "~/Sync/biblio/MY/") "List of folders containing pdf and other documents.")
   (defvar completion-notes-path
     "~/Sync/notes/org-roam/biblio" "Folder (or file) for notes.")
 
+  (defun my/citar-transform-zotero (key)
+    (format "[[zotero://select/items/@%s][Open in Zotero]]" key))
+
+  (defun my/citar-transform-files (files)
+    (if (and files (not (string-empty-p files)))
+        (mapconcat (lambda (f) (format "[[file:%s]]" (string-trim f)))
+                   (split-string files ";") "\n")
+      ""))
+
   (use-package citar
+    :after org
     :bind (("M-s b b" . citar-open)
            ("M-s b n" . citar-open-note)
            ("M-s M-b" . citar-insert-citation)
@@ -1198,37 +1206,30 @@
     (org-cite-activate-processor 'citar)
     :defines citar-open-note-functions
     :init
+    (setq citar-display-transform-functions
+          '((zotero my/citar-transform-zotero)
+            (files my/citar-transform-files)))
     (setq citar-templates
           `((main . "${author editor:30}     ${date year issued:4}     ${title:48}")
             (suffix . "          ${=key= id:15}    ${=type=:12}    ${tags keywords annotation:*}")
             (preview . "${author editor} (${year issued date}) ${title}, \
     ${journal journaltitle publisher container-title collection-title}.\n")
-            (note . ,(concat "${title}\n\n"
-                             "- tags ::\n" ;XXX
+            (note . ,(concat "#+title: ${title}\n"
+                             "#+filetags: :literature:\n\n"
+                             "- tags :: ${tags}\n"
                              "- keywords :: ${keywords}\n"
-                             "- extra :: ${annotation}\n"
-                             "- note :: ${note}\n\n"
-                             "* TODO main\n"
-                             ":PROPERTIES:\n"
-                             ":Custom_ID: ${=key=}\n"
-                             ":NOTER_DOCUMENT: ${file}\n"
-                             ":NOTER_PAGE:\n"
-                             ":AUTHOR: ${author}\n"
-                             ":JOURNAL: ${journaltitle}\n"
-                             ":YEAR: ${year} ${date}\n"
-                             ":DOI: ${doi}\n"
-                             ":URL: ${url}\n"
-                             ":END:\n\n"
-                             "* suppl\n"
-                             ":PROPERTIES:\n"
-                             ":NOTER_DOCUMENT: ${file}\n"
-                             ":END:"))))
+                             "- DOI :: [[https://doi.org/${doi}][${doi}]]\n"
+                             "- URL :: ${url}\n"
+                             "- Zotero :: ${=key=%zotero}\n\n"
+                             "* File(s)\n"
+                             "${file%files}\n\n"
+                             "* Notes\n"
+                             "${note}\n\n"))))
     :hook
     (LaTeX-mode . citar-capf-setup)
     (org-mode . citar-capf-setup)
     (markdown-mode . citar-capf-setup)
     :config
-    (setq citar-notes-source 'citar-file)
     (setq citar-symbol-separator "  ")
     (setq citar-file-open-functions
           '(("pdf"  . citar-file-open-external)
@@ -1253,8 +1254,22 @@
 
   (use-package citar-org-roam
     :after (citar org-roam)
-    :commands (citar-org-roam-mode)
-    :config (citar-org-roam-mode))
+    :config
+    (setq citar-notes-source 'citar-org-roam)
+    (citar-org-roam-mode 1)
+    ;; Ensure zotero links work
+    (with-eval-after-load 'ol
+      (org-link-set-parameters "zotero" :follow (lambda (path)
+                                                  (let ((url (if (string-prefix-p "//" path)
+                                                                 (concat "zotero:" path)
+                                                               (concat "zotero://" path))))
+                                                    (message "Opening Zotero link: %s" url)
+                                                    (browse-url-xdg-open url))))))
+
+  ;; Note: citar-open-entry-in-zotero is built-into citar.
+  ;; It uses the zotero://select/items/@citekey protocol.
+  (with-eval-after-load 'citar
+    (add-to-list 'citar-file-open-functions '("zotero" . citar-open-entry-in-zotero)))
 
   (use-package citar-embark
     :after (citar embark)
