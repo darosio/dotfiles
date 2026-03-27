@@ -89,9 +89,32 @@ Columns: title, firstCreator, year, dateAdded, citationcounts, readstatus, hasAt
 ### Zotero plugins (assessed)
 
 - **Better BibTeX** ✅ essential
+
 - **Actions & Tags** ✅ keep (auto-tag unread, Ctrl+l → zotero:// URI)
+
 - **Better Notes** ⚠️ marginal — duplicates org-roam workflow
+
 - **PapersGPT** ❌ remove — superseded by `my/citar-llm-summarize` + gptel
+
+- [ ] copy prompt from https://github.com/papersgpt/papersgpt-for-zotero/blob/bb5ba7057e1245622aee80dbf189127f61eeb0b9/src/modules/base.ts#L194
+
+- postscript for better bibtex export
+  if (Translator.BetterBibTeX && item.attachments) {
+  let zoteroLinks = [];
+  for (const att of item.attachments) {
+  // Check if it's a PDF and has a key
+  if ((att.contentType === 'application/pdf' || att.filename.toLowerCase().endsWith('.pdf')) && att.key) {
+  zoteroLinks.push(`zotero://open-pdf/library/items/${att.key}`);
+  }
+  }
+  if (zoteroLinks.length > 0) {
+  // This overwrites the 'file' field with the working Zotero URIs
+  this.add({ name: 'file', value: zoteroLinks.join(';') });
+  }
+  }
+
+- another link exploiting Actions and Tags
+  https://plexwave.org/blog/org-zotero-links
 
 ______________________________________________________________________
 

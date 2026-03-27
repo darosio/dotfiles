@@ -1226,8 +1226,28 @@ exists anywhere in the file."
   (defvar completion-notes-path
     "~/Sync/org-roam/biblio" "Folder (or file) for notes.")
 
+  (defun my/citar-format-zotero-url (key)
+    "Format a Zotero URL for the given key."
+    (format "zotero://select/library/items/%s" key))
+
+  (defun my/citar-format-zotero-pdf-url (key)
+    "Format a Zotero PDF URL for the given key."
+    (format "zotero://open-pdf/library/items/%s" key))
+
+  (defun my/citar-open-zotero (key)
+    "Open Zotero with the specified key using xdg-open."
+    (let ((url (my/citar-format-zotero-url key)))
+      (message "Opening: %s" url)
+      (start-process "xdg-open" "xdg-open" "xdg-open" url)))
+
+  (defun my/citar-open-zotero-pdf (key)
+    "Open Zotero PDF with the specified key using xdg-open."
+    (let ((url (my/citar-format-zotero-pdf-url key)))
+      (message "Opening PDF: %s" url)
+      (start-process "xdg-open" "xdg-open" "xdg-open" url)))
+
   (defun my/citar-transform-zotero (key)
-    (format "[[zotero://select/items/@%s][Open in Zotero]]" key))
+    (format "[[%s][Open in Zotero]]" (my/citar-format-zotero-url key)))
 
   (defun my/citar-transform-files (files)
     (if (and files (not (string-empty-p files)))
