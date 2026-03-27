@@ -1010,6 +1010,7 @@
 
   (use-package org-roam
     :after org
+    :demand t
     :commands (org-roam-db-autosync-mode)
     :defines (org-roam-mode-map
               org-roam-node-display-template
@@ -1025,7 +1026,7 @@
                    (window-parameters . ((no-other-window . t)
                                          (no-delete-other-windows . t)))))
     :custom
-    (org-roam-directory "~/Sync/notes/org-roam/")
+    (org-roam-directory "~/Sync/org-roam/")
     :bind (("M-s s" . org-roam-node-find)
            ("M-s M-s" . org-roam-ref-find)
            ("C-c n R" . org-roam-node-random)
@@ -1092,6 +1093,7 @@
           deft-use-filter-string-for-filename t))
 
   (use-package consult-notes
+    :after (consult org-roam)
     :straight (:type git :host github :repo "mclear-tools/consult-notes")
     :commands (consult-notes
                consult-notes-search-in-all-notes
@@ -1099,28 +1101,80 @@
                consult-notes-org-roam-find-node-relation)
     :bind (("M-s n" . consult-notes-search-in-all-notes)
            ("M-s M-n" . consult-notes)
-           ("M-s N" . consult-notes-org-roam-find-node))
+           ("M-s N" . consult-notes-org-roam-find-node)
+           ("M-s S" . my/consult-notes-search-and)
+           ("M-s M-N" . consult-notes-org-roam-find-node-relation))
     :config
-    (setq consult-notes-file-dir-sources '(("Notes" ?n "~/Sync/notes/")
-                                           ("Proj" ?p "~/Sync/proj/")
-                                           ("Org" ?o "~/Sync/box/org/"))
+    (setq consult-notes-file-dir-sources '(("Notes"  ?n "~/Sync/notes/")
+                                           ("Proj"  ?p "~/Sync/proj/")
+                                           ("Org"   ?o "~/Sync/box/org/")
+                                           ("Citar" ?c "~/Sync/org-roam/biblio/"))
           consult-notes-org-headings-files '("~/Sync/proj/lab.org"
                                              "~/Sync/box/org/journal.org"
                                              "~/Sync/box/org/projects.org")
           )
-    (consult-notes-org-headings-mode)   ; org heading
-    (consult-notes-org-roam-mode)       ; org roam
-    ;; XXX: MAYBE: embark and citar support https://github.com/mclear-tools/consult-notes
+    ;; use ripgrep for full-text search
+    (setq consult-notes-use-rg t)
+    ;; activate org-roam integration
+    (consult-notes-org-roam-mode)
+    ;; activate headings integration
+    (consult-notes-org-headings-mode)
+    ;; show backlink count and file size in annotations
+    (setq consult-notes-org-roam-blinks t
+          consult-notes-org-roam-show-file-size t)
+    ;; Add citar source to consult-notes if available
+    (when (require 'consult-notes-citar nil t)
+      (consult-notes-citar-mode))
+
+    (defun my/consult-notes-search-and (query)
+      "Search notes for files containing ALL keywords in QUERY (Deft-style).
+This pipes multiple ripgrep commands to find files where every term
+exists anywhere in the file."
+      (interactive "sSearch keywords (AND): ")
+      (let* ((terms (split-string query " " t))
+             (dirs (append
+                    (mapcar (lambda (src) (nth 2 src)) consult-notes-file-dir-sources)
+                    (list org-roam-directory)))
+             (cmd (cond
+                   ((null terms) nil)
+                   ((= (length terms) 1)
+                    (concat "rg --ignore-case --line-number --with-filename --no-heading "
+                            (shell-quote-argument (car terms))
+                            " "
+                            (mapconcat #'shell-quote-argument dirs " ")))
+                   (t
+                    (let ((all-but-last (butlast terms))
+                          (last-term (car (last terms))))
+                      (concat "rg -l --ignore-case "
+                              (shell-quote-argument (car all-but-last))
+                              " "
+                              (mapconcat #'shell-quote-argument dirs " ")
+                              (mapconcat (lambda (term)
+                                           (concat " | xargs -d '\\n' rg -l --ignore-case "
+                                                   (shell-quote-argument term)))
+                                         (cdr all-but-last) "")
+                              " | xargs -d '\\n' rg --ignore-case --line-number --with-filename --no-heading "
+                              (shell-quote-argument last-term)))))))
+        (if cmd
+            (let ((lines (split-string (shell-command-to-string cmd) "\n" t)))
+              (if lines
+                  (let ((selected (completing-read "Matches: " lines nil t)))
+                    (when (string-match "^\\(.+?\\):\\([0-9]+\\):" selected)
+                      (let ((file (match-string 1 selected))
+                            (line (string-to-number (match-string 2 selected))))
+                        (find-file file)
+                        (goto-char (point-min))
+                        (forward-line (1- line)))))
+                (message "No files match all keywords.")))
+          (call-interactively #'consult-notes))))
+
     )
 
   (use-package consult-org-roam
-    :after org-roam
+    :after (consult org-roam)
     :commands consult-org-roam-mode
     :defines consult-org-roam-forward-links
-    :init
-    (require 'consult-org-roam)
-    ;; Activate the minor mode
-    (consult-org-roam-mode 1)
+    :init (consult-org-roam-mode 1)
     :config
     ;; Eventually suppress previewing for certain functions
     (consult-customize consult-org-roam-forward-links :preview-key (kbd "M-."))
@@ -1128,6 +1182,7 @@
     ;; Define some convenient keybindings as an addition
     ("C-c n R" . consult-org-roam-file-find)
     ("C-c n b" . consult-org-roam-backlinks)
+    ("C-c n B" . consult-org-roam-backlinks-recursive)
     ("C-c n l" . consult-org-roam-forward-links)
     ("C-c n r" . consult-org-roam-search)
     :custom
@@ -1140,6 +1195,7 @@
     (consult-org-roam-buffer-after-buffers t))
 
   )
+
 (progn ;; Bibliography
 
   (use-package bibtex
@@ -1174,7 +1230,7 @@
       "~/Sync/biblio/former/"
       "~/Sync/biblio/MY/") "List of folders containing pdf and other documents.")
   (defvar completion-notes-path
-    "~/Sync/notes/org-roam/biblio" "Folder (or file) for notes.")
+    "~/Sync/org-roam/biblio" "Folder (or file) for notes.")
 
   (defun my/citar-transform-zotero (key)
     (format "[[zotero://select/items/@%s][Open in Zotero]]" key))
@@ -1200,7 +1256,7 @@
     (org-cite-global-bibliography completion-bibliography)
     (citar-bibliography completion-bibliography)
     (citar-library-paths completion-library-path)
-    (citar-notes-paths '("~/Sync/notes/org-roam/biblio"))
+    (citar-notes-paths '("~/Sync/org-roam/biblio"))
     (org-cite-insert-processor 'citar)
     (org-cite-follow-processor 'citar)
     (org-cite-activate-processor 'citar)
@@ -1274,7 +1330,12 @@
   (use-package citar-embark
     :after (citar embark)
     :commands (citar-embark-mode)
-    :init (citar-embark-mode))
+    :demand t
+    :no-require
+    :config
+    (citar-embark-mode)
+    (define-key citar-embark-map (kbd "z") #'citar-open-entry-in-zotero)
+    )
 
   (use-package oc
     :straight org

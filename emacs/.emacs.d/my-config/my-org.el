@@ -166,7 +166,7 @@
                       (append (directory-files proj-dir t "\\.org$")
                               (directory-files "~/Sync/notes/home/" t "\\.org$")
                               (directory-files-recursively "~/Sync/notes/arch/" "\\.org$")
-                              (directory-files-recursively "~/Sync/notes/org-roam/" "\\.org$")))
+                              (directory-files-recursively "~/Sync/org-roam/" "\\.org$")))
       (file-missing
        (message "The directory %s does not exist or is not accessible." proj-dir))))
 
