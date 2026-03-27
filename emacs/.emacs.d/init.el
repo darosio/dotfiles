@@ -1709,11 +1709,10 @@ exists anywhere in the file."
   (setq ee-terminal-command "foot")
   (define-key ee-keymap (kbd "R") 'ee-rga)
   )
+;; Debug settings (toggle with C-c t d)
+(setq debug-on-error nil
+      debug-on-quit nil)
 
-
-
-(setq debug-on-error nil)
-(setq debug-on-quit nil)
 (let ((elapsed (float-time (time-subtract (current-time) emacs-start-time))))
   (message "Loading settings...done (%.3fs)" elapsed))
 
