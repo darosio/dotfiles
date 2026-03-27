@@ -720,15 +720,9 @@
   ;; Orderless: flexible matching style
   (use-package orderless
     :custom
-    (completion-styles '(orderless partial-completion basic))
+    (completion-styles '(orderless basic))
     (completion-category-defaults nil)
-    (completion-category-overrides '((file (styles orderless partial-completion))
-                                     (buffer (styles orderless partial-completion))
-                                     (command (styles orderless partial-completion))
-                                     (info-menu (styles orderless))
-                                     (consult-grep (styles orderless))
-                                     (embark-collect (styles orderless))
-                                     (minibuffer-completion-table (styles orderless partial-completion)))))
+    (completion-category-overrides nil))
 
   ;; CRM: Configure completing-read-multiple prompt
   (use-package crm
@@ -903,14 +897,15 @@
     :custom
     (dabbrev-ignored-buffer-regexps '("\\.\\(?:pdf\\|jpe?g\\|png\\)\\'")))
 
+  ;; Corfu for popup in-buffer completions
   (use-package corfu
-    :straight (corfu :files (:defaults "extensions/*")
-                     :includes (corfu-info corfu-history corfu-capf-super))
+    :bind (:map corfu-map ("SPC" . corfu-insert-separator))
     :config
     (setq corfu-popupinfo-delay 0
-          corfu-auto t
+          corfu-auto nil
           corfu-auto-prefix 2
-          corfu-minimum-prefix-length 1)
+          corfu-minimum-prefix-length 1
+          corfu-prefer-capf t)
     :custom
     (text-mode-ispell-word-completion nil)
     :init
@@ -918,20 +913,20 @@
     (corfu-popupinfo-mode)
     (corfu-history-mode))
 
+
+  ;; Use cape for additional completion sources (dabbrev, file, keyword, etc.)
   (use-package cape
-    :commands (cape-dabbrev
-               cape-file
-               cape-elisp-block
-               cape-dict
-               cape-keyword
-               cape-capf-super)
+    :commands (cape-dabbrev cape-file cape-elisp-block cape-dict cape-keyword cape-capf-super)
     :bind ("C-M-s-<tab>" . cape-prefix-map)
     :init
     (add-hook 'completion-at-point-functions #'cape-dabbrev)
     (add-hook 'completion-at-point-functions #'cape-file)
-    (add-hook 'completion-at-point-functions #'cape-elisp-block)
-    (setq-local completion-at-point-functions
-                (list (cape-capf-super #'cape-dabbrev #'cape-dict #'cape-file #'cape-keyword))))
+    (add-hook 'completion-at-point-functions #'cape-history)
+    (add-hook 'completion-at-point-functions #'cape-keyword)
+    (setq completion-at-point-functions
+          (cons (cape-capf-super #'cape-elisp-block #'cape-dict)
+                completion-at-point-functions)))
+
   )
 
 (use-package yasnippet
@@ -1063,10 +1058,9 @@
     :straight
     (:host github :repo "org-roam/org-roam-ui" :branch "main" :files ("*.el" "out"))
     :after (org-roam)
-    ;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
-    ;;         a hookable mode anymore, you're advised to pick something yourself
-    ;;         if you don't care about startup time, use
-    ;;  :hook (after-init . org-roam-ui-mode)
+    :bind
+    ("C-c n U" . org-roam-ui-mode)
+    ;; :hook (after-init . org-roam-ui-mode)
     :config
     (setq org-roam-ui-sync-theme t
           org-roam-ui-follow t
@@ -1286,7 +1280,6 @@ exists anywhere in the file."
     (org-mode . citar-capf-setup)
     (markdown-mode . citar-capf-setup)
     :config
-    (setq citar-symbol-separator "  ")
     (setq citar-file-open-functions
           '(("pdf"  . citar-file-open-external)
             ("html" . citar-file-open-external)
