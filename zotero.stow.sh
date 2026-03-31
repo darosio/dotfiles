@@ -30,6 +30,7 @@ fi
 
 # Stow user.js (symlink is safe — Zotero reads but never rewrites user.js).
 stow -t "$HOME" zotero
+cp --remove-destination zotero/.zotero/zotero/90bt0tu8.default/prefs.js ~/.zotero/zotero/90bt0tu8.default/prefs.js
 
 cd "$HOME" || exit
 wget https://github.com/syt2/zotero-addons/releases/latest/download/zotero-addons.xpi
