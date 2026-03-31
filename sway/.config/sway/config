@@ -278,7 +278,7 @@ client.focused_inactive #268bd2 #268bd2 #fdf6e3 #484e50
 client.unfocused        #333333 #93a1a1 #fdf6e3 #292d2e
 
 # #shortcuts
-bindsym $mod+t exec thunar
+bindsym $mod+t exec pcmanfm
 bindsym $mod+p exec bash -c dpass
 bindsym $mod+Shift+p exec pavucontrol
 
