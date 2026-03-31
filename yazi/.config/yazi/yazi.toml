@@ -11,6 +11,7 @@ csvlens = [
 ]
 edit = [
   { run = '$EDITOR "$@"', block = false, for = "unix" },
+  { run = 'gvim "$@"', block = false, for = "unix" },
 ]
 open = [
   { run = 'handlr open "$@"', desc = "Open" },
@@ -19,6 +20,7 @@ open = [
 
 [open]
 prepend_rules = [
+  { name = "*", use = ["open", "edit"] }, # Fallback for all files
   { name = "*.csv", use = ["csvlens"] },
   { name = "*.ipynb", use = ["jupyter"] },
 ]
