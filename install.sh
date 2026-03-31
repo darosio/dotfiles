@@ -6,6 +6,17 @@ set -euo pipefail
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+# Ensure we're not using a virtual environment's python for system packages
+deactivate_venv() {
+  if [ -n "${VIRTUAL_ENV:-}" ]; then
+    echo "Warning: Virtual environment detected ($VIRTUAL_ENV). Bypassing for system installation..."
+    # Attempt to clean PATH by removing the venv bin directory
+    PATH=${PATH//"$VIRTUAL_ENV/bin:"/}
+    export PATH
+    unset VIRTUAL_ENV
+  fi
+}
+
 list_packages() {
   echo "Available packages:"
   echo ""
@@ -24,6 +35,7 @@ list_packages() {
 
 run_script() {
   local script="$1"
+  deactivate_venv
   if [[ -x "$DOTFILES_DIR/$script" ]]; then
     echo "Running $script..."
     "$DOTFILES_DIR/$script"

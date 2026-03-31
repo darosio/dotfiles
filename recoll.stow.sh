@@ -1,5 +1,11 @@
 #!/usr/bin/env sh
 #
+if [ -n "$VIRTUAL_ENV" ]; then
+  PATH=$(echo "$PATH" | sed -e "s|$VIRTUAL_ENV/bin:||g")
+  export PATH
+  unset VIRTUAL_ENV
+fi
+
 yay -S --noconfirm recoll
 yay -S --noconfirm pstotext
 yay -S --noconfirm python-mutagen
