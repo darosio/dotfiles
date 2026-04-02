@@ -242,6 +242,11 @@ include /etc/sway/config.d/*
 ####################################################################
 # i3 config file (v4)
 
+# Propagate Wayland/display vars to systemd user session and dbus so that
+# services like dunst (graphical-session.target) can connect to the compositor.
+exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
+exec dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
+
 #autostart
 #exec --no-startup-id git annex assistant --autostart
 #exec --no-startup-id artha
