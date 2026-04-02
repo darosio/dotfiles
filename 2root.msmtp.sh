@@ -2,11 +2,15 @@
 #
 yay -S --noconfirm msmtp
 yay -S --noconfirm msmtp-mta
-sudo rm /etc/msmtprc /etc/msmtp.aliases
+sudo rm -f /etc/msmtprc /etc/msmtp.aliases
 sudo stow -t / 2root.msmtp
 
-# Create plaintext password file for root msmtp (used at boot without GPG agent)
-if [ ! -f /home/dan/.msmtp-gmail-pass ]; then
-  PASSWORD_STORE_DIR=/home/dan/Sync/.pass/ pass email/gmail-isync | head -1 > /home/dan/.msmtp-gmail-pass
-  chmod 600 /home/dan/.msmtp-gmail-pass
-fi
+# Encrypt Gmail password with systemd-creds (TPM2-bound, machine-specific).
+# The credential is tied to this machine's TPM — cannot be decrypted on another host.
+sudo mkdir -p /etc/credstore
+PASSWORD_STORE_DIR=/home/dan/Sync/.pass/ pass email/gmail-isync | head -1 | tr -d '\n' |
+  sudo systemd-creds encrypt --name=msmtp-gmail - /etc/credstore/msmtp-gmail.cred
+sudo chmod 600 /etc/credstore/msmtp-gmail.cred
+
+# Remove old plaintext fallback
+rm -f /home/dan/.msmtp-gmail-pass
