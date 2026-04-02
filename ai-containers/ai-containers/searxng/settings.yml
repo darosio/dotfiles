@@ -9,13 +9,13 @@ server:
     - text/html
     - application/json
 engines:
-  - name: google_scholar
+  - name: google scholar
     disabled: false
     categories: [general, science]
   - name: pubmed
     disabled: false
     categories: [general, science]
-  - name: semantic_scholar
+  - name: semantic scholar
     disabled: false
     categories: [general, science]
   - name: arxiv
@@ -27,10 +27,6 @@ engines:
   - name: wolframalpha
     disabled: false
     categories: [general, science]
-  - name: ahmia
-    disabled: true
-  - name: torch
-    disabled: true
   - name: wikidata
     disabled: true
 categories_as_tabs:

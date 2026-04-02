@@ -6,6 +6,7 @@ services:
       - "8080:8080"
     volumes:
       - ./settings.yml:/etc/searxng/settings.yml:ro
+      - ./limiter.toml:/etc/searxng/limiter.toml:ro
     environment:
       - SEARXNG_SETTINGS_PATH=/etc/searxng/settings.yml
     restart: unless-stopped
