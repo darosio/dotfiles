@@ -90,9 +90,9 @@
         '(
           ("/cnr/INBOX"               . ?c)
           ("/cnr/Sent Items"          . ?C)
+          ("/cnr/refs"                . ?r)
+          ("/cnr/keepup"              . ?k)
           ("/gmail/Inbox"             . ?j)
-          ("/gmail/refs"              . ?r)
-          ("/gmail/keepup"            . ?k)
           ("/gmail/[Gmail]/Sent Mail" . ?s)
           ("/gmail/[Gmail]/Spam"      . ?x)
           ("/pec/INBOX"               . ?P)
