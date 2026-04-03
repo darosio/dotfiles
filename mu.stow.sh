@@ -11,6 +11,10 @@ stow -t "$HOME" mbsync
 mkdir -p "$HOME"/Maildir/cnr
 mkdir -p "$HOME"/Maildir/gmail
 mkdir -p "$HOME"/Maildir/pec
+# CNR subfolders created by first mbsync run; refs/keepup need pre-creation
+# so messages can be migrated before syncing upstream
+mkdir -p "$HOME"/Maildir/cnr/refs/cur "$HOME"/Maildir/cnr/refs/new "$HOME"/Maildir/cnr/refs/tmp
+mkdir -p "$HOME"/Maildir/cnr/keepup/cur "$HOME"/Maildir/cnr/keepup/new "$HOME"/Maildir/cnr/keepup/tmp
 
 # OAuth2 token directory for mutt_oauth2.py
 mkdir -p "$HOME"/.config/mutt_oauth2
