@@ -79,6 +79,58 @@ Keybindings reserved for users: `C-c <letter>` and `F5`–`F9`.
 - **org-mime** for mu4e compose
 - `C-c o a` — mu4e-compose-attach-captured-message
 
+#### CNR / Office 365 OAuth2 IMAP setup
+
+CNR migrated to Microsoft 365. Basic auth is disabled; XOAUTH2 is required.
+The working configuration uses `mutt_oauth2.py` (from mutt's contrib, stored in
+`mbsync/.local/bin/`) with `cyrus-sasl-xoauth2-git` (AUR) for SASL support.
+
+**Key lessons from the initial setup:**
+
+| Item          | Value / Decision                                                                          |
+| ------------- | ----------------------------------------------------------------------------------------- |
+| Client ID     | `9e5f94bc-e8a4-4e73-b8be-63364c29d753` (Thunderbird's — works without Azure registration) |
+| Tenant ID     | `34c64e9f-d27f-4edd-a1f0-1397f0c84f94` (CNR-specific, **not** `common`)                   |
+| Auth flow     | `localhostauthcode` — CNR blocks `devicecode`; browser redirect required                  |
+| PKCE          | Required by CNR; the script sends `code_challenge`/`code_verifier`                        |
+| URL parse fix | The script must extract `?code=` from the redirect URL, not send the whole URL            |
+| SASL lib      | `cyrus-sasl-xoauth2-git` (AUR) must be installed for mbsync XOAUTH2 support               |
+
+**First-time setup** (`mu.stow.sh` handles install/dirs; this step is manual):
+
+```sh
+# All packages and directories are set up by mu.stow.sh.
+# Only the browser-based authorisation must be done manually:
+mutt_oauth2.py ~/.config/mutt_oauth2/cnr.tokens --verbose --authorize --authflow localhostauthcode
+# → when prompted: registration=microsoft, email=daniele.arosio@cnr.it
+# → a browser window opens — log in with CNR credentials
+# → copy the full redirect URL back to the terminal
+mutt_oauth2.py ~/.config/mutt_oauth2/cnr.tokens --verbose --test
+mbsync cnr
+```
+
+Token file is GPG-encrypted with `danielepietroarosio@gmail.com` key.
+Tokens auto-refresh; re-run `--authorize` only if the refresh token expires.
+
+**Note:** CNR O365 SMTP accepts basic auth (app password in `pass email/cnr`),
+even though IMAP requires OAuth2. This is a common split Microsoft tenant config.
+
+#### FBK email setup
+
+`darosio@fbk.eu` is hosted on **Google Workspace** (MX → Google). All mail is
+forwarded to `daniele.arosio@cnr.it` — no separate IMAP sync needed.
+
+Sending as `darosio@fbk.eu` was investigated but not set up:
+
+- `smtp.fbk.eu:587` is reachable but its TLS cert does not match the hostname
+- `smtp.gmail.com:587` requires an app password or OAuth2; FBK's Google Workspace
+  admin has disabled app passwords (no option visible in myaccount.google.com)
+- OAuth2 for Google Workspace SMTP would require a separate registration —
+  not worth the effort since CNR identity is sufficient for FBK correspondence
+
+If FBK ever enables app passwords, adding an msmtp account is straightforward:
+`smtp.gmail.com:587`, user `darosio@fbk.eu`, `passwordeval "pass email/fbk"`.
+
 ### Notes
 
 - **deft** — native insert mode; can create new `./proj/file`

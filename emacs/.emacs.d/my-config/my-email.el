@@ -8,14 +8,6 @@
   :straight (:type built-in)            ; in AUR/mu
   :commands (mu4e mu4e-compose-new)
   :preface
-  (defun replace-duck-emails-in-buffer ()
-    "Replace duck.com email addresses with their original format."
-    (interactive)
-    (save-excursion
-      (goto-char (point-min))
-      (while (re-search-forward "\\([[:word:].+-]+\\)_at_\\([[:word:].+-]+\\)\\(\\.[a-zA-Z.]+\\)_[[:word:]]+@duck\\.com" nil t)
-        (replace-match "\\1@\\2\\3" nil nil))))
-
   (defun my-mu4e-compose-mode-hook ()
     "My settings for message composition."
     (set-fill-column 80)
@@ -35,9 +27,7 @@
   :hook
   (dired-mode . turn-on-gnus-dired-mode)
   (mu4e-view-mode . variable-pitch-mode)
-  (mu4e-compose-mode . (lambda ()
-                         (my-mu4e-compose-mode-hook)
-                         (replace-duck-emails-in-buffer)))
+  (mu4e-compose-mode . my-mu4e-compose-mode-hook)
 
   :bind (("M-g M-a m" . mu4e)
          ("C-x m" . mu4e)
@@ -54,6 +44,9 @@
          ("G"         . end-of-buffer)
          ("V"         . mu4e-view-verify-msg-popup)
          ("v"         . visual-fill-column-mode)
+         ("I"         . (lambda () (interactive)   ; toggle remote images for this message
+                          (setq-local shr-inhibit-images (not shr-inhibit-images))
+                          (mu4e-view-refresh)))
          ("C-c l" . org-store-link)         ; requires ol.el
          ("f" . mu4e-view-mark-for-flag)
          :map mu4e-headers-mode-map
@@ -80,6 +73,7 @@
         mu4e-confirm-quit nil
         fill-flowed-encode-column 998; https://www.ietf.org/rfc/rfc2822.txt
         shr-color-visible-luminance-min 80
+        shr-inhibit-images t            ; block remote images by default (kills pixel trackers)
         mu4e-context-policy 'pick-first ; start with the first (default) context;
         mu4e-search-include-related t
         mu4e-search-skip-duplicates nil
@@ -94,10 +88,11 @@
 
   (setq mu4e-maildir-shortcuts
         '(
+          ("/cnr/INBOX"               . ?c)
+          ("/cnr/Sent Items"          . ?C)
           ("/gmail/Inbox"             . ?j)
           ("/gmail/refs"              . ?r)
           ("/gmail/keepup"            . ?k)
-          ("/gmail/[Gmail]/Drafts"    . ?d)
           ("/gmail/[Gmail]/Sent Mail" . ?s)
           ("/gmail/[Gmail]/Spam"      . ?x)
           ("/pec/INBOX"               . ?P)
@@ -111,6 +106,12 @@
 
   (setq mu4e-bookmarks
         `(
+          (:key ?i
+                :name "All inboxes"
+                :query "maildir:/cnr/INBOX OR maildir:/gmail/Inbox")
+          (:key ?c
+                :name "CNR inbox"
+                :query "maildir:/cnr/INBOX")
           (:key ?a
                 :name "Temporary archive"
                 :query "maildir:/gmail/archive_tmp")
@@ -142,15 +143,21 @@
   (setq mu4e-contexts
         `( ,(make-mu4e-context
              :name "cnr"
+             :match-func (lambda (msg)
+                           (when msg
+                             (string-prefix-p "/cnr" (mu4e-message-field msg :maildir))))
              :vars '((user-mail-address . "daniele.arosio@cnr.it"  )
                      (user-full-name . "Daniele Arosio" )
-                     (mu4e-sent-folder . "/gmail/[Gmail]/Sent Mail" )
-                     (mu4e-drafts-folder . "/gmail/[Gmail]/Drafts" )
+                     (mu4e-sent-folder . "/cnr/Sent Items" )
+                     (mu4e-drafts-folder . "/cnr/Drafts" )
                      (mu4e-refile-folder . "/archive" )
-                     (mu4e-trash-folder . "/gmail/[Gmail]/Trash")
+                     (mu4e-trash-folder . "/cnr/Deleted Items")
                      (message-signature . "")))
            ,(make-mu4e-context
              :name "gmail"
+             :match-func (lambda (msg)
+                           (when msg
+                             (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
              :vars '( (user-mail-address . "danielepietroarosio@gmail.com" )
                       (mu4e-sent-folder . "/gmail/[Gmail]/Sent Mail" )
                       (mu4e-drafts-folder . "/gmail/[Gmail]/Drafts")

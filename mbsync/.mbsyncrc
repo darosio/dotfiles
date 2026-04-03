@@ -10,6 +10,32 @@ Expunge Both
 CopyArrivalDate yes
 
 ################################################################################
+# CNR (Office 365)
+################################################################################
+IMAPAccount cnr
+Host outlook.office365.com
+Port 993
+User daniele.arosio@cnr.it
+PassCmd "~/.local/bin/mutt_oauth2.py ~/.config/mutt_oauth2/cnr.tokens"
+AuthMechs XOAUTH2
+TLSType IMAPS
+CertificateFile /etc/ssl/certs/ca-certificates.crt
+
+IMAPStore cnr-remote
+Account cnr
+
+MaildirStore cnr-local
+SubFolders Verbatim
+Path ~/Maildir/cnr/
+Inbox ~/Maildir/cnr/INBOX
+
+Channel cnr
+Far :cnr-remote:
+Near :cnr-local:
+Patterns * !Archive
+
+
+################################################################################
 # Postecert
 ################################################################################
 # imap account information
