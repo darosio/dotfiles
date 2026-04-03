@@ -87,6 +87,6 @@ Inbox ~/Maildir/gmail/Inbox
 Channel gmail
 Far :gmail-remote:
 Near :gmail-local:
-Patterns * ![Gmail]* "[Gmail]/Drafts" "[Gmail]/Sent Mail" "[Gmail]/Spam" "[Gmail]/Trash"
+Patterns * ![Gmail]* !refs !keepup "[Gmail]/Drafts" "[Gmail]/Sent Mail" "[Gmail]/Spam" "[Gmail]/Trash"
 
 # Group gmail
