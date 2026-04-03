@@ -32,7 +32,7 @@ Inbox ~/Maildir/cnr/INBOX
 Channel cnr
 Far :cnr-remote:
 Near :cnr-local:
-Patterns * !Archive
+Patterns INBOX "Sent Items" Drafts "Deleted Items" "Junk Email" Trash Outbox
 
 
 ################################################################################
