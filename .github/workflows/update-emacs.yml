@@ -22,7 +22,7 @@ jobs:
       - name: Prepare Emacs configuration directory
         run: |
           mkdir -p ~/Sync/proj ~/Sync/box/org/gcal ~/Sync/notes/arch
-          mkdir -p ~/Sync/notes/org-roam ~/Sync/biblio ~/Sync/media
+          mkdir -p ~/Sync/notes/org-roam ~/Sync/org-roam ~/Sync/biblio ~/Sync/media
           ln -s "$GITHUB_WORKSPACE/emacs/.emacs.d" ~/.emacs.d
       - name: Set up Emacs
         uses: purcell/setup-emacs@master
@@ -56,7 +56,7 @@ jobs:
       - name: Prepare Emacs configuration directory
         run: |
           mkdir -p ~/Sync/proj ~/Sync/box/org/gcal ~/Sync/notes/arch
-          mkdir -p ~/Sync/notes/org-roam ~/Sync/biblio ~/Sync/media
+          mkdir -p ~/Sync/notes/org-roam ~/Sync/org-roam ~/Sync/biblio ~/Sync/media
           ln -s "$GITHUB_WORKSPACE/emacs/.emacs.d" ~/.emacs.d
       - name: Set up Emacs
         uses: purcell/setup-emacs@master
