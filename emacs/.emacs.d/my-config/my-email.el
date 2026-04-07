@@ -265,7 +265,16 @@
                                          (mu4e-action-retag-message msg "-\\Inbox")
                                          (mu4e--server-move docid "/personal" "+S-u-N"))))
   (mu4e~headers-defun-mark-for tag)
-  (mu4e~headers-defun-mark-for personal))
+  (mu4e~headers-defun-mark-for personal)
+  ;; Gmail IMAP quirk: moving to Trash with the \Deleted (T) flag causes mbsync
+  ;; (Expunge Both) to expunge the message locally before uploading it to
+  ;; [Gmail]/Trash — leaving only the Inbox label removed, message in All Mail.
+  ;; Use +S (Seen) instead so mbsync syncs the file to remote Trash first.
+  (let ((trash-mark (alist-get 'trash mu4e-marks)))
+    (setf (alist-get 'trash mu4e-marks)
+          (plist-put trash-mark :action
+                     (lambda (docid msg target)
+                       (mu4e--server-move docid target "+S-u-N"))))))
 
 (use-package mu4e-org
   :after mu4e

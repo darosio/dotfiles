@@ -76,6 +76,8 @@ CertificateFile /etc/ssl/certs/ca-certificates.crt
 # remote storage (use the imap account specified above)
 IMAPStore gmail-remote
 Account gmail
+# Move deleted messages to Trash instead of just removing the label (Gmail IMAP quirk)
+Trash "[Gmail]/Trash"
 
 # local storage
 MaildirStore gmail-local
@@ -87,6 +89,6 @@ Inbox ~/Maildir/gmail/Inbox
 Channel gmail
 Far :gmail-remote:
 Near :gmail-local:
-Patterns * ![Gmail]* !refs !keepup "[Gmail]/Drafts" "[Gmail]/Sent Mail" "[Gmail]/Spam" "[Gmail]/Trash"
+Patterns * !"[Gmail]/All Mail" !"[Gmail]/Important" !"[Gmail]/Starred"
 
 # Group gmail
