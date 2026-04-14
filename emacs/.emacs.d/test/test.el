@@ -216,6 +216,18 @@
   (require 'gptel nil t)
   (test--check "gptel loaded" (featurep 'gptel))
   (test--check "gptel-send" (fboundp 'gptel-send))
+  (let* ((edit-tools (alist-get "edit" gptel--known-tools nil nil #'equal))
+         (edit-buffer-tool (and edit-tools
+                                (alist-get "EditBuffer" edit-tools nil nil #'equal)))
+         (tool-json (and edit-buffer-tool
+                         (gptel--json-encode
+                          (gptel--parse-tools gptel-backend (list edit-buffer-tool))))))
+    (test--check "EditBuffer tool registered" edit-buffer-tool)
+    (test--check "EditBuffer required args encode as JSON array"
+                 (and tool-json
+                      (string-match-p "\"required\":\\[" tool-json)
+                      (not (string-match-p "\"required\":true" tool-json))
+                      (not (string-match-p "\"required\":false" tool-json)))))
 
   (require 'ellama nil t)
   (test--check "ellama loaded" (featurep 'ellama)))

@@ -403,17 +403,14 @@ Review and send with \\[gptel-send]."
                 :function #'codel-edit-buffer
                 :description "Replace OLD-STRING with NEW-STRING in an Emacs buffer"
                 :args '((:name "buffer_name"
-                               :type string
-                               :description "Name of the buffer to modify"
-                               :required t)
+                                :type string
+                                :description "Name of the buffer to modify")
                         (:name "old_string"
-                               :type string
-                               :description "Text to replace (must match exactly)"
-                               :required t)
+                                :type string
+                                :description "Text to replace (must match exactly)")
                         (:name "new_string"
-                               :type string
-                               :description "Text to replace old_string with"
-                               :required t))
+                                :type string
+                                :description "Text to replace old_string with"))
                 :category "edit"))
 
   ;; System prompt directives (select via gptel-menu or presets below)
