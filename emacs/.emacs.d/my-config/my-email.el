@@ -13,16 +13,11 @@
     (set-fill-column 80)
     (visual-fill-column-mode)
     (guess-language-mode)
-    (let* ((ctx (mu4e-context-current))
-           (name (mu4e-context-name ctx)))
-      (when name
-        (cond
-         ((string= name "pec")
-          (save-excursion (message-remove-header "Bcc:*")))
-         ((string= name "cnr")
-          (save-excursion
-            (goto-char (point-max))
-            (mml-attach-file "~/Sync/Maildir/firma-istituzionale.html")))))))
+    (when-let ((ctx (mu4e-context-current))
+               (name (mu4e-context-name ctx)))
+      (cond
+       ((string= name "pec")
+        (save-excursion (message-remove-header "Bcc:*"))))))
 
   :hook
   (dired-mode . turn-on-gnus-dired-mode)
@@ -101,8 +96,16 @@
           ))
 
   (setq mu4e-compose-format-flowed t
-        mu4e-compose-context-policy 'ask-if-none
-        message-signature nil)
+         mu4e-compose-context-policy 'ask-if-none
+         message-signature nil)
+
+  ;; Outlook/Office365 already stores sent mail server-side for the CNR account.
+  ;; Let mu4e avoid filing a second local copy into /cnr/Sent Items.
+  (setq mu4e-sent-messages-behavior
+        (lambda ()
+          (if (string= (message-sendmail-envelope-from) "daniele.arosio@cnr.it")
+              'delete
+            'sent)))
 
   (setq mu4e-bookmarks
         `(
@@ -148,6 +151,7 @@
                              (string-prefix-p "/cnr" (mu4e-message-field msg :maildir))))
              :vars '((user-mail-address . "daniele.arosio@cnr.it"  )
                      (user-full-name . "Daniele Arosio" )
+                     (message-sendmail-extra-arguments . ("--account=cnr"))
                      (mu4e-sent-folder . "/cnr/Sent Items" )
                      (mu4e-drafts-folder . "/cnr/Drafts" )
                      (mu4e-refile-folder . "/archive" )
@@ -159,6 +163,7 @@
                            (when msg
                              (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
              :vars '( (user-mail-address . "danielepietroarosio@gmail.com" )
+                      (message-sendmail-extra-arguments . ("--account=gmail"))
                       (mu4e-sent-folder . "/gmail/[Gmail]/Sent Mail" )
                       (mu4e-drafts-folder . "/gmail/[Gmail]/Drafts")
                       (mu4e-refile-folder . "/archive" )
@@ -171,6 +176,7 @@
                              (string-prefix-p "/pec" (mu4e-message-field msg :maildir))))
              :vars '( (user-mail-address . "daniele.arosio@postecert.it" )
                       (user-full-name . "Daniele Arosio" )
+                      (message-sendmail-extra-arguments . ("--account=pec"))
                       (mu4e-drafts-folder . "/pec/Drafts")
                       (mu4e-trash-folder . "/pec/trash")
                       (mu4e-sent-folder . "/pec/Sent Items")
@@ -215,6 +221,7 @@
         ;; message-send-mail-function 'smtpmail-send-it ; when using queue
         message-send-mail-function 'message-send-mail-with-sendmail
         sendmail-program "/usr/bin/msmtp"
+        message-sendmail-extra-arguments nil
         message-sendmail-envelope-from 'header
         message-sendmail-f-is-evil nil
         message-citation-line-format "On %a %d %b %Y at %R, %f wrote:\n"
