@@ -1,5 +1,146 @@
 # Changelog
 
+## [3.22.0] - 2026-04-14
+
+### 🚀 Features
+
+- Add mm_organize script
+- Add mm_organize.py
+- Update mm_organize
+- Add starship prompt to yazi
+- Add 2md alias for markitdown
+- *(emacs)* Add copilot
+- Add wifite and sniffnet
+- Add searxng and perplexica
+- Add open-notebookLM
+- Add overall install.sh
+- Update borg for btrfs snapshot
+- Add upgrade-emacs target (update + smoke tests)
+- *(emacs)* Add khoj.el
+- Add agents customization
+- Add llm-ollama
+- Add fabric
+- Add gptel directives and presets `@ @`
+- Add pdfembed and ragask
+- Add ai-containers with `aic` command
+- *(emacs)* Fix khoj.el
+- *(gptel)* Specific laptop models
+- *(gptel)* Mcp-searxNG tool ans search preset
+- Ollama service stow setup
+- *(emacs)* Add pdf gptel preset that auto-connects pdf MCP server
+- *(gptel)* Improve mcp tools and prompt templates
+- *(pdf-mcp)* Add cross-session read_pdf cache
+- *(gptel)* Add vane search
+- *(emacs)* Add copilot.el
+- Adopt pcmanfm instead of thunar
+- CNR M365 OAuth2 IMAP + msmtp + mu4e multi-account
+- *(email)* Move refs and keepup folders from Gmail to CNR
+- *(mbsync)* Add cnr/Archive remove gmail/archive_tmp
+
+### 🐛 Bug Fixes
+
+- Rmlintt and rm aliases
+- Yazi preview
+- Yazi local plugins
+- Yazi email selected files as attachments with `C-m`
+- Package management aliases
+- Yazi size spotter for git-annex
+- *(emacs)* Tables fixed pitch
+- Gpg-agent
+- Yazi previews and keybindings
+- Yazi and handlr open menu
+- F12 new terminal
+- Jupyter-lab from yazi
+- Mcp-searxng
+- Msmtp on servers
+- Borg with btrfs (raid1)
+- Run smoke tests after update+thaw in workflow
+- Use PAT_WORKFLOWS for PR creation in update-emacs
+- Docs
+- Tests update_changelog
+- Renamed colors-dark foot.ini section
+- Warning and upgrade emacs
+- Llm and fabric models default
+- *(scripts)* Add Parameters sections to pdf-mcp.py docstrings
+- *(ollama)* Installation and configuration
+- *(emacs)* Citar zotero vertico interaction
+- Zotero setup
+- *(emacs)* Copilot binding
+- *(emacs)* Remove permanent debug setting use `C-c t d`
+- *(emacs)* Zotero
+- Clamav fangfrisch freshclam
+- Install python packages outside virtual_env
+- Zotero copy of pref.js
+- *(yazi)* Re-enable 'open with' with upgraded versions
+- Ai-container
+- Network (add wireless-regdb)
+- Msmtp for root
+- Wayland/display vars propagation
+- Nftables rate-limited log
+- *(mbsync)* Limit CNR sync to mail folders only
+- *(mu)* Use POSIX-compatible mkdir for CNR refs/keepup dirs
+- *(mbsync)* Exclude refs and keepup from Gmail sync (migrated to CNR)
+- *(mu4e)* Gmail Trash
+- Update-emacs.yml after org-roam folder move
+- *(emacs)* Last gptel upgrade
+- Exclude root-owned files from hooks that need write access
+
+### 💼 Other
+
+- *(emacs)* Update straight.el package versions (#414)
+- *(emacs)* Update straight.el package versions (#444)
+- *(emacs)* Update straight.el package versions (#447)
+
+### 🚜 Refactor
+
+- Yazi install and plugins
+- *(emacs)* My-ai
+- DRY update-emacs workflow with Makefile targets
+- Simplify update-emacs workflow, add thaw-emacs
+- Add normalize/check-all to update-emacs pipeline
+- *(emacs)* Install only, no eager loading
+- *(emacs)* Move pdf-mcp.py to emacs/.local/bin for stow
+- *(emacs)* Org-roam consult-notes
+- *(emacs)* Orderless corfu org-roam-ui `C-c n U`
+
+### 📚 Documentation
+
+- Rewrite README for uv/direnv/make workflow
+
+### 🧪 Testing
+
+- *(emacs)* Expand smoke tests to cover ~70 package checks
+- Add pytest tests for mm_organize and update_changelog scripts
+
+### 🦾 Build
+
+- *(deps)* Bump ruff from 0.13.2 to 0.15.2
+- *(deps)* Bump astral-sh/setup-uv from v6 to v7
+- *(deps)* Bump python Docker tag to v3.14 (#292)
+- *(deps)* Bump mdformat-gfm from 0.4.1 to 1.0.0
+- *(deps)* Bump mdformat from 0.7.22 to 1.0.0
+- *(deps)* Bump pre-commit from 4.3.0 to 4.5.1
+- *(emacs)* Update packages
+- *(deps)* Bump actions/checkout from v5 to v6
+- *(deps)* Bump peter-evans/create-pull-request from v7 to v8
+- *(deps)* Bump actions/cache from v4 to v5
+- *(deps)* Bump git-cliff from 2.10.1 to 2.12.0
+- Update packages
+- *(deps)* Bump pylsp-mypy from 0.7.0 to 0.7.1
+- *(deps)* Bump click from 8.2.1 to 8.3.1
+- Update to cookiecutter
+- *(docs)* Drop sphinx-autodoc-typehints
+- Update yazi-rs package
+
+### 🐙 CI/CD
+
+- *(emacs)* Add package update with PR creation flow
+- Add lockfile-update workflow, fix cruft-update auth
+- Fix cruft-update missing label
+- Fix cruft-update lockfile detection using git diff HEAD
+- Manual cruft update
+- *(emacs)* Improve upgrade-emacs
+
 ## [3.22.0] - 2026-02-27
 
 ### 🚀 Features
