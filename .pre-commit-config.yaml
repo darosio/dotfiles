@@ -21,14 +21,14 @@ repos:
       - id: check-toml
       - id: debug-statements
       - id: end-of-file-fixer
-        exclude: (^|/)yazi/plugins/
+        exclude: (^|/)yazi/plugins/|^2root\.clamav/etc/sudoers\.d/clamav$
       - id: mixed-line-ending
       - id: name-tests-test
         args: [--pytest-test-first]
       - id: requirements-txt-fixer
       - id: detect-private-key
       - id: trailing-whitespace
-        exclude: (^|/)yazi/plugins/
+        exclude: (^|/)yazi/plugins/|^2root\.clamav/etc/sudoers\.d/clamav$
       - id: pretty-format-json
         args: [--autofix, --indent, "2", --no-sort-keys]
         exclude: \.ipynb$
