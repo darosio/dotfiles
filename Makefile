@@ -86,12 +86,24 @@ bump:  ## Bumps version, updates changelog, commits and tags.
 # Emacs
 
 # Advice to auto-resolve interactive prompts in batch mode:
-# "y" (yes/confirm) → accept, "c" (cancel/skip) → skip, else quit.
+# - accept ordinary yes/confirm prompts
+# - discard dirty worktrees in straight repos so vendor caches don't block upgrades
+# - refuse to write lockfiles when some repos still have unpushed local commits
+# - otherwise cancel/skip when possible
 STRAIGHT_BATCH_ADVICE := (advice-add (quote straight--popup-raw) :override \
   (lambda (msg actions) (message "BATCH: %s" msg) \
     (let ((yes (assoc "y" actions)) \
+          (no (assoc "n" actions)) \
+          (discard (assoc "d" actions)) \
           (cancel (or (assoc "c" actions) (assoc "C-g" actions)))) \
-      (cond (yes (funcall (nth 2 yes))) \
+      (cond ((and (string-match-p "Really write lockfiles[?]" msg) no) \
+             (funcall (nth 2 no))) \
+            ((and (string-match-p "Really write lockfiles[?]" msg) cancel) \
+             (funcall (nth 2 cancel))) \
+            ((and (string-match-p "dirty worktree" msg) discard) \
+             (funcall (nth 2 discard))) \
+            (yes (funcall (nth 2 yes))) \
+            (discard (funcall (nth 2 discard))) \
             (cancel (funcall (nth 2 cancel))) \
             (t (signal (quote quit) (list msg)))))))
 EMACS_BATCH = emacs --batch -l ~/.emacs.d/init.el
@@ -99,10 +111,11 @@ EMACS_BATCH = emacs --batch -l ~/.emacs.d/init.el
 test-emacs:  ## Run Emacs smoke tests
 	$(EMACS_BATCH) -l ~/.emacs.d/test/test.el
 
-update-emacs:  ## Pull, normalize, freeze, thaw, check packages
-	$(EMACS_BATCH) --eval '(progn $(STRAIGHT_BATCH_ADVICE) (straight-pull-all) (straight-normalize-all) (straight-freeze-versions) (straight-thaw-versions) (straight-check-all))'
+update-emacs:  ## Thaw, pull, normalize, and check straight.el packages
+	$(EMACS_BATCH) --eval '(progn $(STRAIGHT_BATCH_ADVICE) (straight-thaw-versions) (straight-pull-all) (straight-normalize-all) (straight-check-all))'
 
-upgrade-emacs: update-emacs test-emacs  ## Full upgrade: update + smoke tests
+upgrade-emacs: update-emacs test-emacs  ## Full upgrade: update, smoke tests, freeze pins
+	$(EMACS_BATCH) --eval '(progn $(STRAIGHT_BATCH_ADVICE) (straight-freeze-versions))'
 
 thaw-emacs:  ## Restore straight.el repos to match lockfile
 	$(EMACS_BATCH) --eval '(progn $(STRAIGHT_BATCH_ADVICE) (straight-thaw-versions) (straight-check-all))'

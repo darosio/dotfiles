@@ -11,13 +11,13 @@ Emacs packages are managed with
 **Locally:**
 
 ```bash
-make upgrade-emacs    # pull → normalize → freeze → thaw → check → smoke tests
+make upgrade-emacs    # thaw → pull → normalize → check → smoke tests → freeze
 # review changes to emacs/.emacs.d/straight/versions/default.el
 git add -A && git commit -m "bump(emacs): update straight.el packages"
 git push
 ```
 
-**Via CI:** trigger the *Emacs CI* workflow manually (`workflow_dispatch`). It
+**Via CI:** trigger the *Emacs Upgrade* workflow manually (`workflow_dispatch`). It
 runs `make upgrade-emacs` and creates a PR if versions changed.
 
 **After merging a CI-created PR:**

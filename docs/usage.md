@@ -47,10 +47,10 @@ make check               # lint + type + test + coverage
 
 ## CI / Automation
 
-| Workflow              | Trigger          | Purpose                                 |
-| --------------------- | ---------------- | --------------------------------------- |
-| `ci.yml`              | push, PR         | pre-commit lint, pytest, auto-merge     |
-| `update-emacs.yml`    | dispatch, push   | Emacs smoke tests / package update + PR |
-| `cruft-update.yml`    | weekly, dispatch | Apply cookiecutter template updates     |
-| `lockfile-update.yml` | weekly, dispatch | `uv lock --upgrade` + PR                |
-| `release.yml`         | tag push         | Publish release                         |
+| Workflow              | Trigger          | Purpose                                  |
+| --------------------- | ---------------- | ---------------------------------------- |
+| `ci.yml`              | push, PR         | pre-commit lint, pytest, auto-merge      |
+| `upgrade-emacs.yml`   | dispatch, push   | Emacs smoke tests / package upgrade + PR |
+| `cruft-update.yml`    | weekly, dispatch | Apply cookiecutter template updates      |
+| `lockfile-update.yml` | weekly, dispatch | `uv lock --upgrade` + PR                 |
+| `release.yml`         | tag push         | Publish release                          |

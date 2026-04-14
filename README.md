@@ -1,7 +1,7 @@
 # Dotfiles
 
 [![CI](https://github.com/darosio/dotfiles/actions/workflows/ci.yml/badge.svg)](https://github.com/darosio/dotfiles/actions/workflows/ci.yml)
-[![Emacs CI](https://github.com/darosio/dotfiles/actions/workflows/update-emacs.yml/badge.svg)](https://github.com/darosio/dotfiles/actions/workflows/update-emacs.yml)
+[![Emacs Upgrade](https://github.com/darosio/dotfiles/actions/workflows/upgrade-emacs.yml/badge.svg)](https://github.com/darosio/dotfiles/actions/workflows/upgrade-emacs.yml)
 [![](https://img.shields.io/badge/Pages-blue?logo=github)](https://darosio.github.io/dotfiles/)
 
 Configuration files for a Linux desktop managed with
@@ -98,13 +98,13 @@ Emacs packages are managed with
 **Locally:**
 
 ```bash
-make upgrade-emacs    # pull → normalize → freeze → thaw → check → smoke tests
+make upgrade-emacs    # thaw → pull → normalize → check → smoke tests → freeze
 # review changes to emacs/.emacs.d/straight/versions/default.el
 git add -A && git commit -m "bump(emacs): update straight.el packages"
 git push
 ```
 
-**Via CI:** trigger the *Emacs CI* workflow manually (`workflow_dispatch`). It
+**Via CI:** trigger the *Emacs Upgrade* workflow manually (`workflow_dispatch`). It
 runs `make upgrade-emacs` and creates a PR if versions changed.
 
 **After merging a CI-created PR:**
@@ -116,13 +116,13 @@ make thaw-emacs       # checkout pinned commits + rebuild
 
 ## CI / Automation
 
-| Workflow              | Trigger          | Purpose                                 |
-| --------------------- | ---------------- | --------------------------------------- |
-| `ci.yml`              | push, PR         | pre-commit lint, pytest, auto-merge     |
-| `update-emacs.yml`    | dispatch, push   | Emacs smoke tests / package update + PR |
-| `cruft-update.yml`    | weekly, dispatch | Apply cookiecutter template updates     |
-| `lockfile-update.yml` | weekly, dispatch | `uv lock --upgrade` + PR                |
-| `release.yml`         | tag push         | Publish release                         |
+| Workflow              | Trigger          | Purpose                                  |
+| --------------------- | ---------------- | ---------------------------------------- |
+| `ci.yml`              | push, PR         | pre-commit lint, pytest, auto-merge      |
+| `upgrade-emacs.yml`   | dispatch, push   | Emacs smoke tests / package upgrade + PR |
+| `cruft-update.yml`    | weekly, dispatch | Apply cookiecutter template updates      |
+| `lockfile-update.yml` | weekly, dispatch | `uv lock --upgrade` + PR                 |
+| `release.yml`         | tag push         | Publish release                          |
 
 ## License
 
