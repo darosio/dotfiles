@@ -11,6 +11,8 @@ stow -t "$HOME" mbsync
 mkdir -p "$HOME"/Maildir/cnr
 mkdir -p "$HOME"/Maildir/gmail
 mkdir -p "$HOME"/Maildir/pec
+mkdir -p "$HOME"/Sync/Maildir/archive/cur "$HOME"/Sync/Maildir/archive/new "$HOME"/Sync/Maildir/archive/tmp
+mkdir -p "$HOME"/Sync/Maildir/personal/cur "$HOME"/Sync/Maildir/personal/new "$HOME"/Sync/Maildir/personal/tmp
 # CNR subfolders created by first mbsync run; refs/keepup need pre-creation
 # so messages can be migrated before syncing upstream
 mkdir -p "$HOME"/Maildir/cnr/refs/cur "$HOME"/Maildir/cnr/refs/new "$HOME"/Maildir/cnr/refs/tmp
@@ -42,4 +44,5 @@ mu index
 cd "$HOME"/Maildir || exit
 ln -sf "$HOME"/Sync/Maildir/archive .
 ln -sf "$HOME"/Sync/Maildir/personal .
+mkdir -p trash/cur trash/new trash/tmp
 ln -sf "$HOME"/Sync/Maildir/mailrc .

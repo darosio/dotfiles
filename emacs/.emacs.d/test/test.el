@@ -233,6 +233,65 @@
   (test--check "ellama loaded" (featurep 'ellama)))
 
 ;; ═══════════════════════════════════════════════════════════════════════
+;; Mail: mu4e account routing
+;; ═══════════════════════════════════════════════════════════════════════
+
+(test-section "Mail"
+  (require 'mu4e nil t)
+  (test--check "mu4e loaded" (featurep 'mu4e))
+  (let* ((archive-bookmark
+          (seq-find (lambda (bookmark)
+                      (eq (plist-get bookmark :key) ?a))
+                     mu4e-bookmarks))
+         (archive-trash-bookmark
+          (seq-find (lambda (bookmark)
+                      (eq (plist-get bookmark :key) ?t))
+                     mu4e-bookmarks))
+          (archive-msg '(:maildir "/archive"))
+          (personal-msg '(:maildir "/personal"))
+          (cnr-msg '(:maildir "/cnr/INBOX"))
+          (gmail-msg '(:maildir "/gmail/Inbox")))
+    (test--check "Archive refile stays local"
+                 (equal mu4e-refile-folder "/archive"))
+    (test--check "Shared archive deletes use local trash"
+                 (equal (funcall mu4e-trash-folder archive-msg) "/trash"))
+    (test--check "Personal archive deletes use local trash"
+                 (equal (funcall mu4e-trash-folder personal-msg) "/trash"))
+    (test--check "CNR mail deletes use CNR trash"
+                 (equal (funcall mu4e-trash-folder cnr-msg) "/cnr/Deleted Items"))
+    (test--check "Gmail mail deletes use Gmail trash"
+                 (equal (funcall mu4e-trash-folder gmail-msg) "/gmail/[Gmail]/Trash"))
+    (test--check "Archive bookmark tracks local archive"
+                 (equal (plist-get archive-bookmark :query)
+                        "maildir:/archive"))
+    (test--check "Trash bookmark tracks local trash"
+                 (equal (plist-get archive-trash-bookmark :query)
+                        "maildir:/trash"))
+    (test--check "Trash advice forces related messages off"
+                 (let ((mu4e-search-include-related t))
+                   (not (my-mu4e--search-execute-a
+                          (lambda (&rest _) mu4e-search-include-related)
+                          "maildir:/trash"))))
+    (test--check "Quoted trash advice forces related messages off"
+                 (let ((mu4e-search-include-related t))
+                   (not (my-mu4e--search-execute-a
+                          (lambda (&rest _) mu4e-search-include-related)
+                          "maildir:\"/trash\""))))
+    (test--check "Normal search advice preserves related toggle off"
+                 (let ((mu4e-search-include-related nil))
+                   (not (my-mu4e--search-execute-a
+                          (lambda (&rest _) mu4e-search-include-related)
+                          "maildir:/cnr/INBOX"))))
+    (test--check "Normal search advice preserves related toggle on"
+                 (let ((mu4e-search-include-related t))
+                   (my-mu4e--search-execute-a
+                    (lambda (&rest _) mu4e-search-include-related)
+                    "maildir:/cnr/INBOX")))
+    (test--check "Headers D marks for delete"
+                 (eq (lookup-key mu4e-headers-mode-map (kbd "D"))
+                     'mu4e-headers-mark-for-delete))))
+
+;; ═══════════════════════════════════════════════════════════════════════
 ;; LaTeX: AUCTeX + cdlatex
 ;; ═══════════════════════════════════════════════════════════════════════
 

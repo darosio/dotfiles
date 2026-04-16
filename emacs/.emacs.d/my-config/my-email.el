@@ -8,6 +8,17 @@
   :straight (:type built-in)            ; in AUR/mu
   :commands (mu4e mu4e-compose-new)
   :preface
+  (defun my-mu4e--search-execute-a (orig-fun expr &optional ignore-history)
+    "Force related messages off for archive trash searches.
+ORIG-FUN is `mu4e--search-execute', EXPR is the search query, and
+IGNORE-HISTORY is passed through unchanged."
+    (let ((mu4e-search-include-related
+           (and mu4e-search-include-related
+                (not (and expr
+                          (string-match-p "maildir:\\(\"/trash\"\\|/trash\\)"
+                                          expr))))))
+      (funcall orig-fun expr ignore-history)))
+
   (defun my-mu4e-compose-mode-hook ()
     "My settings for message composition."
     (set-fill-column 80)
@@ -44,10 +55,11 @@
                           (mu4e-view-refresh)))
          ("C-c l" . org-store-link)         ; requires ol.el
          ("f" . mu4e-view-mark-for-flag)
-         :map mu4e-headers-mode-map
-         ("G" . end-of-buffer)
-         ("D" . "T d")
-         ("f" . mu4e-headers-mark-for-flag))
+         ("D" . mu4e-headers-mark-for-delete)
+          :map mu4e-headers-mode-map
+          ("G" . end-of-buffer)
+          ("D" . mu4e-headers-mark-for-delete)
+          ("f" . mu4e-headers-mark-for-flag))
 
   :config
   (setq mail-user-agent 'mu4e-user-agent
@@ -93,10 +105,30 @@
           ("/pec/INBOX"               . ?P)
           ("/personal"                . ?p)
           ("/archive"                 . ?a)
+          ("/trash"                   . ?T)
           ))
 
   (setq mu4e-compose-format-flowed t
          mu4e-compose-context-policy 'ask-if-none
+         mu4e-refile-folder "/archive"
+         mu4e-trash-folder
+         (lambda (msg)
+           (let ((maildir (when msg (mu4e-message-field msg :maildir))))
+             (cond
+              ((and maildir (string-prefix-p "/cnr" maildir)) "/cnr/Deleted Items")
+              ((and maildir (string-prefix-p "/gmail" maildir)) "/gmail/[Gmail]/Trash")
+              ((and maildir (string-prefix-p "/pec" maildir)) "/pec/trash")
+              ((and maildir
+                    (or (string-prefix-p "/archive" maildir)
+                        (string-prefix-p "/personal" maildir)
+                        (string-prefix-p "/trash" maildir)))
+               "/trash")
+              (t (pcase (when-let ((ctx (mu4e-context-current)))
+                          (mu4e-context-name ctx))
+                   ("cnr" "/cnr/Deleted Items")
+                   ("gmail" "/gmail/[Gmail]/Trash")
+                   ("pec" "/pec/trash")
+                   (_ "/trash"))))))
          message-signature nil)
 
   ;; Outlook/Office365 already stores sent mail server-side for the CNR account.
@@ -116,11 +148,11 @@
                 :name "CNR inbox"
                 :query "maildir:/cnr/INBOX")
           (:key ?a
-                :name "Temporary archive"
-                :query "maildir:/gmail/archive_tmp")
+                :name "Archive"
+                :query "maildir:/archive")
           (:key ?t
-                :name "Trash for Gmail w/o related"
-                :query "maildir:/gmail/[Gmail]/Trash")
+                :name "Trash"
+                :query "maildir:/trash")
           (:key ?s :hide t
                 :name "Starred"
                 :query "flag:flagged")
@@ -133,10 +165,12 @@
           (:key ?b :hide t
                 :name "Big messages"
                 :query "size:5M..500M")
-          (:key ?3 :hide t
-                :name "Last 3 days"
-                :query "date:3d..now")
-          ))
+           (:key ?3 :hide t
+                 :name "Last 3 days"
+                 :query "date:3d..now")
+           ))
+  (advice-remove 'mu4e--search-execute #'my-mu4e--search-execute-a)
+  (advice-add 'mu4e--search-execute :around #'my-mu4e--search-execute-a)
   )
 
 (use-package mu4e-context
@@ -154,33 +188,28 @@
                      (message-sendmail-extra-arguments . ("--account=cnr"))
                      (mu4e-sent-folder . "/cnr/Sent Items" )
                      (mu4e-drafts-folder . "/cnr/Drafts" )
-                     (mu4e-refile-folder . "/archive" )
-                     (mu4e-trash-folder . "/cnr/Deleted Items")
                      (message-signature . "")))
            ,(make-mu4e-context
              :name "gmail"
              :match-func (lambda (msg)
                            (when msg
                              (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
-             :vars '( (user-mail-address . "danielepietroarosio@gmail.com" )
-                      (message-sendmail-extra-arguments . ("--account=gmail"))
-                      (mu4e-sent-folder . "/gmail/[Gmail]/Sent Mail" )
-                      (mu4e-drafts-folder . "/gmail/[Gmail]/Drafts")
-                      (mu4e-refile-folder . "/archive" )
-                      (mu4e-trash-folder . "/gmail/[Gmail]/Trash")
-                      (message-signature  . "daniele Arosio\n38123 Trento\n")))
+              :vars '( (user-mail-address . "danielepietroarosio@gmail.com" )
+                       (message-sendmail-extra-arguments . ("--account=gmail"))
+                       (mu4e-sent-folder . "/gmail/[Gmail]/Sent Mail" )
+                       (mu4e-drafts-folder . "/gmail/[Gmail]/Drafts")
+                       (message-signature  . "daniele Arosio\n38123 Trento\n")))
            ,(make-mu4e-context
              :name "pec"
              :match-func (lambda (msg)
                            (when msg
                              (string-prefix-p "/pec" (mu4e-message-field msg :maildir))))
-             :vars '( (user-mail-address . "daniele.arosio@postecert.it" )
-                      (user-full-name . "Daniele Arosio" )
-                      (message-sendmail-extra-arguments . ("--account=pec"))
-                      (mu4e-drafts-folder . "/pec/Drafts")
-                      (mu4e-trash-folder . "/pec/trash")
-                      (mu4e-sent-folder . "/pec/Sent Items")
-                      (message-signature . "daniele Arosio\n38123 Trento\n")))
+              :vars '( (user-mail-address . "daniele.arosio@postecert.it" )
+                       (user-full-name . "Daniele Arosio" )
+                       (message-sendmail-extra-arguments . ("--account=pec"))
+                       (mu4e-drafts-folder . "/pec/Drafts")
+                       (mu4e-sent-folder . "/pec/Sent Items")
+                       (message-signature . "daniele Arosio\n38123 Trento\n")))
            ))
   )
 
@@ -278,10 +307,11 @@
   ;; [Gmail]/Trash — leaving only the Inbox label removed, message in All Mail.
   ;; Use +S (Seen) instead so mbsync syncs the file to remote Trash first.
   (let ((trash-mark (alist-get 'trash mu4e-marks)))
-    (setf (alist-get 'trash mu4e-marks)
-          (plist-put trash-mark :action
-                     (lambda (docid msg target)
-                       (mu4e--server-move docid target "+S-u-N"))))))
+    (when trash-mark
+      (setf (alist-get 'trash mu4e-marks)
+            (plist-put trash-mark :action
+                       (lambda (docid msg target)
+                         (mu4e--server-move docid target "+S-u-N")))))))
 
 (use-package mu4e-org
   :after mu4e

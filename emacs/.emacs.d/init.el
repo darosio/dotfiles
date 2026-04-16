@@ -527,7 +527,8 @@
     ;; Check for font existence more robustly
     (unless (or (find-font (font-spec :family "Symbols Nerd Font Mono"))
                 (file-exists-p "~/.local/share/fonts/NFM.ttf"))
-      (nerd-icons-install-fonts))
+      (unless noninteractive
+        (nerd-icons-install-fonts)))
     :custom
     (nerd-icons-font-family "Symbols Nerd Font Mono"))
 
