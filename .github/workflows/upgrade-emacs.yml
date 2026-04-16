@@ -19,6 +19,10 @@ jobs:
       CI: true
     steps:
       - uses: actions/checkout@v6
+      - name: Install mail dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y mu4e maildir-utils
       - name: Prepare Emacs configuration directory
         run: |
           mkdir -p ~/Sync/proj ~/Sync/box/org/gcal ~/Sync/notes/arch
@@ -53,6 +57,10 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+      - name: Install mail dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y mu4e maildir-utils
       - name: Prepare Emacs configuration directory
         run: |
           mkdir -p ~/Sync/proj ~/Sync/box/org/gcal ~/Sync/notes/arch
