@@ -8,6 +8,16 @@
   :straight (:type built-in)            ; in AUR/mu
   :commands (mu4e mu4e-compose-new)
   :preface
+  (unless (locate-library "mu4e")
+    (dolist (dir (append
+                  '("/usr/share/emacs/site-lisp/mu4e")
+                  (file-expand-wildcards
+                   "/usr/share/emacs/site-lisp/elpa-src/mu4e-*" t)
+                  (file-expand-wildcards
+                   "/usr/share/emacs/site-lisp/elpa/mu4e-*" t)))
+      (when (file-directory-p dir)
+        (add-to-list 'load-path dir))))
+
   (defun my-mu4e--search-execute-a (orig-fun expr &optional ignore-history)
     "Force related messages off for archive trash searches.
 ORIG-FUN is `mu4e--search-execute', EXPR is the search query, and
