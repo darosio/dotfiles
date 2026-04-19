@@ -114,7 +114,8 @@
     :straight (:type built-in)
     :custom
     (browse-url-browser-function 'browse-url-generic)
-    (browse-url-generic-program "firefox"))
+    (browse-url-generic-program "firefox")
+    (browse-url-handlers '(("\\`file:" . browse-url-xdg-open))))
 
   (use-package comint
     :straight (:type built-in)
