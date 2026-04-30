@@ -2,6 +2,10 @@
 #
 # Install ollama, configure systemd override, migrate models to /home
 
+set -eu
+
+SCRIPT_DIR=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)
+
 # Install
 yay -S --noconfirm ollama
 
@@ -19,12 +23,12 @@ fi
 # Sets OLLAMA_HOST, OLLAMA_MODELS, OLLAMA_CONTEXT_LENGTH (65536 on workstation, 8192 on laptop)
 sudo mkdir -p /etc/systemd/system/ollama.service.d
 if [ "$(uname -n)" = "whisker" ]; then
-  cd 2root.ollama.whisker || return
+  cd 2root.ollama.whisker || exit 1
 else
-  cd 2root.ollama || return
+  cd "$SCRIPT_DIR/2root.ollama" || exit 1
 fi
 sudo cp --parents etc/systemd/system/ollama.service.d/override.conf /
-cd ../
+cd "$SCRIPT_DIR"
 
 sudo systemctl daemon-reload
 sudo systemctl enable --now ollama
