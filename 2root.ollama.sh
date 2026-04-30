@@ -18,7 +18,7 @@ fi
 # Stow host-specific systemd override
 # Sets OLLAMA_HOST, OLLAMA_MODELS, OLLAMA_CONTEXT_LENGTH (65536 on workstation, 8192 on laptop)
 sudo mkdir -p /etc/systemd/system/ollama.service.d
-if [ "$(hostname)" = "whisker" ]; then
+if [ "$(uname -n)" = "whisker" ]; then
   cd 2root.ollama.whisker || return
 else
   cd 2root.ollama || return
