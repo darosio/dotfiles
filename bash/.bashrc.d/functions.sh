@@ -1,21 +1,38 @@
 # shellcheck shell=bash
 
+_aic_service_url() {
+  case "$1" in
+    vane) printf '%s\n' "http://localhost:3000" ;;
+    searxng) printf '%s\n' "http://localhost:8080" ;;
+    khoj) printf '%s\n' "http://localhost:42110" ;;
+    mcp-searxng) printf '%s\n' "stdio" ;;
+    *) return 1 ;;
+  esac
+}
+
 # AI containers (~/ai-containers/{searxng,vane,khoj,...})
 aic() {
   local base="$HOME/ai-containers"
-  local services="searxng vane khoj mcp-searxng"
+  local -a services=(searxng vane khoj mcp-searxng)
   local action="${1:-help}" svc="${2:-}"
+  local -a targets
+
+  if [ -n "$svc" ]; then
+    targets=("$svc")
+  else
+    targets=("${services[@]}")
+  fi
 
   case "$action" in
     up)
-      for s in ${svc:-$services}; do
+      for s in "${targets[@]}"; do
         [ -f "$base/$s/podman-compose.yml" ] || continue
         echo "Starting $s..."
         (cd "$base/$s" && podman-compose up -d)
       done
       ;;
     down)
-      for s in ${svc:-$services}; do
+      for s in "${targets[@]}"; do
         [ -f "$base/$s/podman-compose.yml" ] || continue
         echo "Stopping $s..."
         (cd "$base/$s" && podman-compose down)
@@ -28,16 +45,47 @@ aic() {
     ps)
       podman ps -a --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'
       ;;
+    url)
+      for s in "${targets[@]}"; do
+        printf '%-12s %s\n' "$s" "$(_aic_service_url "$s" 2> /dev/null || printf 'unknown')"
+      done
+      ;;
+    health)
+      local status url
+      for s in "${targets[@]}"; do
+        url="$(_aic_service_url "$s" 2> /dev/null || printf 'unknown')"
+        if [ "$url" = "stdio" ]; then
+          status=$(podman inspect -f '{{.State.Status}}' "$s" 2> /dev/null || printf 'stopped')
+          printf '%-12s %s (%s)\n' "$s" "$status" "$url"
+        elif [ "$url" = "unknown" ]; then
+          printf '%-12s unknown\n' "$s"
+        elif curl -fsS -o /dev/null "$url"; then
+          printf '%-12s up (%s)\n' "$s" "$url"
+        else
+          printf '%-12s down (%s)\n' "$s" "$url"
+        fi
+      done
+      ;;
+    update | upgrade)
+      for s in "${targets[@]}"; do
+        [ -f "$base/$s/podman-compose.yml" ] || continue
+        echo "Updating $s..."
+        (cd "$base/$s" && podman-compose pull && podman-compose up -d --remove-orphans)
+      done
+      ;;
     logs)
       [ -z "$svc" ] && echo "Usage: aic logs <service>" && return 1
       podman logs -f "$svc"
       ;;
     *)
-      echo "Usage: aic {up|down|restart|ps|logs} [service]"
-      echo "Services: $services"
+      echo "Usage: aic {up|down|restart|ps|url|health|update|upgrade|logs} [service]"
+      echo "Services: ${services[*]}"
       echo "  aic up          — start all"
       echo "  aic up vane     — start one"
       echo "  aic down khoj   — stop one"
+      echo "  aic url         — print service URLs"
+      echo "  aic health      — check service reachability"
+      echo "  aic update vane — pull and recreate one service"
       echo "  aic ps          — status"
       echo "  aic logs searxng"
       ;;

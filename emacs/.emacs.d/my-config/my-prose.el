@@ -71,8 +71,8 @@ buffer and used as the LLM instruction.
 Connects the SearxNG and fetcher MCP servers synchronously so that
 `searxng_web_search' and `fetch_url' are available, then sends an async
 `gptel-request' using the `proposal' system directive (defined in
-`gptel-directives').  The model is pinned to qwen3.5:35b-a3b (Ollama) —
-or ministral-3:latest on whisker — regardless of the active preset, ensuring
+`gptel-directives').  The model is pinned to the local fast Ollama model —
+or its configured fallback on whisker — regardless of the active preset, ensuring
 tool support even when brainstorm/reasoning presets are active.
 The response is appended as an org heading in the buffer \\='*Grant: TOPIC*\\='.
 
@@ -81,9 +81,11 @@ See also: `gptel-grant-sota', `gptel-grant-gap', `gptel-grant-innovation',
   (require 'gptel)
   (gptel-mcp-connect '("searxng" "fetcher") 'sync)
   (let* ((gptel-backend (gptel-get-backend "Ollama"))
-         (gptel-model   (if (string= (system-name) "whisker")
-                            'ministral-3:latest
-                          'qwen3.5:35b-a3b))
+         (gptel-model   (if (fboundp 'my/ollama-model)
+                            (my/ollama-model my/ollama-fast-model my/ollama-light-model)
+                          (if (string= (system-name) "whisker")
+                              'ministral-3:latest
+                            'qwen3.6:35b-a3b)))
          (query  (format template topic))
          (prompt (format
                   "Use searxng_web_search to find recent peer-reviewed literature for:\n\n%s\n\n\

@@ -54,7 +54,7 @@ services:
       - KHOJ_TERRARIUM_URL=http://sandbox:8080
       # Ollama on host
       - OPENAI_BASE_URL=http://host.docker.internal:11434/v1/
-      - KHOJ_DEFAULT_CHAT_MODEL=qwen3.5:35b-a3b
+      - KHOJ_DEFAULT_CHAT_MODEL=qwen3.6:27b
       # Uncomment and set API keys for cloud providers
       # - OPENAI_API_KEY=${OPENAI_API_KEY}
       # - GEMINI_API_KEY=${GEMINI_API_KEY}

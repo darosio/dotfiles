@@ -22,6 +22,61 @@
 (defvar my/groq-api-key (lambda () (nth 0 (process-lines "pass" "show" "cloud/groq"))))
 (defvar my/deepseek-api-key (lambda () (nth 0 (process-lines "pass" "show" "cloud/deepseek"))))
 
+(defconst my/on-whisker (string= (system-name) "whisker")
+  "Whether this Emacs instance runs on the whisker host.")
+
+(defconst my/ollama-host "localhost:11434"
+  "Ollama host used by local Emacs AI clients.")
+
+(defconst my/vane-base-url "http://localhost:3000"
+  "Vane base URL.")
+
+(defconst my/khoj-server-url "http://127.0.0.1:42110"
+  "Khoj base URL for the local Emacs client.")
+
+(defconst my/ollama-light-model 'ministral-3:latest
+  "Lightweight Ollama fallback model.")
+
+(defconst my/ollama-fast-model 'qwen3.6:35b-a3b
+  "Fast general-purpose Ollama model.")
+
+(defconst my/ollama-fast-fallback 'qwen3.5:4b
+  "Fallback fast Ollama model for smaller hosts.")
+
+(defconst my/ollama-writing-model 'qwen3.6:27b
+  "Primary Ollama model for writing/coding tasks.")
+
+(defconst my/ollama-writing-fallback 'gemma4:e4b
+  "Fallback Ollama model for writing/coding tasks.")
+
+(defconst my/ollama-reasoning-model 'qwen3.6:27b
+  "Primary local reasoning model; enable thinking mode when needed.")
+
+(defconst my/ollama-math-model 'phi4-reasoning:plus
+  "Primary local math/science reasoning model.")
+
+(defconst my/ollama-vision-model 'qwen3-vl:32b
+  "Primary local multimodal model.")
+
+(defconst my/ollama-embedding-model "qwen3-embedding:latest"
+  "Primary local embedding model shared with Vane and Khoj.")
+
+(defconst my/vane-chat-model (symbol-name my/ollama-fast-model)
+  "Ollama chat model key to use for Vane queries.")
+
+(defconst my/vane-embedding-model my/ollama-embedding-model
+  "Ollama embedding model key to use for Vane queries.")
+
+(defun my/ollama-model (primary &optional fallback)
+  "Return PRIMARY model, or FALLBACK on whisker.
+
+If FALLBACK is nil, use `my/ollama-light-model'."
+  (if my/on-whisker (or fallback my/ollama-light-model) primary))
+
+(defun my/ollama-model-name (primary &optional fallback)
+  "Return `my/ollama-model' as a string for llm.el providers."
+  (symbol-name (my/ollama-model primary fallback)))
+
 (use-package llm
   :commands make-llm-ollama)
 
@@ -45,8 +100,8 @@
   ;; Session naming provider
   (setopt ellama-naming-provider
           (make-llm-ollama
-           :chat-model "gemma3:4b-it-qat"
-           :embedding-model "nomic-embed-text"
+           :chat-model (my/ollama-model-name my/ollama-fast-model my/ollama-fast-fallback)
+           :embedding-model my/ollama-embedding-model
            :default-chat-non-standard-params '(("stop" . ("\n")))))
   (setopt ellama-naming-scheme 'ellama-generate-name-by-llm)
   ;; Display behavior
@@ -66,14 +121,14 @@
   (advice-add 'pixel-scroll-precision :before #'ellama-disable-scroll)
   (advice-add 'end-of-buffer :after #'ellama-enable-scroll)
   (setopt ellama-providers
-          `(("Ollama gemma3" . ,(make-llm-ollama
-                                 :chat-model "gemma3:4b-it-qat"
-                                 :embedding-model "nomic-embed-text"
-                                 :default-chat-non-standard-params '(("num_ctx" . 8192))))
-            ("Ollama LLaVA" . ,(make-llm-ollama
-                                :chat-model "llava:latest"
-                                :embedding-model "nomic-embed-text"
-                                :default-chat-non-standard-params '(("num_ctx" . 4096))))
+          `(("Ollama local" . ,(make-llm-ollama
+                                :chat-model (my/ollama-model-name my/ollama-fast-model my/ollama-fast-fallback)
+                                :embedding-model my/ollama-embedding-model
+                                :default-chat-non-standard-params '(("num_ctx" . 8192))))
+            ("Ollama vision" . ,(make-llm-ollama
+                                 :chat-model (my/ollama-model-name my/ollama-vision-model my/ollama-writing-fallback)
+                                 :embedding-model my/ollama-embedding-model
+                                 :default-chat-non-standard-params '(("num_ctx" . 4096))))
             ("OpenAI o4-mini" . ,(make-llm-openai
                                   :key my/openai-api-key
                                   :chat-model "o4-mini"
@@ -83,8 +138,8 @@
                                     :chat-model "gemini-2.0-flash"))))
   (setopt ellama-summarization-provider
           (make-llm-ollama
-           :chat-model "gemma3:4b-it-qat"
-           :embedding-model "nomic-embed-text"
+           :chat-model (my/ollama-model-name my/ollama-fast-model my/ollama-fast-fallback)
+           :embedding-model my/ollama-embedding-model
            :default-chat-non-standard-params '(("num_ctx" . 8192)))))
 
 (use-package gptel
@@ -109,12 +164,6 @@
          ("<Launch5> a" . gptel-aibo)
          ("<Launch5> s" . gptel-aibo-summon))
   :preface
-  ;; Machine detection: used for model selection throughout this file.
-  (defconst my/on-whisker (string= (system-name) "whisker"))
-  (defun my/ollama-model (primary &optional fallback)
-    "Return PRIMARY model, or FALLBACK (default: ministral-3:latest) on whisker."
-    (if my/on-whisker (or fallback 'ministral-3:latest) primary))
-
   (defun get-ollama-models ()
     "Fetch the list of installed Ollama models."
     (let* ((output (shell-command-to-string "ollama list"))
@@ -144,15 +193,6 @@
                 (format "Successfully edited buffer %s" buffer-name))))))))
 
   ;; --- Vane (AI-powered web search) ---
-  (defvar my/vane-base-url "http://localhost:3000"
-    "Vane base URL (Perplexica successor).")
-
-  (defvar my/vane-chat-model "qwen3.5:35b-a3b"
-    "Ollama chat model key to use for Vane queries.")
-
-  (defvar my/vane-embedding-model "qwen3-embedding:latest"
-    "Ollama embedding model key to use for Vane queries.")
-
   (defvar my/vane-focus-mode "academicSearch"
     "Vane focus mode.
 Options: webSearch, academicSearch, writingAssistant, wolframAlphaSearch.")
@@ -347,12 +387,16 @@ Review and send with \\[gptel-send]."
         gptel-expert-commands t
         gptel-track-media t
         gptel-log-level 'info
-        gptel-model (my/ollama-model 'qwen3.5:35b-a3b 'qwen3.5:4b)
+        gptel-model (my/ollama-model my/ollama-fast-model my/ollama-fast-fallback)
         gptel-backend
         (gptel-make-ollama "Ollama"
-          :stream t :host "localhost:11434"
+          :stream t :host my/ollama-host
           :models (if my/on-whisker
-                      '(ministral-3:latest qwen3.5:4b gemma3:latest)
+                      `(,my/ollama-light-model
+                        ,my/ollama-fast-model
+                        ,my/ollama-writing-model
+                        ,my/ollama-writing-fallback
+                        ,my/ollama-vision-model)
                     (get-ollama-models)))
         gptel-display-buffer-action '((display-buffer-full-frame))
         ;; org-cite: all Zotero Better BibTeX auto-exports are the primary bibliography
@@ -428,42 +472,42 @@ Review and send with \\[gptel-send]."
 
   (gptel-make-preset 'writing
                      :description "Scientific writing - proposals, manuscripts"
-                     :backend "Ollama" :model (my/ollama-model 'qwen3.5:27b 'gemma3:latest)
+                     :backend "Ollama" :model (my/ollama-model my/ollama-writing-model my/ollama-writing-fallback)
                      :system (alist-get 'writing gptel-directives)
                      :pre (lambda () (gptel-mcp-connect '("pdf") 'sync))
                      :tools '(:append ("zotero_lookup")))
 
   (gptel-make-preset 'brainstorm
                      :description "Scientific ideation - explore, challenge, connect"
-                     :backend "Ollama" :model (my/ollama-model 'deepseek-r1:32b)
+                     :backend "Ollama" :model (my/ollama-model my/ollama-reasoning-model my/ollama-fast-model)
                      :system (alist-get 'brainstorm gptel-directives))
 
   (gptel-make-preset 'coding
                      :description "Coding - refactor, review, buffer editing"
-                     :backend "Ollama" :model (my/ollama-model 'qwen3.5:27b 'gemma3:latest)
+                     :backend "Ollama" :model (my/ollama-model my/ollama-writing-model my/ollama-writing-fallback)
                      :system (alist-get 'coding gptel-directives)
                      :tools '("read_buffer" "EditBuffer"))
 
   (gptel-make-preset 'review
                      :description "Critical peer review - gaps, controls, statistics"
-                     :backend "Ollama" :model (my/ollama-model 'qwen3.5:27b 'gemma3:latest)
+                     :backend "Ollama" :model (my/ollama-model my/ollama-writing-model my/ollama-writing-fallback)
                      :system (alist-get 'review gptel-directives))
 
   (gptel-make-preset 'reasoning
                      :description "Deep reasoning - chain-of-thought, hard problems"
-                     :backend "Ollama" :model (my/ollama-model 'deepseek-r1:32b))
+                     :backend "Ollama" :model (my/ollama-model my/ollama-reasoning-model my/ollama-fast-model))
 
   (gptel-make-preset 'fast
                      :description "Fast iteration - MoE, low latency"
-                     :backend "Ollama" :model (my/ollama-model 'qwen3.5:35b-a3b 'qwen3.5:4b))
+                     :backend "Ollama" :model (my/ollama-model my/ollama-fast-model my/ollama-fast-fallback))
 
   (gptel-make-preset 'math
                      :description "Math / science reasoning"
-                     :backend "Ollama" :model (my/ollama-model 'phi4-reasoning:plus))
+                     :backend "Ollama" :model (my/ollama-model my/ollama-math-model))
 
   (gptel-make-preset 'vision
                      :description "Multimodal / vision"
-                     :backend "Ollama" :model (my/ollama-model 'qwen3-vl:32b 'gemma3:latest))
+                     :backend "Ollama" :model (my/ollama-model my/ollama-vision-model my/ollama-writing-fallback))
 
   (gptel-make-preset 'copilot
                      :description "GitHub Copilot cloud backend"
@@ -471,22 +515,22 @@ Review and send with \\[gptel-send]."
 
   (gptel-make-preset 'search
                      :description "Web search - SearxNG + fetch via MCP"
-                     :backend "Ollama" :model (my/ollama-model 'qwen3.5:35b-a3b 'qwen3.5:4b)
+                     :backend "Ollama" :model (my/ollama-model my/ollama-fast-model my/ollama-fast-fallback)
                      :system "Use the provided tools to search the web for up-to-date information. Always cite sources with URL and title."
                      :pre (lambda () (gptel-mcp-connect '("searxng" "fetcher") 'sync))
                      :tools '(:append ("searxng_web_search" "web_url_read" "fetch_url")))
 
   (gptel-make-preset 'search-science
                      :description "Scientific literature search - PubMed / arXiv / Scholar via MCP"
-                     :backend "Ollama" :model (my/ollama-model 'qwen3.5:35b-a3b 'qwen3.5:4b)
-                     :system "You are a scientific literature assistant. Use searxng_web_search to find peer-reviewed literature. Prefer PubMed, arXiv, Google Scholar, and Semantic Scholar.\n\nFor each paper found:\n1. Extract the DOI from the result URL or metadata\n2. Call zotero_lookup with the DOI — if found, cite as [cite:@Key]\n3. If not in Zotero, report it as: DOI: 10.xxxx/xxx (user will add it to Zotero manually)\n\nYou also have access to zotero_search_items and zotero_get_item_fulltext — use these to search the user's live Zotero library and retrieve full text of indexed papers.\n\nHighlight knowledge gaps and translational relevance. Never invent citations."
+                     :backend "Ollama" :model (my/ollama-model my/ollama-fast-model my/ollama-fast-fallback)
+                     :system "You are a scientific literature assistant. Use searxng_web_search to find peer-reviewed literature. Prefer PubMed, arXiv, Google Scholar, and Semantic Scholar.\n\nFor each paper found:\n1. Extract the DOI from the result URL or metadata\n2. Call zotero_lookup with the DOI — if found, cite as [cite:@Key]\n3. If not in Zotero, report it as: DOI: 10.xxxx/xxx (user will add it to Zotero manually)\n\nHighlight knowledge gaps and translational relevance. Never invent citations."
                      :pre (lambda () (gptel-mcp-connect '("searxng" "fetcher" "pdf" "zotero") 'sync))
                      :tools '(:append ("searxng_web_search" "web_url_read" "fetch_url"
                                        "zotero_lookup" "zotero_search_items" "zotero_get_item_fulltext")))
 
   (gptel-make-preset 'grant
                      :description "Grant writing - lit search + structured proposal sections"
-                     :backend "Ollama" :model (my/ollama-model 'qwen3.5:27b 'gemma3:latest)
+                     :backend "Ollama" :model (my/ollama-model my/ollama-writing-model my/ollama-writing-fallback)
                      :system (alist-get 'proposal gptel-directives)
                      :pre (lambda () (gptel-mcp-connect '("searxng" "fetcher" "pdf" "zotero") 'sync))
                      :tools '(:append ("searxng_web_search" "web_url_read" "fetch_url"
@@ -494,13 +538,13 @@ Review and send with \\[gptel-send]."
 
   (gptel-make-preset 'pdf
                      :description "Local PDF reader - extract text, cite via MCP"
-                     :backend "Ollama" :model (my/ollama-model 'qwen3.5:35b-a3b 'qwen3.5:4b)
+                     :backend "Ollama" :model (my/ollama-model my/ollama-fast-model my/ollama-fast-fallback)
                      :system "You have access to read_pdf, extract_doi, and zotero_lookup tools.\n\nCitation workflow:\n1. Call read_pdf with the absolute path — the header shows filename, pages, and DOI if found\n2. Call zotero_lookup with the DOI (and/or filename) to find the entry in your Zotero library\n3. If found, cite as [cite:@Key]\n4. If not found, report: DOI: 10.xxxx/xxx (user will add it to Zotero manually)\n\nNever invent citations."
                      :pre (lambda () (gptel-mcp-connect '("pdf") 'sync)))
 
   (gptel-make-preset 'pdf-science
                      :description "PDF + literature search - read papers, search, cite"
-                     :backend "Ollama" :model (my/ollama-model 'qwen3.5:35b-a3b 'qwen3.5:4b)
+                     :backend "Ollama" :model (my/ollama-model my/ollama-fast-model my/ollama-fast-fallback)
                      :system "You are a scientific research assistant with PDF reading and web search tools.\n\nFor PDFs:\n1. Call read_pdf to extract text (DOI appears in the header)\n2. Call zotero_lookup with the DOI and/or filename\n3. If found, cite as [cite:@Key]; if not found, report: DOI: 10.xxxx/xxx\n\nFor web search:\n1. Use searxng_web_search — prefer PubMed, arXiv, Google Scholar, Semantic Scholar\n2. Extract the DOI; call zotero_lookup — cite as [cite:@Key] if found, else report the DOI\n\nNever invent citations. Never invent citation keys."
                      :pre (lambda () (gptel-mcp-connect '("pdf" "searxng" "fetcher") 'sync))
                      :tools '(:append ("searxng_web_search" "web_url_read" "fetch_url" "zotero_lookup")))
@@ -556,7 +600,7 @@ Review and send with \\[gptel-send]."
   :after org
   :bind ("M-s M-k" . #'khoj)
   :custom
-  (khoj-server-url "http://127.0.0.1:42110")
+  (khoj-server-url my/khoj-server-url)
   (khoj-server-is-local nil)
   (khoj-auto-setup nil)
   (khoj-auto-index nil)
@@ -619,9 +663,10 @@ Review and send with \\[gptel-send]."
                 "import pymupdf,sys;"
                 "doc=pymupdf.open(sys.argv[1]);"
                 "print('\\n'.join(p.get_text() for p in doc))"
-                "\" %s | llm -m qwen3.5:27b"
+                "\" %s | llm -m %s"
                 " 'Summarize in 300 words. Key findings, methods, limitations.'")
-        (shell-quote-argument file))
+        (shell-quote-argument file)
+        (symbol-name my/ollama-writing-model))
        (format "*citar-summary:%s*" key))
     (message "No PDF found for %s" key)))
 (bind-key "M-s b s" #'my/citar-llm-summarize)

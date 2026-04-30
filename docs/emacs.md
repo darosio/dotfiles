@@ -175,22 +175,22 @@ Presets select backend, model, system prompt, and tools in one step.
 Activate via `gptel-menu` (`<Launch5> m`) or type `@preset-name` in the prompt.
 Host-specific model overrides apply automatically on `whisker` (laptop).
 
-| Preset           | Model                 | Tools                               | Notes                              |
-| ---------------- | --------------------- | ----------------------------------- | ---------------------------------- |
-| `writing`        | qwen3.5:27b           | `zotero_lookup`                     | Formal academic prose + citations  |
-| `brainstorm`     | deepseek-r1:32b       | —                                   | Challenge assumptions              |
-| `coding`         | qwen3.5:27b           | `read_buffer`, `EditBuffer`         | Refactor, review, buffer editing   |
-| `review`         | qwen3.5:27b           | —                                   | Peer-review style critique         |
-| `reasoning`      | deepseek-r1:32b       | —                                   | Deep chain-of-thought              |
-| `fast`           | qwen3.5:35b-a3b (MoE) | —                                   | Fast iteration                     |
-| `math`           | phi4-reasoning:plus   | —                                   | Math / science reasoning           |
-| `vision`         | qwen3-vl:32b          | —                                   | Multimodal / image input           |
-| `search`         | qwen3.5:35b-a3b       | SearxNG + fetcher                   | General web search                 |
-| `search-science` | qwen3.5:35b-a3b       | SearxNG + fetcher + `zotero_lookup` | PubMed/arXiv + Zotero citation     |
-| `grant`          | qwen3.5:27b           | SearxNG + fetcher + `zotero_lookup` | Grant writing, structured sections |
-| `pdf`            | qwen3.5:35b-a3b       | `read_pdf`, `zotero_lookup`         | Read + cite a local PDF            |
-| `pdf-science`    | qwen3.5:35b-a3b       | All above                           | PDF + broader literature search    |
-| `copilot`        | —                     | —                                   | GitHub Copilot cloud backend       |
+| Preset           | Model                 | Tools                               | Notes                                            |
+| ---------------- | --------------------- | ----------------------------------- | ------------------------------------------------ |
+| `writing`        | qwen3.6:27b           | `zotero_lookup`                     | Formal academic prose + citations                |
+| `brainstorm`     | qwen3.6:27b           | —                                   | Challenge assumptions; use thinking when needed  |
+| `coding`         | qwen3.6:27b           | `read_buffer`, `EditBuffer`         | Refactor, review, buffer editing                 |
+| `review`         | qwen3.6:27b           | —                                   | Peer-review style critique                       |
+| `reasoning`      | qwen3.6:27b           | —                                   | Deep reasoning; enable thinking mode when needed |
+| `fast`           | qwen3.6:35b-a3b (MoE) | —                                   | Fast iteration                                   |
+| `math`           | phi4-reasoning:plus   | —                                   | Math / science reasoning                         |
+| `vision`         | qwen3-vl:32b          | —                                   | Multimodal / image input                         |
+| `search`         | qwen3.6:35b-a3b       | SearxNG + fetcher                   | General web search                               |
+| `search-science` | qwen3.6:35b-a3b       | SearxNG + fetcher + `zotero_lookup` | PubMed/arXiv + Zotero citation                   |
+| `grant`          | qwen3.6:27b           | SearxNG + fetcher + `zotero_lookup` | Grant writing, structured sections               |
+| `pdf`            | qwen3.6:35b-a3b       | `read_pdf`, `zotero_lookup`         | Read + cite a local PDF                          |
+| `pdf-science`    | qwen3.6:35b-a3b       | All above                           | PDF + broader literature search                  |
+| `copilot`        | —                     | —                                   | GitHub Copilot cloud backend                     |
 
 #### MCP Tools
 
@@ -234,8 +234,9 @@ literature synthesis template. Review and send with `<Launch5> <Launch5>`.
 #### Vane Search (AI-powered web search)
 
 `<Launch5> v` → `my/vane-search` — prompts for a query, POSTs to Vane at
-`localhost:3000`, and opens an org buffer with the answer and clickable source
-links. Requires Vane running (`aic up vane`). Change `my/vane-focus-mode` to
+`my/vane-base-url` (default: `http://localhost:3000`), and opens an org buffer
+with the answer and clickable source links. Requires Vane running (`aic up vane`
+or `aic health vane`). Change `my/vane-focus-mode` to
 `academicSearch` for PubMed/Scholar-focused results.
 
 #### Save to Org-roam
@@ -330,26 +331,25 @@ ______________________________________________________________________
 
 ### Model Roster
 
-| Model                    | Role                                                              |
-| ------------------------ | ----------------------------------------------------------------- |
-| `qwen3.5:27b`            | Best local coder (72.4% SWE-bench, IFEval 95%). Proposals, Python |
-| `qwen3.5:35b-a3b`        | Fast MoE ~111 tok/s. Agentic sessions, fast iteration             |
-| `deepseek-r1:32b`        | Best local reasoning. No tools — use via gptel/llm CLI only       |
-| `phi4-reasoning:plus`    | 11 GB, strong math/science reasoning                              |
-| `glm-4.7-flash:q4_K_M`   | Best tool-calling fallback if qwen3.5 has multi-turn errors       |
-| `ministral-3:14b`        | Fast lightweight general inference                                |
-| `qwen3-vl:32b`           | Multimodal / vision                                               |
-| `qwen3-embedding:latest` | Best local embedding — Khoj RAG                                   |
-| `deepseek-ocr:latest`    | OCR on scanned PDFs                                               |
-| `gemma3:27b-it-qat`      | Strong general, QAT quantization                                  |
-| `devstral:latest`        | Agentic coding: multi-step planning, review, translation          |
-| `magistral:latest`       | Mistral reasoning model                                           |
-| All `:cloud` models      | Zero disk cost — keep all                                         |
+| Model                    | Role                                                                         |
+| ------------------------ | ---------------------------------------------------------------------------- |
+| `qwen3.6:27b`            | Primary dense local model. Writing, coding, and reasoning with thinking mode |
+| `qwen3.6:35b-a3b`        | Fast MoE default. Agentic sessions, search, and laptop-friendly reasoning    |
+| `phi4-reasoning:plus`    | 11 GB, strong math/science reasoning                                         |
+| `glm-4.7-flash:q4_K_M`   | Best tool-calling fallback if qwen3.6 has multi-turn errors                  |
+| `ministral-3:14b`        | Fast lightweight general inference                                           |
+| `qwen3-vl:32b`           | Multimodal / vision                                                          |
+| `qwen3-embedding:latest` | Best local embedding — Khoj RAG                                              |
+| `deepseek-ocr:latest`    | OCR on scanned PDFs                                                          |
+| `gemma4:e4b`             | Small fallback with native multimodal/tool support                           |
+| `devstral:latest`        | Agentic coding: multi-step planning, review, translation                     |
+| `magistral:latest`       | Mistral reasoning model                                                      |
+| All `:cloud` models      | Zero disk cost — keep all                                                    |
 
 Models that **support tools** (for Claude Code / gptel):
-`qwen3.5:27b`, `qwen3.5:35b-a3b`, `glm-4.7-flash`, `gemma3:27b-it-qat`, `ministral-3:14b`
+`qwen3.6:27b`, `qwen3.6:35b-a3b`, `glm-4.7-flash`, `gemma4:e4b`, `ministral-3:14b`
 
-Models that do **not** support tools: `deepseek-r1` variants, `deepseek-v3` variants
+Models that do **not** support tools: some reasoning-first DeepSeek variants, `deepseek-v3` variants
 
 This is state-of-the-art scientific writing infrastructure.
 
@@ -363,7 +363,7 @@ This is state-of-the-art scientific writing infrastructure.
 | Copilot CLI          | ✗                            | Moderate  | ✗ subscription | GitHub PR review        |
 
 ```bash
-ollama launch claude --model qwen3.5:35b-a3b
+ollama launch claude --model qwen3.6:35b-a3b
 ```
 
 ### AI agent config files
@@ -372,24 +372,24 @@ ollama launch claude --model qwen3.5:35b-a3b
 
 ### Daily Workflow
 
-| Activity                   | Primary tool                                | Secondary                            |
-| -------------------------- | ------------------------------------------- | ------------------------------------ |
-| Read a new paper           | `pdfllm "instruction"`                      | Khoj for cross-paper search          |
-| Write proposals/grants     | gptel `@grant`                              | `fabric --pattern improve_writing`   |
-| Scientific brainstorm      | gptel `@brainstorm`                         | cogito:671b-cloud                    |
-| Literature synthesis       | `<Launch5> l`                               | gptel `@search-science`              |
-| Local web search (AI)      | `<Launch5> v` (Vane)                        | Vane browser tab                     |
-| Current web info           | Perplexica                                  | Gemini CLI (1M context)              |
-| Coding inline              | `copilot.el`                                | —                                    |
-| Coding discussion/fix      | gptel in Emacs                              | —                                    |
-| Multi-file refactor        | Claude Code + qwen3.5:27b                   | OpenCode                             |
-| Shell pipelines            | `llm`                                       | `fabric` patterns                    |
-| Cross-document retrieval   | Khoj (`M-s M-k`)                            | `llm-rag`                            |
-| OCR on scanned PDFs        | `deepseek-ocr` via Ollama                   | `pymupdf`                            |
-| -------------------------- | ------------------------------------------- | ------------------------------------ |
-| Design experiments         | `deepseek-r1:32b` + `phi4-reasoning:plus`   | Reasoning + quantitative             |
-| Protein design             | ESM3 + RFdiffusion (not Ollama)             | Specialized tools required           |
-| -------------------------- | ------------------------------------------- | ------------------------------------ |
+| Activity                   | Primary tool                                       | Secondary                            |
+| -------------------------- | -------------------------------------------------- | ------------------------------------ |
+| Read a new paper           | `pdfllm "instruction"`                             | Khoj for cross-paper search          |
+| Write proposals/grants     | gptel `@grant`                                     | `fabric --pattern improve_writing`   |
+| Scientific brainstorm      | gptel `@brainstorm`                                | cogito:671b-cloud                    |
+| Literature synthesis       | `<Launch5> l`                                      | gptel `@search-science`              |
+| Local web search (AI)      | `<Launch5> v` (Vane)                               | Vane browser tab                     |
+| Current web info           | Perplexica                                         | Gemini CLI (1M context)              |
+| Coding inline              | `copilot.el`                                       | —                                    |
+| Coding discussion/fix      | gptel in Emacs                                     | —                                    |
+| Multi-file refactor        | Claude Code + qwen3.6:27b                          | OpenCode                             |
+| Shell pipelines            | `llm`                                              | `fabric` patterns                    |
+| Cross-document retrieval   | Khoj (`M-s M-k`)                                   | `llm-rag`                            |
+| OCR on scanned PDFs        | `deepseek-ocr` via Ollama                          | `pymupdf`                            |
+| -------------------------- | -------------------------------------------        | ------------------------------------ |
+| Design experiments         | `qwen3.6:27b` (+ thinking) + `phi4-reasoning:plus` | Reasoning + quantitative             |
+| Protein design             | ESM3 + RFdiffusion (not Ollama)                    | Specialized tools required           |
+| -------------------------- | -------------------------------------------        | ------------------------------------ |
 
 #### Web search
 
@@ -421,7 +421,7 @@ Best for: "what are recent papers on ESM3 protein design", "current best practic
 # debug / review
 mypy src/ | llm "explain these type errors grouped by root cause"
 python -m nima analyze --input stack.tif 2>&1 | llm "what is causing this error?"
-git diff | llm -m ollama/qwen3.5:27b "review this diff for bugs and unintended changes"
+git diff | llm -m ollama/qwen3.6:27b "review this diff for bugs and unintended changes"
 
 # fabric patterns
 fabric --pattern extract_wisdom < paper.txt
@@ -444,7 +444,7 @@ All use **pymupdf** for text extraction, then pipe to `llm` or `fabric`.
 pdfllm [-m model] [-t template] <file.pdf> [prompt]
 
 pdfllm paper.pdf "summarize key findings on pH-independent sensing"
-pdfllm -m ollama/qwen3.5:27b paper.pdf "extract all calibration steps as a numbered list"
+pdfllm -m ollama/qwen3.6:27b paper.pdf "extract all calibration steps as a numbered list"
 pdfllm -t fabric:extract_wisdom paper.pdf   # use a fabric template
 ```
 
@@ -461,7 +461,7 @@ pdffabric [-p pattern] [-m model] <file.pdf>
 pdffabric paper.pdf                          # default: extract_wisdom
 pdffabric -p summarize paper.pdf
 pdffabric -p improve_writing draft.pdf
-pdffabric -m qwen3.5:27b -p extract_wisdom paper.pdf
+pdffabric -m qwen3.6:27b -p extract_wisdom paper.pdf
 ```
 
 | Flag | Meaning                                         |
@@ -490,7 +490,7 @@ ragask [-m model] [-c collection] [-l chain-limit] <prompt>
 
 ragask "what ionophore concentrations have I used in my calibration protocols?"
 ragask -c myproject "summarize the sensing mechanisms in these papers"
-ragask -m ollama/qwen3.5:27b -c biblio "compare pH dependence across included papers"
+ragask -m ollama/qwen3.6:27b -c biblio "compare pH dependence across included papers"
 ```
 
 | Flag | Meaning                            |
@@ -522,7 +522,7 @@ Container definition: `ai-containers/ai-containers/khoj/podman-compose.yml`
 
 Khoj is configured to reach Ollama on the host via
 `http://host.docker.internal:11434/v1/`. The default chat model is
-`qwen3.5:35b-a3b`; the embedding model is set in the admin panel.
+`qwen3.6:35b-a3b`; the embedding model is set in the admin panel.
 
 ### Web UI (no Emacs required)
 
@@ -530,7 +530,7 @@ Open `http://localhost:42110` in a browser.
 
 **First-time setup (admin panel at `http://localhost:42110/admin`):**
 
-1. Set **Chat model** → provider: Ollama, model: `qwen3.5:35b-a3b`
+1. Set **Chat model** → provider: Ollama, model: `qwen3.6:35b-a3b`
 2. Set **Embedding model** → provider: Ollama, model: `qwen3-embedding:latest`
 3. Go to **Files** → upload PDFs or point to local folders
 
@@ -589,7 +589,7 @@ Create fine-tuned system-prompt models for recurring tasks:
 mkdir -p ~/models
 
 cat > ~/models/daniele-research.Modelfile << 'EOF'
-FROM qwen3.5:27b
+FROM qwen3.6:27b
 PARAMETER temperature 0.7
 PARAMETER top_p 0.9
 PARAMETER num_ctx 65536
@@ -598,7 +598,7 @@ EOF
 ollama create daniele-research -f ~/models/daniele-research.Modelfile
 
 cat > ~/models/daniele-proposal.Modelfile << 'EOF'
-FROM qwen3.5:27b
+FROM qwen3.6:27b
 PARAMETER temperature 0.4
 PARAMETER top_p 0.85
 PARAMETER num_ctx 65536
@@ -607,7 +607,7 @@ EOF
 ollama create daniele-proposal -f ~/models/daniele-proposal.Modelfile
 
 cat > ~/models/daniele-brainstorm.Modelfile << 'EOF'
-FROM deepseek-r1:32b
+FROM qwen3.6:35b-a3b
 PARAMETER temperature 0.9
 PARAMETER top_p 0.95
 PARAMETER num_ctx 65536

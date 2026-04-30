@@ -18,6 +18,9 @@ aic up              # start all
 aic up vane         # start one service
 aic down khoj       # stop one
 aic restart searxng # restart
+aic url             # print service URLs
+aic health          # check service reachability
+aic update          # pull latest images + recreate services
 aic ps              # status
 aic logs khoj       # follow logs
 ```
@@ -41,7 +44,7 @@ First visit opens a settings screen. Configure:
 
 1. **Chat Model Provider** → Ollama
 2. **Ollama API URL** → `http://host.docker.internal:11434`
-3. **Chat Model** → `qwen3.5:35b-a3b`
+3. **Chat Model** → `qwen3.6:35b-a3b`
 4. **Embedding Model Provider** → Ollama
 5. **Embedding Model** → `qwen3-embedding`
 
@@ -76,7 +79,7 @@ Admin panel at `http://localhost:42110/server/admin` — credentials in `pass ai
 
 #### 2. Chat Model — set default
 
-**Admin → Server Chat Settings** → set **Chat default** to `qwen3.5:35b-a3b`.
+**Admin → Server Chat Settings** → set **Chat default** to `qwen3.6:35b-a3b`.
 
 All Ollama models are auto-discovered and listed under **Chat Models**.
 
