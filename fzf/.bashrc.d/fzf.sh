@@ -2,6 +2,9 @@
 
 eval "$(fzf --bash)"
 
+# Yazi's built-in `z` picker shells out to plain `fzf`, so skip cache trees there too.
+export FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS:+$FZF_DEFAULT_OPTS }--walker-skip=.cache"
+
 # Find and view man pages
 MANPATH=/usr/share/man
 fman() {

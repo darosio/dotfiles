@@ -84,17 +84,6 @@ ed() {
   fi
 }
 
-ranger_cd() {
-  tempfile="$(mktemp -t tmp.XXXXXX)"
-  /usr/bin/ranger --choosedir="$tempfile" "${@:-$(pwd)}"
-
-  if [ -f "$tempfile" ] && [ "$(cat -- "$tempfile")" != "$(pwd -P)" ]; then
-    cd -- "$(cat "$tempfile")" || return 1
-  fi
-
-  rm -f -- "$tempfile"
-}
-
 pdf_myReduce() {
   gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dNOPAUSE -dQUIET -dBATCH -dPDFSETTINGS=/ebook -sOutputFile="$2" "$1"
 }

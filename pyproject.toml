@@ -134,7 +134,7 @@ live_mode = true
 strict = true
 
 [tool.ruff]
-extend-exclude = ["ranger/.config/ranger/commands.py", "scripts/update_changelog.py", "searxng-mcp.py", "mbsync/.local/bin/mutt_oauth2.py"]
+extend-exclude = ["scripts/update_changelog.py", "searxng-mcp.py", "mbsync/.local/bin/mutt_oauth2.py"]
 fix = true
 force-exclude = true
 line-length = 88
@@ -220,7 +220,6 @@ max-complexity = 12
 "__init__.py" = ["I002"] # don't need annotations
 "docs/conf.py" = ["INP001"]
 "src/*" = ["ANN201", "DOC201", "DOC501", "LOG", "PLR6301", "S404", "T20"]
-"ranger/.local/bin/*" = ["LOG", "T20"]
 "yazi/.local/bin/*" = ["DOC201", "DOC501"]
 "tests/*" = ["PLC2701", "PLR6301", "S101", "PLR2004", "DTZ001"]
 
@@ -254,6 +253,5 @@ extend-exclude = [
   "bash/.bashrc.d/fzf.sh",
   "emacs/.emacs.d/mk/mk-text.el",
   "gvim/.vim/syntax/ijmacro.vim",
-  "**/ranger/rc.conf",
   "**/yazi/plugins",
 ]

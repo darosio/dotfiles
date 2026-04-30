@@ -88,6 +88,16 @@ on = ["C"]
 run = "plugin ouch"
 desc = "Compress with ouch"
 
+[[mgr.prepend_keymap]]
+on = "="
+run = "shell 'chmod %s' --block --cursor=6 --interactive"
+desc = "Change permissions of selected files"
+
+[[mgr.prepend_keymap]]
+on = [",", "="]
+run = "shell 'chmod %s' --block --cursor=6 --interactive"
+desc = "Change permissions of selected files"
+
 # [[mgr.prepend_keymap]]
 # on = ["<A-TAB>"]
 # run = "shell -- git annex info --bytes --fast $@| awk '/local annex size/ {print $4/1024/1024}' | xargs zenity --info --text"

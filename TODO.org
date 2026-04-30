@@ -1,10 +1,23 @@
 For Calibre just remember: /Sync/media/books
 
-* TODO Complete yazi setup [0/4]
-- [ ] compress / atool
-- [ ] epub (preview)
-- [ ] attach file and send mail
-- [ ] =, ,= for =, M=
+* DONE Complete yazi setup [4/4]
+- [X] compress / atool
+- [X] epub (preview)
+- [X] attach file and send mail
+- [X] =, ,= for =, M=
+
+* TODO Repo maintenance [0/11]
+- [ ] [installer-integration-tests] Add temp-HOME smoke tests for =install.sh= and representative =*.stow.sh= packages; verify symlink creation and idempotent behavior.
+- [ ] [declarative-host-profiles] Add declarative install profiles (desktop/laptop/server/ai) with package metadata such as =needs_root=, =depends_on=, and platform constraints.
+- [ ] [extract-host-overrides] Move hardcoded personal paths and host assumptions into a local override layer or environment-driven settings.
+- [ ] [fix-install-cwd] Update =install.sh= so scripts run from the dotfiles repo root; this fixes relative-path and =stow= package resolution issues.
+- [ ] [fix-latex-package-install] Fix =latex.sh= so =texlive-bibtexextra= is actually passed to =yay= instead of being swallowed by an inline comment.
+- [ ] [fix-ollama-relative-cd] Harden =2root.ollama.sh=: replace invalid top-level =return= with =exit 1= and anchor relative =cd= calls to the script or repo root.
+- [ ] [remove-mu-premature-sync] Stop =mu.stow.sh= from running =mbsync= /= mu init= before the OAuth token exists; keep those as manual post-setup steps.
+- [ ] [make-root-scripts-idempotent] Make rerunnable root scripts idempotent; avoid repeated =tee -a= appends in mdadm/rkhunter-style configs.
+- [ ] [tighten-smartd-log-perms] Replace world-writable =/var/log/smartdnotify.log= permissions with least-privilege ownership and mode.
+- [ ] [fail-fast-ai-container-secrets] Make =ai-containers.stow.sh= fail when =pass ai/khoj= is missing instead of writing an empty =.env=.
+- [ ] [fix-zotero-relative-copy] Fix =zotero.stow.sh= relative copy paths and make the addon download idempotent.
 
 * calendar and orgzly
 - [ ] define and save appropriate orgzly setting (e.le.2d or s.today)

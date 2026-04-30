@@ -9,6 +9,11 @@ jupyter = [{ run = '${TERM} bash -c "jupyter-lab \"$1\""', block = false, orphan
 csvlens = [
   { run = 'csvlens "$@"', block = true, desc = "csvlens" },
 ]
+browser = [
+  { run = 'firefox "$@"', orphan = true, desc = "Firefox" },
+  { run = 'handlr open "$@"', desc = "Open" },
+  { run = 'handlr open -e true "$@"', desc = "Open menu" },
+]
 edit = [
   { run = '$EDITOR "$@"', block = false, for = "unix" },
   { run = 'gvim "$@"', block = false, for = "unix" },
@@ -20,6 +25,7 @@ open = [
 
 [open]
 prepend_rules = [
+  { name = "*.{html,htm,xhtml}", use = ["browser", "edit"] },
   { name = "*", use = ["open", "edit"] }, # Fallback for all files
   { name = "*.csv", use = ["csvlens"] },
   { name = "*.ipynb", use = ["jupyter"] },
@@ -33,6 +39,7 @@ prepend_previewers = [
   { name = "*.csv", run = 'piper -- bat --color=always --style=grid,numbers "$1"' },
   # HTML preview
   { name = "*.{html,htm,xhtml}", run = 'piper -- sh -c "w3m -dump -T text/html \"$1\" 2>/dev/null || pandoc -t plain -- \"$1\" 2>/dev/null || echo \"No HTML preview available\""' },
+  { mime = "application/epub+zip", run = "piper -- bash -lc 'ebook-meta \"$1\" 2>/dev/null | sed -n \"/^Title[[:space:]]*:/p;/^Author(s)[[:space:]]*:/p;/^Publisher[[:space:]]*:/p;/^Published[[:space:]]*:/p;/^Languages[[:space:]]*:/p\"; printf \"\\n--- contents ---\\n\"; bsdtar -tvf \"$1\" 2>/dev/null | sed -n \"1,120p\"' bash \"$1\"" },
   # # DJVU preview
   # { name = "*.{djvu,djv}", run = "djvu-view" },
   { name = "*.chm", run = 'piper -- extract_chmLib "$1" --' },

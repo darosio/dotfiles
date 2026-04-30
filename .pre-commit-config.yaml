@@ -120,7 +120,6 @@ repos:
     hooks:
       - id: shfmt # prebuilt upstream executable
         args: ["-w", "-i", "2", "-ci", "-sr"] # 2 spaces, indent case, simplify redirects
-        exclude: '(^.*ranger/scope.sh)'
 
   - repo: https://github.com/astral-sh/uv-pre-commit
     rev: 0.10.9

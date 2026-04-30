@@ -58,12 +58,7 @@ function color_my_prompt {
   # If you added Conda:
   # local base_ps1="$__user_and_host $__cur_location$__git_branch_color$__git_branch\n$__pyenv_prompt$__conda_prompt$__prompt_tail "
 
-  # Add Ranger indicator if needed
-  if [ -n "$RANGER_LEVEL" ]; then
-    PS1="$base_ps1"'(in ranger) '
-  else
-    PS1="$base_ps1"
-  fi
+  PS1="$base_ps1"
 }
 
 # If .git-prompt.sh exists, set options and source it

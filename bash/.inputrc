@@ -25,7 +25,7 @@ set colored-completion-prefix On
 set menu-complete-display-prefix On
 
 
-"\C-o": "ranger_cd\C-m"
+"\C-o": "y\C-m"
 "\C-f": "fzf_open\C-m"
 "\ed": "fzf_cmd\C-m"
 "\ey": "y\C-m"
