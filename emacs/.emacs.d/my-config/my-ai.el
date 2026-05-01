@@ -403,14 +403,14 @@ Review and send with \\[gptel-send]."
                 :function #'codel-edit-buffer
                 :description "Replace OLD-STRING with NEW-STRING in an Emacs buffer"
                 :args '((:name "buffer_name"
-                                :type string
-                                :description "Name of the buffer to modify")
+                               :type string
+                               :description "Name of the buffer to modify")
                         (:name "old_string"
-                                :type string
-                                :description "Text to replace (must match exactly)")
+                               :type string
+                               :description "Text to replace (must match exactly)")
                         (:name "new_string"
-                                :type string
-                                :description "Text to replace old_string with"))
+                               :type string
+                               :description "Text to replace old_string with"))
                 :category "edit"))
 
   ;; System prompt directives (select via gptel-menu or presets below)
@@ -479,16 +479,18 @@ Review and send with \\[gptel-send]."
   (gptel-make-preset 'search-science
                      :description "Scientific literature search - PubMed / arXiv / Scholar via MCP"
                      :backend "Ollama" :model (my/ollama-model 'qwen3.5:35b-a3b 'qwen3.5:4b)
-                     :system "You are a scientific literature assistant. Use searxng_web_search to find peer-reviewed literature. Prefer PubMed, arXiv, Google Scholar, and Semantic Scholar.\n\nFor each paper found:\n1. Extract the DOI from the result URL or metadata\n2. Call zotero_lookup with the DOI — if found, cite as [cite:@Key]\n3. If not in Zotero, report it as: DOI: 10.xxxx/xxx (user will add it to Zotero manually)\n\nHighlight knowledge gaps and translational relevance. Never invent citations."
-                     :pre (lambda () (gptel-mcp-connect '("searxng" "fetcher" "pdf") 'sync))
-                     :tools '(:append ("searxng_web_search" "web_url_read" "fetch_url" "zotero_lookup")))
+                     :system "You are a scientific literature assistant. Use searxng_web_search to find peer-reviewed literature. Prefer PubMed, arXiv, Google Scholar, and Semantic Scholar.\n\nFor each paper found:\n1. Extract the DOI from the result URL or metadata\n2. Call zotero_lookup with the DOI — if found, cite as [cite:@Key]\n3. If not in Zotero, report it as: DOI: 10.xxxx/xxx (user will add it to Zotero manually)\n\nYou also have access to zotero_search_items and zotero_get_item_fulltext — use these to search the user's live Zotero library and retrieve full text of indexed papers.\n\nHighlight knowledge gaps and translational relevance. Never invent citations."
+                     :pre (lambda () (gptel-mcp-connect '("searxng" "fetcher" "pdf" "zotero") 'sync))
+                     :tools '(:append ("searxng_web_search" "web_url_read" "fetch_url"
+                                       "zotero_lookup" "zotero_search_items" "zotero_get_item_fulltext")))
 
   (gptel-make-preset 'grant
                      :description "Grant writing - lit search + structured proposal sections"
                      :backend "Ollama" :model (my/ollama-model 'qwen3.5:27b 'gemma3:latest)
                      :system (alist-get 'proposal gptel-directives)
-                     :pre (lambda () (gptel-mcp-connect '("searxng" "fetcher" "pdf") 'sync))
-                     :tools '(:append ("searxng_web_search" "web_url_read" "fetch_url" "zotero_lookup")))
+                     :pre (lambda () (gptel-mcp-connect '("searxng" "fetcher" "pdf" "zotero") 'sync))
+                     :tools '(:append ("searxng_web_search" "web_url_read" "fetch_url"
+                                       "zotero_lookup" "zotero_search_items" "zotero_get_item_fulltext")))
 
   (gptel-make-preset 'pdf
                      :description "Local PDF reader - extract text, cite via MCP"
@@ -532,6 +534,13 @@ Review and send with \\[gptel-send]."
                                    :env (:GITHUB_PERSONAL_ACCESS_TOKEN
                                          ,(string-trim
                                            (shell-command-to-string "pass cloud/github_mcp.el")))))
+             ;; Zotero local MCP — talks to running Zotero desktop via local API
+             ;; Installed: uv tool install zotero-mcp-server[semantic]
+             ;; Setup run:  zotero-mcp setup  (configured ZOTERO_LOCAL=true)
+             ;; Requires Zotero desktop to be running
+             ("zotero" . (:command "/home/dan/.local/bin/zotero-mcp"
+                                   :env (:ZOTERO_LOCAL "true"
+                                                       :ZOTERO_EMBEDDING_MODEL "default")))
              ("duckduckgo" . (:command "uvx" :args ("duckduckgo-mcp-server")))
              ("nixos" . (:command "uvx" :args ("mcp-nixos")))
              ("sequential-thinking" . (:command "npx" :args ("-y" "@modelcontextprotocol/server-sequential-thinking")))
