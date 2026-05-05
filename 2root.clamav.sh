@@ -1,8 +1,10 @@
 #!/usr/bin/env sh
 #
 
+set -eu
+
 # Ensure we're not using a virtual environment's python for system packages
-if [ -n "$VIRTUAL_ENV" ]; then
+if [ -n "${VIRTUAL_ENV:-}" ]; then
   echo "Warning: Virtual environment detected ($VIRTUAL_ENV). Bypassing for system installation..."
   # Attempt to clean PATH by removing the venv bin directory
   PATH="$(echo "$PATH" | sed -e "s|$VIRTUAL_ENV/bin:||g")"
@@ -13,13 +15,12 @@ fi
 # We need the system python and build module for AUR packages
 yay -S --noconfirm clamav python-fangfrisch
 
-sudo rm -f /etc/clamav/clamd.conf
-sudo rm -f /etc/clamav/virus-event.bash
-sudo rm -f /usr/lib/systemd/system/clamav-clamonacc.service
-sudo rm -f /etc/sudoers.d/clamav
-sudo rm -f /etc/fangfrisch/fangfrisch.conf
-
 # sudo stow -t / 2root.clamav
+# -sudo rm -f /etc/clamav/clamd.conf
+# -sudo rm -f /etc/clamav/virus-event.bash
+# -sudo rm -f /usr/lib/systemd/system/clamav-clamonacc.service
+# -sudo rm -f /etc/sudoers.d/clamav
+# -sudo rm -f /etc/fangfrisch/fangfrisch.conf
 
 # Ensure clamav user can read configs (symlinks point into /home which has restrictive perms)
 # Copy config files to override symlinks with regular files
