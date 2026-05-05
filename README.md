@@ -25,9 +25,12 @@ make init                             # installs pre-commit hooks
 
 ```bash
 ./install.sh --list                   # see available packages
-./install.sh --all                    # install all user packages
+./install.sh --all                    # install safe user packages
 ./install.sh emacs.stow.sh gh.stow.sh  # install specific packages
 ```
+
+`--all` skips side-effect-heavy scripts such as mail sync, container secret
+generation, and remote installers; run those explicitly when needed.
 
 Or use `stow` directly:
 
