@@ -32,5 +32,7 @@ fi
 stow -t "$HOME" zotero
 cp --remove-destination zotero/.zotero/zotero/90bt0tu8.default/prefs.js ~/.zotero/zotero/90bt0tu8.default/prefs.js
 
+uv tool install zotero-mcp-server[semantic]
+
 cd "$HOME" || exit
 wget https://github.com/syt2/zotero-addons/releases/latest/download/zotero-addons.xpi
