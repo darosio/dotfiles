@@ -5,30 +5,27 @@ linemode = "size"
 show_symlink = false
 
 [opener]
-jupyter = [{ run = '${TERM} bash -c "jupyter-lab \"$1\""', block = false, orphan = true, desc = "jupyter" }]
-csvlens = [
-  { run = 'csvlens "$@"', block = true, desc = "csvlens" },
-]
-browser = [
-  { run = 'firefox "$@"', orphan = true, desc = "Firefox" },
-  { run = 'handlr open "$@"', desc = "Open" },
-  { run = 'handlr open -e true "$@"', desc = "Open menu" },
-]
+jupyter = [{ run = '${TERM} bash -c "jupyter-lab \"%s\""', block = false, orphan = true, desc = "Jupyter" }]
+nbpeek = [{ run = 'jupyter nbconvert --to markdown "%s" --stdout | bat', block = true, desc = "Preview Notebook" }]
+csvlens = [{ run = 'csvlens "%s"', block = true, desc = "CSV Lens" }]
+browser = [{ run = 'firefox "%s"', orphan = true, desc = "Firefox" }]
 edit = [
-  { run = '$EDITOR "$@"', block = false, for = "unix" },
-  { run = 'gvim "$@"', block = false, for = "unix" },
+  { run = '$EDITOR "%s"', block = true, desc = "Terminal Editor" },
+  { run = 'gvim "%s"', orphan = true, desc = "GV Vim" },
 ]
 open = [
-  { run = 'handlr open "$@"', desc = "Open" },
-  { run = 'handlr open -e true "$@"', desc = "Open menu" },
+  { run = 'handlr open "%s"', desc = "Open" },
+  { run = 'handlr open -e true "%s"', desc = "Open menu" },
 ]
 
 [open]
 prepend_rules = [
-  { name = "*.{html,htm,xhtml}", use = ["browser", "edit"] },
-  { name = "*", use = ["open", "edit"] }, # Fallback for all files
-  { name = "*.csv", use = ["csvlens"] },
-  { name = "*.ipynb", use = ["jupyter"] },
+  # Using 'url' instead of 'name' for glob matching
+  { url = "*.{html,htm,xhtml}", use = ["browser", "edit", "open"] },
+  { url = "*.csv", use = ["csvlens", "edit", "open"] },
+  { url = "*.ipynb", use = ["jupyter", "nbpeek", "edit", "open"] },
+  { url = "*/", use = ["open", "edit"] },
+  { url = "*", use = ["edit", "open"] },
 ]
 
 [plugin]
