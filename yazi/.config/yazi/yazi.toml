@@ -5,17 +5,17 @@ linemode = "size"
 show_symlink = false
 
 [opener]
-jupyter = [{ run = '${TERM} bash -c "jupyter-lab \"%s\""', block = false, orphan = true, desc = "Jupyter" }]
-nbpeek = [{ run = 'jupyter nbconvert --to markdown "%s" --stdout | bat', block = true, desc = "Preview Notebook" }]
-csvlens = [{ run = 'csvlens "%s"', block = true, desc = "CSV Lens" }]
-browser = [{ run = 'firefox "%s"', orphan = true, desc = "Firefox" }]
+jupyter = [{ run = '${TERM} bash -c "jupyter-lab \"$@\""', block = false, orphan = true, desc = "Jupyter" }]
+nbpeek = [{ run = 'jupyter nbconvert --to markdown "$@" --stdout | bat', block = true, desc = "Preview Notebook" }]
+csvlens = [{ run = 'csvlens "$@"', block = true, desc = "CSV Lens" }]
+browser = [{ run = 'firefox "$@"', orphan = true, desc = "Firefox" }]
 edit = [
-  { run = '$EDITOR "%s"', block = true, desc = "Terminal Editor" },
-  { run = 'gvim "%s"', orphan = true, desc = "GV Vim" },
+  { run = '$EDITOR "$@"', block = false, desc = "Terminal Editor" },
+  { run = 'gvim "$@"', orphan = true, desc = "GV Vim" },
 ]
 open = [
-  { run = 'handlr open "%s"', desc = "Open" },
-  { run = 'handlr open -e true "%s"', desc = "Open menu" },
+  { run = 'handlr open "$@"', desc = "Open" },
+  { run = 'handlr open -e true "$@"', desc = "Open menu" },
 ]
 
 [open]
@@ -24,8 +24,9 @@ prepend_rules = [
   { url = "*.{html,htm,xhtml}", use = ["browser", "edit", "open"] },
   { url = "*.csv", use = ["csvlens", "edit", "open"] },
   { url = "*.ipynb", use = ["jupyter", "nbpeek", "edit", "open"] },
-  { url = "*/", use = ["open", "edit"] },
-  { url = "*", use = ["edit", "open"] },
+  { url = "*.{org,md,txt}", use = ["edit", "open"] },
+  { url = "*/", use = ["open", "reveal", "edit"] },
+  { url = "*", use = ["open", "edit"] },
 ]
 
 [plugin]
