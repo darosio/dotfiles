@@ -34,24 +34,24 @@ prepend_previewers = [
   # Replace magick, image, video with mediainfo
   { mime = "{audio,video,image}/*", run = "mediainfo" },
   { mime = "application/subrip", run = "mediainfo" },
-  { name = "*.csv", run = 'piper -- bat --color=always --style=grid,numbers "$1"' },
+  { url = "*.csv", run = 'piper -- bat --color=always --style=grid,numbers "$1"' },
   # HTML preview
-  { name = "*.{html,htm,xhtml}", run = 'piper -- sh -c "w3m -dump -T text/html \"$1\" 2>/dev/null || pandoc -t plain -- \"$1\" 2>/dev/null || echo \"No HTML preview available\""' },
+  { url = "*.{html,htm,xhtml}", run = 'piper -- sh -c "w3m -dump -T text/html \"$1\" 2>/dev/null || pandoc -t plain -- \"$1\" 2>/dev/null || echo \"No HTML preview available\""' },
   { mime = "application/epub+zip", run = "piper -- bash -lc 'ebook-meta \"$1\" 2>/dev/null | sed -n \"/^Title[[:space:]]*:/p;/^Author(s)[[:space:]]*:/p;/^Publisher[[:space:]]*:/p;/^Published[[:space:]]*:/p;/^Languages[[:space:]]*:/p\"; printf \"\\n--- contents ---\\n\"; bsdtar -tvf \"$1\" 2>/dev/null | sed -n \"1,120p\"' bash \"$1\"" },
   # # DJVU preview
   # { name = "*.{djvu,djv}", run = "djvu-view" },
-  { name = "*.chm", run = 'piper -- extract_chmLib "$1" --' },
-  { name = "*/", run = 'piper -- eza -TL=3 --color=always --icons=always --group-directories-first --no-quotes --all "$1"' },
-  { name = "*.eml", run = 'piper -- view_mail_html.py "$1"' },
+  { url = "*.chm", run = 'piper -- extract_chmLib "$1" --' },
+  { url = "*/", run = 'piper -- eza -TL=3 --color=always --icons=always --group-directories-first --no-quotes --all "$1"' },
+  { url = "*.eml", run = 'piper -- view_mail_html.py "$1"' },
   { mime = "message/rfc822", run = 'piper -- mu view -- "$1"' },
-  { name = "*.cab", run = 'piper -- sh -c "bsdtar --list --file \"$1\" 2>/dev/null || file -bL \"$1\""' },
+  { url = "*.cab", run = 'piper -- sh -c "bsdtar --list --file \"$1\" 2>/dev/null || file -bL \"$1\""' },
   # Office Documents
   { mime = "application/openxmlformats-officedocument.*", run = "office" },
   { mime = "application/oasis.opendocument.*", run = "office" },
   { mime = "application/ms-*", run = "office" },
   { mime = "application/msword", run = "office" },
-  { name = "*.docx", run = "office" },
-  { name = "*.sxw", run = "office" },
+  { url = "*.docx", run = "office" },
+  { url = "*.sxw", run = "office" },
   # Archive previewer
   { mime = "application/*zip", run = "ouch" },
   { mime = "application/*tar", run = "ouch" },
@@ -62,7 +62,7 @@ prepend_previewers = [
   { mime = "application/*zstd", run = "ouch" },
   { mime = "application/java-archive", run = "ouch" },
   # Last
-  { name = "/remote/**", run = 'noop' },
+  { url = "/remote/**", run = 'noop' },
 ]
 
 prepend_preloaders = [
@@ -76,20 +76,22 @@ prepend_preloaders = [
   { mime = "application/oasis.opendocument.*", run = "office" },
   { mime = "application/ms-*", run = "office" },
   { mime = "application/msword", run = "office" },
-  { name = "*.docx", run = "office" },
+  { url = "*.docx", run = "office" },
 ]
 
 append_previewers = [
   # My fallback previewer
-  { name = "*", run = "binary" },
+  { mime = "*", run = "binary" },
 ]
 
 [[plugin.prepend_fetchers]]
 id = "git"
-name = "*"
+mime = "*"
 run = "git"
+group = "git"
 
 [[plugin.prepend_fetchers]]
 id = "git"
-name = "*/"
+url = "*/"
 run = "git"
+group = "git"
