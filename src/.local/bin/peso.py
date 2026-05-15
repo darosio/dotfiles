@@ -48,7 +48,7 @@ sns.regplot(
     line_kws={"alpha": 0.71, "linewidth": 3},
     scatter=False,
 )
-# sns.regplot("days", "peso", data=df, ci=95, color="yellow", robust=True) # noqa: ERA001, E501
+# sns.regplot("days", "peso", data=df, ci=95, color="yellow", robust=True) # noqa: ERA001
 sns.regplot(
     "days",
     "peso",

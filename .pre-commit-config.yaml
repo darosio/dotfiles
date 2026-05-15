@@ -77,7 +77,7 @@ repos:
         exclude: ".gitconfig|zotero/"
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.2
+    rev: v0.15.13
     hooks:
       - id: ruff
         types_or: [python, pyi, jupyter]
@@ -100,7 +100,7 @@ repos:
       - id: pydoclint
 
   - repo: https://github.com/crate-ci/typos
-    rev: v1.45.1
+    rev: v1.46.1
     hooks:
       - id: typos
         # args: [] # Turn off automatic fixing
@@ -122,7 +122,7 @@ repos:
         args: ["-w", "-i", "2", "-ci", "-sr"] # 2 spaces, indent case, simplify redirects
 
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.10.9
+    rev: 0.11.14
     hooks:
       - id: uv-lock
         stages: [pre-commit]
