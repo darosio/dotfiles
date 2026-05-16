@@ -12,6 +12,7 @@ SAFE_ALL_SCRIPTS=(
   agents.stow.sh
   alacritty.stow.sh
   automount.stow.sh
+  broot.stow.sh
   direnv.stow.sh
   emacs.stow.sh
   gh.stow.sh
