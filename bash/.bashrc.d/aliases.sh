@@ -8,7 +8,6 @@ alias ee='$EDITOR $HOME/.emacs.d/init.el'
 alias ea='$EDITOR $HOME/.bashrc.d/aliases.sh'
 
 # File and system Operations
-alias or='rifle'
 alias o='handlr open'
 alias ow='handlr open --enable-selector=true'
 alias t='tree'
@@ -34,6 +33,7 @@ alias 2md='uvx markitdown'
 # Package Management
 alias pacman_orphan='sudo pacman -Qtdq'
 alias pacman_pending='sudo pacman -Qu'
+alias mirrorlist_refresh='sudo reflector --country Italy,Germany,Austria --age 24 --protocol https --sort rate --fastest 10 --save /etc/pacman.d/mirrorlist'
 
 # Git
 alias g='git st; git in; git out'
