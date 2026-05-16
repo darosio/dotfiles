@@ -24,6 +24,8 @@ prepend_rules = [
   { url = "*.{html,htm,xhtml}", use = ["browser", "edit", "open"] },
   { url = "*.csv", use = ["csvlens", "edit", "open"] },
   { url = "*.ipynb", use = ["jupyter", "nbpeek", "edit", "open"] },
+  { url = "*.py", use = ["edit", "open"] },
+  { url = "*.zip", use = ["extract", "open"] },
   { url = "*.{org,md,txt}", use = ["edit", "open"] },
   { url = "*/", use = ["open", "reveal", "edit"] },
   { url = "*", use = ["open", "edit"] },
