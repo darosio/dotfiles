@@ -28,4 +28,7 @@ if [ -z "$WAYLAND_DISPLAY" ] && [ -n "$XDG_VTNR" ] && [ "$XDG_VTNR" -eq 1 ]; the
   exec sway
 fi
 
-source /home/dan/.config/broot/launcher/bash/br
+if [ -r "$HOME/.config/broot/launcher/bash/br" ]; then
+  # shellcheck source=/dev/null
+  source "$HOME/.config/broot/launcher/bash/br"
+fi
