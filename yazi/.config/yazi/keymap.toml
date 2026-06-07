@@ -138,6 +138,12 @@ desc = "Change permissions of selected files"
 #        }' |
 #        xargs -I{} zenity --info --width=340 --title='Git-Annex Total' --text='Total annexed data in this repo:\n\n<b>{}</b>' --html"
 # desc = "Pop-up Git-Annex total size (human + bold)"
+# Ranger-style "Open with" (type command manually)
+[[mgr.prepend_keymap]]
+on = "r"
+run = 'shell --block --interactive --cursor=0 " \"$@\""'
+desc = "Open with (manual command)"
+
 [[mgr.prepend_keymap]]
 on = ["<A-TAB>"]
 run = '''shell --

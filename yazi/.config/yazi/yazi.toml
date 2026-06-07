@@ -17,18 +17,21 @@ open = [
   { run = 'handlr open "$@"', desc = "Open" },
   { run = 'handlr open -e true "$@"', desc = "Open menu" },
 ]
+manual = [
+  { run = 'ya emit shell --block --interactive --cursor=0 " \"$@\""', desc = "Manual" },
+]
 
 [open]
 prepend_rules = [
   # Using 'url' instead of 'name' for glob matching
-  { url = "*.{html,htm,xhtml}", use = ["browser", "edit", "open"] },
-  { url = "*.csv", use = ["csvlens", "edit", "open"] },
-  { url = "*.ipynb", use = ["jupyter", "nbpeek", "edit", "open"] },
-  { url = "*.py", use = ["edit", "open"] },
-  { url = "*.zip", use = ["extract", "open"] },
-  { url = "*.{org,md,txt}", use = ["edit", "open"] },
-  { url = "*/", use = ["open", "reveal", "edit"] },
-  { url = "*", use = ["open", "edit"] },
+  { url = "*.{html,htm,xhtml}", use = ["browser", "edit", "open", "manual"] },
+  { url = "*.csv", use = ["csvlens", "edit", "open", "manual"] },
+  { url = "*.ipynb", use = ["jupyter", "nbpeek", "edit", "open", "manual"] },
+  { url = "*.py", use = ["edit", "open", "manual"] },
+  { url = "*.zip", use = ["extract", "open", "manual"] },
+  { url = "*.{org,md,txt}", use = ["edit", "open", "manual"] },
+  { url = "*/", use = ["open", "reveal", "edit", "manual"] },
+  { url = "*", use = ["open", "edit", "manual"] },
 ]
 
 [plugin]
