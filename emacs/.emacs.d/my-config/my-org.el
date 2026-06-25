@@ -303,7 +303,7 @@
 
           ("w" "Weight"
            table-line (file+headline da-gtd "Weight")
-           "|%t|%?|")
+           "| %t | %^{Weight} | |")
 
           ("h" "new Habit"
            entry (file+headline da-gtd "Habits")

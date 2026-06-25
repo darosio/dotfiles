@@ -2,78 +2,112 @@
 #
 """Track weight."""
 
-from __future__ import annotations
+import re
+from pathlib import Path
 
-from datetime import timedelta
-
+import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
 
+SMOOTHING_WINDOW_DAYS = 3
+WEIGHT_TABLE = Path("~/Sync/box/org/gtd.org").expanduser()
+WEIGHT_ROW_RE = re.compile(
+    r"\|\s*<(?P<date>\d{4}-\d{2}-\d{2})\s+\w+>\s*\|"
+    r"\s*(?P<weight>\d+(?:\.\d+)?)\s*\|",
+)
+WEIGHT_HEADING_RE = re.compile(r"^\*\s+weight\s*$", re.IGNORECASE)
 
-def linearfit(days: object, val: object) -> tuple[float, str]:
+
+def linearfit(days: object, val: object) -> str:
     """Fit line."""
     slope, _intercept = np.polyfit(days, val, 1)
-    fit_label = f" grams/week ({slope * 7000:.1f}) "
-    return slope, fit_label
+    return f" grams/week ({slope * 7000:.1f}) "
 
 
-# data input
-df = pd.read_csv("~/Sync/4home/Dan/npeso.tsv", sep="\t")
-df.data = pd.to_datetime(df.data, format="%d/%m/%Y")
-df["days"] = [d.days for d in df.data - df.data.loc[0] + timedelta(days=1)]
+def read_weight_table(path: Path = WEIGHT_TABLE) -> pd.DataFrame:
+    """Read weight entries from the Org table in gtd.org."""
+    rows = []
+    in_weight_heading = False
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if line.startswith("* "):
+            in_weight_heading = bool(WEIGHT_HEADING_RE.match(line))
+            continue
+        if not in_weight_heading:
+            continue
+        match = WEIGHT_ROW_RE.match(line)
+        if match:
+            rows.append({
+                "date": match.group("date"),
+                "weight": float(match.group("weight")),
+            })
+    return pd.DataFrame(rows)
 
-slope, fit_label = linearfit(df.days, df.peso)
-print(fit_label)
 
-# plotting
-sns.set_style("whitegrid")
+def main() -> None:
+    """Run main."""
+    # data input
+    df = read_weight_table()
+    df.date = pd.to_datetime(df.date, format="%Y-%m-%d")
+    df["days"] = (df.date - df.date.iloc[0]).dt.days + 1
+    df["date_num"] = mdates.date2num(df.date)
+    grams_per_week = linearfit(df.days, df.weight)
+    print(grams_per_week)
 
-sns.regplot(
-    "days",
-    "peso",
-    data=df,
-    ci=0,
-    scatter_kws={"marker": "s", "s": 60, "color": "slategrey"},
-    label="weight",
-)
-sns.regplot(
-    "days",
-    "peso",
-    data=df,
-    ci=95,
-    color="indianred",
-    label=fit_label,
-    line_kws={"alpha": 0.71, "linewidth": 3},
-    scatter=False,
-)
-# sns.regplot("days", "peso", data=df, ci=95, color="yellow", robust=True) # noqa: ERA001
-sns.regplot(
-    "days",
-    "peso",
-    data=df,
-    lowess=True,
-    color="seagreen",
-    label="lowess",
-    scatter=False,
-    line_kws={"alpha": 0.5, "linewidth": 7},
-)
+    # plotting
+    sns.set_style("whitegrid")
+    sns.regplot(x="date_num", y="weight", data=df, ci=0, scatter_kws={"s": 100})
+    sns.regplot(
+        x="date_num",
+        y="weight",
+        data=df,
+        ci=95,
+        color="indianred",
+        label=grams_per_week,
+        line_kws={"alpha": 0.75, "linewidth": 3},
+        scatter=False,
+    )
+    sns.regplot(
+        x="date_num",
+        y="weight",
+        data=df,
+        lowess=True,
+        color="seagreen",
+        label="lowess",
+        scatter=False,
+        line_kws={"alpha": 0.5, "linewidth": 7},
+    )
 
-# sns.regplot(df.days[1:-1], np.convolve(df.peso, np.ones((3,))/3, mode='valid'),
-#             ci=0, fit_reg=False, marker='_', line_kws={'linewidth': 5})
-sns.lineplot(df.days[1:-1], np.convolve(df.peso, np.ones((3,)) / 3, mode="valid"))
-sns.scatterplot(
-    df.days[1:-1], np.convolve(df.peso, np.ones((3,)) / 3, mode="valid"), color="orange"
-)
+    if len(df) >= SMOOTHING_WINDOW_DAYS:
+        smoothed = np.convolve(
+            df.weight,
+            np.ones(SMOOTHING_WINDOW_DAYS) / SMOOTHING_WINDOW_DAYS,
+            mode="valid",
+        )
+        sns.scatterplot(
+            x=df.date_num[1:-1],
+            y=smoothed,
+            marker="*",
+            color="darkred",
+            s=500,
+            label="3-day moving average",
+        )
+    plt.legend()
+    plt.title("Tracking my weight")
+    plt.xlim([df.date_num.iloc[0] - 1, df.date_num.iloc[-1] + 1])
+    ax = plt.gca()
+    locator = mdates.AutoDateLocator()
+    ax.xaxis.set_major_locator(locator)
+    ax.xaxis.set_major_formatter(mdates.ConciseDateFormatter(locator))
+    # plt.ylim([73.5, 77.5]) # noqa: ERA001
+    plt.grid(which="minor", color="r", linestyle="--")
+    ymin = round(min(df.weight) - 0.5)
+    ymax = round(max(df.weight) + 0.5)
+    plt.yticks([i / 2 for i in range(ymin * 2, ymax * 2 + 1)])
+    plt.tight_layout()
+    plt.show()
 
-plt.legend()
-plt.title("Tracking my weight")
-plt.xlim([0, df.days.iloc[-1] + 1])
-# plt.ylim([73.5, 77.5]) # noqa: ERA001
-plt.grid(b=True, which="minor", color="r", linestyle="--")
-ymin = round(min(df.peso) - 0.5)
-ymax = round(max(df.peso) + 0.5)
-plt.yticks([i / 2 for i in range(ymin * 2, ymax * 2 + 1)])
-plt.tight_layout()
-plt.show()
+
+if __name__ == "__main__":
+    main()
