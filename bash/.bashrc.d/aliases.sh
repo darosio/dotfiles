@@ -23,6 +23,10 @@ alias rm='trash-put'
 alias rmlintt='rmlint --keep-all-tagged --must-match-tagged -r -f -T df,dd'
 
 # System Commands
+# sudo systemctl enable --now btrfs-scrub@-.timer
+# sudo systemctl enable --now btrfs-scrub@home.timer
+alias balance_home='sudo btrfs balance start -dusage=80 -musage=80 /home'
+alias bfsu='sudo btrfs filesystem usage'
 alias du.='du -ksh .[!.]* * | sort -h'
 alias grep='grep --color'
 alias stow='stow -t ~/'
