@@ -140,7 +140,7 @@ desc = "Change permissions of selected files"
 # desc = "Pop-up Git-Annex total size (human + bold)"
 # Ranger-style "Open with" (type command manually)
 [[mgr.prepend_keymap]]
-on = "r"
+on = "o"
 run = 'shell --block --interactive --cursor=0 " \"$@\""'
 desc = "Open with (manual command)"
 
