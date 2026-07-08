@@ -3,6 +3,7 @@
 """Track weight."""
 
 import re
+import sys
 from pathlib import Path
 
 import matplotlib.dates as mdates
@@ -45,10 +46,22 @@ def read_weight_table(path: Path = WEIGHT_TABLE) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+def parse_last_n(argv: list[str]) -> int | None:
+    """Parse a tail-style ``-N`` argument (e.g. ``peso.py -10``)."""
+    for arg in argv:
+        match = re.fullmatch(r"-(\d+)", arg)
+        if match:
+            return int(match.group(1))
+    return None
+
+
 def main() -> None:
     """Run main."""
     # data input
     df = read_weight_table()
+    last_n = parse_last_n(sys.argv[1:])
+    if last_n is not None:
+        df = df.tail(last_n).reset_index(drop=True)
     df.date = pd.to_datetime(df.date, format="%Y-%m-%d")
     df["days"] = (df.date - df.date.iloc[0]).dt.days + 1
     df["date_num"] = mdates.date2num(df.date)
