@@ -33,10 +33,12 @@ import email
 import mailbox
 import sys
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from io import BytesIO
+
+    from _typeshed import SupportsWrite
 
 
 def custom_message_from_file(file: BytesIO) -> email.message.Message:
@@ -53,11 +55,14 @@ class UTF8Mbox(mailbox.mbox):
 
     def _dump_message(
         self,
-        message: email.message.Message,
-        target: BytesIO,
-        mangle_from_: bool,  # noqa: FBT001,ARG002 "Need to override mailbox.UTF8Mbox"
+        message: Any,  # noqa: ANN401 base accepts Message, str, bytes or file-like
+        target: SupportsWrite[bytes],
+        mangle_from_: bool = True,  # noqa: FBT001,FBT002
     ) -> None:
         """Write message to file from mbox mailbox."""
+        if not isinstance(message, email.message.Message):
+            super()._dump_message(message, target, mangle_from_)
+            return
         # Convert message to string
         msg_str = message.as_string()
         # Encode the message to bytes
