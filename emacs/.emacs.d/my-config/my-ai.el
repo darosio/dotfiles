@@ -685,7 +685,7 @@ Review and send with \\[gptel-send]."
 
 (use-package copilot
   :straight (:host github :repo "copilot-emacs/copilot.el" :files ("*.el"))
-  :hook (prog-mode . copilot-mode)
+  :hook (prog-mode . (lambda () (unless noninteractive (copilot-mode 1))))
   :bind (:map copilot-completion-map
               ("<Launch5> <TAB>"   . copilot-accept-completion)
               ("<Launch5> M-<TAB>" . copilot-accept-completion-by-word)
