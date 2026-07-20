@@ -536,6 +536,13 @@ Review and send with \\[gptel-send]."
                      :tools '(:append ("searxng_web_search" "web_url_read" "fetch_url"
                                        "zotero_lookup" "zotero_search_items" "zotero_get_item_fulltext")))
 
+  (gptel-make-preset 'grant-landscape
+                     :description "Grant landscape - funders, calls, competing awards via Exa (semantic web search)"
+                     :backend "Ollama" :model (my/ollama-model my/ollama-writing-model my/ollama-writing-fallback)
+                     :system "You are a research funding analyst. Use Exa's web search and fetch tools to find funding-agency calls, program priorities, and comparable or competing awarded grants (e.g. NIH RePORTER, CORDIS, ERC, national funders). This is landscape and competitive-intelligence research, not peer-reviewed literature — do not treat results as citable scientific sources or route them through Zotero. Report the source URL and publication/award date for every claim. Flag anything that looks outdated or unconfirmed."
+                     :pre (lambda () (gptel-mcp-connect '("exa") 'sync))
+                     :tools '(:append ("web_search_exa" "web_fetch_exa")))
+
   (gptel-make-preset 'pdf
                      :description "Local PDF reader - extract text, cite via MCP"
                      :backend "Ollama" :model (my/ollama-model my/ollama-fast-model my/ollama-fast-fallback)
@@ -586,6 +593,11 @@ Review and send with \\[gptel-send]."
                                    :env (:ZOTERO_LOCAL "true"
                                                        :ZOTERO_EMBEDDING_MODEL "default")))
              ("duckduckgo" . (:command "uvx" :args ("duckduckgo-mcp-server")))
+             ;; Exa neural/semantic web search — hosted API, no container needed.
+             ;; Requires its own key (Claude Code's exa plugin auths differently):
+             ;;   pass insert cloud/exa_api_key.el   (get key from https://exa.ai/)
+             ("exa" . (:command "npx" :args ("-y" "exa-mcp-server")
+                                :env (:EXA_API_KEY ,(string-trim (shell-command-to-string "pass cloud/exa_api_key.el")))))
              ("nixos" . (:command "uvx" :args ("mcp-nixos")))
              ("sequential-thinking" . (:command "npx" :args ("-y" "@modelcontextprotocol/server-sequential-thinking")))
              ("context7" . (:command "npx" :args ("-y" "@upstash/context7-mcp") :env (:DEFAULT_MINIMUM_TOKENS "6000")))
