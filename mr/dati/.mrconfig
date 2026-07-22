@@ -7,6 +7,7 @@
 [GBM_persson]
 
 [ibf]
+checkout = git clone 'git@gin.g-node.org:/darosio/ibf.git' 'ibf'
 
 [matrix_brescia]
 

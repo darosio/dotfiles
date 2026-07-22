@@ -18,6 +18,8 @@ alias ll='ls -Flh'
 alias la='ls -Fah'
 alias lla='ls -Flah'
 alias bigcp='rsync -Phrltz --info=progress2'
+# Tailored for git-annex repos (preserves permissions, hard links, and symlinks)
+alias annexcp='rsync -aPzH --info=progress2 --chmod=u+rwX'
 alias rm='trash-put'
 # -T "defaults -bl"
 alias rmlintt='rmlint --keep-all-tagged --must-match-tagged -r -f -T df,dd'
