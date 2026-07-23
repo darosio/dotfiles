@@ -1,0 +1,23 @@
+services:
+  litellm:
+    image: ghcr.io/berriai/litellm:main-latest
+    container_name: litellm
+    stdin_open: true
+    tty: true
+    command: ["--config", "/app/config.yaml", "--port", "4000"]
+    ports:
+      - "127.0.0.1:4000:4000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENCODE_ZEN_API_KEY: ${OPENCODE_ZEN_API_KEY:-}
+      OPENCODE_GO_API_KEY: ${OPENCODE_GO_API_KEY:-}
+      GITHUB_COPILOT_TOKEN_DIR: /root/.config/litellm/github_copilot
+    volumes:
+      - ./config.yaml:/app/config.yaml:ro
+      - copilot_auth:/root/.config/litellm
+    restart: unless-stopped
+
+volumes:
+  copilot_auth:

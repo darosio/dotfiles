@@ -5,6 +5,7 @@ set -eu
 # Stow AI container configs to ~/ai-containers/
 # Start services with: aic up [service]
 mkdir -p "$HOME"/ai-containers/khoj
+mkdir -p "$HOME"/ai-containers/litellm
 stow -t "$HOME" ai-containers
 
 # Generate khoj .env from pass (password on line 1, key=value on remaining lines)

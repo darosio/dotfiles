@@ -5,6 +5,7 @@ _aic_service_url() {
     vane) printf '%s\n' "http://localhost:3000" ;;
     searxng) printf '%s\n' "http://localhost:8080" ;;
     khoj) printf '%s\n' "http://localhost:42110" ;;
+    litellm) printf '%s\n' "http://localhost:4000" ;;
     mcp-searxng) printf '%s\n' "stdio" ;;
     *) return 1 ;;
   esac
@@ -13,7 +14,7 @@ _aic_service_url() {
 # AI containers (~/ai-containers/{searxng,vane,khoj,...})
 aic() {
   local base="$HOME/ai-containers"
-  local -a services=(searxng vane khoj mcp-searxng)
+  local -a services=(searxng vane khoj litellm mcp-searxng)
   local action="${1:-help}" svc="${2:-}"
   local -a targets
 
@@ -312,5 +313,45 @@ claude-kobold() {
   export ANTHROPIC_DEFAULT_HAIKU_MODEL="kobold-local"
   export CLAUDE_CODE_SUBAGENT_MODEL="kobold-local"
   export CLAUDE_CODE_EFFORT_LEVEL="max" # optional, remove if not wanted
+  claude
+}
+
+claude-litellm-openai() {
+  export ANTHROPIC_BASE_URL="http://localhost:4000"
+  export ANTHROPIC_AUTH_TOKEN="local-litellm"
+  export ANTHROPIC_MODEL="claude-openai"
+  export ANTHROPIC_DEFAULT_OPUS_MODEL="claude-openai"
+  export ANTHROPIC_DEFAULT_SONNET_MODEL="claude-openai"
+  export ANTHROPIC_DEFAULT_HAIKU_MODEL="claude-openai"
+  claude
+}
+
+claude-litellm-zen() {
+  export ANTHROPIC_BASE_URL="http://localhost:4000"
+  export ANTHROPIC_AUTH_TOKEN="local-litellm"
+  export ANTHROPIC_MODEL="claude-zen"
+  export ANTHROPIC_DEFAULT_OPUS_MODEL="claude-zen"
+  export ANTHROPIC_DEFAULT_SONNET_MODEL="claude-zen"
+  export ANTHROPIC_DEFAULT_HAIKU_MODEL="claude-zen"
+  claude
+}
+
+claude-litellm-go() {
+  export ANTHROPIC_BASE_URL="http://localhost:4000"
+  export ANTHROPIC_AUTH_TOKEN="local-litellm"
+  export ANTHROPIC_MODEL="claude-go"
+  export ANTHROPIC_DEFAULT_OPUS_MODEL="claude-go"
+  export ANTHROPIC_DEFAULT_SONNET_MODEL="claude-go"
+  export ANTHROPIC_DEFAULT_HAIKU_MODEL="claude-go"
+  claude
+}
+
+claude-litellm-copilot() {
+  export ANTHROPIC_BASE_URL="http://localhost:4000"
+  export ANTHROPIC_AUTH_TOKEN="local-litellm"
+  export ANTHROPIC_MODEL="claude-copilot"
+  export ANTHROPIC_DEFAULT_OPUS_MODEL="claude-copilot"
+  export ANTHROPIC_DEFAULT_SONNET_MODEL="claude-copilot"
+  export ANTHROPIC_DEFAULT_HAIKU_MODEL="claude-copilot"
   claude
 }

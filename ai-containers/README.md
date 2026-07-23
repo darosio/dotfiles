@@ -9,6 +9,7 @@ Local AI services stack managed with podman-compose and stow.
 | **Vane**        | http://localhost:3000  | AI-powered web search (Perplexica successor) |
 | **SearxNG**     | http://localhost:8080  | Privacy-focused metasearch (MCP backend)     |
 | **Khoj**        | http://localhost:42110 | Local RAG — index files, ask questions       |
+| **LiteLLM**     | http://localhost:4000  | OpenAI-compatible model gateway              |
 | **MCP-SearxNG** | stdio                  | Web search tool for gptel in Emacs           |
 
 ## Manage
@@ -23,6 +24,7 @@ aic health          # check service reachability
 aic update          # pull latest images + recreate services
 aic ps              # status
 aic logs khoj       # follow logs
+aic up litellm       # start the model gateway
 ```
 
 ______________________________________________________________________
@@ -122,6 +124,92 @@ ollama pull whisper
 ```
 
 Khoj degrades gracefully if no STT is configured.
+
+______________________________________________________________________
+
+### LiteLLM — http://localhost:4000
+
+This optional gateway currently routes to Ollama on the host and exposes
+stable role-based model names:
+
+| Alias       | Ollama model             |
+| ----------- | ------------------------ |
+| `fast`      | `qwen3.6:35b-a3b`        |
+| `writing`   | `qwen3.6:27b`            |
+| `reasoning` | `qwen3.6:27b`            |
+| `math`      | `phi4-reasoning:plus`    |
+| `vision`    | `qwen3-vl:32b`           |
+| `embedding` | `qwen3-embedding:latest` |
+
+Start and test it:
+
+```bash
+aic up litellm
+curl http://localhost:4000/health/liveliness
+curl http://localhost:4000/v1/models
+```
+
+For an OpenAI-compatible client, use base URL
+`http://localhost:4000/v1/`, API key `ollama`, and one of the aliases above.
+For containerized clients, use `http://host.containers.internal:4000/v1/`.
+
+The initial configuration intentionally contains no cloud providers or API
+keys. After validating the local route, migrate Khoj, paper-qa, fabric, and
+Vane one at a time by changing only their endpoint and model name. Leave
+gptel's native backends unchanged unless a concrete routing need arises.
+
+#### Claude Code through LiteLLM
+
+LiteLLM can translate Claude Code's Anthropic-compatible requests to OpenAI
+or OpenCode Zen. These are API accounts, not ChatGPT/Claude web subscriptions.
+OpenCode Zen is pay-as-you-go; the OpenCode Go monthly plan is a separate
+service and may not expose the same models or endpoint.
+
+Store credentials outside Git, export them before starting LiteLLM, and then
+start the gateway:
+
+```bash
+export OPENAI_API_KEY="$(pass show home/openai-dpa | head -1)"
+export OPENCODE_ZEN_API_KEY="$(pass show cloud/opencode_zen | head -1)"
+export OPENCODE_GO_API_KEY="$(pass show cloud/opencode_go | head -1)"
+aic up litellm
+```
+
+Use one of the shell launchers:
+
+```bash
+claude-litellm-openai
+claude-litellm-zen
+claude-litellm-go
+claude-litellm-copilot
+```
+
+The launchers set `ANTHROPIC_BASE_URL=http://localhost:4000` and select the
+`claude-openai`, `claude-zen`, or `claude-go` LiteLLM alias. The Zen route uses
+`https://opencode.ai/zen/v1` and the Go route uses
+`https://opencode.ai/zen/go/v1`. Change the model IDs in `litellm/config.yaml`
+to models supported by your account.
+
+The Copilot route uses LiteLLM's GitHub OAuth device flow and the
+`github_copilot/gpt-4` model. On first use, watch the gateway logs:
+
+```bash
+aic restart litellm   # recreate after changing config.yaml
+podman attach litellm  # keep this terminal attached during OAuth
+```
+
+Open the displayed GitHub URL, enter the device code, and authorize with the
+GitHub account holding Copilot Pro. Keep the attach session open until the
+server reports successful authentication. The OAuth token is stored in the
+persistent `copilot_auth` volume. This route consumes Copilot quota and may
+not expose all Claude Code features or models; if authentication still leaves
+the directory empty, use the native `copilot.el`/Copilot CLI integration or
+another Claude Code provider.
+
+Do not route OpenCode itself through LiteLLM merely to use Zen. OpenCode has
+native Zen authentication and model selection; use `/connect`, select Zen,
+and then `/models`. LiteLLM is useful when Claude Code or another client must
+share the same provider endpoint.
 
 #### 6. Index your files
 

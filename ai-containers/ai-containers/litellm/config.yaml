@@ -1,0 +1,48 @@
+model_list:
+  # Keep client-facing names stable while changing the Ollama model behind them.
+  - model_name: fast
+    litellm_params:
+      model: ollama/qwen3.6:35b-a3b
+      api_base: http://host.docker.internal:11434
+  - model_name: writing
+    litellm_params:
+      model: ollama/qwen3.6:27b
+      api_base: http://host.docker.internal:11434
+  - model_name: reasoning
+    litellm_params:
+      model: ollama/qwen3.6:27b
+      api_base: http://host.docker.internal:11434
+  - model_name: math
+    litellm_params:
+      model: ollama/phi4-reasoning:plus
+      api_base: http://host.docker.internal:11434
+  - model_name: vision
+    litellm_params:
+      model: ollama/qwen3-vl:32b
+      api_base: http://host.docker.internal:11434
+  - model_name: embedding
+    litellm_params:
+      model: ollama/qwen3-embedding:latest
+      api_base: http://host.docker.internal:11434
+  # These routes are optional and require the corresponding environment key.
+  # They allow Claude Code's Anthropic protocol to reach other providers.
+  - model_name: claude-openai
+    litellm_params:
+      model: openai/gpt-5.4
+      api_key: os.environ/OPENAI_API_KEY
+  - model_name: claude-zen
+    litellm_params:
+      model: anthropic/claude-sonnet-4-6
+      api_base: https://opencode.ai/zen/v1
+      api_key: os.environ/OPENCODE_ZEN_API_KEY
+  - model_name: claude-go
+    litellm_params:
+      model: openai/deepseek-v4-pro
+      api_base: https://opencode.ai/zen/go/v1
+      api_key: os.environ/OPENCODE_GO_API_KEY
+  - model_name: claude-copilot
+    litellm_params:
+      model: github_copilot/gpt-4
+
+litellm_settings:
+  drop_params: true
