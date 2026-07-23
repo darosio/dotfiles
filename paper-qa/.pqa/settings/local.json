@@ -1,6 +1,6 @@
 {
-  "llm": "openai/qwen3:1.7b",
-  "summary_llm": "openai/qwen3:1.7b",
+  "llm": "openai/qwen3.5:4b",
+  "summary_llm": "openai/qwen3.5:4b",
   "embedding": "openai/nomic-embed-text",
   "parsing": {
     "multimodal": "OFF"
@@ -8,9 +8,9 @@
   "llm_config": {
     "model_list": [
       {
-        "model_name": "openai/qwen3:1.7b",
+        "model_name": "openai/qwen3.5:4b",
         "litellm_params": {
-          "model": "openai/qwen3:1.7b",
+          "model": "openai/qwen3.5:4b",
           "api_base": "http://localhost:11434/v1",
           "api_key": "ollama",
           "timeout": 300
@@ -21,9 +21,9 @@
   "summary_llm_config": {
     "model_list": [
       {
-        "model_name": "openai/qwen3:1.7b",
+        "model_name": "openai/qwen3.5:4b",
         "litellm_params": {
-          "model": "openai/qwen3:1.7b",
+          "model": "openai/qwen3.5:4b",
           "api_base": "http://localhost:11434/v1",
           "api_key": "ollama",
           "timeout": 300

@@ -21,7 +21,6 @@
 (defvar my/openrouter-api-key (lambda () (nth 0 (process-lines "pass" "show" "cloud/openrouter"))))
 (defvar my/groq-api-key (lambda () (nth 0 (process-lines "pass" "show" "cloud/groq"))))
 (defvar my/deepseek-api-key (lambda () (nth 0 (process-lines "pass" "show" "cloud/deepseek"))))
-
 (defconst my/on-whisker (string= (system-name) "whisker")
   "Whether this Emacs instance runs on the whisker host.")
 
@@ -599,14 +598,10 @@ Review and send with \\[gptel-send]."
              ("exa" . (:command "npx" :args ("-y" "exa-mcp-server")
                                 :env (:EXA_API_KEY ,(string-trim (shell-command-to-string "pass cloud/exa_api_key.el")))))
              ("nixos" . (:command "uvx" :args ("mcp-nixos")))
-             ("sequential-thinking" . (:command "npx" :args ("-y" "@modelcontextprotocol/server-sequential-thinking")))
-             ("context7" . (:command "npx" :args ("-y" "@upstash/context7-mcp") :env (:DEFAULT_MINIMUM_TOKENS "6000")))
-             ("graphlit" . (:command "npx"
-                                     :args ("-y" "graphlit-mcp-server")
-                                     :env (:GRAPHLIT_ORGANIZATION_ID "b2821f53-fda4-4ac1-8c25-5312d4807139"
-                                                                     :GRAPHLIT_ENVIRONMENT_ID "e48c582c-3523-4833-9e5f-037d87cf510b"
-                                                                     :GRAPHLIT_JWT_SECRET "PjpJX7IRDdsMjQkc8pDxjHbF4LkyO8tBLTFTK/S1IqI=")))))
-  :config (require 'mcp-hub))
+              ("sequential-thinking" . (:command "npx" :args ("-y" "@modelcontextprotocol/server-sequential-thinking")))
+              ("context7" . (:command "npx" :args ("-y" "@upstash/context7-mcp") :env (:DEFAULT_MINIMUM_TOKENS "6000")))
+             ))
+   :config (require 'mcp-hub))
 
 (use-package khoj
   :after org

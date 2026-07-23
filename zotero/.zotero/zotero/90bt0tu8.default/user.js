@@ -152,25 +152,6 @@ user_pref(
   "extensions.zotero.Knowledge4Zotero.templateKeys",
   '["[QuickInsertV3]","[QuickImportV2]","[QuickNoteV5]","[ExportMDFileNameV2]","[ExportMDFileHeaderV2]","[ExportMDFileContent]","[ExportLatexFileContent]"]',
 );
-user_pref("extensions.zotero.PapersGPT.advancedChatCount", 1);
-user_pref("extensions.zotero.PapersGPT.chatCount", 14);
-user_pref("extensions.zotero.PapersGPT.customModelApiModel", "phi4:latest");
-user_pref(
-  "extensions.zotero.PapersGPT.customModelApiUrl",
-  "http://localhost:11434/api/chat",
-);
-user_pref("extensions.zotero.PapersGPT.grade", "Guest");
-user_pref("extensions.zotero.PapersGPT.isDBInitialized", true);
-user_pref("extensions.zotero.PapersGPT.lastUsedTime", 1748594174);
-user_pref("extensions.zotero.PapersGPT.lastVersion", "papersgpt-v0.2.1");
-user_pref("extensions.zotero.PapersGPT.parsedDocID", 10);
-user_pref("extensions.zotero.PapersGPT.time5", 1748525317);
-user_pref(
-  "extensions.zotero.PapersGPT.usingAPIURL",
-  "http://localhost:11434/api/chat",
-);
-user_pref("extensions.zotero.PapersGPT.usingModel", "phi4:latest");
-user_pref("extensions.zotero.PapersGPT.usingPublisher", "Customized");
 user_pref(
   "extensions.zotero.findPDFs.resolvers",
   '[{"name":"Sci-Hub","method":"GET","url":"https://sci-hub.se/{doi}","mode":"html","selector":"#pdf","attribute":"src","automatic":true},{"name":"Sci-Hub","method":"GET","url":"https://sci-hub.st/{doi}","mode":"html","selector":"#pdf","attribute":"src","automatic":true},{"name":"Sci-Hub","method":"GET","url":"https://sci-hub.ru/{doi}","mode":"html","selector":"#pdf","attribute":"src","automatic":true},{"name":"Sci-Hub","method":"GET","url":"https://sci-hub.ren/{doi}","mode":"html","selector":"#pdf","attribute":"src","automatic":true},{"name":"Sci-Hub","method":"GET","url":"https://sci-hub.wf/{doi}","mode":"html","selector":"#pdf","attribute":"src","automatic":true},{"name":"Sci-Hub","method":"GET","url":"https://sci-hub.ee/{doi}","mode":"html","selector":"#pdf","attribute":"src","automatic":true}]',
