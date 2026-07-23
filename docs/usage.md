@@ -54,3 +54,37 @@ make check               # lint + type + test + coverage
 | `cruft-update.yml`    | weekly, dispatch | Apply cookiecutter template updates      |
 | `lockfile-update.yml` | weekly, dispatch | `uv lock --upgrade` + PR                 |
 | `release.yml`         | tag push         | Publish release                          |
+
+## Git-Annex Modernization
+
+For an old git-annex repository, load the shell configuration and run:
+
+```bash
+gamod
+```
+
+The helper shows status, runs `git annex sync`, checks content with
+`git annex fsck --fast`, upgrades to the newest repository version supported by
+the installed git-annex, and enables `annex.addunlocked`, `annex.thin`,
+`annex.sshcaching`, and `annex.stalldetection`. It then runs
+`git annex find --unlocked` to detect already-unlocked annexed files. If any
+are found, it runs `git annex lock .` first, then `git annex unlock .` to
+normalize them for thin mode. It applies `chattr -C .git/annex/objects` when
+`lsattr` and `chattr` are available.
+
+The helper does not run `git add`, stage files, or commit. Review the result:
+
+```bash
+git status
+```
+
+If files are already unlocked and the conversion does not complete as
+expected, explicitly relock and unlock them:
+
+```bash
+git annex lock .
+git annex unlock .
+```
+
+Ensure another verified copy exists before using `annex.thin`; it saves local
+disk space but increases dependence on content available from other remotes.
