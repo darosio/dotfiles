@@ -9,6 +9,7 @@ alias lg='git annex list --allrepos'
 alias gaa='ga_repo_audit'
 alias gam='ga_monthly'
 alias gamod='ga_modernize'
+alias gaboot='ga_bootstrap_clone'
 alias gafm='ga_fix_missing'
 alias gmaint='ga_git_maintenance'
 alias gauclean='ga_unused_cleanup'
@@ -325,6 +326,42 @@ ga_repo_bootstrap_hosted() {
   ga_repo_bootstrap "${HOSTNAME:-$(hostname -s 2> /dev/null || hostname)}" || return 1
   ga_add_gin_origin "$repo_name" "$gin_owner" || return 1
   ga_add_github_mirror "$repo_name" "$github_owner" || return 1
+}
+
+# Generic bootstrap for an already-cloned repo on a new machine.
+# Reuses shared defaults and avoids per-repo custom commands.
+# Usage:
+#   ga_bootstrap_clone [repo_name] [github_owner] [gin_owner]
+ga_bootstrap_clone() {
+  local repo_name="${1:-$(_ga_repo_name)}"
+  local github_owner="${2:-${GITHUB_OWNER:-darosio}}"
+  local gin_owner="${3:-${GIN_OWNER:-darosio}}"
+  local annex_name="${HOSTNAME:-$(hostname -s 2> /dev/null || hostname)}"
+
+  _ga_require_repo || return 1
+
+  if ! git annex info > /dev/null 2>&1; then
+    git annex init --version=10 "$annex_name" || return 1
+  fi
+
+  git config annex.addunlocked true
+  git config annex.thin true
+  git config annex.sshcaching true
+  git config annex.stalldetection true
+
+  ga_add_gin_origin "$repo_name" "$gin_owner" || return 1
+  ga_add_github_mirror "$repo_name" "$github_owner" || return 1
+  git config remote.origin.annex-ignore false
+  git config remote.github.annex-ignore true
+
+  if git remote get-url bitbucket > /dev/null 2>&1; then
+    git config remote.bitbucket.annex-ignore true
+  fi
+
+  # Special remotes are annex metadata, not Git remotes.
+  git annex enableremote vigolana > /dev/null 2>&1 || true
+
+  git annex sync origin
 }
 
 # Add/update origin as GIN (and create repo if gin CLI is available).
