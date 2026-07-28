@@ -44,6 +44,20 @@ MANUAL_SCRIPTS=(
   wifite.stow.sh
 )
 
+# Root/system packages that stow into / and need sudo, but whose filename does
+# not carry the 2root. prefix. Keep in sync with any such script added later.
+ROOT_SCRIPTS=(
+  sshd.sh
+)
+
+# Print every root/system package: the 2root.*.sh convention plus ROOT_SCRIPTS.
+root_scripts() {
+  {
+    find "$DOTFILES_DIR" -maxdepth 1 -name '2root.*.sh' -printf '%f\n'
+    printf '%s\n' "${ROOT_SCRIPTS[@]}"
+  } | sort -u
+}
+
 # Ensure we're not using a virtual environment's python for system packages
 deactivate_venv() {
   if [ -n "${VIRTUAL_ENV:-}" ]; then
@@ -71,10 +85,11 @@ list_packages() {
   find "$DOTFILES_DIR" -maxdepth 1 -name '*.stow.sh' ! -name '0*' ! -name '2root*' -printf '  %f\n' | sort
   echo ""
   echo "Root/system packages (require sudo):"
-  find "$DOTFILES_DIR" -maxdepth 1 -name '2root.*.sh' -printf '  %f\n' | sort
+  root_scripts | sed 's/^/  /'
   echo ""
   echo "Standalone scripts:"
-  find "$DOTFILES_DIR" -maxdepth 1 -name '*.sh' ! -name '*.stow.sh' ! -name '2root*' ! -name 'install.sh' -printf '  %f\n' | sort
+  find "$DOTFILES_DIR" -maxdepth 1 -name '*.sh' ! -name '*.stow.sh' ! -name '2root*' ! -name 'install.sh' -printf '%f\n' |
+    grep -vxF -f <(printf '%s\n' "${ROOT_SCRIPTS[@]}") | sort | sed 's/^/  /'
 }
 
 run_script() {
@@ -101,7 +116,8 @@ install_all() {
   echo "Skipped manual packages with side effects:"
   printf '  %s\n' "${MANUAL_SCRIPTS[@]}"
   echo ""
-  echo "Done! Root packages (2root.*.sh) must be run manually with sudo."
+  echo "Done! Root packages must be run manually with sudo:"
+  root_scripts | sed 's/^/  /'
 }
 
 case "${1:-}" in
