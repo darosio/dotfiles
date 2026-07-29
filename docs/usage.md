@@ -55,6 +55,29 @@ make check               # lint + type + test + coverage
 | `lockfile-update.yml` | weekly, dispatch | `uv lock --upgrade` + PR                 |
 | `release.yml`         | tag push         | Publish release                          |
 
+## Yazi File Manager
+
+Installed by `yazi.stow.sh`, which also installs the previewer and opener
+binaries that `yazi/.config/yazi/yazi.toml` calls out to. One exception: the
+`message/rfc822` previewer needs `mu`, installed separately by `mu.stow.sh`.
+
+Third-party plugins are pinned in `yazi/.config/yazi/package.toml` and installed
+with `ya pkg install`; upgrade them with `ya pkg upgrade`, which rewrites the
+pinned revisions in that file. They land in `~/.config/yazi/plugins/`, which is
+a real directory holding per-plugin symlinks — `yazi.stow.sh` creates it before
+stowing so that `ya pkg` never writes into this repo.
+
+Plugins committed under `yazi/.config/yazi/plugins/` are local instead:
+
+| Plugin              | Why it is vendored                                                                                 |
+| ------------------- | -------------------------------------------------------------------------------------------------- |
+| `smart-tab.yazi`    | Small local plugin, no upstream                                                                    |
+| `confirm-quit.yazi` | Small local plugin, no upstream                                                                    |
+| `office.yazi`       | Fork of `macydnah/office` @ `41ebef8`, ported to the Yazi 26 plugin API (upstream is unmaintained) |
+
+The shell helper `y` (`yazi/.bashrc.d/y.sh`) runs yazi and cds the shell to the
+directory you exited in.
+
 ## Git-Annex Modernization
 
 For an old git-annex repository, load the shell configuration and run:

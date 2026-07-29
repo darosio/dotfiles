@@ -48,6 +48,7 @@ ______________________________________________________________________
 | Org-roam AI notes      | `~/Sync/notes/org-roam/ai-notes/`                                               |
 | Zotero stow config     | `zotero/.zotero/zotero/90bt0tu8.default/user.js`, `zotero/treePrefs.json`       |
 | AI container configs   | `ai-containers/`                                                                |
+| Yazi config / plugins  | `yazi/.config/yazi/` (`package.toml` pins plugins; `plugins/` holds local ones) |
 
 ______________________________________________________________________
 

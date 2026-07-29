@@ -24,11 +24,6 @@ rev = "8f1d971"
 hash = "8a7c58225816a163a6e8730c0adafbc8"
 
 [[plugin.deps]]
-use = "macydnah/office"
-rev = "41ebef8"
-hash = "5805affd3ae8adcb3c72b6997d21c0a6"
-
-[[plugin.deps]]
 use = "ndtoan96/ouch"
 rev = "0742fff"
 hash = "2bd799b42b8e42b8ef100310be71f8d1"
@@ -37,6 +32,11 @@ hash = "2bd799b42b8e42b8ef100310be71f8d1"
 use = "Rolv-Apneseth/starship"
 rev = "a63550b"
 hash = "c2021386289a0cbb3e152a052f67c177"
+
+[[plugin.deps]]
+use = "Shallow-Seek/djvu-view"
+rev = "f218aa6"
+hash = "522db0412d7839c8c343f9c733713d24"
 
 [flavor]
 deps = []
