@@ -9,6 +9,7 @@ stow -t "$HOME" misc
 mkdir -p "$HOME"/.local/bin
 stow -t "$HOME" scripts
 
+yay -S --noconfirm trash-cli # bash/.bashrc.d/aliases.sh aliases rm to trash-put
 yay -S --noconfirm python-hatch
 #yay -S --noconfirm pyenv-virtualenv
 yay -S --noconfirm pyenv
