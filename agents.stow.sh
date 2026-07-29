@@ -5,4 +5,5 @@ mkdir -p "$HOME"/.copilot
 mkdir -p "$HOME"/.gemini
 mkdir -p "$HOME"/.codex
 mkdir -p "$HOME"/.hermes
+mkdir -p "$HOME"/.local/bin
 stow -t "$HOME" agents
