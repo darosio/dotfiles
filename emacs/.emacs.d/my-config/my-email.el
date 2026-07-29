@@ -405,10 +405,12 @@ IGNORE-HISTORY is passed through unchanged."
 (eval-after-load 'mu4e
   '(progn
      (defun mu4e-compose-new-with-attachments (paths)
-       "Compose a new mu4e message with files specified in the comma-separated string PATHS.
+       "Compose a new mu4e message attaching PATHS.
+        PATHS is a list of file names, as sent by the yazi C-e binding, or a
+        comma-separated string when called interactively.
         This function is intended to be called by emacsclient."
        (interactive "sAttachments (comma-separated): ")
-       (let* ((attachment-list (split-string paths "," t))
+       (let* ((attachment-list (if (listp paths) paths (split-string paths "," t)))
               (attachment-paths (mapcar (lambda (p) (expand-file-name (string-trim p))) attachment-list)))
          ;; 1. Compose a new message (this sets up the subject, etc.)
          (mu4e-compose-new)

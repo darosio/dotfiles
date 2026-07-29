@@ -126,17 +126,23 @@ desc = "Show Git-Annex total size (Human Readable)"
 [[mgr.prepend_keymap]]
 on = "<C-e>"
 run = '''shell --block --
-    # 1. Collect all selected paths, separated by a comma.
-    #    We use printf "%s," to ensure no trailing newline, and sed to remove the final comma.
-    paths=$(for p in "$@"; do printf "%s," "$p"; done | sed 's/,$//')
+    # Yazi rewrites a literal %s in this command to the space-joined selected
+    # paths, which silently ate printf's format specifier and collapsed every
+    # selection into one path. Every printf format below is therefore written
+    # %%s, which yazi unescapes to %s before running the command.
 
-    # 2. ESCAPE the collected paths for embedding into the Lisp string.
-    #    This is crucial for paths containing spaces, backslashes, or quotes.
-    elisp_paths=$(printf "%s" "$paths" | sed 's/\\/\\\\\\\\/g; s/"/\\"/g')
+    # 1. Build an elisp list of the selected paths: ("/a/b" "/c/d").
+    #    A list, not a comma-joined string, so a comma in a filename is safe.
+    elisp_list='('
+    for p in "$@"; do
+      # Escape backslashes first, then double quotes, for the Lisp string.
+      esc=$(printf '%%s' "$p" | sed 's/\\/\\\\/g; s/"/\\"/g')
+      elisp_list="$elisp_list\"$esc\" "
+    done
+    elisp_list="$elisp_list)"
 
-    # 3. Execute the working command via emacsclient, ensuring it creates a new frame (-c)
-    #    and doesn't block the terminal (until the frame is closed) (-n).
-    emacsclient -c -n -e "(mu4e-compose-new-with-attachments \"$elisp_paths\")"
+    # 2. -c creates a new frame, -n returns without waiting for it to close.
+    emacsclient -c -n -e "(mu4e-compose-new-with-attachments '$elisp_list)"
 '''
 desc = "Compose mu4e message with selected file attachments"
 
