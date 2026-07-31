@@ -1,5 +1,18 @@
 # shellcheck shell=bash
 
+# Raw data directory, relative to the repository root. Originals here are kept
+# immutable by git-annex locking plus the protect-raw-data pre-commit hook; no
+# filesystem chmod is applied, since a read-only directory also blocks merges
+# and ingestion of new raw data.
+GA_RAW_DIR="${GA_RAW_DIR:-data/raw}"
+
+# Files matching this expression are added unlocked; everything else -- the raw
+# data -- is added locked, keeping originals immutable. Note that
+# annex.addunlocked is NOT honoured via .gitattributes: git-annex reads it only
+# from .git/config and the git-annex branch, so per-directory policy must be
+# expressed as a matching expression. See git-annex-matching-expression(1).
+GA_ADDUNLOCKED_EXPR="${GA_ADDUNLOCKED_EXPR:-exclude=$GA_RAW_DIR/*}"
+
 # Git Annex Aliases
 
 # Shortcut for 'git annex'
@@ -13,8 +26,6 @@ alias gaboot='ga_bootstrap_clone'
 alias gafm='ga_fix_missing'
 alias gmaint='ga_git_maintenance'
 alias gauclean='ga_unused_cleanup'
-alias garawlock='ga_raw_lock'
-alias garawhook='ga_raw_hook_install'
 alias gabundle='ga_bundle_create'
 
 # Git Annex Functions
@@ -28,6 +39,20 @@ _ga_require_repo() {
 
 _ga_repo_name() {
   basename "$(git rev-parse --show-toplevel)"
+}
+
+# Name this machine's annex repository after the host.
+_ga_annex_name() {
+  printf '%s\n' "${HOSTNAME:-$(hostname -s 2> /dev/null || hostname)}"
+}
+
+# Settings every repository gets, however it was created. annex.addunlocked is
+# deliberately absent: new repositories set it repo-wide via 'git annex config',
+# existing ones must instead drop any local value that would shadow it.
+_ga_apply_annex_defaults() {
+  git config annex.thin true
+  git config annex.sshcaching true
+  git config annex.stalldetection true
 }
 
 _ga_set_remote_url() {
@@ -55,14 +80,14 @@ ga_repo_audit() {
 
   echo "# git config --get annex.version"
   git config --get annex.version || true
-  echo "# git config --get annex.addunlocked"
-  git config --get annex.addunlocked || true
+  echo "# annex.addunlocked (effective, incl. git-annex branch)"
+  git annex config --show-origin annex.addunlocked || true
   echo "# git config --get annex.thin"
   git config --get annex.thin || true
-  echo "# git config annex.sshcaching"
-  git config annex.sshcaching || true
-  echo "# git config annex.stalldetection"
-  git config annex.stalldetection || true
+  echo "# git config --get annex.sshcaching"
+  git config --get annex.sshcaching || true
+  echo "# git config --get annex.stalldetection"
+  git config --get annex.stalldetection || true
   echo
 
   if command -v lsattr > /dev/null 2>&1; then
@@ -157,10 +182,9 @@ ga_modernize() {
   git annex upgrade || return 1
 
   echo "# Applying annex settings"
-  git config annex.addunlocked true
-  git config annex.thin true
-  git config annex.sshcaching true
-  git config annex.stalldetection true
+  # Drop any local override so the repo-wide addunlocked policy applies.
+  git config --unset annex.addunlocked 2> /dev/null || true
+  _ga_apply_annex_defaults
 
   local probe_rc=0
   local do_normalize=0
@@ -172,7 +196,7 @@ ga_modernize() {
   else
     probe_rc=$?
     if [ "$probe_rc" -eq 124 ]; then
-      echo "# Unlocked-file probe timed out after 30s."
+      echo "# Unlocked-file probe timed out after 100s."
       echo "# This may already be a large v10/addunlocked repository."
       if [ -t 0 ]; then
         read -r -p "Proceed with lock+unlock all annexed files anyway? [y/N] " reply
@@ -193,10 +217,14 @@ ga_modernize() {
   if [ "$do_normalize" -eq 1 ]; then
     echo "# Detected (or confirmed) unlocked annexed files; normalizing with lock+unlock"
     git annex lock . || return 1
-    git annex unlock . || return 1
   else
     echo "# No unlocked annexed files detected; unlocking existing annexed files"
-    git annex unlock . || return 1
+  fi
+  git annex unlock . || return 1
+
+  if [ -d "$GA_RAW_DIR" ]; then
+    echo "# Re-enforcing lock policy for raw data ($GA_RAW_DIR)"
+    git annex lock "$GA_RAW_DIR" || return 1
   fi
 
   if [ "$apply_nocow" -eq 1 ]; then
@@ -273,24 +301,23 @@ ga_unlock_edit() {
   echo "  git annex sync --content"
 }
 
-# Quarterly restore drill for a representative path.
+# Quarterly restore drill for a representative path. Same whereis -> get ->
+# fsck flow as ga_fix_missing; kept as a separate name because it is a distinct
+# scheduled practice rather than a reaction to a missing file.
 # $1: file or directory path
 ga_restore_drill() {
-  _ga_require_repo || return 1
-  if [ -z "$1" ]; then
+  if [ -z "${1:-}" ]; then
     echo "Usage: ga_restore_drill <file-or-dir>"
     return 1
   fi
-  git annex whereis "$1" || return 1
-  git annex get "$1" || return 1
-  git annex fsck "$1"
+  ga_fix_missing "$1"
 }
 
 # Bootstrap a new data project (for cookiecutter Data Analysis projects).
 # $1: annex name (default: HOSTNAME)
 # $2: optional origin URL
 ga_repo_bootstrap() {
-  local annex_name="${1:-${HOSTNAME:-$(hostname -s 2> /dev/null || hostname)}}"
+  local annex_name="${1:-$(_ga_annex_name)}"
   local origin_url="${2:-}"
 
   if ! git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
@@ -298,10 +325,8 @@ ga_repo_bootstrap() {
   fi
 
   git annex init --version=10 "$annex_name" || return 1
-  git config annex.addunlocked true
-  git config annex.thin true
-  git config annex.sshcaching true
-  git config annex.stalldetection true
+  git annex config --set annex.addunlocked "$GA_ADDUNLOCKED_EXPR" || return 1
+  _ga_apply_annex_defaults
 
   if [ -n "$origin_url" ] && ! git remote get-url origin > /dev/null 2>&1; then
     git remote add origin "$origin_url"
@@ -310,6 +335,9 @@ ga_repo_bootstrap() {
   if [ -d data ]; then
     mkdir -p data/raw data/interim data/processed
   fi
+
+  # The commit-time guard for raw data is a versioned local hook in
+  # .pre-commit-config.yaml; 'make init' (pre-commit install) wires it up.
 }
 
 # Configure preferred remote topology for scientific datasets:
@@ -323,7 +351,7 @@ ga_repo_bootstrap_hosted() {
   local gin_owner="${3:-${GIN_OWNER:-darosio}}"
 
   _ga_require_repo || return 1
-  ga_repo_bootstrap "${HOSTNAME:-$(hostname -s 2> /dev/null || hostname)}" || return 1
+  ga_repo_bootstrap "$(_ga_annex_name)" || return 1
   ga_add_gin_origin "$repo_name" "$gin_owner" || return 1
   ga_add_github_mirror "$repo_name" "$github_owner" || return 1
 }
@@ -336,7 +364,8 @@ ga_bootstrap_clone() {
   local repo_name="${1:-$(_ga_repo_name)}"
   local github_owner="${2:-${GITHUB_OWNER:-darosio}}"
   local gin_owner="${3:-${GIN_OWNER:-darosio}}"
-  local annex_name="${HOSTNAME:-$(hostname -s 2> /dev/null || hostname)}"
+  local annex_name
+  annex_name="$(_ga_annex_name)"
 
   _ga_require_repo || return 1
 
@@ -344,10 +373,10 @@ ga_bootstrap_clone() {
     git annex init --version=10 "$annex_name" || return 1
   fi
 
-  git config annex.addunlocked true
-  git config annex.thin true
-  git config annex.sshcaching true
-  git config annex.stalldetection true
+  # The addunlocked policy travels in the git-annex branch; a local value here
+  # would shadow it, so make sure the clone has none.
+  git config --unset annex.addunlocked 2> /dev/null || true
+  _ga_apply_annex_defaults
 
   ga_add_gin_origin "$repo_name" "$gin_owner" || return 1
   ga_add_github_mirror "$repo_name" "$github_owner" || return 1
@@ -361,6 +390,8 @@ ga_bootstrap_clone() {
   # Special remotes are annex metadata, not Git remotes.
   git annex enableremote vigolana > /dev/null 2>&1 || true
 
+  # Hooks are not cloned; run 'make init' (pre-commit install) afterwards to
+  # wire up the raw-data guard carried in .pre-commit-config.yaml.
   git annex sync origin
 }
 
@@ -429,59 +460,11 @@ ga_add_storage_remotes() {
 # Usage:
 #   ga_bundle_create [output.bundle]
 ga_bundle_create() {
-  local outfile="${1:-$(_ga_repo_name)-$(date +%F).bundle}"
+  local outfile
   _ga_require_repo || return 1
+  outfile="${1:-$(_ga_repo_name)-$(date +%F).bundle}"
   git bundle create "$outfile" --all
   echo "Created bundle: $outfile"
-}
-
-# Enforce filesystem-level immutability for scientific raw data.
-# $1: raw data directory (default: raw)
-ga_raw_lock() {
-  local raw_dir="${1:-raw}"
-  _ga_require_repo || return 1
-  if [ ! -d "$raw_dir" ]; then
-    echo "Directory not found: $raw_dir"
-    return 1
-  fi
-  chmod -R a-w "$raw_dir"
-  echo "Read-only lock applied to: $raw_dir"
-}
-
-# Install a pre-commit hook that rejects staged changes under raw data path.
-# Override for intentional exceptions:
-#   GA_ALLOW_RAW=1 git commit -m "..."
-# $1: raw data directory (default: raw)
-ga_raw_hook_install() {
-  local raw_dir="${1:-raw}"
-  local hook_file
-  _ga_require_repo || return 1
-  hook_file="$(git rev-parse --git-path hooks/pre-commit)" || return 1
-
-  cat > "$hook_file" << EOF
-#!/usr/bin/env bash
-set -euo pipefail
-
-RAW_DIR="$raw_dir"
-
-if [ "\${GA_ALLOW_RAW:-0}" = "1" ]; then
-  exit 0
-fi
-
-changed=\$(git diff --cached --name-only --diff-filter=ACMRTD -- "\$RAW_DIR")
-if [ -n "\$changed" ]; then
-  echo "ERROR: staged changes detected in '\$RAW_DIR/' (immutable raw data policy)." >&2
-  echo "Blocked files:" >&2
-  echo "\$changed" >&2
-  echo >&2
-  echo "If this is intentional, commit with override:" >&2
-  echo "  GA_ALLOW_RAW=1 git commit -m \"...\"" >&2
-  exit 1
-fi
-EOF
-
-  chmod +x "$hook_file"
-  echo "Installed pre-commit raw-data guard for: $raw_dir"
 }
 
 # Copy directory structure to a destination
@@ -506,13 +489,11 @@ lndate() {
 # Initialize a Git repository with Git Annex
 # $1: Annex configuration parameter
 ga_init() {
-  local annex_name="${1:-${HOSTNAME:-$(hostname -s 2> /dev/null || hostname)}}"
+  local annex_name="${1:-$(_ga_annex_name)}"
   git init
   git annex init "$annex_name"
-  git config annex.addunlocked true
-  git config annex.thin true
-  git config annex.sshcaching true
-  git config annex.stalldetection true
+  git annex config --set annex.addunlocked "$GA_ADDUNLOCKED_EXPR"
+  _ga_apply_annex_defaults
 
   touch README
   git add .
