@@ -100,6 +100,35 @@ ga_repo_audit() {
   fi
 }
 
+# Assert the two invariants of the raw data directory: every original is locked,
+# and nothing is left staged. The protect-raw-data hook rejects the commit of an
+# unlocked original, but 'git annex sync' reports that rejection and still exits
+# 0, so a bad ingest otherwise sits uncommitted -- and therefore unpushed and
+# uncopied -- indefinitely. Paths are resolved from the repository root, since
+# 'git status' and 'git annex find' both take them relative to the cwd.
+_ga_check_raw() {
+  local root unlocked pending rc=0
+  root="$(git rev-parse --show-toplevel)" || return 1
+  [ -d "$root/$GA_RAW_DIR" ] || return 0
+
+  unlocked="$(git -C "$root" annex find --unlocked "$GA_RAW_DIR")" || return 1
+  if [ -n "$unlocked" ]; then
+    echo "# WARNING: unlocked originals in $GA_RAW_DIR"
+    echo "$unlocked"
+    echo "# Repair from the repository root: git annex lock $GA_RAW_DIR"
+    rc=1
+  fi
+
+  pending="$(git -C "$root" status --porcelain -- "$GA_RAW_DIR")" || return 1
+  if [ -n "$pending" ]; then
+    echo "# WARNING: uncommitted changes in $GA_RAW_DIR"
+    echo "$pending"
+    rc=1
+  fi
+
+  return "$rc"
+}
+
 # Monthly operational checks.
 ga_monthly() {
   _ga_require_repo || return 1
@@ -107,7 +136,8 @@ ga_monthly() {
   git annex fsck --fast --quiet || return 1
   git count-objects -vH || return 1
   git gc || return 1
-  git annex find --not --copies=2
+  git annex find --not --copies=2 || return 1
+  _ga_check_raw
 }
 
 # Modernize an existing git-annex repository without creating a commit.
