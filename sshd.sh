@@ -8,10 +8,13 @@ yay -S --noconfirm openssh
 sudo mkdir -p /etc/systemd/system/sshd.service.d/
 sudo stow -t / sshd
 
-# Arch ships an AuthorizedKeysCommand pointing at userdbctl, which shadows
-# ~/.ssh/authorized_keys on systems that do not use systemd-homed.
-sudo sed -i 's/^AuthorizedKeysCommand/#AuthorizedKeysCommand/' \
-  /etc/ssh/sshd_config.d/20-systemd-userdb.conf
+# Arch ships an AuthorizedKeysCommand pointing at userdbctl, useless without
+# systemd-homed. The stowed 10-no-userdb.conf overrides it by sorting ahead of
+# 20-systemd-userdb.conf, so no packaged file needs editing -- an approach that
+# survives openssh upgrades, unlike patching 20- in place.
+
+# Validate before restarting: a bad drop-in would leave sshd refusing to start.
+sudo sshd -t
 
 # The drop-in only takes effect after a reload + restart; enable --now on an
 # already-running unit is a no-op and silently leaves sshd on port 22.

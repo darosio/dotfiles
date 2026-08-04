@@ -1,0 +1,18 @@
+# Static table lookup for hostnames.
+# See hosts(5) for details.
+127.0.0.1	localhost
+::1		localhost
+127.0.1.1	whisker.localdomain	whisker
+
+# FBK wired subnet (10.40.40.0/23). FBK publishes no DNS for these names and no
+# PTR records, so /etc/hosts is the only way to resolve them on campus.
+#
+# NOTE: these are DHCP leases, not reservations -- whisker itself drew .217 and
+# .222 from the same pool on consecutive attempts. If a name starts reaching the
+# wrong machine, re-check with `ip -4 -br addr` on the host itself.
+#
+# Only add a 127.0.1.1 alias for THIS machine. Pointing a remote host's name at
+# loopback makes `ssh <host>` silently connect back to whisker.
+10.40.40.223	aai
+10.40.41.89	sterzing
+10.40.40.221	vigolana

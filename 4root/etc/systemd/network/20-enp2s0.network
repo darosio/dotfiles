@@ -3,6 +3,14 @@ Name=enp2s0
 
 [Network]
 DHCP=yes
+LinkLocalAddressing=ipv4
+
+[Link]
+# The port runs 802.1X (see 2root.eduroam_wired.sh): it gains carrier long
+# before wpa_supplicant authorizes it, and may never authorize on a foreign
+# network. Boot must not block in systemd-networkd-wait-online waiting for it.
+RequiredForOnline=no
 
 [DHCP]
+# Lower than wlan0's 20, so the cable wins when both are up.
 RouteMetric=10
