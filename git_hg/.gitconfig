@@ -31,6 +31,8 @@
     lg = log --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr %an)%Creset' --abbrev-commit --date=relative
     ls = ls-files
 	what = "!f() { git wd-merging > "temp.diff" && viw "temp.diff"; }; f"
+	gone = "!git fetch --prune --quiet; git branch --format=\"%(refname:short) %(upstream:track)\" | grep \" \\[gone\\]\" | cut -d\" \" -f1"
+	prune-gone = "!f() { git fetch --prune --quiet || return 1; b=$(git branch --format=\"%(refname:short) %(upstream:track)\" | grep \" \\[gone\\]\" | cut -d\" \" -f1); if [ -z \"$b\" ]; then echo \"No branches with a deleted upstream.\"; return 0; fi; cur=$(git symbolic-ref --quiet --short HEAD); for x in $b; do if [ \"$x\" = \"$cur\" ]; then git switch --quiet main 2>/dev/null || git switch --quiet master || return 1; fi; echo \"deleting $x\"; git branch -D \"$x\"; done; }; f"
 
 [push]
     default = simple
