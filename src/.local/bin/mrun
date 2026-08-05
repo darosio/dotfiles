@@ -1,0 +1,121 @@
+#!/usr/bin/env bash
+#
+# mrun -- run a command inside a memory-bounded transient cgroup.
+#
+# Containment for compute that can overshoot: a fit grid, an MCMC sweep, a
+# resampling loop. MemoryHigh throttles by forcing reclaim, MemoryMax is the
+# hard wall, and a raised OOM score makes the job the preferred victim. The
+# failure then lands on the job rather than on the desktop session, and it
+# works whether or not swap exists.
+#
+#   mrun ./scripts/run_noise_comparison_staged.sh
+#   mrun --high 40% --max 50% -- python fit_grid.py --n 512
+#   mrun --name fitgrid -- pytest -x        # findable in systemd-cgtop
+#
+# Defaults are percentages of physical RAM rather than absolute sizes, so the
+# same dotfiles behave sensibly on hosts with different memory. On aai
+# (123 GiB) 65%/80% is ~80 GiB / ~99 GiB.
+#
+# WHY choom RATHER THAN -p OOMScoreAdjust=500. OOMScoreAdjust is an exec-context
+# property. Scope units adopt existing processes and have no exec context, so
+# `systemd-run --scope -p OOMScoreAdjust=500` is rejected outright with
+# "Unknown assignment: OOMScoreAdjust=500" -- the command never runs. choom(1)
+# sets /proc/self/oom_score_adj before exec instead, and children inherit it.
+#
+# COMPOSING WITH GNU parallel. The two orderings are not equivalent:
+#
+#   parallel mrun -- ./fit {} ::: a b c    # per-job bound, N scopes
+#   mrun -- parallel ./fit {} ::: a b c    # one aggregate bound, 1 scope
+#
+# Per-job is usually what you want: each worker gets its own wall, and one
+# overshooting fit is killed alone while the others carry on. Use the aggregate
+# form when the concern is total footprint across workers rather than any
+# single one -- but note that hitting MemoryMax there kills the whole scope,
+# taking every sibling job with it. Leave --name unset in the per-job form so
+# systemd assigns each scope a unique unit name.
+
+set -euo pipefail
+
+high=65%
+max=80%
+oom_score=500
+name=
+dry_run=0
+
+usage() {
+  cat << 'EOF'
+Usage: mrun [OPTIONS] [--] COMMAND [ARG...]
+
+Run COMMAND in a transient systemd scope with memory limits.
+
+Options:
+  -H, --high SIZE       MemoryHigh, throttle via reclaim  (default 65%)
+  -M, --max SIZE        MemoryMax, hard wall              (default 80%)
+  -O, --oom-score N     oom_score_adj, -1000..1000        (default 500)
+  -n, --name NAME       scope unit name; omit for an auto-generated unique one
+  -N, --dry-run         print the systemd-run invocation and exit
+  -h, --help            this help
+
+SIZE takes systemd syntax: a percentage of RAM (65%) or an absolute size (80G).
+EOF
+}
+
+while [ $# -gt 0 ]; do
+  case $1 in
+    -H | --high)
+      high=$2
+      shift 2
+      ;;
+    -M | --max)
+      max=$2
+      shift 2
+      ;;
+    -O | --oom-score)
+      oom_score=$2
+      shift 2
+      ;;
+    -n | --name)
+      name=$2
+      shift 2
+      ;;
+    -N | --dry-run)
+      dry_run=1
+      shift
+      ;;
+    -h | --help)
+      usage
+      exit 0
+      ;;
+    --)
+      shift
+      break
+      ;;
+    -*)
+      printf 'mrun: unknown option %s\n\n' "$1" >&2
+      usage >&2
+      exit 2
+      ;;
+    *) break ;;
+  esac
+done
+
+if [ $# -eq 0 ]; then
+  printf 'mrun: no command given\n\n' >&2
+  usage >&2
+  exit 2
+fi
+
+# --collect reaps the scope unit even when the command exits non-zero, which
+# otherwise leaves a failed unit behind for every crashed job.
+cmd=(systemd-run --user --scope --collect
+  -p "MemoryHigh=$high" -p "MemoryMax=$max")
+[ -n "$name" ] && cmd+=(--unit "$name")
+cmd+=(-- choom -n "$oom_score" -- "$@")
+
+if [ "$dry_run" -eq 1 ]; then
+  printf '%q ' "${cmd[@]}"
+  printf '\n'
+  exit 0
+fi
+
+exec "${cmd[@]}"
