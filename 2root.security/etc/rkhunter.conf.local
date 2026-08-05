@@ -1,0 +1,19 @@
+# Local rkhunter overrides for Arch Linux.
+#
+# rkhunter reads rkhunter.conf.local from the same directory as the main
+# config, if it exists (see rkhunter(8)). Keeping the customisation here rather
+# than appended to /etc/rkhunter.conf leaves the packaged file pristine, so
+# pacman upgrades never produce a .pacnew conflict over it.
+
+# Whitelist modern compatibility scripts on Arch Linux
+SCRIPTWHITELIST=/usr/bin/egrep
+SCRIPTWHITELIST=/usr/bin/fgrep
+SCRIPTWHITELIST=/usr/bin/ldd
+
+# Allow known benign hidden files
+ALLOWHIDDENFILE=/etc/.updated
+ALLOWHIDDENFILE=/usr/share/man/man5/.k5identity.5.gz
+ALLOWHIDDENFILE=/usr/share/man/man5/.k5login.5.gz
+
+# My SSH config is handled by a systemd drop-in, so skip the static file check.
+DISABLE_TESTS="system_configs_ssh"

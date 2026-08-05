@@ -20,7 +20,26 @@ yay -S --noconfirm fail2ban
 sudo systemctl enable fail2ban
 sudo systemctl start fail2ban
 
-sudo stow -t / 2root.security
+# /etc/sysctl.d is read by systemd-sysctl, which finishes ~2 s before /home is
+# mounted. A stow symlink into /home/dan/workspace/dotfiles is therefore
+# dangling at that moment and systemd-sysctl skips it silently, so none of the
+# hardening below survived a reboot -- only the explicit `sysctl -p` further
+# down ever applied it. Install that one file as a real copy instead, and hide
+# it from stow so the two do not fight over the same target. Re-run this script
+# after editing 2root.security/etc/sysctl.d/99-sysctl.conf.
+#
+# The rest of the package (audit rules, fail2ban) is read by services that
+# start well after /home is mounted, so symlinks are fine there.
+#
+# rkhunter.conf.local is likewise excluded and installed as a real copy further
+# down: a security scanner should not read its own config through a symlink
+# into a user-writable checkout.
+sudo stow -t / \
+  --ignore='99-sysctl\.conf' \
+  --ignore='rkhunter\.conf\.local' \
+  2root.security
+sudo install -Dm644 2root.security/etc/sysctl.d/99-sysctl.conf \
+  /etc/sysctl.d/99-sysctl.conf
 
 # . Enable Firewalld (or add additional rules to nftables)
 # yay -S --noconfirm firewalld
@@ -72,21 +91,22 @@ yay -S --noconfirm lynis
 # echo "blacklist usb_storage" | sudo tee /etc/modprobe.d/usb_storage.conf
 
 yay -S --noconfirm rkhunter
-sudo rkhunter --propupd
+
+# The custom whitelist goes in rkhunter.conf.local, which rkhunter reads from
+# the same directory as the main config. It used to be appended to
+# /etc/rkhunter.conf with `tee -a`, which was not idempotent -- every re-run of
+# this script added another copy of the block -- and which also diverged a
+# pacman backup file, so upgrades would start producing .pacnew conflicts.
+#
+# One-time cleanup on a host that ran the old version: delete the
+# "--- START OF CUSTOM CONFIGURATION ---" .. "--- END ... ---" block from
+# /etc/rkhunter.conf, or restore the packaged file with
+# `sudo pacman -S --overwrite /etc/rkhunter.conf rkhunter`.
+sudo install -Dm600 2root.security/etc/rkhunter.conf.local \
+  /etc/rkhunter.conf.local
+
 sudo rkhunter --update
+# --propupd baselines file properties, so it runs last, once the config that
+# decides which files are in scope is in place.
+sudo rkhunter --propupd
 # rkhunter --check-all --sk --rwo
-# Append the custom whitelist configuration for Arch Linux
-sudo tee -a /etc/rkhunter.conf << 'EOF'
-# --- START OF CUSTOM CONFIGURATION ---
-# Whitelist modern compatibility scripts on Arch Linux
-SCRIPTWHITELIST=/usr/bin/egrep
-SCRIPTWHITELIST=/usr/bin/fgrep
-SCRIPTWHITELIST=/usr/bin/ldd
-# Allow known benign hidden files
-ALLOWHIDDENFILE=/etc/.updated
-ALLOWHIDDENFILE=/usr/share/man/man5/.k5identity.5.gz
-ALLOWHIDDENFILE=/usr/share/man/man5/.k5login.5.gz
-# My SSH config is handled by a systemd drop-in, so skip the static file check.
-DISABLE_TESTS="system_configs_ssh"
-# --- END OF CUSTOM CONFIGURATION ---
-EOF
