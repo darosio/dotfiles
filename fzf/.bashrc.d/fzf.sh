@@ -2,8 +2,24 @@
 
 eval "$(fzf --bash)"
 
-# Yazi's built-in `z` picker shells out to plain `fzf`, so skip cache trees there too.
-export FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS:+$FZF_DEFAULT_OPTS }--walker-skip=.cache"
+# Exclusions live in ~/.local/bin/fzf-source and reach every picker through the
+# commands below. --walker-skip only matters when that script cannot run and fzf
+# falls back to its built-in walker; it is a rough echo of the script, limited to
+# bare directory names since the walker cannot match paths. It is absolute rather
+# than additive, so fzf's own default (.git,node_modules) has to be repeated or
+# lost. ctrl-o re-lists with nothing excluded, the escape hatch on either route.
+export FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS:+$FZF_DEFAULT_OPTS }--walker-skip=.git,node_modules,.cache,site-packages,.venv,venv,.hatch,__pycache__,.goldendict --bind='ctrl-o:reload(fd --hidden --no-ignore --strip-cwd-prefix)'"
+
+# Guarded so an unstowed machine still gets a working fzf rather than a picker
+# whose source command fails.
+if command -v fd > /dev/null 2>&1 && [ -x "$HOME/.local/bin/fzf-source" ]; then
+  export FZF_DEFAULT_COMMAND="$HOME/.local/bin/fzf-source"
+  # Ctrl-T and Alt-C blank FZF_DEFAULT_COMMAND unless given one of their own,
+  # which would drop them back to the walker and its separate list. Pointing
+  # them here keeps fzf-source the single source of truth.
+  export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+  export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND --type d"
+fi
 
 # Find and view man pages
 MANPATH=/usr/share/man

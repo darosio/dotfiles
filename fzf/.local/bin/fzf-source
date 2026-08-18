@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# File list for fzf, used via FZF_DEFAULT_COMMAND (see ~/.bashrc.d/fzf.sh) and so
+# by yazi's `z` picker, bare `fzf`, Ctrl-T and Alt-C alike.
+#
+# Extra arguments are passed through to fd (Alt-C appends --type d).
+# Escape hatch: ctrl-o inside any picker re-lists with nothing excluded at all.
+set -euo pipefail
+
+args=(
+  --no-ignore-vcs    # keep .gitignore'd files listed, as fzf's own walker does
+  --strip-cwd-prefix # yazi resolves relative paths against its cwd
+
+  # Installed dependencies, excluded by name so the enclosing directory can be
+  # called anything: .venv, venv, .hatch, <project>_env all reduce to this.
+  --exclude site-packages
+  --exclude node_modules
+  --exclude __pycache__
+  --exclude .venv # bin/, lib/, pyvenv.cfg once site-packages is gone
+  --exclude .git  # ~200 entries per repo, none of them edited by hand
+)
+
+# Hidden paths in $HOME are application state - browser profiles, flatpak data,
+# package caches - and never the thing being looked for: they were 422k of the
+# 714k entries here, .mozilla alone 243k. Anywhere else they are content, since
+# stow keeps every dotfile under one (fzf/.config/fzf/, yazi/.config/yazi/).
+if [ "$PWD" != "$HOME" ]; then
+  args+=(--hidden)
+fi
+
+exec fd "${args[@]}" "$@"
