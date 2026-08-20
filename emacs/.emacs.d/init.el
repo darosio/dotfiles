@@ -46,7 +46,10 @@
 
 ;; --- Package Management (straight.el and use-package) ---
 ;; Use 'setq-default' instead of custom-set or setq to set variables
-(setq-default straight-vc-git-default-clone-depth '1) ;full
+(setq-default straight-vc-git-default-clone-depth 'full) ; not 1:
+;; a shallow repo cannot check out a pin that has fallen outside its
+;; window, so straight-thaw-versions fails per-package and the lockfile
+;; silently stops being restorable.
 (setq-default straight-recipes-gnu-elpa-use-mirror t)
 
 ;; *** 1. Straight Bootstrap ***
