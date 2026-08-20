@@ -356,7 +356,7 @@ class TestProviders:
     def test_key_prefers_environment(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """An exported key is used without shelling out to pass."""
         monkeypatch.setenv("GEMINI_API_KEY", "from-env")
-        assert ann.api_key() == "from-env"
+        assert ann.api_key("gemini") == "from-env"
 
     def test_key_falls_back_to_pass(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """With no env key the pass entry is consulted."""
@@ -368,7 +368,7 @@ class TestProviders:
             "run",
             lambda *_a, **_k: type("R", (), {"stdout": "from-pass\nother\n"})(),
         )
-        assert ann.api_key() == "from-pass"
+        assert ann.api_key("gemini") == "from-pass"
 
     def test_pass_lookup_sets_store_dir(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """The pass call carries PASSWORD_STORE_DIR; this store is not default."""
@@ -385,7 +385,7 @@ class TestProviders:
             return type("R", (), {"stdout": "k\n"})()
 
         monkeypatch.setattr(subprocess, "run", fake_run)
-        assert ann.api_key() == "k"
+        assert ann.api_key("gemini") == "k"
         assert seen["PASSWORD_STORE_DIR"].endswith("/Sync/.pass")
 
     def test_existing_store_dir_is_respected(
@@ -405,7 +405,7 @@ class TestProviders:
             return type("R", (), {"stdout": "k\n"})()
 
         monkeypatch.setattr(subprocess, "run", fake_run)
-        ann.api_key()
+        ann.api_key("gemini")
         assert seen["PASSWORD_STORE_DIR"] == "/custom/store"  # noqa: S105
 
     def test_missing_key_is_explicit(self, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -413,8 +413,40 @@ class TestProviders:
         monkeypatch.delenv("GEMINI_API_KEY", raising=False)
         monkeypatch.delenv("GOOGLE_API_KEY", raising=False)
         monkeypatch.setattr(shutil, "which", lambda _: None)
-        with pytest.raises(ValueError, match="no Gemini API key"):
-            ann.api_key()
+        with pytest.raises(ValueError, match="no gemini API key"):
+            ann.api_key("gemini")
+
+    def test_deepseek_uses_json_object_not_schema(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """DeepSeek rejects json_schema, so only json_object is sent."""
+        monkeypatch.setenv("DEEPSEEK_API_KEY", "ds")
+        _url, payload, headers = ann.build_request(
+            "p", provider="deepseek", model="deepseek-v4-flash", host="https://d/v1"
+        )
+        body = json.loads(payload)
+        assert body["response_format"] == {"type": "json_object"}
+        assert headers["Authorization"] == "Bearer ds"
+
+    def test_prompt_says_json_for_deepseek(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """The word 'json' must reach the prompt or DeepSeek returns nothing."""
+        captured: dict[str, str] = {}
+
+        def fake_chat(prompt: str, **_k: object) -> str:
+            captured["prompt"] = prompt
+            return _reply()
+
+        monkeypatch.setattr(ann, "chat", fake_chat)
+        ann.propose("t", provider="deepseek", model="m", host="http://h", max_quotes=1)
+        assert "json" in captured["prompt"]
+
+    def test_openai_shape_shared_by_hosted_providers(self) -> None:
+        """Gemini and DeepSeek both answer in the choices envelope."""
+        body = {"choices": [{"message": {"content": "z"}}]}
+        assert ann.extract_content("deepseek", body) == "z"
+        assert ann.extract_content("gemini", body) == "z"
 
     def test_provider_defaults_are_distinct(self) -> None:
         """Each provider carries its own model and endpoint default."""

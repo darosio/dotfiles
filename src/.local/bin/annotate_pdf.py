@@ -73,20 +73,33 @@ CATEGORY_COLORS: Final[dict[str, tuple[float, float, float]]] = {
     "conclusions": (0.42, 0.79, 0.47),  # green
 }
 
-PROVIDERS: Final = ("ollama", "gemini")
+PROVIDERS: Final = ("ollama", "gemini", "deepseek")
 DEFAULT_MODELS: Final[dict[str, str]] = {
     "ollama": "qwen3.5:4b",
     "gemini": "gemini-3.6-flash",
+    "deepseek": "deepseek-v4-flash",
 }
 DEFAULT_HOSTS: Final[dict[str, str]] = {
     "ollama": "http://localhost:11434",
     # Google's OpenAI-compatible surface, so one request shape serves both.
     "gemini": "https://generativelanguage.googleapis.com/v1beta/openai",
+    "deepseek": "https://api.deepseek.com/v1",
 }
-_KEY_ENV_VARS: Final = ("GEMINI_API_KEY", "GOOGLE_API_KEY")
-_GEMINI_STORE_ENTRY: Final = "cloud/gemini_API_key"
+CREDENTIALS: Final[dict[str, tuple[tuple[str, ...], str]]] = {
+    "gemini": (("GEMINI_API_KEY", "GOOGLE_API_KEY"), "cloud/gemini_API_key"),
+    "deepseek": (("DEEPSEEK_API_KEY",), "cloud/deepseek"),
+}
 _MAX_PAGE_CHARS: Final = 4000  # ~1100 prompt tokens, measured on a paper page
-_MAX_TOKENS: Final = 512  # three quoted sentences need ~270
+# Three quoted sentences need ~270 tokens of content. Hosted reasoning models
+# bill their thinking against the same budget and its length varies per call:
+# DeepSeek v4 spent 299 tokens on one run and all 2048 on the next, and a
+# budget exhausted mid-thought returns finish_reason=length with empty content.
+# Ollama needs no headroom here because think=false disables reasoning outright.
+MAX_TOKENS: Final[dict[str, int]] = {
+    "ollama": 512,
+    "gemini": 8192,
+    "deepseek": 8192,
+}
 _MIN_MATCH_WORDS: Final = 6  # shorter fragments match anything and mean little
 _TIMEOUT_S: Final = 900  # a dense page took 5.5 min on 8 CPU cores
 
@@ -96,6 +109,14 @@ _SYSTEM: Final = (
     "Never paraphrase, never join fragments, never fix typos. "
     "Prefer sentences stating what was measured, what was found, or what it "
     "means. Return no sentence at all rather than an approximate one."
+)
+
+# Spelled out for providers that enforce JSON syntax but not a schema. The
+# literal word "json" is load-bearing: DeepSeek returns empty content without
+# it. Harmless where the schema is enforced anyway.
+_SHAPE_HINT: Final = (
+    'Reply with json of the form {"highlights": '
+    '[{"quote": "...", "category": "methods|results|conclusions"}]}.'
 )
 
 _SCHEMA: Final[dict[str, Any]] = {
@@ -206,12 +227,17 @@ def locate(
     return []
 
 
-def api_key() -> str:
-    """Return the Gemini API key from the environment or from pass.
+def api_key(provider: str) -> str:
+    """Return *provider*'s API key from the environment or from pass.
 
     Falls back to ``pass`` because that is where the rest of this setup keeps
-    the key (my-ai.el and hermes-secrets both read the same entry), so no key
+    these keys (my-ai.el and hermes-secrets read the same entries), so no key
     has to be exported into the shell to use this script.
+
+    Parameters
+    ----------
+    provider : str
+        One of :data:`CREDENTIALS`.
 
     Returns
     -------
@@ -223,7 +249,8 @@ def api_key() -> str:
     ValueError
         If no key is found in either place.
     """
-    for var in _KEY_ENV_VARS:
+    env_vars, store_entry = CREDENTIALS[provider]
+    for var in env_vars:
         value = os.environ.get(var)
         if value:
             return value
@@ -234,7 +261,7 @@ def api_key() -> str:
         env = dict(os.environ)
         env.setdefault("PASSWORD_STORE_DIR", str(Path.home() / "Sync" / ".pass"))
         found = subprocess.run(  # noqa: S603 - fixed argv, path from shutil.which
-            [pass_bin, "show", _GEMINI_STORE_ENTRY],
+            [pass_bin, "show", store_entry],
             capture_output=True,
             text=True,
             check=False,
@@ -244,8 +271,7 @@ def api_key() -> str:
         if key:
             return key
     msg = (
-        f"no Gemini API key: set {_KEY_ENV_VARS[0]} or store it at "
-        f"`pass {_GEMINI_STORE_ENTRY}`"
+        f"no {provider} API key: set {env_vars[0]} or store it at `pass {store_entry}`"
     )
     raise ValueError(msg)
 
@@ -279,24 +305,29 @@ def build_request(
         {"role": "user", "content": prompt},
     ]
     headers = {"Content-Type": "application/json"}
-    if provider == "gemini":
+    if provider in CREDENTIALS:
         payload: dict[str, Any] = {
             "model": model,
             "messages": messages,
-            "max_tokens": _MAX_TOKENS,
-            "response_format": {
+            "max_tokens": MAX_TOKENS[provider],
+        }
+        if provider == "deepseek":
+            # DeepSeek rejects json_schema; json_object plus the shape spelled
+            # out in the prompt is the most it enforces.
+            payload["response_format"] = {"type": "json_object"}
+        else:
+            payload["response_format"] = {
                 "type": "json_schema",
                 "json_schema": {"name": "highlights", "schema": _SCHEMA},
-            },
-        }
-        headers["Authorization"] = f"Bearer {api_key()}"
+            }
+        headers["Authorization"] = f"Bearer {api_key(provider)}"
         return f"{host}/chat/completions", json.dumps(payload).encode(), headers
     payload = {
         "model": model,
         "stream": False,
         "think": False,  # thinking models otherwise return empty content
         "format": _SCHEMA,
-        "options": {"num_predict": _MAX_TOKENS},
+        "options": {"num_predict": MAX_TOKENS[provider]},
         "messages": messages,
     }
     return f"{host}/api/chat", json.dumps(payload).encode(), headers
@@ -317,9 +348,9 @@ def extract_content(provider: str, body: dict[str, Any]) -> str:
     str
         Assistant content, expected to be JSON matching :data:`_SCHEMA`.
     """
-    if provider == "gemini":
-        return str(body["choices"][0]["message"]["content"])
-    return str(body["message"]["content"])
+    if provider == "ollama":
+        return str(body["message"]["content"])
+    return str(body["choices"][0]["message"]["content"])
 
 
 def http_error_message(error: urllib.error.HTTPError) -> str:
@@ -438,7 +469,7 @@ def propose(  # noqa: PLR0913
     """
     prompt = (
         f"Choose at most {max_quotes} sentences to highlight in this page. "
-        f"Categories: {', '.join(sorted(CATEGORY_COLORS))}.\n\n"
+        f"Categories: {', '.join(sorted(CATEGORY_COLORS))}. {_SHAPE_HINT}\n\n"
         f"{text[:_MAX_PAGE_CHARS]}"
     )
     try:
