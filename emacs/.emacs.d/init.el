@@ -25,8 +25,15 @@
 ;; Global debug settings (consider making these conditional for normal use)
 (setq debug-on-error t
       debug-on-quit t)
-;; Set user-emacs-directory to the directory of this file
-(setq user-emacs-directory (file-truename (file-name-directory load-file-name)))
+;; Fixed, not derived from load-file-name. This file is symlinked out of the
+;; dotfiles repo, and `emacs --daemon' sees /home/dan/.emacs.d/init.el while
+;; `emacs --batch -l init.el' sees the resolved repo path. straight derives its
+;; base directory from this variable, so a derived value gave the two
+;; invocations separate build trees: the daemon loaded March byte-code while
+;; batch runs (and the smoke tests) loaded freshly built files, from one config.
+;; ~/.emacs.d/{straight,.cache} are symlinks into the repo, so this resolves
+;; there for both.
+(setq user-emacs-directory (expand-file-name "~/.emacs.d/"))
 ;; Define a constant for Emacs start time (good for profiling)
 (defconst emacs-start-time (current-time))
 ;; Configure Emacs as a daemon if applicable
