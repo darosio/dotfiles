@@ -50,6 +50,7 @@ import json
 import os
 import shutil
 import subprocess
+import urllib.error
 import urllib.request
 from dataclasses import dataclass
 from pathlib import Path
@@ -321,6 +322,37 @@ def extract_content(provider: str, body: dict[str, Any]) -> str:
     return str(body["message"]["content"])
 
 
+def http_error_message(error: urllib.error.HTTPError) -> str:
+    """Extract the provider's explanation from a failed HTTP response.
+
+    Google wraps its error object in a JSON *array*, Ollama returns a bare
+    object; both are unwrapped here so a refusal reads as one sentence instead
+    of a traceback.
+
+    Parameters
+    ----------
+    error : urllib.error.HTTPError
+        The raised error, whose body is read once.
+
+    Returns
+    -------
+    str
+        The provider's message, or the HTTP reason if the body is not JSON.
+    """
+    try:
+        payload = json.loads(error.read())
+    except (json.JSONDecodeError, OSError, ValueError):
+        return str(error.reason or "no detail")
+    if isinstance(payload, list):
+        payload = payload[0] if payload else {}
+    if not isinstance(payload, dict):
+        return str(error.reason or "no detail")
+    inner = payload.get("error", payload)
+    if not isinstance(inner, dict):
+        return str(error.reason or "no detail")
+    return str(inner.get("message") or error.reason or "no detail")
+
+
 def chat(
     prompt: str,
     *,
@@ -353,6 +385,8 @@ def chat(
     ------
     ValueError
         If *host* is not an http(s) URL.
+    RuntimeError
+        If the provider returns an HTTP error, carrying its message.
     """
     if not host.startswith(("http://", "https://")):
         msg = f"host must be an http(s) URL, got {host!r}"
@@ -361,8 +395,13 @@ def chat(
         prompt, provider=provider, model=model, host=host
     )
     request = urllib.request.Request(url, data=payload, headers=headers)  # noqa: S310 - scheme checked above
-    with urllib.request.urlopen(request, timeout=timeout) as response:  # noqa: S310
-        body = json.loads(response.read())
+    try:
+        with urllib.request.urlopen(request, timeout=timeout) as response:  # noqa: S310
+            body = json.loads(response.read())
+    except urllib.error.HTTPError as exc:
+        detail = http_error_message(exc)
+        msg = f"{provider} refused the request (HTTP {exc.code}): {detail}"
+        raise RuntimeError(msg) from exc
     return extract_content(provider, body)
 
 
@@ -548,14 +587,17 @@ def main(  # noqa: PLR0913
         text = page.get_text()
         if not text.strip():
             continue
-        proposals = propose(
-            text,
-            provider=provider,
-            model=model,
-            host=host,
-            max_quotes=max_quotes,
-            timeout=timeout,
-        )
+        try:
+            proposals = propose(
+                text,
+                provider=provider,
+                model=model,
+                host=host,
+                max_quotes=max_quotes,
+                timeout=timeout,
+            )
+        except RuntimeError as exc:
+            raise click.ClickException(str(exc)) from exc
         result = annotate_page(page, proposals, author=author)
         results.append(result)
         for proposal in result.applied:

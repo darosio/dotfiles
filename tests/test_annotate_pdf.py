@@ -7,11 +7,15 @@ test_pdf_mcp.py keeps pymupdf out of the project dependencies.
 
 from __future__ import annotations
 
+import email.message
 import importlib.util
+import io
 import json
 import shutil
 import subprocess  # noqa: S404 - patched, never executed in tests
 import sys
+import urllib.error
+import urllib.request
 from pathlib import Path
 
 import pytest
@@ -216,6 +220,61 @@ class TestPropose:
             )
             == []
         )
+
+
+class TestHttpErrors:
+    """A provider refusal reads as a sentence, not a traceback."""
+
+    @staticmethod
+    def _error(body: bytes) -> urllib.error.HTTPError:
+        """Build an HTTPError carrying *body*.
+
+        Parameters
+        ----------
+        body : bytes
+            Response payload.
+
+        Returns
+        -------
+        urllib.error.HTTPError
+            Error with the given body.
+        """
+        return urllib.error.HTTPError(
+            "https://x",
+            429,
+            "Too Many Requests",
+            email.message.Message(),
+            io.BytesIO(body),
+        )
+
+    def test_google_wraps_its_error_in_a_list(self) -> None:
+        """Google returns a JSON array; the message is still found."""
+        body = b'[{"error": {"message": "Your prepayment credits are depleted."}}]'
+        assert "prepayment" in ann.http_error_message(self._error(body))
+
+    def test_bare_object_shape(self) -> None:
+        """An Ollama-style bare error object is unwrapped too."""
+        body = b'{"error": {"message": "model not found"}}'
+        assert ann.http_error_message(self._error(body)) == "model not found"
+
+    def test_non_json_body_falls_back_to_reason(self) -> None:
+        """A gateway HTML page degrades to the HTTP reason."""
+        assert ann.http_error_message(self._error(b"<html>502</html>")) == (
+            "Too Many Requests"
+        )
+
+    def test_chat_raises_with_provider_message(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """chat() turns an HTTPError into a RuntimeError carrying the detail."""
+        body = b'[{"error": {"message": "credits depleted"}}]'
+
+        def boom(*_a: object, **_k: object) -> object:
+            raise self._error(body)
+
+        monkeypatch.setattr(urllib.request, "urlopen", boom)
+        with pytest.raises(RuntimeError, match="credits depleted"):
+            ann.chat("p", provider="ollama", model="m", host="http://h")
 
 
 class TestHelpers:
