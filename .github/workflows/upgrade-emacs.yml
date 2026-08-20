@@ -3,12 +3,14 @@ name: Emacs Upgrade
 
 on:
   workflow_dispatch:
+  schedule:
+    # Weekly, so a broken upgrade is one week of drift to bisect, not four
+    # months. Runs the upgrade job; the push job stays push-only.
+    - cron: '0 5 * * 1' # every Monday at 05:00 UTC
   push:
     branches: [main]
     paths:
       - 'emacs/**'
-      # schedule:
-      #   - cron: '0 5 * * 1'  # every Monday at 05:00 UTC
 
 jobs:
 
@@ -45,7 +47,9 @@ jobs:
         run: make test-emacs
 
   upgrade-packages:
-    if: github.event_name == 'workflow_dispatch'
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event_name == 'schedule'
     runs-on: ubuntu-latest
     env:
       CI: true
