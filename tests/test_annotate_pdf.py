@@ -263,6 +263,32 @@ class TestHttpErrors:
             "Too Many Requests"
         )
 
+    def test_timeout_becomes_runtime_error(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """A stalled read is reported, not raised as a bare TimeoutError."""
+
+        def stall(*_a: object, **_k: object) -> object:
+            msg = "The read operation timed out"
+            raise TimeoutError(msg)
+
+        monkeypatch.setattr(urllib.request, "urlopen", stall)
+        with pytest.raises(RuntimeError, match="did not answer"):
+            ann.chat("p", provider="deepseek", model="m", host="http://h")
+
+    def test_url_error_becomes_runtime_error(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """A refused connection is reported the same way."""
+
+        def refuse(*_a: object, **_k: object) -> object:
+            msg = "connection refused"
+            raise urllib.error.URLError(msg)
+
+        monkeypatch.setattr(urllib.request, "urlopen", refuse)
+        with pytest.raises(RuntimeError, match="did not answer"):
+            ann.chat("p", provider="ollama", model="m", host="http://h")
+
     def test_chat_raises_with_provider_message(
         self, monkeypatch: pytest.MonkeyPatch
     ) -> None:

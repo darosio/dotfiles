@@ -433,6 +433,10 @@ def chat(
         detail = http_error_message(exc)
         msg = f"{provider} refused the request (HTTP {exc.code}): {detail}"
         raise RuntimeError(msg) from exc
+    except (urllib.error.URLError, TimeoutError) as exc:
+        # A stalled connection must not cost the pages already annotated.
+        msg = f"{provider} did not answer: {exc}"
+        raise RuntimeError(msg) from exc
     return extract_content(provider, body)
 
 
@@ -613,6 +617,7 @@ def main(  # noqa: PLR0913
     host = host or DEFAULT_HOSTS[provider]
     doc = pymupdf.open(pdf)
     results: list[PageResult] = []
+    failed = 0
     for index in parse_pages(pages, doc.page_count):
         page = doc[index]
         text = page.get_text()
@@ -628,7 +633,11 @@ def main(  # noqa: PLR0913
                 timeout=timeout,
             )
         except RuntimeError as exc:
-            raise click.ClickException(str(exc)) from exc
+            # Skip the page rather than the document: a long paper is many
+            # calls, and one refusal or stall should not discard the rest.
+            click.echo(f"p{index + 1} failed: {exc}", err=True)
+            failed += 1
+            continue
         result = annotate_page(page, proposals, author=author)
         results.append(result)
         for proposal in result.applied:
@@ -642,6 +651,11 @@ def main(  # noqa: PLR0913
     applied = sum(len(r.applied) for r in results)
     dropped = sum(len(r.dropped) for r in results)
     click.echo(f"{applied} highlighted, {dropped} dropped (not found on the page)")
+    if failed:
+        click.echo(f"{failed} pages failed and were skipped", err=True)
+    if failed and not results:
+        msg = f"every page failed; nothing to write for {pdf.name}"
+        raise click.ClickException(msg)
 
     if dry_run:
         click.echo("dry run: nothing written")
