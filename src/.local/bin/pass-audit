@@ -1,0 +1,105 @@
+#!/usr/bin/env bash
+#
+# pass-audit -- report which password-store entries this machine can decrypt.
+#
+# Reads each entry's recipient key IDs straight from the OpenPGP packet header
+# and compares them against the secret keys in the local keyring. It never
+# decrypts, so it raises no pinentry prompts and sweeps hundreds of entries in
+# a couple of seconds.
+#
+#   pass-audit                    # summary plus the entries that would fail
+#   pass-audit -v                 # every entry with its recipient key
+#   pass-audit -s ~/other-store   # audit a store other than the default
+#
+# WHY THIS EXISTS. A store shared between machines drifts silently: add an
+# encryption subkey on one host and gpg starts encrypting to it there, while a
+# host that never received the new key material keeps using the old subkey and
+# cannot read anything the other one writes. Nothing errors -- consumers that
+# tolerate a missing secret (hermes-secrets skips empty entries by design) just
+# go quiet. This makes that split visible, on both machines.
+#
+# Exits 1 when any entry is unreadable, so it can gate a backup or a sync.
+
+set -euo pipefail
+
+store="${PASSWORD_STORE_DIR:-$HOME/.password-store}"
+verbose=0
+
+usage() {
+  sed -n '3,13p' "$0" | sed 's/^# \{0,1\}//'
+}
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -v | --verbose) verbose=1 ;;
+    -s | --store)
+      store="${2:?--store needs a directory}"
+      shift
+      ;;
+    -h | --help)
+      usage
+      exit 0
+      ;;
+    *)
+      printf 'pass-audit: unknown argument %s\n' "$1" >&2
+      exit 2
+      ;;
+  esac
+  shift
+done
+
+if [ ! -d "$store" ]; then
+  printf 'pass-audit: no store at %s\n' "$store" >&2
+  exit 2
+fi
+
+# Every secret key this machine holds, primaries and subkeys alike: an entry is
+# readable if it names any one of them as a recipient.
+secret_ids=$(gpg --list-secret-keys --with-colons 2> /dev/null |
+  awk -F: '/^(sec|ssb):/ {printf "%s ", $5}')
+
+readable=0
+unreadable=0
+missing=""
+
+while IFS= read -r -d '' file; do
+  entry="${file#"$store"/}"
+  entry="${entry%.gpg}"
+  # Recipient key IDs without decrypting; an entry may carry several.
+  kids=$(gpg --list-only --list-packets "$file" 2> /dev/null |
+    grep -o 'keyid [0-9A-F]*' | awk '{printf "%s ", $2}')
+  held=""
+  for kid in $kids; do
+    case " $secret_ids " in
+      *" $kid "*)
+        held="$kid"
+        break
+        ;;
+    esac
+  done
+  if [ -n "$held" ]; then
+    readable=$((readable + 1))
+    [ "$verbose" -eq 1 ] && printf '  ok         %-18s %s\n' "$held" "$entry"
+  else
+    unreadable=$((unreadable + 1))
+    first="${kids%% *}"
+    printf '  UNREADABLE %-18s %s\n' "${first:-?}" "$entry"
+    missing="$missing ${first:-?}"
+  fi
+done < <(find "$store" -name '*.gpg' -print0 | sort -z)
+
+total=$((readable + unreadable))
+printf '\n%s: %d entries, %d readable, %d unreadable\n' \
+  "$store" "$total" "$readable" "$unreadable"
+
+if [ "$unreadable" -gt 0 ]; then
+  printf '\nkey material this machine lacks:\n'
+  tr ' ' '\n' <<< "$missing" | sed '/^$/d' | sort | uniq -c | sort -rn |
+    while read -r count kid; do
+      printf '  %-18s %d entries\n' "$kid" "$count"
+    done
+  printf '\nImport the missing key, then re-run:\n'
+  printf '  other machine: gpg --export-secret-keys --armor <KEYID> > key.asc\n'
+  printf '  this machine:  gpg --import key.asc\n'
+  exit 1
+fi
