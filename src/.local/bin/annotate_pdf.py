@@ -20,6 +20,7 @@ the script works straight off PATH without being added to any environment:
 Usage:
   annotate_pdf.py --dry-run paper.pdf
   annotate_pdf.py --pages 1-8 paper.pdf
+  annotate_pdf.py --provider gemini paper.pdf
   annotate_pdf.py --in-place ~/Zotero/storage/ABCD1234/paper.pdf
 
 Editing a file under ~/Zotero/storage makes Zotero re-upload it on the next
@@ -34,11 +35,21 @@ cores and quoted exactly, while qwen3:1.7b took 41 s and paraphrased, so its
 proposal was dropped by the verification step. Prefer the larger model and run
 it over a whole paper in the background; ``ollama ps`` will tell you whether it
 is on CPU, which is what makes this slow.
+
+--provider gemini trades that wait for money, through Google's OpenAI-compatible
+endpoint. At the measured 1116 input and 265 output tokens per page, 3.6 Flash
+costs about $0.0018 a page: roughly $0.04 for a 20-page paper. It is billed from
+the first token once billing is enabled on the project, so keep the prepay
+balance low and auto-reload off. The key is read from GEMINI_API_KEY, or from
+`pass cloud/gemini_API_key` if that is unset, so nothing needs exporting.
 """
 
 from __future__ import annotations
 
 import json
+import os
+import shutil
+import subprocess
 import urllib.request
 from dataclasses import dataclass
 from pathlib import Path
@@ -61,8 +72,18 @@ CATEGORY_COLORS: Final[dict[str, tuple[float, float, float]]] = {
     "conclusions": (0.42, 0.79, 0.47),  # green
 }
 
-_DEFAULT_MODEL: Final = "qwen3.5:4b"
-_DEFAULT_HOST: Final = "http://localhost:11434"
+PROVIDERS: Final = ("ollama", "gemini")
+DEFAULT_MODELS: Final[dict[str, str]] = {
+    "ollama": "qwen3.5:4b",
+    "gemini": "gemini-3.6-flash",
+}
+DEFAULT_HOSTS: Final[dict[str, str]] = {
+    "ollama": "http://localhost:11434",
+    # Google's OpenAI-compatible surface, so one request shape serves both.
+    "gemini": "https://generativelanguage.googleapis.com/v1beta/openai",
+}
+_KEY_ENV_VARS: Final = ("GEMINI_API_KEY", "GOOGLE_API_KEY")
+_GEMINI_STORE_ENTRY: Final = "cloud/gemini_API_key"
 _MAX_PAGE_CHARS: Final = 4000  # ~1100 prompt tokens, measured on a paper page
 _MAX_TOKENS: Final = 512  # three quoted sentences need ~270
 _MIN_MATCH_WORDS: Final = 6  # shorter fragments match anything and mean little
@@ -184,17 +205,142 @@ def locate(
     return []
 
 
-def chat(prompt: str, *, model: str, host: str, timeout: int = _TIMEOUT_S) -> str:
+def api_key() -> str:
+    """Return the Gemini API key from the environment or from pass.
+
+    Falls back to ``pass`` because that is where the rest of this setup keeps
+    the key (my-ai.el and hermes-secrets both read the same entry), so no key
+    has to be exported into the shell to use this script.
+
+    Returns
+    -------
+    str
+        The API key.
+
+    Raises
+    ------
+    ValueError
+        If no key is found in either place.
+    """
+    for var in _KEY_ENV_VARS:
+        value = os.environ.get(var)
+        if value:
+            return value
+    pass_bin = shutil.which("pass")
+    if pass_bin:
+        # This store does not live at pass's default path; mirror the fallback
+        # hermes-secrets uses so the key resolves without exporting anything.
+        env = dict(os.environ)
+        env.setdefault("PASSWORD_STORE_DIR", str(Path.home() / "Sync" / ".pass"))
+        found = subprocess.run(  # noqa: S603 - fixed argv, path from shutil.which
+            [pass_bin, "show", _GEMINI_STORE_ENTRY],
+            capture_output=True,
+            text=True,
+            check=False,
+            env=env,
+        )
+        key = found.stdout.split("\n", 1)[0].strip()
+        if key:
+            return key
+    msg = (
+        f"no Gemini API key: set {_KEY_ENV_VARS[0]} or store it at "
+        f"`pass {_GEMINI_STORE_ENTRY}`"
+    )
+    raise ValueError(msg)
+
+
+def build_request(
+    prompt: str, *, provider: str, model: str, host: str
+) -> tuple[str, bytes, dict[str, str]]:
+    """Build the HTTP request for *provider*.
+
+    Both providers take the same messages and the same JSON schema; they differ
+    in where the schema goes, how generation is capped, and how they authenticate.
+
+    Parameters
+    ----------
+    prompt : str
+        User message; the system prompt is added here.
+    provider : str
+        One of :data:`PROVIDERS`.
+    model : str
+        Model name.
+    host : str
+        Base URL for the provider.
+
+    Returns
+    -------
+    tuple[str, bytes, dict[str, str]]
+        URL, encoded payload and headers.
+    """
+    messages = [
+        {"role": "system", "content": _SYSTEM},
+        {"role": "user", "content": prompt},
+    ]
+    headers = {"Content-Type": "application/json"}
+    if provider == "gemini":
+        payload: dict[str, Any] = {
+            "model": model,
+            "messages": messages,
+            "max_tokens": _MAX_TOKENS,
+            "response_format": {
+                "type": "json_schema",
+                "json_schema": {"name": "highlights", "schema": _SCHEMA},
+            },
+        }
+        headers["Authorization"] = f"Bearer {api_key()}"
+        return f"{host}/chat/completions", json.dumps(payload).encode(), headers
+    payload = {
+        "model": model,
+        "stream": False,
+        "think": False,  # thinking models otherwise return empty content
+        "format": _SCHEMA,
+        "options": {"num_predict": _MAX_TOKENS},
+        "messages": messages,
+    }
+    return f"{host}/api/chat", json.dumps(payload).encode(), headers
+
+
+def extract_content(provider: str, body: dict[str, Any]) -> str:
+    """Pull the assistant text out of a provider's response body.
+
+    Parameters
+    ----------
+    provider : str
+        One of :data:`PROVIDERS`.
+    body : dict[str, Any]
+        Decoded JSON response.
+
+    Returns
+    -------
+    str
+        Assistant content, expected to be JSON matching :data:`_SCHEMA`.
+    """
+    if provider == "gemini":
+        return str(body["choices"][0]["message"]["content"])
+    return str(body["message"]["content"])
+
+
+def chat(
+    prompt: str,
+    *,
+    provider: str,
+    model: str,
+    host: str,
+    timeout: int = _TIMEOUT_S,
+) -> str:
     """Send *prompt* to an Ollama chat endpoint and return the reply content.
 
     Parameters
     ----------
     prompt : str
         User message; the system prompt is added here.
+    provider : str
+        One of :data:`PROVIDERS`.
     model : str
-        Model name as listed by ``ollama list``.
+        Model name.
     host : str
-        Base URL of the Ollama server.
+        Base URL for the provider.
     timeout : int
         Seconds to wait for the response.
 
@@ -211,30 +357,19 @@ def chat(prompt: str, *, model: str, host: str, timeout: int = _TIMEOUT_S) -> st
     if not host.startswith(("http://", "https://")):
         msg = f"host must be an http(s) URL, got {host!r}"
         raise ValueError(msg)
-    payload = json.dumps({
-        "model": model,
-        "stream": False,
-        "think": False,
-        "format": _SCHEMA,
-        "options": {"num_predict": _MAX_TOKENS},
-        "messages": [
-            {"role": "system", "content": _SYSTEM},
-            {"role": "user", "content": prompt},
-        ],
-    }).encode()
-    request = urllib.request.Request(  # noqa: S310 - scheme checked above
-        f"{host}/api/chat",
-        data=payload,
-        headers={"Content-Type": "application/json"},
+    url, payload, headers = build_request(
+        prompt, provider=provider, model=model, host=host
     )
+    request = urllib.request.Request(url, data=payload, headers=headers)  # noqa: S310 - scheme checked above
     with urllib.request.urlopen(request, timeout=timeout) as response:  # noqa: S310
         body = json.loads(response.read())
-    return str(body["message"]["content"])
+    return extract_content(provider, body)
 
 
-def propose(
+def propose(  # noqa: PLR0913
     text: str,
     *,
+    provider: str,
     model: str,
     host: str,
     max_quotes: int,
@@ -246,10 +381,12 @@ def propose(
     ----------
     text : str
         Page text, truncated to :data:`_MAX_PAGE_CHARS`.
+    provider : str
+        One of :data:`PROVIDERS`.
     model : str
-        Model name as listed by ``ollama list``.
+        Model name.
     host : str
-        Base URL of the Ollama server.
+        Base URL for the provider.
     max_quotes : int
         Upper bound on the number of sentences requested.
     timeout : int
@@ -266,7 +403,9 @@ def propose(
         f"{text[:_MAX_PAGE_CHARS]}"
     )
     try:
-        raw = json.loads(chat(prompt, model=model, host=host, timeout=timeout))
+        raw = json.loads(
+            chat(prompt, provider=provider, model=model, host=host, timeout=timeout)
+        )
     except (json.JSONDecodeError, KeyError):
         return []
     proposals = [
@@ -356,9 +495,14 @@ def parse_pages(spec: str | None, count: int) -> Sequence[int]:
     type=click.Path(exists=True, dir_okay=False, path_type=Path),
 )
 @click.option(
-    "--model", default=_DEFAULT_MODEL, show_default=True, help="Ollama model."
+    "--provider",
+    type=click.Choice(PROVIDERS),
+    default="ollama",
+    show_default=True,
+    help="Where inference runs. gemini bills per token; ollama is local.",
 )
-@click.option("--host", default=_DEFAULT_HOST, show_default=True, help="Ollama URL.")
+@click.option("--model", default=None, help="Model name; provider default if unset.")
+@click.option("--host", default=None, help="Base URL; provider default if unset.")
 @click.option(
     "--max-quotes",
     default=3,
@@ -384,8 +528,9 @@ def parse_pages(spec: str | None, count: int) -> Sequence[int]:
 def main(  # noqa: PLR0913
     pdf: Path,
     *,
-    model: str,
-    host: str,
+    provider: str,
+    model: str | None,
+    host: str | None,
     max_quotes: int,
     pages: str | None,
     author: str,
@@ -393,7 +538,9 @@ def main(  # noqa: PLR0913
     timeout: int,
     dry_run: bool,
 ) -> None:
-    """Highlight key sentences in PDF using a local Ollama model."""
+    """Highlight key sentences in PDF using a local or hosted model."""
+    model = model or DEFAULT_MODELS[provider]
+    host = host or DEFAULT_HOSTS[provider]
     doc = pymupdf.open(pdf)
     results: list[PageResult] = []
     for index in parse_pages(pages, doc.page_count):
@@ -402,7 +549,12 @@ def main(  # noqa: PLR0913
         if not text.strip():
             continue
         proposals = propose(
-            text, model=model, host=host, max_quotes=max_quotes, timeout=timeout
+            text,
+            provider=provider,
+            model=model,
+            host=host,
+            max_quotes=max_quotes,
+            timeout=timeout,
         )
         result = annotate_page(page, proposals, author=author)
         results.append(result)

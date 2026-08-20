@@ -9,6 +9,8 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import shutil
+import subprocess  # noqa: S404 - patched, never executed in tests
 import sys
 from pathlib import Path
 
@@ -178,7 +180,12 @@ class TestPropose:
         monkeypatch.setattr(
             ann, "chat", lambda *_a, **_k: _reply((_ON_PAGE, "speculation"))
         )
-        assert ann.propose("text", model="m", host="http://h", max_quotes=3) == []
+        assert (
+            ann.propose(
+                "text", provider="ollama", model="m", host="http://h", max_quotes=3
+            )
+            == []
+        )
 
     def test_max_quotes_is_enforced(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """More proposals than requested are truncated."""
@@ -189,14 +196,26 @@ class TestPropose:
                 (_ON_PAGE, "results"), (_INVENTED, "methods"), (_ON_PAGE, "conclusions")
             ),
         )
-        assert len(ann.propose("t", model="m", host="http://h", max_quotes=2)) == 2
+        assert (
+            len(
+                ann.propose(
+                    "t", provider="ollama", model="m", host="http://h", max_quotes=2
+                )
+            )
+            == 2
+        )
 
     def test_malformed_reply_yields_nothing(
         self, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         """A non-JSON reply is treated as no proposals rather than crashing."""
         monkeypatch.setattr(ann, "chat", lambda *_a, **_k: "not json at all")
-        assert ann.propose("t", model="m", host="http://h", max_quotes=3) == []
+        assert (
+            ann.propose(
+                "t", provider="ollama", model="m", host="http://h", max_quotes=3
+            )
+            == []
+        )
 
 
 class TestHelpers:
@@ -230,4 +249,116 @@ class TestHelpers:
     def test_chat_rejects_non_http_host(self) -> None:
         """A host that is not http(s) is refused before any request is made."""
         with pytest.raises(ValueError, match="http"):
-            ann.chat("hi", model="m", host="file:///etc/passwd")
+            ann.chat("hi", provider="ollama", model="m", host="file:///etc/passwd")
+
+
+class TestProviders:
+    """Request shape and response parsing per provider."""
+
+    def test_ollama_request_disables_thinking(self) -> None:
+        """The Ollama body carries think=False and the schema in format."""
+        url, payload, headers = ann.build_request(
+            "p", provider="ollama", model="m", host="http://localhost:11434"
+        )
+        body = json.loads(payload)
+        assert url == "http://localhost:11434/api/chat"
+        assert body["think"] is False
+        assert body["format"]["required"] == ["highlights"]
+        assert "Authorization" not in headers
+
+    def test_gemini_request_uses_openai_shape(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """The Gemini body is OpenAI-compatible and bearer-authenticated."""
+        monkeypatch.setenv("GEMINI_API_KEY", "secret")
+        url, payload, headers = ann.build_request(
+            "p", provider="gemini", model="gemini-3.6-flash", host="https://x/openai"
+        )
+        body = json.loads(payload)
+        assert url == "https://x/openai/chat/completions"
+        assert headers["Authorization"] == "Bearer secret"
+        schema = body["response_format"]["json_schema"]["schema"]
+        assert schema["required"] == ["highlights"]
+        assert "think" not in body
+
+    @pytest.mark.parametrize(
+        ("provider", "body", "expected"),
+        [
+            ("ollama", {"message": {"content": "x"}}, "x"),
+            ("gemini", {"choices": [{"message": {"content": "y"}}]}, "y"),
+        ],
+    )
+    def test_extract_content(
+        self, provider: str, body: dict[str, object], expected: str
+    ) -> None:
+        """Each provider's reply is unwrapped from its own envelope."""
+        assert ann.extract_content(provider, body) == expected
+
+    def test_key_prefers_environment(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        """An exported key is used without shelling out to pass."""
+        monkeypatch.setenv("GEMINI_API_KEY", "from-env")
+        assert ann.api_key() == "from-env"
+
+    def test_key_falls_back_to_pass(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        """With no env key the pass entry is consulted."""
+        monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+        monkeypatch.delenv("GOOGLE_API_KEY", raising=False)
+        monkeypatch.setattr(shutil, "which", lambda _: "/usr/bin/pass")
+        monkeypatch.setattr(
+            subprocess,
+            "run",
+            lambda *_a, **_k: type("R", (), {"stdout": "from-pass\nother\n"})(),
+        )
+        assert ann.api_key() == "from-pass"
+
+    def test_pass_lookup_sets_store_dir(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        """The pass call carries PASSWORD_STORE_DIR; this store is not default."""
+        monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+        monkeypatch.delenv("GOOGLE_API_KEY", raising=False)
+        monkeypatch.delenv("PASSWORD_STORE_DIR", raising=False)
+        monkeypatch.setattr(shutil, "which", lambda _: "/usr/bin/pass")
+        seen: dict[str, str] = {}
+
+        def fake_run(*_a: object, **kwargs: object) -> object:
+            env = kwargs["env"]
+            assert isinstance(env, dict)
+            seen.update(env)
+            return type("R", (), {"stdout": "k\n"})()
+
+        monkeypatch.setattr(subprocess, "run", fake_run)
+        assert ann.api_key() == "k"
+        assert seen["PASSWORD_STORE_DIR"].endswith("/Sync/.pass")
+
+    def test_existing_store_dir_is_respected(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """An exported PASSWORD_STORE_DIR is not overridden."""
+        monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+        monkeypatch.delenv("GOOGLE_API_KEY", raising=False)
+        monkeypatch.setenv("PASSWORD_STORE_DIR", "/custom/store")
+        monkeypatch.setattr(shutil, "which", lambda _: "/usr/bin/pass")
+        seen: dict[str, str] = {}
+
+        def fake_run(*_a: object, **kwargs: object) -> object:
+            env = kwargs["env"]
+            assert isinstance(env, dict)
+            seen.update(env)
+            return type("R", (), {"stdout": "k\n"})()
+
+        monkeypatch.setattr(subprocess, "run", fake_run)
+        ann.api_key()
+        assert seen["PASSWORD_STORE_DIR"] == "/custom/store"  # noqa: S105
+
+    def test_missing_key_is_explicit(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        """No key anywhere raises rather than sending an unauthenticated call."""
+        monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+        monkeypatch.delenv("GOOGLE_API_KEY", raising=False)
+        monkeypatch.setattr(shutil, "which", lambda _: None)
+        with pytest.raises(ValueError, match="no Gemini API key"):
+            ann.api_key()
+
+    def test_provider_defaults_are_distinct(self) -> None:
+        """Each provider carries its own model and endpoint default."""
+        assert ann.DEFAULT_HOSTS["ollama"].startswith("http://localhost")
+        assert "generativelanguage" in ann.DEFAULT_HOSTS["gemini"]
+        assert set(ann.DEFAULT_MODELS) == set(ann.PROVIDERS)
