@@ -6,7 +6,7 @@ For Calibre just remember: /Sync/media/books
 - [X] attach file and send mail
 - [X] =, ,= for =, M=
 
-* TODO Repo maintenance [0/11]
+* TODO Repo maintenance [0/12]
 - [ ] [installer-integration-tests] Add temp-HOME smoke tests for =install.sh= and representative =*.stow.sh= packages; verify symlink creation and idempotent behavior.
 - [ ] [declarative-host-profiles] Add declarative install profiles (desktop/laptop/server/ai) with package metadata such as =needs_root=, =depends_on=, and platform constraints.
 - [ ] [extract-host-overrides] Move hardcoded personal paths and host assumptions into a local override layer or environment-driven settings.
@@ -18,6 +18,7 @@ For Calibre just remember: /Sync/media/books
 - [ ] [tighten-smartd-log-perms] Replace world-writable =/var/log/smartdnotify.log= permissions with least-privilege ownership and mode.
 - [ ] [fail-fast-ai-container-secrets] Make =ai-containers.stow.sh= fail when =pass ai/khoj= is missing instead of writing an empty =.env=.
 - [ ] [fix-zotero-relative-copy] Fix =zotero.stow.sh= relative copy paths and make the addon download idempotent.
+- [ ] [hermes-botfather-token] Rotate the Telegram bot token via BotFather and store it as =pass cloud/telegram_bot_token=; the value there and the one in the real =~/.hermes/.env= already differ, and the latter leaked into a chat transcript. Then delete that file so =stow -t ~ agents= succeeds: stow is all-or-nothing, and that one real file is why =~/.local/bin/hermes-secrets= (the =secrets.command= helper Hermes reads, so Hermes starts with no secrets at all) and =~/.claude/setup-mcp-servers.sh= are absent from $HOME. Run =stow-audit= to confirm =agents= reports clean afterwards.
 
 * calendar and orgzly
 - [ ] define and save appropriate orgzly setting (e.le.2d or s.today)
