@@ -60,12 +60,21 @@
         guess-language-min-paragraph-length 15
         guess-language-languages '(en it)))
 
-(use-package sdcv
+;; quick-sdcv rather than sdcv.el: a maintained fork that drops the pos-tip and
+;; showtip dependencies, lives on GitHub rather than repo.or.cz, and repairs
+;; outline folding -- which is what makes 24 dictionaries readable, since the
+;; buffer opens collapsed and you expand the one you want instead of paging
+;; through Webster's and both halves of the OED with n/p.
+;; Dictionaries are found via ~/.stardict/dic (see goldendict.stow.sh); sdcv
+;; itself comes from the sdcv package.
+(use-package quick-sdcv
+  :straight (:host github :repo "jamescherti/quick-sdcv.el")
   :bind
-  ("<f7> S" . sdcv-search-pointer)
-  (:map sdcv-mode-map
-        ("n" . sdcv-next-dictionary)
-        ("p" . sdcv-previous-dictionary)))
+  ("<f7> S" . quick-sdcv-search-at-point)
+  ("<f7> s" . quick-sdcv-search-input)
+  :custom
+  (quick-sdcv-fold-on-search t)
+  (quick-sdcv-unique-buffers t))
 
 (use-package wordnut
   :bind

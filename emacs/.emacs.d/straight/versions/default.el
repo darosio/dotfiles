@@ -132,6 +132,7 @@
  ("popup-el" . "3afe431e9aa2e271aaf0412cbb50c733387e8ea4")
  ("pos-tip" . "4889e08cf9077c8589ea6fea4e2ce558614dfcde")
  ("queue" . "8df1334d54d4735d2f821790422a850dfaaa08ef")
+ ("quick-sdcv.el" . "1c5ba196370ee5ff78c211c6758778b370915849")
  ("s.el" . "d7c04b84d03481a1ed62ee13dbe595224ccbe57c")
  ("sdcv.el" . "941ac2fbbb1be9ad595aed6dd782a842c4676a1a")
  ("seq" . "da86da9bf111f68fb81efd466d76d53af5aebc00")
