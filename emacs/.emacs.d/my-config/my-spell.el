@@ -72,6 +72,17 @@
   :bind
   ("<f7> s" . quick-sdcv-search-at-point)
   ("<f7> S" . quick-sdcv-search-input)
+  ;; quick-sdcv folds with outline-minor-mode but binds nothing, and
+  ;; outline-minor-mode-cycle is nil, so outline-cycle is reachable only from
+  ;; [right-margin mouse-1]. The buffer derives from special-mode and is
+  ;; read-only, so plain keys are free: TAB cycles the dictionary at point,
+  ;; backtab the whole buffer, and n/p restore the heading navigation that
+  ;; sdcv.el had.
+  (:map quick-sdcv-mode-map
+        ("TAB" . outline-cycle)
+        ("<backtab>" . outline-cycle-buffer)
+        ("n" . outline-next-visible-heading)
+        ("p" . outline-previous-visible-heading))
   :custom
   (quick-sdcv-fold-on-search t)
   (quick-sdcv-unique-buffers t))
