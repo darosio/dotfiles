@@ -65,7 +65,26 @@ cd "$dotfiles" 2> /dev/null || {
   exit 2
 }
 
+# Targets documented as deliberate copies; see the file's own header.
+allow_patterns=()
+if [ -f "$dotfiles/.stow-audit-allow" ]; then
+  while IFS= read -r line; do
+    case "$line" in '' | '#'*) continue ;; esac
+    allow_patterns+=("$line")
+  done < "$dotfiles/.stow-audit-allow"
+fi
+
+allowed() {
+  local candidate="$1" pattern
+  for pattern in ${allow_patterns[@]+"${allow_patterns[@]}"}; do
+    # shellcheck disable=SC2254  # the pattern is meant to glob
+    case "$candidate" in $pattern) return 0 ;; esac
+  done
+  return 1
+}
+
 partial=0
+allowed_count=0
 shadowed=0
 unstowed=0
 clean=0
@@ -88,6 +107,10 @@ for dir in */; do
   while IFS= read -r entry; do
     [ -n "$entry" ] || continue
     git check-ignore -q "$pkg/$entry" 2> /dev/null && continue
+    if allowed "$pkg/$entry"; then
+      allowed_count=$((allowed_count + 1))
+      continue
+    fi
     blocked=$((blocked + 1))
     blocked_list+=("$entry")
   done < <(printf '%s\n' "$out" | grep 'neither a link nor a directory' |
@@ -130,8 +153,8 @@ for dir in */; do
   fi
 done
 
-printf '\n%d clean, %d partial, %d shadowed, %d unstowed (%s)\n' \
-  "$clean" "$partial" "$shadowed" "$unstowed" "$dotfiles"
+printf '\n%d clean, %d partial, %d shadowed, %d unstowed, %d allowed (%s)\n' \
+  "$clean" "$partial" "$shadowed" "$unstowed" "$allowed_count" "$dotfiles"
 
 if [ "$partial" -gt 0 ]; then
   printf '\nRe-stow a partial package to link what it gained:\n'

@@ -1,0 +1,10 @@
+# Targets that are meant to stay real files rather than symlinks, one glob per
+# line, matched against <package>/<path-relative-to-target>. stow-audit reports
+# these as SHADOWED otherwise, and the report should mean something.
+#
+# Zotero rewrites its profile at runtime, so a symlink would be replaced on the
+# next launch. The copies in this repo exist to seed a fresh install --
+# zotero.stow.sh copies them deliberately, and says so.
+zotero/.zotero/zotero/*/prefs.js
+zotero/.zotero/zotero/*/user.js
+zotero/.zotero/zotero/*/treePrefs.json
