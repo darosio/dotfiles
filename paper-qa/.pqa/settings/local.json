@@ -47,7 +47,9 @@
   "agent": {
     "index": {
       "concurrency": 1,
-      "recurse_subdirectories": false
+      "recurse_subdirectories": true,
+      "paper_directory": "~/Sync/biblio/New",
+      "name": "biblio-new-local"
     }
   }
 }

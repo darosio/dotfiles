@@ -5,6 +5,17 @@
 #   pqa-deepseek ask "which chloride transporters set EGABA in immature neurons?"
 #   pqa-deepseek index
 #
+# The corpus is part of the settings, not the command line: paper-qa indexes a
+# directory, never a single file. Both profiles point at ~/Sync/biblio/New with
+# recursion on, since nothing under biblio is flat any more. Another corpus is
+# an override away, and needs its own index name or the two get mixed:
+#
+#   pqa-deepseek --agent.index.paper_directory ~/Sync/biblio/MY \
+#                --agent.index.name biblio-my ask "..."
+#
+# Mind the size before pointing it at the big ones: main is 1937 pdfs / 7 GB and
+# former 3020 / 4.3 GB, and every one is parsed and embedded on this machine.
+#
 # paper-qa resolves settings by name from ~/.pqa/settings/<name>.json, so this is
 # `pqa -s deepseek` with a key attached. litellm reads the key through
 # os.environ/DEEPSEEK_API_KEY at call time, which keeps it out of the settings
