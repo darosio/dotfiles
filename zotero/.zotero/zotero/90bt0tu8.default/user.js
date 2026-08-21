@@ -11,7 +11,7 @@
 
 user_pref("ArtalkUser", '{"email":"darosio","name":"darosio"}');
 user_pref("extensions.ui.dictionary.hidden", false);
-user_pref("extensions.zotero.attachmentRenameTemplate", '{{ title truncate="50" }}');
+user_pref("extensions.zotero.attachmentRenameTemplate", "{{ citationKey }}");
 user_pref("extensions.zotero.autoRenameFiles.fileTypes", "application/pdf,application/epub+zip,image/,audio/,video/");
 user_pref("extensions.zotero.autoRenameFiles.linked", true);
 /* user_pref("extensions.zotero.automaticTags", false); */
