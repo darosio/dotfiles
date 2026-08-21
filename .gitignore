@@ -28,9 +28,6 @@ emacs/.emacs.d/straight/build-cache.el
 emacs/.emacs.d/straight/build/
 emacs/.emacs.d/straight/modified/
 emacs/.emacs.d/straight/repos/
-# npm tree installed by M-x copilot-install-server (copilot-install-dir
-# resolves here because init.el is symlinked out of this repo)
-emacs/.emacs.d/.cache/
 docs/_build/
 
 # Sphinx documentation

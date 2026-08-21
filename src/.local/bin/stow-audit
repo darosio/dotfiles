@@ -80,7 +80,18 @@ for dir in */; do
 
   out=$(stow --simulate --verbose=2 -t "$target" "$pkg" 2>&1)
   linked=$(printf '%s\n' "$out" | grep -c 'already points to')
-  blocked=$(printf '%s\n' "$out" | grep -c 'neither a link nor a directory')
+
+  # stow reports each blocked target once per pass, so count distinct paths;
+  # gitignored runtime state is skipped here for the same reason as below.
+  blocked=0
+  blocked_list=()
+  while IFS= read -r entry; do
+    [ -n "$entry" ] || continue
+    git check-ignore -q "$pkg/$entry" 2> /dev/null && continue
+    blocked=$((blocked + 1))
+    blocked_list+=("$entry")
+  done < <(printf '%s\n' "$out" | grep 'neither a link nor a directory' |
+    sed 's/.*existing target //; s/ since.*//' | sort -u)
 
   # Runtime state an application writes inside the package directory is
   # gitignored, never meant to be linked, and would otherwise read as drift:
@@ -114,8 +125,7 @@ for dir in */; do
     shadowed=$((shadowed + 1))
     printf '  SHADOWED %-20s %s real files where links belong\n' "$pkg" "$blocked"
     if [ "$verbose" -eq 1 ]; then
-      printf '%s\n' "$out" | grep 'neither a link nor a directory' |
-        sed 's/.*existing target //; s/ since.*//; s/^/             /'
+      printf '             %s\n' "${blocked_list[@]}"
     fi
   fi
 done
