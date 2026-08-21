@@ -29,8 +29,13 @@ if [ "$PROFILE_DIR" != "$KNOWN" ]; then
 fi
 
 # Stow user.js (symlink is safe — Zotero reads but never rewrites user.js).
+# prefs.js and treePrefs.json are excluded by zotero/.stow-local-ignore and
+# copied below instead: Zotero rewrites both, replacing any symlink.
 stow -t "$HOME" zotero
-cp --remove-destination zotero/.zotero/zotero/90bt0tu8.default/prefs.js ~/.zotero/zotero/90bt0tu8.default/prefs.js
+for f in prefs.js treePrefs.json; do
+  cp --remove-destination "zotero/.zotero/zotero/90bt0tu8.default/$f" \
+    "$HOME/.zotero/zotero/90bt0tu8.default/$f"
+done
 
 uv tool install zotero-mcp-server[semantic]
 

@@ -1,0 +1,7 @@
+# Files stow must not link, using stow's own mechanism (stow(8), "Ignore Lists").
+#
+# Zotero rewrites both at runtime, so a symlink is replaced by a real file on
+# the next launch. They live here to seed a fresh profile and are installed by
+# zotero.stow.sh with `cp --remove-destination`, not by stow.
+prefs\.js
+treePrefs\.json

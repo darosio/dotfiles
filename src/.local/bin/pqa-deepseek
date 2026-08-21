@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+#
+# pqa-deepseek -- run paper-qa against DeepSeek instead of the local Ollama.
+#
+#   pqa-deepseek ask "which chloride transporters set EGABA in immature neurons?"
+#   pqa-deepseek index
+#
+# paper-qa resolves settings by name from ~/.pqa/settings/<name>.json, so this is
+# `pqa -s deepseek` with a key attached. litellm reads the key through
+# os.environ/DEEPSEEK_API_KEY at call time, which keeps it out of the settings
+# file and out of this repository; the value comes from pass, the same entry
+# hermes-secrets reads.
+#
+# Embeddings stay on Ollama even in that profile: DeepSeek serves no embedding
+# endpoint, and keeping them local means the corpus is never uploaded, only the
+# excerpts the model is asked about. Use plain `pqa -s local` to keep everything
+# on this machine.
+set -euo pipefail
+
+key="${DEEPSEEK_API_KEY:-}"
+if [ -z "$key" ]; then
+  # `|| true`: under `set -e` with pipefail a failing pass would abort here,
+  # before the message below explains what to do about it.
+  key=$(PASSWORD_STORE_DIR="${PASSWORD_STORE_DIR:-$HOME/Sync/.pass}" \
+    pass show cloud/deepseek 2> /dev/null | head -n 1 || true)
+fi
+
+if [ -z "$key" ]; then
+  printf 'pqa-deepseek: no key. Set DEEPSEEK_API_KEY, or store it as: pass cloud/deepseek\n' >&2
+  exit 2
+fi
+
+DEEPSEEK_API_KEY="$key" exec pqa -s deepseek "$@"
