@@ -70,8 +70,8 @@
 (use-package quick-sdcv
   :straight (:host github :repo "jamescherti/quick-sdcv.el")
   :bind
-  ("<f7> S" . quick-sdcv-search-at-point)
-  ("<f7> s" . quick-sdcv-search-input)
+  ("<f7> s" . quick-sdcv-search-at-point)
+  ("<f7> S" . quick-sdcv-search-input)
   :custom
   (quick-sdcv-fold-on-search t)
   (quick-sdcv-unique-buffers t))

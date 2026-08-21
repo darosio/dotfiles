@@ -975,7 +975,6 @@
 (straight-use-package 'flyspell-correct)
 (straight-use-package 'consult-flyspell)
 (straight-use-package 'guess-language)
-(straight-use-package 'sdcv)
 (straight-use-package 'wordnut)
 (straight-use-package 'powerthesaurus)
 (require 'my-spell)
