@@ -1,0 +1,130 @@
+#!/usr/bin/env bash
+#
+# stow-audit -- find dotfiles packages that have drifted out of sync with $HOME.
+#
+#   stow-audit                 # packages needing attention, plus a summary
+#   stow-audit -v              # name the individual files, and list clean packages
+#   stow-audit -d ~/dotfiles -t /tmp/target
+#
+# WHY THIS EXISTS. Nothing re-stows a package when a file is added to it, so a
+# package stowed a year ago keeps whatever it had then: the new file sits in the
+# repo, is absent from $HOME, and nothing errors. goldendict's environment.d
+# entry was unstowed for four years that way, and fzf's the same, each failing
+# silently until something that needed them broke.
+#
+# WHAT IT REPORTS.
+#   PARTIAL   some of the package is linked, files added since are not. This is
+#             drift, it is what the tool is for, and it sets the exit status.
+#   SHADOWED  a real file sits where a link belongs. Sometimes deliberate --
+#             zotero.stow.sh copies treePrefs.json precisely because Zotero
+#             rewrites it at runtime -- so this is reported, never failed on.
+#   unstowed  nothing linked at all: usually a package for another host, or one
+#             installed by hand. Shown with -v.
+#
+# Runtime state at a path the package also owns (.emacs.d/straight/build-cache.el,
+# .cache/copilot) is stow's "not owned by stow" and is ignored: it is the normal
+# steady state of a config directory an application writes into.
+#
+# Exits 1 when any package is PARTIAL, so it can gate a sync or a backup.
+
+set -uo pipefail
+
+dotfiles="${DOTFILES_DIR:-$HOME/workspace/dotfiles}"
+target="$HOME"
+verbose=0
+
+usage() {
+  sed -n '3,27p' "$0" | sed 's/^# \{0,1\}//'
+}
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -v | --verbose) verbose=1 ;;
+    -d | --dotfiles)
+      dotfiles="${2:?--dotfiles needs a directory}"
+      shift
+      ;;
+    -t | --target)
+      target="${2:?--target needs a directory}"
+      shift
+      ;;
+    -h | --help)
+      usage
+      exit 0
+      ;;
+    *)
+      printf 'stow-audit: unknown argument %s\n' "$1" >&2
+      exit 2
+      ;;
+  esac
+  shift
+done
+
+cd "$dotfiles" 2> /dev/null || {
+  printf 'stow-audit: no dotfiles directory at %s\n' "$dotfiles" >&2
+  exit 2
+}
+
+partial=0
+shadowed=0
+unstowed=0
+clean=0
+
+for dir in */; do
+  pkg="${dir%/}"
+  # Root packages target / and need sudo; audit those separately.
+  case "$pkg" in 2root.* | 4root | docs | tests) continue ;; esac
+  # A stow package keeps its payload under dot-entries; anything else is source.
+  dotted=$(find "$pkg" -maxdepth 1 -name '.?*' -print -quit 2> /dev/null)
+  [ -n "$dotted" ] || continue
+
+  out=$(stow --simulate --verbose=2 -t "$target" "$pkg" 2>&1)
+  linked=$(printf '%s\n' "$out" | grep -c 'already points to')
+  blocked=$(printf '%s\n' "$out" | grep -c 'neither a link nor a directory')
+
+  # Runtime state an application writes inside the package directory is
+  # gitignored, never meant to be linked, and would otherwise read as drift:
+  # emacs keeps straight/build-cache.el and straight/modified/ there.
+  pending=0
+  pending_list=()
+  while IFS= read -r entry; do
+    [ -n "$entry" ] || continue
+    git check-ignore -q "$pkg/$entry" 2> /dev/null && continue
+    pending=$((pending + 1))
+    pending_list+=("$entry")
+  done < <(printf '%s\n' "$out" | grep '^LINK: ' | sed 's/^LINK: //; s/ =>.*//')
+
+  if [ "$pending" -gt 0 ] && [ "$linked" -gt 0 ]; then
+    partial=$((partial + 1))
+    printf '  PARTIAL  %-20s %s of %s entries never linked\n' \
+      "$pkg" "$pending" "$((pending + linked))"
+    if [ "$verbose" -eq 1 ]; then
+      printf '             %s\n' "${pending_list[@]}"
+    fi
+  elif [ "$pending" -gt 0 ]; then
+    unstowed=$((unstowed + 1))
+    [ "$verbose" -eq 1 ] &&
+      printf '  unstowed %-20s %s entries, none linked\n' "$pkg" "$pending"
+  else
+    clean=$((clean + 1))
+    [ "$verbose" -eq 1 ] && printf '  ok       %-20s\n' "$pkg"
+  fi
+
+  if [ "$blocked" -gt 0 ]; then
+    shadowed=$((shadowed + 1))
+    printf '  SHADOWED %-20s %s real files where links belong\n' "$pkg" "$blocked"
+    if [ "$verbose" -eq 1 ]; then
+      printf '%s\n' "$out" | grep 'neither a link nor a directory' |
+        sed 's/.*existing target //; s/ since.*//; s/^/             /'
+    fi
+  fi
+done
+
+printf '\n%d clean, %d partial, %d shadowed, %d unstowed (%s)\n' \
+  "$clean" "$partial" "$shadowed" "$unstowed" "$dotfiles"
+
+if [ "$partial" -gt 0 ]; then
+  printf '\nRe-stow a partial package to link what it gained:\n'
+  printf '  stow -t %s <package>\n' "$target"
+  exit 1
+fi
