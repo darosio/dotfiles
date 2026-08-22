@@ -3,15 +3,32 @@
 #
 # Managed files:
 #   user.js        — stowed (symlink); sets BBT auto-exports + citekey format
+#   prefs.js       — copied (not symlinked); Zotero rewrites it at runtime
 #   treePrefs.json — copied (not symlinked); Zotero overwrites it at runtime,
 #                    breaking symlinks. Re-run this script to restore columns.
+#   Both copies are excluded from stow by zotero/.stow-local-ignore.
 #
-# BBT citation key format: auth.capitalize + year2 + shorttitle(3)
-# Produces keys like: Alejaldre21MethodsEnzymeLibrary
+# BBT citation key format:
+#   auth.capitalize + year + "_" + authorLast(initials=true).capitalize
+# Produces keys like: Vehtari2017_Gabry, Colee2024_LeconteAM
+#
+# FILE LAYOUT. Identity lives in the directory, not the filename. Zotero names
+# the attachment from attachmentRenameTemplate, {{ title truncate="50" }}, and
+# ZotMoov then files it under the citation key:
+#
+#   ~/Sync/biblio/main/Vehtari2017_Gabry/Practical Bayesian model evaluat….pdf
+#
+# so a title can change, truncate or collide without breaking the link to the
+# bibliography, and one key can hold the paper, its supplement and its data.
+# ZotMoov settings that implement this (extensions.zotmoov.*): dst_dir =
+# ~/Sync/biblio/main, enable_subdir_move = true, subdirectory_string = {%b}.
+# The loose pdfs directly under main/ predate this and are a migration backlog.
 #
 # After first run / key format change:
 #   Zotero → Edit → Better BibTeX → Citation Keys → Refresh all keys
 #   Then re-trigger all auto-exports (Edit → Better BibTeX → Export).
+#   Refreshing rewrites every key, and therefore every citekey folder name and
+#   every citation already written elsewhere: change the format deliberately.
 
 yay -S --noconfirm zotero-bin
 
