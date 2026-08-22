@@ -11,7 +11,7 @@
 
 user_pref("ArtalkUser", '{"email":"darosio","name":"darosio"}');
 user_pref("extensions.ui.dictionary.hidden", false);
-user_pref("extensions.zotero.attachmentRenameTemplate", "{{ citationKey }}");
+user_pref("extensions.zotero.attachmentRenameTemplate", '{{ title truncate="50" }}');
 user_pref("extensions.zotero.autoRenameFiles.fileTypes", "application/pdf,application/epub+zip,image/,audio/,video/");
 user_pref("extensions.zotero.autoRenameFiles.linked", true);
 /* user_pref("extensions.zotero.automaticTags", false); */
@@ -37,8 +37,8 @@ user_pref("extensions.zotero.purge.tags", true);
 user_pref("extensions.zotero.sync.server.username", "darosio");
 user_pref("extensions.zotero.sync.storage.enabled", false);
 user_pref("extensions.zotero.translators.better-bibtex.autoExport.%2Fhome%2Fdan%2FSync%2Fbiblio%2Fmain%2ebib", "{\"path\":\"/home/dan/Sync/biblio/main.bib\",\"translatorID\":\"f895aa0d-f28e-47fe-b247-2ea77c6ed583\",\"type\":\"collection\",\"id\":9,\"status\":\"done\",\"error\":\"\",\"recursive\":false,\"updated\":1748595474149,\"enabled\":true,\"asciiBibLaTeX\":false,\"biblatexExtendedNameFormat\":true,\"DOIandURL\":\"both\",\"exportNotes\":true,\"useJournalAbbreviation\":false,\"biblatexAPA\":false,\"biblatexChicago\":false}");
-user_pref("extensions.zotero.translators.better-bibtex.citekeyFormat", "auth.capitalize + year2 + shorttitle(3)");
-user_pref("extensions.zotero.translators.better-bibtex.citekeyFormatEditing", "auth.capitalize + year2 + shorttitle(3)");
+user_pref("extensions.zotero.translators.better-bibtex.citekeyFormat", 'auth.capitalize + year + "_" + authorLast(initials=true).capitalize');
+user_pref("extensions.zotero.translators.better-bibtex.citekeyFormatEditing", 'auth.capitalize + year + "_" + authorLast(initials=true).capitalize');
 user_pref("extensions.zotero.translators.better-bibtex.extraMergeCSL", true);
 user_pref("extensions.zotero.translators.better-bibtex.extraMergeTeX", true);
 user_pref("extensions.zotero.translators.better-bibtex.keyConflictPolicy", "change");
