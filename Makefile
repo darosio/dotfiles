@@ -106,19 +106,31 @@ STRAIGHT_BATCH_ADVICE := (advice-add (quote straight--popup-raw) :override \
             (discard (funcall (nth 2 discard))) \
             (cancel (funcall (nth 2 cancel))) \
             (t (signal (quote quit) (list msg)))))))
+# If the build cache is missing/empty (or was wiped/corrupted), straight
+# thinks nothing changed and skips rebuilding, leaving stale byte-compiled
+# packages that reference old macros (e.g. compat's static-unless). Force a
+# full rebuild whenever that happens.
+STRAIGHT_CACHE_CHECK := (let ((cache (expand-file-name "straight/build-cache.el" user-emacs-directory))) \
+  (when (or (not (file-exists-p cache)) (= 0 (nth 7 (file-attributes cache)))) \
+    (message "BATCH: straight build cache missing or empty; forcing full rebuild") \
+    (straight-rebuild-all)))
 EMACS_BATCH = emacs --batch -l ~/.emacs.d/init.el
+# Bootstrap-only invocation: loads straight.el but not the rest of init.el, so
+# a broken package config (e.g. from a version bump) can't crash before
+# thaw/update/freeze maintenance even gets a chance to run and fix it.
+EMACS_BATCH_BOOTSTRAP = emacs --batch --eval '(progn (defvar bootstrap-version 7) (let ((bootstrap-file (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))) (load bootstrap-file nil (quote nomessage))))'
 
 test-emacs:  ## Run Emacs smoke tests
 	$(EMACS_BATCH) -l ~/.emacs.d/test/test.el
 
 update-emacs:  ## Thaw, pull, normalize, and check straight.el packages
-	$(EMACS_BATCH) --eval '(progn $(STRAIGHT_BATCH_ADVICE) (straight-thaw-versions) (straight-pull-all) (straight-normalize-all) (straight-check-all))'
+	$(EMACS_BATCH_BOOTSTRAP) --eval '(progn $(STRAIGHT_BATCH_ADVICE) (straight-thaw-versions) (straight-pull-all) (straight-normalize-all) $(STRAIGHT_CACHE_CHECK) (straight-check-all))'
 
 upgrade-emacs: update-emacs test-emacs  ## Full upgrade: update, smoke tests, freeze pins
-	$(EMACS_BATCH) --eval '(progn $(STRAIGHT_BATCH_ADVICE) (straight-freeze-versions))'
+	$(EMACS_BATCH_BOOTSTRAP) --eval '(progn $(STRAIGHT_BATCH_ADVICE) (straight-freeze-versions))'
 
 thaw-emacs:  ## Restore straight.el repos to match lockfile
-	$(EMACS_BATCH) --eval '(progn $(STRAIGHT_BATCH_ADVICE) (straight-thaw-versions) (straight-check-all))'
+	$(EMACS_BATCH_BOOTSTRAP) --eval '(progn $(STRAIGHT_BATCH_ADVICE) (straight-thaw-versions) $(STRAIGHT_CACHE_CHECK) (straight-check-all))'
 
 
 # Project cleanup
