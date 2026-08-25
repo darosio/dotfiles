@@ -1,4 +1,4 @@
-;;; early-init.el --- Initialization code run before `init.el'
+;;; early-init.el --- Initialization code run before `init.el' -*- lexical-binding: t; -*-
 
 ;;; Commentary:
 ;; This file contains initialization code that is run before `init.el` is loaded.
