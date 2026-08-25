@@ -126,10 +126,11 @@ desc = "Show Git-Annex total size (Human Readable)"
 [[mgr.prepend_keymap]]
 on = "<C-e>"
 run = '''shell --block --
-    # Yazi rewrites a literal %s in this command to the space-joined selected
-    # paths, which silently ate printf's format specifier and collapsed every
-    # selection into one path. Every printf format below is therefore written
-    # %%s, which yazi unescapes to %s before running the command.
+    # Yazi substitutes a literal %%s in this command with the (quoted,
+    # space-joined) selected paths. `set --` loads them into "$@" so the
+    # loop below can iterate over them safely regardless of spaces/special
+    # characters in filenames.
+    set -- %s
 
     # 1. Build an elisp list of the selected paths: ("/a/b" "/c/d").
     #    A list, not a comma-joined string, so a comma in a filename is safe.

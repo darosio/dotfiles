@@ -82,10 +82,9 @@ prepend_preloaders = [
   # Adobe Illustrator, Adobe Photoshop is image/adobe.photoshop, already handled above
   { mime = "application/postscript", run = "mediainfo" },
   # Office Documents
-  { mime = "application/openxmlformats-officedocument.*", run = "office" },
-  { mime = "application/oasis.opendocument.*", run = "office" },
-  { mime = "application/ms-*", run = "office" },
-  { mime = "application/msword", run = "office" },
+  # Combined into a single rule (was 4) to stay under yazi's 16-preloader cap,
+  # since yazi's own default preset now ships 8 preloaders.
+  { mime = "application/{openxmlformats-officedocument.*,oasis.opendocument.*,ms-*,msword}", run = "office" },
   { url = "*.docx", run = "office" },
 ]
 
