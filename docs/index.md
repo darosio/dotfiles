@@ -7,6 +7,7 @@
 installation
 usage
 emacs
+ai-tools-cheatsheet
 scripts
 submodules
 ```
