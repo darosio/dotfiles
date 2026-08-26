@@ -53,7 +53,7 @@ desc = "Open $SHELL here"
 # Copy selected files to the system clipboard while yanking
 [[mgr.prepend_keymap]]
 on = "Y"
-run = ['shell -- for path in "$@"; do echo "file://$path"; done | wl-copy -t text/uri-list', "yank"]
+run = ['shell -- set -- %s; for path in "$@"; do echo "file://$path"; done | wl-copy -t text/uri-list', "yank"]
 
 # smart-paste without entering destination folder
 [[mgr.prepend_keymap]]
@@ -96,13 +96,16 @@ desc = "Change permissions of selected files"
 # Ranger-style "Open with" (type command manually)
 [[mgr.prepend_keymap]]
 on = "o"
-run = 'shell --block --interactive --cursor=0 " \"$@\""'
+run = 'shell --block --interactive --cursor=0 " %s"'
 desc = "Open with (manual command)"
 
 [[mgr.prepend_keymap]]
 on = ["<A-TAB>"]
 run = '''shell --
 {
+  # 0. Load the selected paths into "$@" (see the C-e binding above for why).
+  set -- %s
+
   # 1. Run git annex info, suppress errors, capture output
   GIT_OUTPUT=$(git annex info --bytes --fast "$@" 2>/dev/null);
 

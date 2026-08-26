@@ -6,9 +6,9 @@ show_symlink = false
 
 [opener]
 # `run` fields use yazi's own opener placeholders (%s, %s1, ...), not shell
-# "$@" - yazi executes `run` directly, it does not exec it as an argv-taking
-# shell function, so a literal "$@" expands to nothing and openers silently
-# get zero paths.
+# "$@" - yazi only substitutes %-tokens into `run` before shell-executing it;
+# it never passes selected files as positional shell parameters, so a literal
+# "$@" has nothing to expand from and openers silently get zero paths.
 jupyter = [{ run = 'foot bash -c "jupyter-lab %s"', block = false, orphan = true, desc = "Jupyter" }]
 nbpeek = [{ run = 'jupyter nbconvert --to markdown %s --stdout | bat', block = true, desc = "Preview Notebook" }]
 csvlens = [{ run = 'csvlens %s', block = true, desc = "CSV Lens" }]
