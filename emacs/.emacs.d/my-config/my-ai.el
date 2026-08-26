@@ -469,91 +469,118 @@ Review and send with \\[gptel-send]."
   ;; --- Presets ---
   ;; my/ollama-model selects the appropriate local model per machine.
 
+  ;; Every preset below resets MCP tool registrations via `gptel-mcp-disconnect'
+  ;; before (re)connecting only the servers it needs, and declares an explicit,
+  ;; exclusive `:tools' list (never `:append') so that switching presets always
+  ;; yields exactly that preset's tool set, never a union with whatever was
+  ;; active before. See `gptel--modify-value': a plain (non-:append) `:tools'
+  ;; value fully replaces `gptel-tools', while `:append' merges onto the
+  ;; current value, which is how tools used to leak across preset switches.
+
   (gptel-make-preset 'writing
                      :description "Scientific writing - proposals, manuscripts"
                      :backend "Ollama" :model (my/ollama-model my/ollama-writing-model my/ollama-writing-fallback)
                      :system (alist-get 'writing gptel-directives)
-                     :pre (lambda () (gptel-mcp-connect '("pdf") 'sync))
-                     :tools '(:append ("zotero_lookup")))
+                     :pre (lambda () (gptel-mcp-disconnect) (gptel-mcp-connect '("pdf") 'sync))
+                     :tools '("zotero_lookup"))
 
   (gptel-make-preset 'brainstorm
                      :description "Scientific ideation - explore, challenge, connect"
                      :backend "Ollama" :model (my/ollama-model my/ollama-reasoning-model my/ollama-fast-model)
-                     :system (alist-get 'brainstorm gptel-directives))
+                     :system (alist-get 'brainstorm gptel-directives)
+                     :pre (lambda () (gptel-mcp-disconnect))
+                     :tools nil)
 
   (gptel-make-preset 'coding
-                     :description "Coding - refactor, review, buffer editing"
+                     :description "Coding - refactor, review, buffer editing, repo + GitHub + docs via MCP"
                      :backend "Ollama" :model (my/ollama-model my/ollama-writing-model my/ollama-writing-fallback)
                      :system (alist-get 'coding gptel-directives)
-                     :tools '("read_buffer" "EditBuffer"))
+                     :pre (lambda () (gptel-mcp-disconnect)
+                            (gptel-mcp-connect '("filesystem" "github" "context7") 'sync))
+                     ;; `:append' is intentional here: `:pre' just reset MCP tools to
+                     ;; exactly filesystem+github+context7, so this only adds the
+                     ;; buffer-local tools on top of that known-clean base.
+                     :tools '(:append ("read_buffer" "EditBuffer")))
 
   (gptel-make-preset 'review
                      :description "Critical peer review - gaps, controls, statistics"
                      :backend "Ollama" :model (my/ollama-model my/ollama-writing-model my/ollama-writing-fallback)
-                     :system (alist-get 'review gptel-directives))
+                     :system (alist-get 'review gptel-directives)
+                     :pre (lambda () (gptel-mcp-disconnect))
+                     :tools nil)
 
   (gptel-make-preset 'reasoning
                      :description "Deep reasoning - chain-of-thought, hard problems"
-                     :backend "Ollama" :model (my/ollama-model my/ollama-reasoning-model my/ollama-fast-model))
+                     :backend "Ollama" :model (my/ollama-model my/ollama-reasoning-model my/ollama-fast-model)
+                     :pre (lambda () (gptel-mcp-disconnect))
+                     :tools nil)
 
   (gptel-make-preset 'fast
                      :description "Fast iteration - MoE, low latency"
-                     :backend "Ollama" :model (my/ollama-model my/ollama-fast-model my/ollama-fast-fallback))
+                     :backend "Ollama" :model (my/ollama-model my/ollama-fast-model my/ollama-fast-fallback)
+                     :pre (lambda () (gptel-mcp-disconnect))
+                     :tools nil)
 
   (gptel-make-preset 'math
                      :description "Math / science reasoning"
-                     :backend "Ollama" :model (my/ollama-model my/ollama-math-model))
+                     :backend "Ollama" :model (my/ollama-model my/ollama-math-model)
+                     :pre (lambda () (gptel-mcp-disconnect))
+                     :tools nil)
 
   (gptel-make-preset 'vision
                      :description "Multimodal / vision"
-                     :backend "Ollama" :model (my/ollama-model my/ollama-vision-model my/ollama-writing-fallback))
+                     :backend "Ollama" :model (my/ollama-model my/ollama-vision-model my/ollama-writing-fallback)
+                     :pre (lambda () (gptel-mcp-disconnect))
+                     :tools nil)
 
   (gptel-make-preset 'copilot
                      :description "GitHub Copilot cloud backend"
-                     :backend "Copilot")
+                     :backend "Copilot"
+                     :pre (lambda () (gptel-mcp-disconnect))
+                     :tools nil)
 
   (gptel-make-preset 'search
                      :description "Web search - SearxNG + fetch via MCP"
                      :backend "Ollama" :model (my/ollama-model my/ollama-fast-model my/ollama-fast-fallback)
                      :system "Use the provided tools to search the web for up-to-date information. Always cite sources with URL and title."
-                     :pre (lambda () (gptel-mcp-connect '("searxng" "fetcher") 'sync))
-                     :tools '(:append ("searxng_web_search" "web_url_read" "fetch_url")))
+                     :pre (lambda () (gptel-mcp-disconnect) (gptel-mcp-connect '("searxng" "fetcher") 'sync))
+                     :tools '("searxng_web_search" "web_url_read" "fetch_url"))
 
   (gptel-make-preset 'search-science
                      :description "Scientific literature search - PubMed / arXiv / Scholar via MCP"
                      :backend "Ollama" :model (my/ollama-model my/ollama-fast-model my/ollama-fast-fallback)
                      :system "You are a scientific literature assistant. Use searxng_web_search to find peer-reviewed literature. Prefer PubMed, arXiv, Google Scholar, and Semantic Scholar.\n\nFor each paper found:\n1. Extract the DOI from the result URL or metadata\n2. Call zotero_lookup with the DOI — if found, cite as [cite:@Key]\n3. If not in Zotero, report it as: DOI: 10.xxxx/xxx (user will add it to Zotero manually)\n\nHighlight knowledge gaps and translational relevance. Never invent citations."
-                     :pre (lambda () (gptel-mcp-connect '("searxng" "fetcher" "pdf" "zotero") 'sync))
-                     :tools '(:append ("searxng_web_search" "web_url_read" "fetch_url"
-                                       "zotero_lookup" "zotero_search_items" "zotero_get_item_fulltext")))
+                     :pre (lambda () (gptel-mcp-disconnect) (gptel-mcp-connect '("searxng" "fetcher" "pdf" "zotero") 'sync))
+                     :tools '("searxng_web_search" "web_url_read" "fetch_url"
+                              "zotero_lookup" "zotero_search_items" "zotero_get_item_fulltext"))
 
   (gptel-make-preset 'grant
                      :description "Grant writing - lit search + structured proposal sections"
                      :backend "Ollama" :model (my/ollama-model my/ollama-writing-model my/ollama-writing-fallback)
                      :system (alist-get 'proposal gptel-directives)
-                     :pre (lambda () (gptel-mcp-connect '("searxng" "fetcher" "pdf" "zotero") 'sync))
-                     :tools '(:append ("searxng_web_search" "web_url_read" "fetch_url"
-                                       "zotero_lookup" "zotero_search_items" "zotero_get_item_fulltext")))
+                     :pre (lambda () (gptel-mcp-disconnect) (gptel-mcp-connect '("searxng" "fetcher" "pdf" "zotero") 'sync))
+                     :tools '("searxng_web_search" "web_url_read" "fetch_url"
+                              "zotero_lookup" "zotero_search_items" "zotero_get_item_fulltext"))
 
   (gptel-make-preset 'grant-landscape
                      :description "Grant landscape - funders, calls, competing awards via Exa (semantic web search)"
                      :backend "Ollama" :model (my/ollama-model my/ollama-writing-model my/ollama-writing-fallback)
                      :system "You are a research funding analyst. Use Exa's web search and fetch tools to find funding-agency calls, program priorities, and comparable or competing awarded grants (e.g. NIH RePORTER, CORDIS, ERC, national funders). This is landscape and competitive-intelligence research, not peer-reviewed literature — do not treat results as citable scientific sources or route them through Zotero. Report the source URL and publication/award date for every claim. Flag anything that looks outdated or unconfirmed."
-                     :pre (lambda () (gptel-mcp-connect '("exa") 'sync))
-                     :tools '(:append ("web_search_exa" "web_fetch_exa")))
+                     :pre (lambda () (gptel-mcp-disconnect) (gptel-mcp-connect '("exa") 'sync))
+                     :tools '("web_search_exa" "web_fetch_exa"))
 
   (gptel-make-preset 'pdf
                      :description "Local PDF reader - extract text, cite via MCP"
                      :backend "Ollama" :model (my/ollama-model my/ollama-fast-model my/ollama-fast-fallback)
                      :system "You have access to read_pdf, extract_doi, and zotero_lookup tools.\n\nCitation workflow:\n1. Call read_pdf with the absolute path — the header shows filename, pages, and DOI if found\n2. Call zotero_lookup with the DOI (and/or filename) to find the entry in your Zotero library\n3. If found, cite as [cite:@Key]\n4. If not found, report: DOI: 10.xxxx/xxx (user will add it to Zotero manually)\n\nNever invent citations."
-                     :pre (lambda () (gptel-mcp-connect '("pdf") 'sync)))
+                     :pre (lambda () (gptel-mcp-disconnect) (gptel-mcp-connect '("pdf") 'sync)))
 
   (gptel-make-preset 'pdf-science
                      :description "PDF + literature search - read papers, search, cite"
                      :backend "Ollama" :model (my/ollama-model my/ollama-fast-model my/ollama-fast-fallback)
                      :system "You are a scientific research assistant with PDF reading and web search tools.\n\nFor PDFs:\n1. Call read_pdf to extract text (DOI appears in the header)\n2. Call zotero_lookup with the DOI and/or filename\n3. If found, cite as [cite:@Key]; if not found, report: DOI: 10.xxxx/xxx\n\nFor web search:\n1. Use searxng_web_search — prefer PubMed, arXiv, Google Scholar, Semantic Scholar\n2. Extract the DOI; call zotero_lookup — cite as [cite:@Key] if found, else report the DOI\n\nNever invent citations. Never invent citation keys."
-                     :pre (lambda () (gptel-mcp-connect '("pdf" "searxng" "fetcher") 'sync))
-                     :tools '(:append ("searxng_web_search" "web_url_read" "fetch_url" "zotero_lookup")))
+                     :pre (lambda () (gptel-mcp-disconnect) (gptel-mcp-connect '("pdf" "searxng" "fetcher") 'sync))
+                     :tools '("searxng_web_search" "web_url_read" "fetch_url" "zotero_lookup"))
 
   :hook
   ((gptel-mode . visual-line-mode)
