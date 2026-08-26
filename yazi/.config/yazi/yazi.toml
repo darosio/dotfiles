@@ -5,21 +5,25 @@ linemode = "size"
 show_symlink = false
 
 [opener]
-jupyter = [{ run = 'foot bash -c "jupyter-lab \"$@\""', block = false, orphan = true, desc = "Jupyter" }]
-nbpeek = [{ run = 'jupyter nbconvert --to markdown "$@" --stdout | bat', block = true, desc = "Preview Notebook" }]
-csvlens = [{ run = 'csvlens "$@"', block = true, desc = "CSV Lens" }]
-browser = [{ run = 'firefox "$@"', orphan = true, desc = "Firefox" }]
+# `run` fields use yazi's own opener placeholders (%s, %s1, ...), not shell
+# "$@" - yazi executes `run` directly, it does not exec it as an argv-taking
+# shell function, so a literal "$@" expands to nothing and openers silently
+# get zero paths.
+jupyter = [{ run = 'foot bash -c "jupyter-lab %s"', block = false, orphan = true, desc = "Jupyter" }]
+nbpeek = [{ run = 'jupyter nbconvert --to markdown %s --stdout | bat', block = true, desc = "Preview Notebook" }]
+csvlens = [{ run = 'csvlens %s', block = true, desc = "CSV Lens" }]
+browser = [{ run = 'firefox %s', orphan = true, desc = "Firefox" }]
 edit = [
   # orphan: $EDITOR is `emacsclient -c`, whose frame must outlive yazi
-  { run = '$EDITOR "$@"', block = false, orphan = true, desc = "Terminal Editor" },
-  { run = 'gvim "$@"', orphan = true, desc = "GV Vim" },
+  { run = '$EDITOR %s', block = false, orphan = true, desc = "Terminal Editor" },
+  { run = 'gvim %s', orphan = true, desc = "GV Vim" },
 ]
 open = [
-  { run = 'handlr open "$@"', desc = "Open" },
-  { run = 'handlr open -e true "$@"', desc = "Open menu" },
+  { run = 'handlr open %s', desc = "Open" },
+  { run = 'handlr open -e true %s', desc = "Open menu" },
 ]
 manual = [
-  { run = 'ya emit shell --block --interactive --cursor=0 " \"$@\""', desc = "Manual" },
+  { run = 'ya emit shell --block --interactive --cursor=0 " %s"', desc = "Manual" },
 ]
 
 [open]
