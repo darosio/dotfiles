@@ -171,26 +171,36 @@ If FBK ever enables app passwords, adding an msmtp account is straightforward:
 
 #### gptel Presets
 
-Presets select backend, model, system prompt, and tools in one step.
-Activate via `gptel-menu` (`<Launch5> m`) or type `@preset-name` in the prompt.
+Presets bundle a system prompt with the tools that prompt needs. Models and
+backends are picked separately in `gptel-menu` (`-m` / `-b`), so there are no
+model-only presets.
+
+**Load a preset with `@` inside `gptel-menu`** (`<Launch5> m`, then `@` —
+`gptel-preset`). Typing `@preset-name` in the *prompt text* is a different
+mechanism: gptel applies it at request time inside a throwaway prompt buffer
+(`gptel--transform-apply-preset`), so it configures that one request only — it
+never changes the buffer's `gptel-tools`, and the tool menu will not list its
+tools.
+
 Host-specific model overrides apply automatically on `whisker` (laptop).
 
-| Preset           | Model                 | Tools                               | Notes                                            |
-| ---------------- | --------------------- | ----------------------------------- | ------------------------------------------------ |
-| `writing`        | qwen3.6:27b           | `zotero_lookup`                     | Formal academic prose + citations                |
-| `brainstorm`     | qwen3.6:27b           | —                                   | Challenge assumptions; use thinking when needed  |
-| `coding`         | qwen3.6:27b           | `read_buffer`, `EditBuffer`         | Refactor, review, buffer editing                 |
-| `review`         | qwen3.6:27b           | —                                   | Peer-review style critique                       |
-| `reasoning`      | qwen3.6:27b           | —                                   | Deep reasoning; enable thinking mode when needed |
-| `fast`           | qwen3.6:35b-a3b (MoE) | —                                   | Fast iteration                                   |
-| `math`           | phi4-reasoning:plus   | —                                   | Math / science reasoning                         |
-| `vision`         | qwen3-vl:32b          | —                                   | Multimodal / image input                         |
-| `search`         | qwen3.6:35b-a3b       | SearxNG + fetcher                   | General web search                               |
-| `search-science` | qwen3.6:35b-a3b       | SearxNG + fetcher + `zotero_lookup` | PubMed/arXiv + Zotero citation                   |
-| `grant`          | qwen3.6:27b           | SearxNG + fetcher + `zotero_lookup` | Grant writing, structured sections               |
-| `pdf`            | qwen3.6:35b-a3b       | `read_pdf`, `zotero_lookup`         | Read + cite a local PDF                          |
-| `pdf-science`    | qwen3.6:35b-a3b       | All above                           | PDF + broader literature search                  |
-| `copilot`        | —                     | —                                   | GitHub Copilot cloud backend                     |
+| Preset            | Model           | Tools                                   | Notes                                           |
+| ----------------- | --------------- | --------------------------------------- | ----------------------------------------------- |
+| `writing`         | qwen3.8:latest  | `zotero_lookup`                         | Formal academic prose + citations               |
+| `brainstorm`      | qwen3.8:latest  | —                                       | Challenge assumptions; use thinking when needed |
+| `review`          | qwen3.8:latest  | —                                       | Peer-review style critique                      |
+| `coding`          | qwen3.8:latest  | filesystem + GitHub + context7, buffers | Refactor, review, buffer editing                |
+| `search`          | qwen3.6:35b-a3b | SearxNG + fetcher                       | General web search                              |
+| `search-science`  | qwen3.6:35b-a3b | SearxNG + fetcher + PDF + Zotero        | Papers and local PDFs, cited via Zotero         |
+| `grant`           | qwen3.8:latest  | same as `search-science`                | Grant writing, structured sections              |
+| `grant-landscape` | qwen3.8:latest  | Exa search + fetch                      | Funders, calls, competing awards                |
+| `pdf`             | qwen3.6:35b-a3b | `read_pdf`, `extract_doi`, Zotero       | Read + cite one local PDF                       |
+| `copilot`         | —               | —                                       | GitHub Copilot cloud backend                    |
+
+Need a different model? Pick it with `-m` in `gptel-menu`; it composes with any
+preset. `qwen3.8:latest` covers maths (thinking mode) and images (real CLIP
+projector), so the old `phi4-reasoning:plus` and `qwen3-vl:32b` specialists were
+removed — both were slower than qwen3.8 at their own speciality.
 
 #### MCP Tools
 
@@ -222,6 +232,15 @@ searxng_web_search(query) or read_pdf(path)
 ```
 
 Zotero's BetterBibTeX plugin auto-exports to `~/Sync/biblio/main.bib`.
+
+**Give PDFs to the model as a path, not as context.** `gptel-add-file` refuses
+binary files unless the model declares the `media` capability *and* the file's
+MIME type (`gptel-context--add-binary-file`), and no Ollama model here declares
+either — `get-ollama-models` returns bare model names with no `:capabilities`.
+So attaching a PDF to `@grant` or `@writing` silently logs *"Ignoring
+unsupported binary file"* and the model never sees it. Paste the absolute path
+instead and let `read_pdf` fetch the text; that path also keeps the PDF out of
+the context window until the model actually asks for it.
 `org-cite-global-bibliography` is set to that file — `citar-insert-citation`
 works for any paper already in Zotero.
 
@@ -230,6 +249,8 @@ works for any paper already in Zotero.
 `<Launch5> l` → `my/literature-scan` — prompts for a topic, opens a dedicated
 `*literature-scan: <topic>*` org buffer pre-filled with `@search-science` and the
 literature synthesis template. Review and send with `<Launch5> <Launch5>`.
+The `@search-science` here is the request-time form on purpose: it applies to
+that scan's request without changing the rest of the session.
 
 #### Vane Search (AI-powered web search)
 
@@ -270,7 +291,7 @@ Read the PDF at ~/papers/ChlorON_review_2024.pdf.
 Summarize the key findings related to pH independence. Cite the paper.
 ```
 
-**State-of-the-art section** (`pdf-science` or `grant` preset):
+**State-of-the-art section** (`search-science` or `grant` preset):
 
 ```
 Search recent literature on pH-independent chloride biosensors.
@@ -278,7 +299,7 @@ Read any relevant review PDFs I provide.
 Write a State of the Art section with org-cite citations.
 ```
 
-**Multi-PDF extraction** (`pdf-science` preset — add files first with `<Launch5> c A`):
+**Multi-PDF extraction** (`search-science` preset — add files first with `<Launch5> c A`):
 
 ```
 Read the PDFs I have added to context and extract for each:
@@ -331,23 +352,25 @@ ______________________________________________________________________
 
 ### Model Roster
 
-| Model                    | Role                                                                         |
-| ------------------------ | ---------------------------------------------------------------------------- |
-| `qwen3.6:27b`            | Primary dense local model. Writing, coding, and reasoning with thinking mode |
-| `qwen3.6:35b-a3b`        | Fast MoE default. Agentic sessions, search, and laptop-friendly reasoning    |
-| `phi4-reasoning:plus`    | 11 GB, strong math/science reasoning                                         |
-| `glm-4.7-flash:q4_K_M`   | Best tool-calling fallback if qwen3.6 has multi-turn errors                  |
-| `ministral-3:14b`        | Fast lightweight general inference                                           |
-| `qwen3-vl:32b`           | Multimodal / vision                                                          |
-| `qwen3-embedding:latest` | Best local embedding — Khoj RAG                                              |
-| `deepseek-ocr:latest`    | OCR on scanned PDFs                                                          |
-| `gemma4:e4b`             | Small fallback with native multimodal/tool support                           |
-| `devstral:latest`        | Agentic coding: multi-step planning, review, translation                     |
-| `magistral:latest`       | Mistral reasoning model                                                      |
-| All `:cloud` models      | Zero disk cost — keep all                                                    |
+| Model                    | Role                                                                              |
+| ------------------------ | --------------------------------------------------------------------------------- |
+| `qwen3.8:latest`         | Primary dense local model. Writing, coding, reasoning; 58.7 tok/s, terse thinking |
+| `qwen3.6:27b`            | Superseded by qwen3.8 — same class but 23.0 tok/s and much more verbose reasoning |
+| `gpt-oss:latest`         | 13 GB, 97 tok/s, terse reasoner — best size/speed ratio here                      |
+| `gemma4:26b`             | Fastest local model measured, 113 tok/s (prefer over `gemma4:31b`, 9.6 tok/s)     |
+| `qwen3.6:35b-a3b`        | Fast MoE default. Agentic sessions, search, and laptop-friendly reasoning         |
+| `glm-4.7-flash:q4_K_M`   | Best tool-calling fallback if qwen3.6 has multi-turn errors                       |
+| `ministral-3:14b`        | Fast lightweight general inference                                                |
+| `qwen3-embedding:latest` | Best local embedding — Khoj RAG                                                   |
+| `deepseek-ocr:latest`    | OCR on scanned PDFs                                                               |
+| `gemma4:e4b`             | Small fallback with native multimodal/tool support                                |
+| `devstral:latest`        | Agentic coding, but only 20.2 tok/s — slower than every general model here        |
+| `magistral:latest`       | Advertises tools but emitted none after 12k chars of thinking — avoid for gptel   |
+| `minimax-m3:cloud`       | Only `:cloud` entry still live (verified 2026-08-27) — zero disk cost             |
+| Other `:cloud` models    | Retired or subscription-gated; still listed in `gptel-menu -m` and fail on use    |
 
 Models that **support tools** (for Claude Code / gptel):
-`qwen3.6:27b`, `qwen3.6:35b-a3b`, `glm-4.7-flash`, `gemma4:e4b`, `ministral-3:14b`
+`qwen3.8:latest`, `qwen3.6:27b`, `qwen3.6:35b-a3b`, `glm-4.7-flash`, `gemma4:e4b`, `ministral-3:14b`
 
 Models that do **not** support tools: some reasoning-first DeepSeek variants, `deepseek-v3` variants
 
@@ -372,24 +395,24 @@ ollama launch claude --model qwen3.6:35b-a3b
 
 ### Daily Workflow
 
-| Activity                   | Primary tool                                       | Secondary                            |
-| -------------------------- | -------------------------------------------------- | ------------------------------------ |
-| Read a new paper           | `pdfllm "instruction"`                             | Khoj for cross-paper search          |
-| Write proposals/grants     | gptel `@grant`                                     | `fabric --pattern improve_writing`   |
-| Scientific brainstorm      | gptel `@brainstorm`                                | cogito:671b-cloud                    |
-| Literature synthesis       | `<Launch5> l`                                      | gptel `@search-science`              |
-| Local web search (AI)      | `<Launch5> v` (Vane)                               | Vane browser tab                     |
-| Current web info           | Perplexica                                         | Gemini CLI (1M context)              |
-| Coding inline              | `copilot.el`                                       | —                                    |
-| Coding discussion/fix      | gptel in Emacs                                     | —                                    |
-| Multi-file refactor        | Claude Code + qwen3.6:27b                          | OpenCode                             |
-| Shell pipelines            | `llm`                                              | `fabric` patterns                    |
-| Cross-document retrieval   | Khoj (`M-s M-k`)                                   | `llm-rag`                            |
-| OCR on scanned PDFs        | `deepseek-ocr` via Ollama                          | `pymupdf`                            |
-| -------------------------- | -------------------------------------------        | ------------------------------------ |
-| Design experiments         | `qwen3.6:27b` (+ thinking) + `phi4-reasoning:plus` | Reasoning + quantitative             |
-| Protein design             | ESM3 + RFdiffusion (not Ollama)                    | Specialized tools required           |
-| -------------------------- | -------------------------------------------        | ------------------------------------ |
+| Activity                   | Primary tool                                | Secondary                            |
+| -------------------------- | ------------------------------------------- | ------------------------------------ |
+| Read a new paper           | `pdfllm "instruction"`                      | Khoj for cross-paper search          |
+| Write proposals/grants     | gptel `@grant`                              | `fabric --pattern improve_writing`   |
+| Scientific brainstorm      | gptel `@brainstorm`                         | minimax-m3:cloud                     |
+| Literature synthesis       | `<Launch5> l`                               | gptel `@search-science`              |
+| Local web search (AI)      | `<Launch5> v` (Vane)                        | Vane browser tab                     |
+| Current web info           | Perplexica                                  | Gemini CLI (1M context)              |
+| Coding inline              | `copilot.el`                                | —                                    |
+| Coding discussion/fix      | gptel in Emacs                              | —                                    |
+| Multi-file refactor        | Claude Code + qwen3.8:latest                | OpenCode                             |
+| Shell pipelines            | `llm`                                       | `fabric` patterns                    |
+| Cross-document retrieval   | Khoj (`M-s M-k`)                            | `llm-rag`                            |
+| OCR on scanned PDFs        | `deepseek-ocr` via Ollama                   | `pymupdf`                            |
+| -------------------------- | ------------------------------------------- | ------------------------------------ |
+| Design experiments         | `qwen3.8:latest` (+ thinking)               | Reasoning + quantitative             |
+| Protein design             | ESM3 + RFdiffusion (not Ollama)             | Specialized tools required           |
+| -------------------------- | ------------------------------------------- | ------------------------------------ |
 
 #### Web search
 

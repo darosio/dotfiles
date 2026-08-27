@@ -37,25 +37,45 @@
   "Lightweight Ollama fallback model.")
 
 (defconst my/ollama-fast-model 'qwen3.6:35b-a3b
-  "Fast general-purpose Ollama model.")
+  "Fast general-purpose Ollama model.
+
+Deliberately still the MoE: only ~3B parameters are active per token, so it
+generates at 106 tok/s against qwen3.8's 58.7. It is the right pick where
+throughput dominates (agentic loops, search); qwen3.8 wins on total latency
+for short tool-calling turns because it emits far fewer tokens.")
 
 (defconst my/ollama-fast-fallback 'qwen3.5:4b
   "Fallback fast Ollama model for smaller hosts.")
 
-(defconst my/ollama-writing-model 'qwen3.6:27b
-  "Primary Ollama model for writing/coding tasks.")
+(defconst my/ollama-writing-model 'qwen3.8:latest
+  "Primary Ollama model for writing/coding tasks.
+
+Replaced qwen3.6:27b (2026-08-27). Same class — dense ~27B, Q4_K_M, 262144
+context, tools + thinking — but measured on a tool-calling turn it runs at
+58.7 tok/s against 23.0, and reasons far more tersely (94 vs 610 characters
+of thinking), so ~8x better wall-clock. It also ships a real CLIP projector,
+which qwen3.6:27b advertises but does not carry. Needs ollama >= 0.32.12.
+
+`:latest' is a floating tag, unlike the pinned tags elsewhere here; it is the
+only one published for this model so far.")
 
 (defconst my/ollama-writing-fallback 'gemma4:e4b
   "Fallback Ollama model for writing/coding tasks.")
 
-(defconst my/ollama-reasoning-model 'qwen3.6:27b
-  "Primary local reasoning model; enable thinking mode when needed.")
+(defconst my/ollama-reasoning-model 'qwen3.8:latest
+  "Primary local reasoning model; enable thinking mode when needed.
+See `my/ollama-writing-model' for why this is no longer qwen3.6:27b.")
 
-(defconst my/ollama-math-model 'phi4-reasoning:plus
-  "Primary local math/science reasoning model.")
+(defconst my/ollama-vision-model 'qwen3.8:latest
+  "Primary local multimodal model.
 
-(defconst my/ollama-vision-model 'qwen3-vl:32b
-  "Primary local multimodal model.")
+Replaced qwen3-vl:32b (2026-08-27), which was 20GB for strictly worse
+behaviour: on the same generated test image both read it correctly (red
+circle, blue square, the text \"K=47\"), but qwen3-vl needed 41.9s against
+22.4s, and 4.9 tok/s against 62.6 on a tool-calling turn. qwen3.8 carries a
+real CLIP projector, so this is the same model as
+`my/ollama-writing-model' on purpose — the constant is kept to name the
+role, not to point somewhere different.")
 
 (defconst my/ollama-embedding-model "qwen3-embedding:latest"
   "Primary local embedding model shared with Vane and Khoj.")
@@ -390,12 +410,15 @@ Review and send with \\[gptel-send]."
         gptel-backend
         (gptel-make-ollama "Ollama"
           :stream t :host my/ollama-host
+          ;; `delete-dups' because the writing and vision roles now resolve to
+          ;; the same model; a duplicated entry shows up twice in the menu.
           :models (if my/on-whisker
-                      `(,my/ollama-light-model
-                        ,my/ollama-fast-model
-                        ,my/ollama-writing-model
-                        ,my/ollama-writing-fallback
-                        ,my/ollama-vision-model)
+                      (delete-dups
+                       (list my/ollama-light-model
+                             my/ollama-fast-model
+                             my/ollama-writing-model
+                             my/ollama-writing-fallback
+                             my/ollama-vision-model))
                     (get-ollama-models)))
         gptel-display-buffer-action '((display-buffer-full-frame))
         ;; org-cite: all Zotero Better BibTeX auto-exports are the primary bibliography
@@ -460,13 +483,13 @@ Review and send with \\[gptel-send]."
   (setq gptel-directives
         '((default    . "You are a helpful assistant. Be concise and precise.")
           (biophysics . "You are a biophysicist assistant. Be precise about units, statistics, and experimental methodology.")
-          (proposal   . "You are helping write a scientific grant proposal. Use formal academic language. Flag speculative claims. Be precise and quantitative. Follow the structure provided in the user's prompt or context — do not impose a default structure.\n\nFor citations: call zotero_lookup with the DOI — if found, cite as [cite:@Key]; if not, report: DOI: 10.xxxx/xxx (user will add it manually). Never invent citation keys.")
+          (proposal   . "You are helping write a scientific grant proposal. Use formal academic language. Flag speculative claims. Be precise and quantitative. Follow the structure provided in the user's prompt or context — do not impose a default structure.")
           (brainstorm . "You are a creative scientific collaborator. Challenge assumptions. Suggest unexpected angles. Think across disciplines. Propose unexpected connections and alternative hypotheses. Be explicit about uncertainty and speculation.")
           (review     . "You are a critical peer reviewer. Identify logical gaps, missing controls, unsupported claims, and statistical issues. Be constructive but thorough.")
-          (writing    . "You are helping a biophysicist write scientific documents. Use formal academic language. Structure arguments clearly. Flag speculative claims. Prefer precise quantitative statements over vague qualitative ones.\n\nFor citations: call zotero_lookup with the DOI — if found, cite as [cite:@Key]; if not, report: DOI: 10.xxxx/xxx (user will add it manually). Never invent citation keys.")
+          (writing    . "You are helping a biophysicist write scientific documents. Use formal academic language. Structure arguments clearly. Flag speculative claims. Prefer precise quantitative statements over vague qualitative ones.")
           (coding     . "You are an expert coding assistant. Provide high-quality code solutions, refactorings, and explanations. Prefer clarity over cleverness.")))
 
-  ;; --- Presets ---
+  ;; --- Preset helpers ---
   ;; my/ollama-model selects the appropriate local model per machine.
 
   (defun my/gptel-mcp-reset-tools ()
@@ -484,118 +507,222 @@ ad hoc outside of a preset. This wrapper only calls
                     gptel--known-tools)
       (gptel-mcp-disconnect)))
 
-  ;; Every preset below resets MCP tool registrations via `my/gptel-mcp-reset-tools'
-  ;; before (re)connecting only the servers it needs, and declares an explicit,
-  ;; exclusive `:tools' list (never `:append') so that switching presets always
-  ;; yields exactly that preset's tool set, never a union with whatever was
-  ;; active before. See `gptel--modify-value': a plain (non-:append) `:tools'
-  ;; value fully replaces `gptel-tools', while `:append' merges onto the
-  ;; current value, which is how tools used to leak across preset switches.
+  (defun my/gptel-mcp-reap-dead-servers ()
+    "Mark MCP servers whose process has died as stopped.
+
+`mcp--status' is only ever set to `stop' by `mcp-stop-server', so a
+server whose process died keeps the status `connected' forever.  That
+stale status is load-bearing in two places: `gptel-mcp-connect' decides
+a server needs no restart when its status is `connected', and
+`gptel-mcp--get-tools' returns a server's cached tool list under the
+same condition.  A dead-but-`connected' entry therefore gets its tools
+re-registered without the process ever being restarted, and every tool
+call then fails silently.
+
+Stopping the dead ones here makes `mcp--server-running-p' return nil for
+them, so the next `gptel-mcp-connect' actually restarts them.  Live
+servers are never touched, which is the property `my/gptel-mcp-reset-tools'
+exists to protect."
+    (when (boundp 'mcp-server-connections)
+      (maphash (lambda (name conn)
+                 (when (and conn (not (jsonrpc-running-p conn)))
+                   (mcp-stop-server name)))
+               mcp-server-connections)))
+
+  (defun my/gptel-tools-if-available (names)
+    "Return a `:tools' spec resolving to whichever of NAMES are available.
+
+Unlike a plain `:tools' list, this never signals a `user-error' if one
+of NAMES fails to resolve (e.g. its MCP server failed to start/connect
+this time) — it drops that tool instead of aborting the whole preset
+application (which would otherwise leave `gptel-tools' and the system
+prompt out of sync: `:system' is applied before `:tools', so a `:tools'
+error still leaves the new system prompt in place with the OLD tool set).
+
+Dropped tools are reported via `message'. The usual cause is an MCP
+server that failed to start or connect, and a silently empty tool set is
+indistinguishable from a preset that deliberately asks for no tools."
+    (list :function
+          (lambda (_current)
+            (let* ((found (seq-filter (lambda (name) (ignore-errors (gptel-get-tool name)))
+                                      names))
+                   (missing (seq-difference names found)))
+              (when missing
+                (message "gptel preset: %d tool(s) unavailable (MCP server not connected?): %s"
+                         (length missing) (string-join missing ", ")))
+              found))))
+
+  (defun my/gptel-mcp-pre (&rest servers)
+    "Return a preset `:pre' function that connects exactly SERVERS.
+
+Every preset below uses this, so applying a preset first unregisters the
+MCP tools of the previously active one and then connects only the servers
+it needs.  Together with each preset's explicit, exclusive `:tools' list
+\(never `:append', and resolved leniently via `my/gptel-tools-if-available')
+this means switching presets always yields exactly that preset's tool set,
+never a union with whatever was active before.  See `gptel--modify-value':
+a plain (non-:append) `:tools' value fully replaces `gptel-tools', while
+`:append' merges onto the current value, which is how tools used to leak
+across preset switches.
+
+Every preset must declare `:system' for the same reason: a preset that
+omits a key does not reset that key, it inherits whatever the previously
+active preset left there."
+    (lambda ()
+      (my/gptel-mcp-reset-tools)
+      (my/gptel-mcp-reap-dead-servers)
+      ;; One `gptel-mcp-connect' call per server, deliberately.  Given a batch,
+      ;; `mcp-hub-start-all-server' only invokes the callback that registers
+      ;; tools once *every* server in that batch has started, and a server that
+      ;; fails asynchronously never increments its counter — so one unhealthy
+      ;; server silently costs you the tools of all the healthy ones too.
+      (dolist (server servers)
+        (condition-case err
+            (gptel-mcp-connect (list server) 'sync)
+          (error (message "gptel preset: MCP server %s failed to connect: %s"
+                          server (error-message-string err)))))))
+
+  ;; Presets differ mostly in their system prompt, not in which tools they
+  ;; need, so the shared tool sets live here instead of being repeated.
+  (defconst my/gptel-citation-workflow
+    "Citation workflow — never invent citations or citation keys:
+1. Obtain the DOI: from a search result's URL or metadata, or from read_pdf's
+   header, which reports filename, pages and the DOI if one was found.
+2. Call zotero_lookup with that DOI (and/or the filename).
+3. Found → cite as [cite:@Key].  Not found → report: DOI: 10.xxxx/xxx, and the
+   user will add it to Zotero manually.
+
+Local PDFs arrive as an absolute path, never as file contents in the
+conversation — call read_pdf with that path to read one."
+    "Shared `:system' tail for every preset carrying read_pdf/zotero_lookup.
+
+Kept out of `gptel-directives' on purpose: a directive selected on its own
+from `gptel-menu' sets no tools, so naming zotero_lookup there promises a
+tool that is not present.  Presets own their tools, so presets own this.")
+
+  (defconst my/gptel-web-tools '("searxng_web_search" "web_url_read" "fetch_url")
+    "Web search and page fetch tools, from the searxng and fetcher MCP servers.")
+
+  (defconst my/gptel-lit-tools
+    (append my/gptel-web-tools
+            '("read_pdf" "zotero_lookup" "zotero_search_items" "zotero_get_item_fulltext"))
+    "Literature tools: web search plus PDF reading and Zotero citation lookup.")
+
+  (defconst my/gptel-pdf-tools '("read_pdf" "extract_doi" "zotero_lookup")
+    "Local PDF reading and citation tools, all from the pdf MCP server.")
+
+  ;; --- Presets ---
+  ;; IMPORTANT: `@preset' typed into a prompt is a *request-time* transform.
+  ;; `gptel--transform-apply-preset' applies it inside the throwaway
+  ;; " *gptel-prompt*" buffer, so it never touches this buffer's `gptel-tools'
+  ;; and the tool menu will not list its tools.  To configure the session,
+  ;; load the preset from `gptel-menu' with `@' (`gptel-preset').
+  ;;
+  ;; Models and backends are picked in `gptel-menu' (-m / -b).  A preset exists
+  ;; only to bundle a system prompt with the tools that prompt actually needs,
+  ;; so there are no model-only presets.
 
   (gptel-make-preset 'writing
                      :description "Scientific writing - proposals, manuscripts"
                      :backend "Ollama" :model (my/ollama-model my/ollama-writing-model my/ollama-writing-fallback)
-                     :system (alist-get 'writing gptel-directives)
-                     :pre (lambda () (my/gptel-mcp-reset-tools) (gptel-mcp-connect '("pdf") 'sync))
-                     :tools '("zotero_lookup"))
+                     ;; Same reasoning as `grant': the directive says to cite via
+                     ;; zotero_lookup, but the DOI has to come from somewhere, and a
+                     ;; PDF cannot be attached as context to a text-only Ollama model.
+                     :system (concat (alist-get 'writing gptel-directives)
+                                     "\n\n" my/gptel-citation-workflow)
+                     :pre (my/gptel-mcp-pre "pdf")
+                     :tools (my/gptel-tools-if-available '("read_pdf" "zotero_lookup")))
 
   (gptel-make-preset 'brainstorm
                      :description "Scientific ideation - explore, challenge, connect"
                      :backend "Ollama" :model (my/ollama-model my/ollama-reasoning-model my/ollama-fast-model)
                      :system (alist-get 'brainstorm gptel-directives)
-                     :pre (lambda () (my/gptel-mcp-reset-tools))
+                     :pre (my/gptel-mcp-pre)
+                     :tools nil)
+
+  (gptel-make-preset 'review
+                     :description "Critical peer review - gaps, controls, statistics"
+                     :backend "Ollama" :model (my/ollama-model my/ollama-writing-model my/ollama-writing-fallback)
+                     :system (alist-get 'review gptel-directives)
+                     :pre (my/gptel-mcp-pre)
                      :tools nil)
 
   (gptel-make-preset 'coding
                      :description "Coding - refactor, review, buffer editing, repo + GitHub + docs via MCP"
                      :backend "Ollama" :model (my/ollama-model my/ollama-writing-model my/ollama-writing-fallback)
                      :system (alist-get 'coding gptel-directives)
-                     :pre (lambda () (my/gptel-mcp-reset-tools)
-                            (gptel-mcp-connect '("filesystem" "github" "context7") 'sync))
+                     ;; github is filtered to a subset: unfiltered it contributes ~45
+                     ;; tools, and a 62-schema payload is more than a local model
+                     ;; handles well.  `gptel-mcp-connect' accepts the
+                     ;; ("server" "tool"...) form, which `my/gptel-mcp-pre' passes
+                     ;; through unchanged — extend the list to taste.
+                     :pre (my/gptel-mcp-pre
+                           "filesystem" "context7"
+                           '("github" "search_code" "get_file_contents" "list_issues"
+                             "create_pull_request" "get_me"))
                      ;; `:append' is intentional here: `:pre' just reset MCP tools to
-                     ;; exactly filesystem+github+context7, so this only adds the
-                     ;; buffer-local tools on top of that known-clean base.
+                     ;; exactly the servers above, so this only adds the buffer-local
+                     ;; tools on top of that known-clean base.
                      :tools '(:append ("read_buffer" "EditBuffer")))
-
-  (gptel-make-preset 'review
-                     :description "Critical peer review - gaps, controls, statistics"
-                     :backend "Ollama" :model (my/ollama-model my/ollama-writing-model my/ollama-writing-fallback)
-                     :system (alist-get 'review gptel-directives)
-                     :pre (lambda () (my/gptel-mcp-reset-tools))
-                     :tools nil)
-
-  (gptel-make-preset 'reasoning
-                     :description "Deep reasoning - chain-of-thought, hard problems"
-                     :backend "Ollama" :model (my/ollama-model my/ollama-reasoning-model my/ollama-fast-model)
-                     :pre (lambda () (my/gptel-mcp-reset-tools))
-                     :tools nil)
-
-  (gptel-make-preset 'fast
-                     :description "Fast iteration - MoE, low latency"
-                     :backend "Ollama" :model (my/ollama-model my/ollama-fast-model my/ollama-fast-fallback)
-                     :pre (lambda () (my/gptel-mcp-reset-tools))
-                     :tools nil)
-
-  (gptel-make-preset 'math
-                     :description "Math / science reasoning"
-                     :backend "Ollama" :model (my/ollama-model my/ollama-math-model)
-                     :pre (lambda () (my/gptel-mcp-reset-tools))
-                     :tools nil)
-
-  (gptel-make-preset 'vision
-                     :description "Multimodal / vision"
-                     :backend "Ollama" :model (my/ollama-model my/ollama-vision-model my/ollama-writing-fallback)
-                     :pre (lambda () (my/gptel-mcp-reset-tools))
-                     :tools nil)
-
-  (gptel-make-preset 'copilot
-                     :description "GitHub Copilot cloud backend"
-                     :backend "Copilot"
-                     :pre (lambda () (my/gptel-mcp-reset-tools))
-                     :tools nil)
 
   (gptel-make-preset 'search
                      :description "Web search - SearxNG + fetch via MCP"
                      :backend "Ollama" :model (my/ollama-model my/ollama-fast-model my/ollama-fast-fallback)
                      :system "Use the provided tools to search the web for up-to-date information. Always cite sources with URL and title."
-                     :pre (lambda () (my/gptel-mcp-reset-tools) (gptel-mcp-connect '("searxng" "fetcher") 'sync))
-                     :tools '("searxng_web_search" "web_url_read" "fetch_url"))
+                     :pre (my/gptel-mcp-pre "searxng" "fetcher")
+                     :tools (my/gptel-tools-if-available my/gptel-web-tools))
 
   (gptel-make-preset 'search-science
-                     :description "Scientific literature search - PubMed / arXiv / Scholar via MCP"
+                     :description "Literature - search papers, read PDFs, cite via Zotero"
                      :backend "Ollama" :model (my/ollama-model my/ollama-fast-model my/ollama-fast-fallback)
-                     :system "You are a scientific literature assistant. Use searxng_web_search to find peer-reviewed literature. Prefer PubMed, arXiv, Google Scholar, and Semantic Scholar.\n\nFor each paper found:\n1. Extract the DOI from the result URL or metadata\n2. Call zotero_lookup with the DOI — if found, cite as [cite:@Key]\n3. If not in Zotero, report it as: DOI: 10.xxxx/xxx (user will add it to Zotero manually)\n\nHighlight knowledge gaps and translational relevance. Never invent citations."
-                     :pre (lambda () (my/gptel-mcp-reset-tools) (gptel-mcp-connect '("searxng" "fetcher" "pdf" "zotero") 'sync))
-                     :tools '("searxng_web_search" "web_url_read" "fetch_url"
-                              "zotero_lookup" "zotero_search_items" "zotero_get_item_fulltext"))
+                     :system (concat "You are a scientific literature assistant with web search and"
+                                     " PDF reading tools. Use searxng_web_search to find peer-reviewed"
+                                     " literature — prefer PubMed, arXiv, Google Scholar and Semantic"
+                                     " Scholar. Highlight knowledge gaps and translational relevance.\n\n"
+                                     my/gptel-citation-workflow)
+                     :pre (my/gptel-mcp-pre "searxng" "fetcher" "pdf" "zotero")
+                     :tools (my/gptel-tools-if-available my/gptel-lit-tools))
 
   (gptel-make-preset 'grant
                      :description "Grant writing - lit search + structured proposal sections"
                      :backend "Ollama" :model (my/ollama-model my/ollama-writing-model my/ollama-writing-fallback)
-                     :system (alist-get 'proposal gptel-directives)
-                     :pre (lambda () (my/gptel-mcp-reset-tools) (gptel-mcp-connect '("searxng" "fetcher" "pdf" "zotero") 'sync))
-                     :tools '("searxng_web_search" "web_url_read" "fetch_url"
-                              "zotero_lookup" "zotero_search_items" "zotero_get_item_fulltext"))
+                     ;; The `proposal' directive covers prose and citations but says
+                     ;; nothing about local files.  Ollama models are text-only, so a
+                     ;; PDF cannot be attached with `gptel-add-file' (gptel gates binary
+                     ;; context on the model declaring `media' + the application/pdf
+                     ;; MIME type).  Reading it with the read_pdf tool is the supported
+                     ;; path, so the prompt has to actually mention that it exists.
+                     :system (concat (alist-get 'proposal gptel-directives)
+                                     "\n\n" my/gptel-citation-workflow)
+                     :pre (my/gptel-mcp-pre "searxng" "fetcher" "pdf" "zotero")
+                     :tools (my/gptel-tools-if-available my/gptel-lit-tools))
 
   (gptel-make-preset 'grant-landscape
                      :description "Grant landscape - funders, calls, competing awards via Exa (semantic web search)"
                      :backend "Ollama" :model (my/ollama-model my/ollama-writing-model my/ollama-writing-fallback)
                      :system "You are a research funding analyst. Use Exa's web search and fetch tools to find funding-agency calls, program priorities, and comparable or competing awarded grants (e.g. NIH RePORTER, CORDIS, ERC, national funders). This is landscape and competitive-intelligence research, not peer-reviewed literature — do not treat results as citable scientific sources or route them through Zotero. Report the source URL and publication/award date for every claim. Flag anything that looks outdated or unconfirmed."
-                     :pre (lambda () (my/gptel-mcp-reset-tools) (gptel-mcp-connect '("exa") 'sync))
-                     :tools '("web_search_exa" "web_fetch_exa"))
+                     :pre (my/gptel-mcp-pre "exa")
+                     :tools (my/gptel-tools-if-available '("web_search_exa" "web_fetch_exa")))
 
   (gptel-make-preset 'pdf
                      :description "Local PDF reader - extract text, cite via MCP"
                      :backend "Ollama" :model (my/ollama-model my/ollama-fast-model my/ollama-fast-fallback)
-                     :system "You have access to read_pdf, extract_doi, and zotero_lookup tools.\n\nCitation workflow:\n1. Call read_pdf with the absolute path — the header shows filename, pages, and DOI if found\n2. Call zotero_lookup with the DOI (and/or filename) to find the entry in your Zotero library\n3. If found, cite as [cite:@Key]\n4. If not found, report: DOI: 10.xxxx/xxx (user will add it to Zotero manually)\n\nNever invent citations."
-                     :pre (lambda () (my/gptel-mcp-reset-tools) (gptel-mcp-connect '("pdf") 'sync)))
+                     :system (concat "You read local PDFs and cite them. read_pdf extracts the"
+                                     " text of a PDF at an absolute path.\n\n"
+                                     my/gptel-citation-workflow)
+                     :pre (my/gptel-mcp-pre "pdf")
+                     :tools (my/gptel-tools-if-available my/gptel-pdf-tools))
 
-  (gptel-make-preset 'pdf-science
-                     :description "PDF + literature search - read papers, search, cite"
-                     :backend "Ollama" :model (my/ollama-model my/ollama-fast-model my/ollama-fast-fallback)
-                     :system "You are a scientific research assistant with PDF reading and web search tools.\n\nFor PDFs:\n1. Call read_pdf to extract text (DOI appears in the header)\n2. Call zotero_lookup with the DOI and/or filename\n3. If found, cite as [cite:@Key]; if not found, report: DOI: 10.xxxx/xxx\n\nFor web search:\n1. Use searxng_web_search — prefer PubMed, arXiv, Google Scholar, Semantic Scholar\n2. Extract the DOI; call zotero_lookup — cite as [cite:@Key] if found, else report the DOI\n\nNever invent citations. Never invent citation keys."
-                     :pre (lambda () (my/gptel-mcp-reset-tools) (gptel-mcp-connect '("pdf" "searxng" "fetcher") 'sync))
-                     :tools '("searxng_web_search" "web_url_read" "fetch_url" "zotero_lookup"))
+  (gptel-make-preset 'copilot
+                     :description "GitHub Copilot cloud backend"
+                     :backend "Copilot"
+                     ;; `:system' is as load-bearing as `:tools' here.  A preset that
+                     ;; omits it inherits the previously active preset's prompt, so
+                     ;; switching pdf -> copilot used to tell Copilot it "has access to
+                     ;; read_pdf, extract_doi and zotero_lookup" while holding no tools.
+                     :system (alist-get 'default gptel-directives)
+                     :pre (my/gptel-mcp-pre)
+                     :tools nil)
 
   :hook
   ((gptel-mode . visual-line-mode)
@@ -611,7 +738,7 @@ ad hoc outside of a preset. This wrapper only calls
   :after gptel
   :custom (mcp-hub-servers
            `(;; Local scripts
-             ("searxng" . (:command "podman" :args ("exec" "-i" "mcp-searxng" "node" "dist/index.js")))
+             ("searxng" . (:command "podman" :args ("exec" "-i" "mcp-searxng" "node" "dist/cli.js")))
              ("pdf" . (:command "uv"
                                 :args ("run" "--with" "pymupdf"
                                        "/home/dan/.local/bin/pdf-mcp.py")
