@@ -29,6 +29,19 @@ engines:
     categories: [general, science]
   - name: wikidata
     disabled: true
+  # Disabled: these consistently fail on this instance and, because SearXNG
+  # waits for every enabled engine, they were adding ~11s to every query --
+  # long enough that mcp-searxng aborted the request before results arrived.
+  # Measured 2026-08-27: brave/startpage/qwant unresponsive, semantic scholar
+  # unresponsive; pubmed/arxiv/crossref/google-scholar/duckduckgo/bing all OK.
+  - name: brave
+    disabled: true
+  - name: startpage
+    disabled: true
+  - name: qwant
+    disabled: true
+  - name: semantic scholar
+    disabled: true
 categories_as_tabs:
   general:
     - general
@@ -38,6 +51,11 @@ categories_as_tabs:
     - news
   images:
     - images
+outgoing:
+  # Cap how long SearXNG waits on any single engine. Without this a newly
+  # blocked engine silently reintroduces the timeout stall above.
+  request_timeout: 4.0
+  max_request_timeout: 6.0
 search:
   safe_search: 0
   autocomplete: ""

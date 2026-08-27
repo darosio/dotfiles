@@ -60,8 +60,26 @@ Pre-configured with scientific engines in `~/ai-containers/searxng/settings.yml`
 
 - PubMed, Google Scholar, Semantic Scholar, arXiv, CrossRef, Wolfram Alpha
 - JSON output enabled (required by MCP-SearxNG)
+- `brave`, `startpage`, `qwant` and `semantic scholar` are explicitly disabled,
+  and `outgoing.request_timeout` is capped at 4s
 
-To tweak engines:
+The disables matter more than they look. SearXNG waits for every enabled engine
+before returning, so engines that CAPTCHA or rate-limit you do not just
+contribute nothing — they set the latency of *every* query. With those four
+enabled a search took ~14s, which is longer than mcp-searxng waits, so
+`searxng_web_search` aborted and gptel silently got no web results at all.
+With them disabled the same query takes ~1s.
+
+If web search starts failing again, check which engines are blocked before
+touching anything else:
+
+```bash
+podman logs --since 2h searxng | grep -oE "Searx[A-Za-z]+Exception" | sort | uniq -c
+curl -s "http://localhost:8080/search?q=test&format=json" | \
+  python3 -c "import sys,json; d=json.load(sys.stdin); print(d['unresponsive_engines'])"
+```
+
+Disable whatever shows up there. To tweak engines:
 
 ```bash
 $EDITOR ~/ai-containers/searxng/settings.yml
