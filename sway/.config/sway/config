@@ -247,6 +247,10 @@ include /etc/sway/config.d/*
 exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
 exec dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
 
+# Hand the PAM login credentials to ksecretd so the wallet unlocks at login
+# (kwallet-pam's XDG autostart is not run by sway).
+exec /usr/lib/pam_kwallet_init
+
 #autostart
 #exec --no-startup-id git annex assistant --autostart
 #exec --no-startup-id artha
