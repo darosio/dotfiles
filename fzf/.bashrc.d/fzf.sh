@@ -7,8 +7,15 @@ eval "$(fzf --bash)"
 # falls back to its built-in walker; it is a rough echo of the script, limited to
 # bare directory names since the walker cannot match paths. It is absolute rather
 # than additive, so fzf's own default (.git,node_modules) has to be repeated or
-# lost. ctrl-o re-lists with nothing excluded, the escape hatch on either route.
-export FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS:+$FZF_DEFAULT_OPTS }--walker-skip=.git,node_modules,.cache,site-packages,.venv,venv,.hatch,__pycache__,.goldendict --bind='ctrl-o:reload(fd --hidden --no-ignore --strip-cwd-prefix)'"
+# lost. ctrl-o is the escape hatch on either route (see below).
+# Assigned, not appended: nested shells inherit it and would stack duplicates.
+export FZF_DEFAULT_OPTS="--walker-skip=.git,node_modules,.cache,site-packages,.venv,venv,.hatch,__pycache__,.goldendict"
+fzf_all='fd --hidden --no-ignore --strip-cwd-prefix'
+# Query history shared by every picker, yazi's `z` included. --history would
+# remap ctrl-p / ctrl-n to it; they stay up / down, and history moves to
+# alt-p / alt-n as in the Emacs minibuffer.
+FZF_DEFAULT_OPTS+=" --history=$HOME/.local/state/fzf-history"
+FZF_DEFAULT_OPTS+=" --bind=ctrl-p:up,ctrl-n:down,alt-p:prev-history,alt-n:next-history"
 
 # Guarded so an unstowed machine still gets a working fzf rather than a picker
 # whose source command fails.
@@ -19,7 +26,21 @@ if command -v fd > /dev/null 2>&1 && [ -x "$HOME/.local/bin/fzf-source" ]; then
   # them here keeps fzf-source the single source of truth.
   export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
   export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND --type d"
+  # ctrl-o toggles between the filtered list and everything; an "all " prompt
+  # prefix marks the unfiltered state. Switching back re-runs $FZF_DEFAULT_COMMAND,
+  # which the Ctrl-T and Alt-C widgets override per call, so each gets its own
+  # list back. Single-quoted: fzf, not this shell, expands the variables.
+  # shellcheck disable=SC2016
+  fzf_toggle='[ "${FZF_PROMPT#all }" = "$FZF_PROMPT" ] && echo "change-prompt(all $FZF_PROMPT)+reload('"$fzf_all"')" || echo "change-prompt(${FZF_PROMPT#all })+reload($FZF_DEFAULT_COMMAND)"'
+  FZF_DEFAULT_OPTS+=" --bind='ctrl-o:transform:$fzf_toggle'"
+  unset fzf_toggle
+  # alt-q toggles 'exact-boundary' quoting on every query term.
+  FZF_DEFAULT_OPTS+=" --bind='alt-q:transform-query($HOME/.local/bin/fzf-quote)'"
+else
+  # The walker cannot be re-run from a bind, so here ctrl-o is one-way.
+  FZF_DEFAULT_OPTS+=" --bind='ctrl-o:reload($fzf_all)'"
 fi
+unset fzf_all
 
 # Find and view man pages
 MANPATH=/usr/share/man

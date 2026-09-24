@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# Toggle exact-boundary quoting ('term') on every term of the fzf query in
+# $FZF_QUERY; bound to alt-q in ~/.bashrc.d/fzf.sh via transform-query.
+#
+# fzf splits the query on spaces and reads quotes per term, so 'foo bar' would
+# not be one quoted phrase: each term is wrapped on its own. If every eligible
+# term is already quoted, all are unquoted; otherwise the unquoted ones are
+# quoted. Negated (!x), anchored (^x, x$) and OR (|) terms are exact already
+# and left untouched. A leading-only quote ('x) counts as unquoted.
+set -euo pipefail
+
+read -ra terms <<< "${FZF_QUERY:-}"
+
+eligible() { [[ $1 != "|" && $1 != !* && $1 != ^* && $1 != *$ ]]; }
+quoted() { [[ ${#1} -ge 2 && $1 == \'*\' ]]; }
+
+all_quoted=true
+for t in "${terms[@]}"; do
+  if eligible "$t" && ! quoted "$t"; then
+    all_quoted=false
+  fi
+done
+
+out=()
+for t in "${terms[@]}"; do
+  if ! eligible "$t"; then
+    out+=("$t")
+  elif $all_quoted; then
+    t=${t#\'}
+    out+=("${t%\'}")
+  else
+    quoted "$t" || t="'${t#\'}'"
+    out+=("$t")
+  fi
+done
+
+printf '%s' "${out[*]}"
