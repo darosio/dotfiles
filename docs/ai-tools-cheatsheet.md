@@ -66,43 +66,23 @@ OPENAI_API_KEY   cloud/openai   openai     # <- uncomment when the entry exists
 rows), `emit` (VAR=VALUE blob), `agent-secrets cloud/x` (one entry).
 Consumers:
 
-| Tool     | How it gets keys                                                                                                                                                   | Stored secret                                                                               |
-| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------- |
-| Hermes   | `secrets.command` → `hermes-secrets` → `agent-secrets emit` (all rows)                                                                                             | none                                                                                        |
-| pi       | `pi-pass-auth` writes every row with a pi-provider-id as a command key: `"!\"$HOME/.local/bin/agent-secrets\" cloud/x"`                                            | command reference, no literal key                                                           |
-| OpenCode | paste the pass value ONCE into its own store: `/connect` → provider → key, or the PTY helper below. Its db then serves every surface (TUI, `run`, shared service). | key in opencode.db (mode 600), same class as its existing deepseek/openrouter/copilot creds |
+| Tool     | How it gets keys                                      | Stored secret         |
+| -------- | ----------------------------------------------------- | --------------------- |
+| Hermes   | automatic — `hermes-secrets` emits every registry row | none                  |
+| pi       | automatic — `pi-pass-auth` stores a command reference | none (reference only) |
+| OpenCode | **manual** — paste the key once per provider          | key in `opencode.db`  |
 
-OpenCode v2 has no `!command` reference form (pi's trick) and its shared
-background service never inherits a wrapper's env, so the wrapper
-`opencode-with-secrets` (`--standalone` + exported env) is only a fallback for
-headless `run` — it does not populate the shared service's model list. The
-durable setup is the stored credential. Re-add after a rotation (the key
-never passes through chat — the helper reads `pass` directly):
+**OpenCode needs one manual step.** It cannot reference `pass` (no command
+key form), so you paste the key into its own store: start `opencode`, run
+`/connect`, pick the provider, paste the value of `pass show cloud/qwencloud`
+(first line). Do it once per provider, and again whenever that key rotates.
+The store is `~/.local/share/opencode/opencode.db` (mode 600) — the same place
+your deepseek and openrouter credentials already live. The registry still
+covers Hermes and pi automatically; OpenCode just reads nothing from it.
 
-```sh
-python3 - <<'PY'   # PTY helper: types the pass value into `opencode auth login`
-import os, pty, time, select, fcntl, termios, struct, re
-key = os.popen(os.path.expanduser("~/.local/bin/agent-secrets cloud/qwencloud")).read().strip()
-pid, fd = pty.fork()
-if pid == 0:
-    os.execvp("opencode", ["opencode", "auth", "login", "alibaba-token-plan", "--method", "key"])
-fcntl.ioctl(fd, termios.TIOCSWINSZ, struct.pack("HHHH", 40, 120, 0, 0))
-time.sleep(3.0); os.write(fd, (key + "\r").encode()); key = ""
-deadline = time.time() + 30
-while time.time() < deadline:
-    r, _, _ = select.select([fd], [], [], 1)
-    if not r: break
-    try: d = os.read(fd, 4096)
-    except OSError: break
-    if not d: break
-os.close(fd); os.waitpid(pid, 0)
-PY
-opencode auth list --format json | jq -r '.[] | select(.id|test("alibaba")) | .id'
-```
-
-The `sleep 3` then write is the reliable part: the TUI renders one character
-per write with ANSI escapes interleaved, so matching on a prompt string races.
-Set a real window size first (`TIOCSWINSZ`) or the TUI never paints.
+`opencode-with-secrets` (env-export wrapper) is *not* the normal path — the
+shared background service never sees its env, so models stay unlisted. Ignore
+it unless you need a one-off headless run with no stored credential.
 
 Workflow for a new provider key:
 
@@ -110,6 +90,8 @@ Workflow for a new provider key:
 2. Add `OPENAI_API_KEY cloud/openai openai` to the registry
 3. `stow -t ~ agents && pi-pass-auth` — done; restart the agents
    (Hermes re-runs the helper per start; pi caches keys per process).
+4. Only if OpenCode should use it: `opencode` → `/connect` → provider →
+   paste the key once.
 
 Gotchas:
 
@@ -118,17 +100,14 @@ Gotchas:
 - The pi mapping needs pi's provider ID (docs/providers.md env-var table —
   e.g. anthropic→`anthropic`, openai→`openai`, google→`google`). Rows
   without a third column are Hermes-only.
-- pi: leave the third column empty for Anthropic while Claude Code OAuth is
-  your plan; a command key there would outrank the OAuth credentials.
-- OpenCode: the shared background service never sees the exported env — use
-  the wrapper (`--standalone` goes last, which the wrapper appends for you).
-  Rows OpenCode doesn't know (EXA, TELEGRAM) are filtered via
-  `~/.cache/opencode/models.json` `env` arrays.
+- pi: leave the third column empty for providers with huge catalogs
+  (openrouter ≈ 400 models flood `/model`) and for Anthropic while Claude
+  Code OAuth is your plan (a command key outranks the OAuth credentials).
 - pi `--print` against the token-plan endpoint has a pre-existing bug:
   HTTP 400 "developer is not one of [...]" with `--model auto` (system role
   mapped to `developer`). Workaround: pin `--provider qwen-token-plan-individual --model <id>`; interactive mode is unaffected.
-- `opencode auth list` may still show OAuth logins (copilot) — those stay in
-  the db by design; command-key auth only replaces pasted API keys.
+- OpenCode keeps its own credential db — pasted API keys and OAuth logins
+  (copilot etc.) both live there; nothing is pruned by the registry.
 
 ## Notes
 
