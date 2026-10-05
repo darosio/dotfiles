@@ -1,0 +1,8 @@
+❯ npx skills add anthropics/skills@mcp-builder -y
+❯ npx skills add github/awesome-copilot@python-mcp-server-generator -y
+❯ npx skills add anthropics/skills@pdf -g
+❯ npx skills add anthropics/knowledge-work-plugins@knowledge-synthesis -g
+❯ npx skills add wshobson/agents@rag-implementation -g
+
+arch-linux-triage
+emacsclient
