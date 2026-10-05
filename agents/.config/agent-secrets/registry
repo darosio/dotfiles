@@ -1,0 +1,39 @@
+# agent-secrets registry — single place to wire a `pass` entry into the AI
+# coding agents. Read by:
+#   ~/.local/bin/hermes-secrets          (Hermes secrets.command env blob)
+#   ~/.local/bin/opencode-with-secrets   (env exports before opencode starts)
+#   ~/.local/bin/pi-pass-auth            (writes "!agent-secrets" command keys
+#                                         into ~/.pi/agent/auth.json)
+#
+# Format: ENV_VAR  pass-entry  [pi-provider-id]
+#   ENV_VAR        the variable the tool ecosystem knows (Hermes plugins and
+#                  OpenCode built-ins read these; see the "env" list per
+#                  provider in ~/.cache/opencode/models.json).
+#   pi-provider-id pi's provider ID for the same key (from pi's
+#                  docs/providers.md table); omit to skip pi for that entry.
+#   '#' lines and blank lines are ignored.
+#
+# Adding a provider = add `pass insert cloud/<name>` then one line here, then
+# re-run: `stow -t ~ agents` (if the registry changed), `pi-pass-auth`, and
+# restart each agent. Keys never land in this repo or in any agent's store.
+
+# --- model providers -------------------------------------------------------
+ALIBABA_TOKEN_PLAN_API_KEY cloud/qwencloud          qwen-token-plan-individual
+GEMINI_API_KEY             cloud/gemini_API_key      google
+DEEPSEEK_API_KEY           cloud/deepseek            deepseek
+OPENROUTER_API_KEY         cloud/openrouter          openrouter
+
+# Anthropic caveat (kept from the original hermes-secrets): export as
+# ANTHROPIC_API_KEY only — never ANTHROPIC_TOKEN, which sits first in the
+# resolution order and would shadow Claude Code OAuth. For pi the same
+# reasoning applies: leave the pi-provider-id empty while ~/.claude
+# credentials are in use; set it to "anthropic" only if you want the console
+# key to win in pi too.
+ANTHROPIC_API_KEY          cloud/claude_api_dpa
+
+# No pass entry yet — add one and uncomment (pi ID: openai):
+# OPENAI_API_KEY             cloud/openai              openai
+
+# --- tools ------------------------------------------------------------------
+EXA_API_KEY                cloud/exa_api_key.el
+TELEGRAM_BOT_TOKEN         cloud/telegram_bot_token

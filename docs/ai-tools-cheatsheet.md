@@ -50,6 +50,54 @@ for their respective ecosystems).
 | Hermes      | `hermes gateway` (Telegram/Discord/Slack), `hermes dashboard` | Same agent/memory reachable outside the terminal — useful when away from a CLI                                               |
 | Hermes      | Persistent cross-surface memory                               | Context carries over between terminal, Telegram, and dashboard sessions                                                      |
 
+## Secrets from `pass` (single registry for all agents)
+
+API keys live only in the password store (`~/Sync/.pass`). One registry
+file decides which entry feeds which tool; adding Anthropic/OpenAI/
+OpenRouter/... is ONE line there, never a script edit:
+
+```
+~/.config/agent-secrets/registry   (stowed from agents/.config/)
+# ENV_VAR  pass-entry  [pi-provider-id]
+OPENAI_API_KEY   cloud/openai   openai     # <- uncomment when the entry exists
+```
+
+`~/.local/bin/agent-secrets` (stowed) is the resolver — `list` (registry
+rows), `emit` (VAR=VALUE blob), `agent-secrets cloud/x` (one entry).
+Consumers:
+
+| Tool     | How it gets keys                                                                                                        | Stored secret                     |
+| -------- | ----------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
+| Hermes   | `secrets.command` → `hermes-secrets` → `agent-secrets emit` (all rows)                                                  | none                              |
+| pi       | `pi-pass-auth` writes every row with a pi-provider-id as a command key: `"!\"$HOME/.local/bin/agent-secrets\" cloud/x"` | command reference, no literal key |
+| OpenCode | `opencode-with-secrets` exports registry rows that match OpenCode's provider env list, then `opencode … --standalone`   | none (after `auth logout`)        |
+
+Workflow for a new provider key:
+
+1. `pass insert cloud/openai` (first line = the key)
+2. Add `OPENAI_API_KEY cloud/openai openai` to the registry
+3. `stow -t ~ agents && pi-pass-auth` — done; restart the agents
+   (Hermes re-runs the helper per start; pi caches keys per process).
+
+Gotchas:
+
+- Locked gpg-agent = pinentry = helper timeout: every tool sees "not
+  configured", never corruption. Quick check: `pass show cloud/qwencloud >/dev/null`.
+- The pi mapping needs pi's provider ID (docs/providers.md env-var table —
+  e.g. anthropic→`anthropic`, openai→`openai`, google→`google`). Rows
+  without a third column are Hermes-only.
+- pi: leave the third column empty for Anthropic while Claude Code OAuth is
+  your plan; a command key there would outrank the OAuth credentials.
+- OpenCode: the shared background service never sees the exported env — use
+  the wrapper (`--standalone` goes last, which the wrapper appends for you).
+  Rows OpenCode doesn't know (EXA, TELEGRAM) are filtered via
+  `~/.cache/opencode/models.json` `env` arrays.
+- pi `--print` against the token-plan endpoint has a pre-existing bug:
+  HTTP 400 "developer is not one of [...]" with `--model auto` (system role
+  mapped to `developer`). Workaround: pin `--provider qwen-token-plan-individual --model <id>`; interactive mode is unaffected.
+- `opencode auth list` may still show OAuth logins (copilot) — those stay in
+  the db by design; command-key auth only replaces pasted API keys.
+
 ## Notes
 
 - This list reflects the tools set up in this repo (`agents/` stow package:

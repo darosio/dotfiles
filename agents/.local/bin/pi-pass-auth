@@ -1,0 +1,47 @@
+#!/usr/bin/env sh
+#
+# Point pi's ~/.pi/agent/auth.json at `pass` instead of storing literal API
+# keys. pi resolves a credential `key` that starts with `!` by running the
+# rest as a shell command, so auth.json ends up containing a reference and no
+# secret ever lands on disk outside the encrypted store.
+#
+# The provider list comes from the shared registry (~/.config/agent-secrets/
+# registry; third column = pi provider ID — see `agent-secrets list`). Re-run
+# after adding registry lines, then `/model` in pi (or restart pi) reloads.
+#
+# Idempotent and non-destructive: only registry-listed provider entries are
+# rewritten; everything else in auth.json (OAuth credentials from `pi /login`,
+# manual pastes) is left untouched. To retire an entry, drop its pi column
+# from the registry and delete the key from auth.json by hand.
+#
+# Requires `pass` to run non-interactively (unlocked gpg-agent), or the
+# provider simply shows as unauthenticated.
+
+set -eu
+
+AUTH_DIR="${PI_CODING_AGENT_DIR:-$HOME/.pi/agent}"
+AUTH_FILE="$AUTH_DIR/auth.json"
+
+[ -f "$AUTH_FILE" ] || {
+  mkdir -p "$AUTH_DIR"
+  printf '%s' '{}' > "$AUTH_FILE"
+  chmod 600 "$AUTH_FILE"
+}
+
+# provider-id  pass-entry
+set_from_pass() {
+  tmp=$(mktemp "$AUTH_FILE.tmp.XXXXXX")
+  # shellcheck disable=SC2016  # $HOME stays literal: pi expands it at run time
+  jq --arg id "$1" \
+    --arg key '!"$HOME/.local/bin/agent-secrets" '"$2" \
+    '.[$id] = {"type": "api_key", "key": $key}' \
+    "$AUTH_FILE" > "$tmp"
+  mv "$tmp" "$AUTH_FILE"
+  chmod 600 "$AUTH_FILE"
+  echo "pi: $1 -> pass entry $2"
+}
+
+"$HOME/.local/bin/agent-secrets" list | while read -r _var entry pi_id; do
+  [ -n "${pi_id:-}" ] || continue
+  set_from_pass "$pi_id" "$entry"
+done

@@ -37,18 +37,19 @@ ______________________________________________________________________
 
 ## Key paths
 
-| Item                   | Path                                                                            |
-| ---------------------- | ------------------------------------------------------------------------------- |
-| Emacs AI config        | `emacs/.emacs.d/my-config/my-ai.el`                                             |
-| MCP PDF server         | `emacs/.local/bin/pdf-mcp.py`                                                   |
-| Grant prompt templates | `emacs/.emacs.d/prompts/grant-synthesis.org`                                    |
-| Zotero BibTeX export   | `~/Sync/biblio/main.bib`, `MY.bib`, `former.bib` (BBT auto-export)              |
-| Biblio PDFs            | `~/Sync/biblio/main/KEY/file.pdf` (Zotmoov subdir layout)                       |
-| Citar notes            | `~/Sync/notes/org-roam/biblio/KEY.org` → migrating to `biblio/main/KEY/KEY.org` |
-| Org-roam AI notes      | `~/Sync/notes/org-roam/ai-notes/`                                               |
-| Zotero stow config     | `zotero/.zotero/zotero/90bt0tu8.default/user.js`, `zotero/treePrefs.json`       |
-| AI container configs   | `ai-containers/`                                                                |
-| Yazi config / plugins  | `yazi/.config/yazi/` (`package.toml` pins plugins; `plugins/` holds local ones) |
+| Item                   | Path                                                                                                                                                                                                                                  |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Emacs AI config        | `emacs/.emacs.d/my-config/my-ai.el`                                                                                                                                                                                                   |
+| Secret registry        | `agents/.config/agent-secrets/registry` + resolvers in `agents/.local/bin/{agent-secrets,hermes-secrets,pi-pass-auth,opencode-with-secrets}` — keys live only in `pass` (`cloud/qwencloud`); details in `docs/ai-tools-cheatsheet.md` |
+| MCP PDF server         | `emacs/.local/bin/pdf-mcp.py`                                                                                                                                                                                                         |
+| Grant prompt templates | `emacs/.emacs.d/prompts/grant-synthesis.org`                                                                                                                                                                                          |
+| Zotero BibTeX export   | `~/Sync/biblio/main.bib`, `MY.bib`, `former.bib` (BBT auto-export)                                                                                                                                                                    |
+| Biblio PDFs            | `~/Sync/biblio/main/KEY/file.pdf` (Zotmoov subdir layout)                                                                                                                                                                             |
+| Citar notes            | `~/Sync/notes/org-roam/biblio/KEY.org` → migrating to `biblio/main/KEY/KEY.org`                                                                                                                                                       |
+| Org-roam AI notes      | `~/Sync/notes/org-roam/ai-notes/`                                                                                                                                                                                                     |
+| Zotero stow config     | `zotero/.zotero/zotero/90bt0tu8.default/user.js`, `zotero/treePrefs.json`                                                                                                                                                             |
+| AI container configs   | `ai-containers/`                                                                                                                                                                                                                      |
+| Yazi config / plugins  | `yazi/.config/yazi/` (`package.toml` pins plugins; `plugins/` holds local ones)                                                                                                                                                       |
 
 ______________________________________________________________________
 
