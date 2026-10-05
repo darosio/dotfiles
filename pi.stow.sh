@@ -10,7 +10,6 @@
 #     then `zotero-mcp setup` (configures ZOTERO_LOCAL=true)
 #   - searxng running at http://localhost:8080 (ai-containers podman quadlet)
 #   - bib files present at ZOTERO_BIB_FILES paths
-#   - exa key in pass as cloud/exa_api_key.el (npm stdio server, no secret stored)
 
 set -eu
 
@@ -27,10 +26,6 @@ add_if_missing() {
 # Ensure mcp.json exists and is valid JSON
 mkdir -p "$HOME/.pi/agent"
 [ -f "$HOME/.pi/agent/mcp.json" ] || printf '{}' > "$HOME/.pi/agent/mcp.json"
-
-# Absolute npx path — pi's spawn does not honour a login-shell PATH.
-NPX_PATH=""
-command -v npx > /dev/null 2>&1 && NPX_PATH=$(command -v npx)
 
 # pdf-mcp (local PDF extraction via PyMuPDF) - uses wrapper with uv
 # pi's -e flag doesn't pass env to spawned process; use sh -c
@@ -49,21 +44,13 @@ fi
 
 # searxng (local metasearch via ai-containers) - needs mcp-searxng bridge
 # SearXNG itself doesn't expose MCP; use npm mcp-searxng
-if [ -n "$NPX_PATH" ]; then
+# pi needs the symlink path (/usr/bin/npx), not the resolved path
+if command -v npx > /dev/null 2>&1; then
+  NPX_PATH=$(which npx)
   add_if_missing searxng \
     -- sh -c "SEARXNG_URL=http://localhost:8080 exec '$NPX_PATH' -y mcp-searxng"
 else
   echo "npx not found, skipping searxng MCP"
-fi
-
-# exa (web search + page fetch) - npm stdio server.
-# The key is resolved from pass at spawn time (\$() stays literal here), so no
-# secret is written into mcp.json. Shares the Hermes registry entry.
-if [ -n "$NPX_PATH" ]; then
-  add_if_missing exa \
-    -- sh -c "EXA_API_KEY=\$(\"\$HOME/.local/bin/agent-secrets\" cloud/exa_api_key.el) exec '$NPX_PATH' -y exa-mcp-server"
-else
-  echo "npx not found, skipping exa MCP"
 fi
 
 echo "pi MCP setup complete. Run 'pi mcp list' to verify."
