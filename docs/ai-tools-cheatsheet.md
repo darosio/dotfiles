@@ -80,10 +80,6 @@ The store is `~/.local/share/opencode/opencode.db` (mode 600) — the same place
 your deepseek and openrouter credentials already live. The registry still
 covers Hermes and pi automatically; OpenCode just reads nothing from it.
 
-`opencode-with-secrets` (env-export wrapper) is *not* the normal path — the
-shared background service never sees its env, so models stay unlisted. Ignore
-it unless you need a one-off headless run with no stored credential.
-
 Workflow for a new provider key:
 
 1. `pass insert cloud/openai` (first line = the key)

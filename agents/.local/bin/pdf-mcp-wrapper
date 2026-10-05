@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+#
+# Run pdf-mcp.py with pymupdf on the fly, so pi (or any MCP client) can exec
+# the server by a plain path. pdf-mcp.py itself is stowed by the emacs package
+# (~/.local/bin/pdf-mcp.py); this wrapper adds the uv-provided pymupdf dep.
+
+exec uv run --with pymupdf "$HOME/.local/bin/pdf-mcp.py" "$@"

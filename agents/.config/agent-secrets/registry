@@ -1,7 +1,6 @@
 # agent-secrets registry — single place to wire a `pass` entry into the AI
 # coding agents. Read by:
 #   ~/.local/bin/hermes-secrets          (Hermes secrets.command env blob)
-#   ~/.local/bin/opencode-with-secrets   (env exports before opencode starts)
 #   ~/.local/bin/pi-pass-auth            (writes "!agent-secrets" command keys
 #                                         into ~/.pi/agent/auth.json)
 #
@@ -15,7 +14,8 @@
 #
 # Adding a provider = add `pass insert cloud/<name>` then one line here, then
 # re-run: `stow -t ~ agents` (if the registry changed), `pi-pass-auth`, and
-# restart each agent. Keys never land in this repo or in any agent's store.
+# restart Hermes/pi. OpenCode: paste once via `/connect`. Keys never land in
+# this repo or in any agent's store.
 
 # --- model providers -------------------------------------------------------
 ALIBABA_TOKEN_PLAN_API_KEY cloud/qwencloud          qwen-token-plan-individual
@@ -39,3 +39,4 @@ ANTHROPIC_API_KEY          cloud/claude_api_dpa
 # --- tools ------------------------------------------------------------------
 EXA_API_KEY                cloud/exa_api_key.el
 TELEGRAM_BOT_TOKEN         cloud/telegram_bot_token
+OLLAMA_API_KEY cloud/API-ollama-cloud ollama
