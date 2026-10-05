@@ -14,11 +14,28 @@ stow -t "$HOME" ai-containers
 mkdir -p "$HOME/.config/containers"
 ln -sfn "$HOME/ai-containers/systemd" "$HOME/.config/containers/systemd"
 
-# Weekly auto-update override timer (stow skips dotfiles, so link it
-# explicitly; quadlet ignores .timer files in its own search path).
+# Quadlet units: link from ~/.config/systemd/user/ for permanent registration.
+# Quadlets generate transient .service files in /run/user/1000/systemd/generator/,
+# so we create symlinks in default.target.wants/ to auto-start them at boot.
 mkdir -p "$HOME/.config/systemd/user"
+for unit in searxng.container vane.container litellm.container; do
+  ln -sfn "$HOME/ai-containers/systemd/users/1000/$unit" \
+    "$HOME/.config/systemd/user/$unit"
+done
+
+# Also link the weekly auto-update timer.
 ln -sfn "$HOME/ai-containers/systemd/user-units/podman-auto-update.timer" \
   "$HOME/.config/systemd/user/podman-auto-update.timer"
+
+# Enable quadlet services to auto-start at boot by creating symlinks in
+# default.target.wants/ (standard method for enabling transient/generated units).
+# Note: litellm is on-demand only (started via `aic up litellm`), so it's
+# intentionally excluded from auto-start.
+mkdir -p "$HOME/.config/systemd/user/default.target.wants"
+for svc in searxng vane; do
+  ln -sfn "/run/user/1000/systemd/generator/$svc.service" \
+    "$HOME/.config/systemd/user/default.target.wants/$svc.service"
+done
 
 # LiteLLM cloud keys (repo-free path; empty when a pass entry is absent).
 LITELLM_ENV="$HOME/.config/containers/litellm.env"

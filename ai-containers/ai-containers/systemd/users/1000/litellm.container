@@ -12,7 +12,7 @@ AutoUpdate=registry
 PublishPort=127.0.0.1:4000:4000
 Volume=/home/dan/ai-containers/litellm/config.yaml:/app/config.yaml:ro
 Volume=litellm_copilot_auth:/root/.config/litellm
-EnvironmentFile=-/home/dan/.config/containers/litellm.env
+EnvironmentFile=/home/dan/.config/containers/litellm.env
 Exec=--config /app/config.yaml --port 4000
 
 [Service]
