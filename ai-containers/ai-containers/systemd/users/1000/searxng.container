@@ -1,0 +1,19 @@
+# SearxNG metasearch — MCP web-search backend for gptel.
+# Managed by podman quadlet; update handled by podman-auto-update.timer.
+[Unit]
+Description=SearxNG metasearch (quadlet)
+
+[Container]
+Image=docker.io/searxng/searxng:latest
+ContainerName=searxng
+AutoUpdate=registry
+PublishPort=8080:8080
+Volume=/home/dan/ai-containers/searxng/settings.yml:/etc/searxng/settings.yml:ro
+Volume=/home/dan/ai-containers/searxng/limiter.toml:/etc/searxng/limiter.toml:ro
+Environment=SEARXNG_SETTINGS_PATH=/etc/searxng/settings.yml
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=default.target

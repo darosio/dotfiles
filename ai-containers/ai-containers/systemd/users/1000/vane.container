@@ -1,0 +1,17 @@
+# Vane AI web search (bundles its own SearxNG). Reach host Ollama via
+# http://host.containers.internal:11434 (auto-provided by rootless podman).
+[Unit]
+Description=Vane AI search (quadlet)
+
+[Container]
+Image=docker.io/itzcrazykns1337/vane:latest
+ContainerName=vane
+AutoUpdate=registry
+PublishPort=3000:3000
+Volume=vane_vane_data:/home/vane/data
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=default.target

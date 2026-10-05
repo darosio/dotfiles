@@ -255,7 +255,7 @@ that scan's request without changing the rest of the session.
 #### Vane Search (AI-powered web search)
 
 `<Launch5> v` → `my/vane-search` — prompts for a query, POSTs to Vane at
-`my/vane-base-url` (default: `http://localhost:3000`), and opens an org buffer
+`my/vane-base-url` (default: `http://127.0.0.1:3000`), and opens an org buffer
 with the answer and clickable source links. Requires Vane running (`aic up vane`
 or `aic health vane`). Change `my/vane-focus-mode` to
 `academicSearch` for PubMed/Scholar-focused results.
@@ -531,14 +531,15 @@ ______________________________________________________________________
 ## Khoj — Self-Hosted RAG
 
 Khoj provides persistent document indexing with web search, chat memory, and
-an Emacs client. Runs as a Podman container at `localhost:42110`.
+an Emacs client. Runs as a Podman container at `127.0.0.1:42110`
+(quadlet migration under evaluation — see `ai-containers/README.md`).
 
 ### Start / stop
 
 ```bash
 aic up khoj      # start Khoj + its Postgres backend
 aic down khoj    # stop
-aic status       # check all AI containers
+aic health       # check all AI containers
 ```
 
 Container definition: `ai-containers/ai-containers/khoj/podman-compose.yml`
@@ -549,9 +550,9 @@ Khoj is configured to reach Ollama on the host via
 
 ### Web UI (no Emacs required)
 
-Open `http://localhost:42110` in a browser.
+Open `http://127.0.0.1:42110` in a browser.
 
-**First-time setup (admin panel at `http://localhost:42110/admin`):**
+**First-time setup (admin panel at `http://127.0.0.1:42110/admin`):**
 
 1. Set **Chat model** → provider: Ollama, model: `qwen3.6:35b-a3b`
 2. Set **Embedding model** → provider: Ollama, model: `qwen3-embedding:latest`

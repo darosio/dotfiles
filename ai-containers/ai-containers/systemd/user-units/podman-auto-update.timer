@@ -1,0 +1,18 @@
+# Override of the distro /usr/lib/systemd/user/podman-auto-update.timer
+# (dotfiles, ai-containers package; linked into ~/.config/systemd/user/ by
+# ai-containers.stow.sh). Tightened daily -> weekly: checks the quadlet AI
+# stack (searxng, vane, litellm; AutoUpdate=registry) on Monday morning
+# instead of nightly. The distro podman-auto-update.service it activates
+# runs `podman auto-update`: pulls only for changed images, restarts those
+# containers, rolls back a restart that fails, then prunes old images.
+[Unit]
+Description=Check quadlet container images for updates (weekly override)
+Documentation=man:podman-auto-update(1)
+
+[Timer]
+OnCalendar=Mon *-*-* 09:30:00
+RandomizedDelaySec=3600
+Persistent=true
+
+[Install]
+WantedBy=timers.target

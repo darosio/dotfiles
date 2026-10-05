@@ -1,20 +1,33 @@
 # shellcheck shell=bash
 
 _aic_service_url() {
+  # 127.0.0.1, not localhost: the pasta port-forwarder behind quadlet
+  # PublishPort resets IPv6 (::1) and curl/Emacs try ::1 first.
   case "$1" in
-    vane) printf '%s\n' "http://localhost:3000" ;;
-    searxng) printf '%s\n' "http://localhost:8080" ;;
-    khoj) printf '%s\n' "http://localhost:42110" ;;
-    litellm) printf '%s\n' "http://localhost:4000" ;;
+    vane) printf '%s\n' "http://127.0.0.1:3000" ;;
+    searxng) printf '%s\n' "http://127.0.0.1:8080" ;;
+    khoj) printf '%s\n' "http://127.0.0.1:42110" ;;
+    litellm) printf '%s\n' "http://127.0.0.1:4000" ;;
     mcp-searxng) printf '%s\n' "stdio" ;;
     *) return 1 ;;
   esac
 }
 
+# Services migrated to podman quadlets (~/ai-containers/systemd/users/1000/).
+# Managed as systemd user services; khoj/mcp-searxng still on podman-compose.
+_aic_is_quadlet() {
+  case "$1" in
+    searxng | vane | litellm) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
 # AI containers (~/ai-containers/{searxng,vane,khoj,...})
+# searxng/vane/litellm are quadlet services; khoj is still podman-compose
+# (its quadlet evaluation units are transient, under $XDG_RUNTIME_DIR).
 aic() {
   local base="$HOME/ai-containers"
-  local -a services=(searxng vane khoj litellm mcp-searxng)
+  local -a services=(searxng vane khoj litellm)
   local action="${1:-help}" svc="${2:-}"
   local -a targets
 
@@ -27,23 +40,53 @@ aic() {
   case "$action" in
     up)
       for s in "${targets[@]}"; do
-        [ -f "$base/$s/podman-compose.yml" ] || continue
-        echo "Starting $s..."
-        (cd "$base/$s" && podman-compose up -d)
+        if _aic_is_quadlet "$s"; then
+          echo "Starting $s (systemd --user)..."
+          systemctl --user start "$s.service"
+        else
+          [ -f "$base/$s/podman-compose.yml" ] || continue
+          echo "Starting $s (podman-compose)..."
+          (cd "$base/$s" && podman-compose --env-file "$HOME/.config/containers/khoj.env" up -d)
+        fi
       done
       ;;
     down)
       for s in "${targets[@]}"; do
-        [ -f "$base/$s/podman-compose.yml" ] || continue
-        echo "Stopping $s..."
-        (cd "$base/$s" && podman-compose down)
+        if _aic_is_quadlet "$s"; then
+          echo "Stopping $s.service..."
+          systemctl --user stop "$s.service"
+        else
+          [ -f "$base/$s/podman-compose.yml" ] || continue
+          echo "Stopping $s..."
+          (cd "$base/$s" && podman-compose --env-file "$HOME/.config/containers/khoj.env" down)
+        fi
+      done
+      ;;
+    enable)
+      # Start now AND pull the quadlet stack up automatically at login/boot
+      # (linger must be on: loginctl enable-linger "$USER").
+      for s in "${targets[@]}"; do
+        if _aic_is_quadlet "$s"; then
+          systemctl --user enable --now "$s.service"
+        fi
       done
       ;;
     restart)
-      aic down "$svc"
-      aic up "$svc"
+      for s in "${targets[@]}"; do
+        if _aic_is_quadlet "$s"; then
+          systemctl --user restart "$s.service"
+        fi
+      done
+      # non-quadlet services: fall back to down+up
+      for s in "${targets[@]}"; do
+        if ! _aic_is_quadlet "$s"; then
+          aic down "$s"
+          aic up "$s"
+        fi
+      done
       ;;
     ps)
+      systemctl --user status searxng.service vane.service litellm.service --no-pager 2> /dev/null | head -20
       podman ps -a --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'
       ;;
     url)
@@ -68,10 +111,39 @@ aic() {
       done
       ;;
     update | upgrade)
+      # Quadlet services: pull the exact Image= from the unit, restart if the
+      # digest changed. Unattended updates run via podman-auto-update.timer
+      # instead (registry policy + rollback). One-shot MCP images (started
+      # per-session by Emacs via podman run --rm) have no unit to track;
+      # pulling them is enough — the next session uses the new image.
+      podman image pull docker.io/isokoliuk/mcp-searxng:latest > /dev/null 2>&1 &&
+        echo "pulled mcp-searxng (next gptel MCP connect uses it)"
+      podman image pull ghcr.io/github/github-mcp-server:latest > /dev/null 2>&1 &&
+        echo "pulled github-mcp-server"
       for s in "${targets[@]}"; do
-        [ -f "$base/$s/podman-compose.yml" ] || continue
-        echo "Updating $s..."
-        (cd "$base/$s" && podman-compose pull && podman-compose up -d --remove-orphans)
+        if _aic_is_quadlet "$s"; then
+          unit_file="$base/systemd/users/1000/$s.container"
+          img=$(sed -n 's/^Image=//p' "$unit_file")
+          old=$(podman images --no-trunc -q "$img" 2> /dev/null | head -1)
+          echo "Pulling $img..."
+          podman image pull "$img" || continue
+          new=$(podman images --no-trunc -q "$img" 2> /dev/null | head -1)
+          if [ "$old" != "$new" ]; then
+            if systemctl --user is-active --quiet "$s.service"; then
+              echo "Updated; restarting $s.service"
+              systemctl --user restart "$s.service"
+            else
+              echo "Updated; $s was stopped, not started"
+            fi
+          else
+            echo "$s already current"
+          fi
+        else
+          [ -f "$base/$s/podman-compose.yml" ] || continue
+          echo "Updating $s..."
+          (cd "$base/$s" && podman-compose pull &&
+            podman-compose --env-file "$HOME/.config/containers/khoj.env" up -d --remove-orphans)
+        fi
       done
       ;;
     logs)
@@ -79,15 +151,14 @@ aic() {
       podman logs -f "$svc"
       ;;
     *)
-      echo "Usage: aic {up|down|restart|ps|url|health|update|upgrade|logs} [service]"
+      echo "Usage: aic {up|down|restart|enable|ps|url|health|update|upgrade|logs} [service]"
       echo "Services: ${services[*]}"
-      echo "  aic up          — start all"
-      echo "  aic up vane     — start one"
-      echo "  aic down khoj   — stop one"
-      echo "  aic url         — print service URLs"
-      echo "  aic health      — check service reachability"
-      echo "  aic update vane — pull and recreate one service"
-      echo "  aic ps          — status"
+      echo "  searxng vane litellm -> quadlet (systemctl --user services)"
+      echo "  khoj mcp-searxng     -> podman-compose"
+      echo "  aic up              — start (all or one)"
+      echo "  aic enable          — start + autostart at boot (quadlet ones)"
+      echo "  aic health          — check service reachability"
+      echo "  aic update          — pull newer images + restart changed services"
       echo "  aic logs searxng"
       ;;
   esac

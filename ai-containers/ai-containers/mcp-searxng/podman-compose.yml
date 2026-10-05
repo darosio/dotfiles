@@ -1,9 +1,0 @@
-services:
-  mcp-searxng:
-    image: docker.io/isokoliuk/mcp-searxng:latest
-    container_name: mcp-searxng
-    stdin_open: true
-    tty: true
-    environment:
-      SEARXNG_URL: http://host.containers.internal:8080
-    restart: unless-stopped

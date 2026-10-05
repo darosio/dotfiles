@@ -8,7 +8,7 @@
 ;; - C-c e           : Start ellama session
 ;; - <Launch5> ...   : gptel commands (see :bind below)
 ;;   <Launch5> l     : Literature scan (search-science preset + template)
-;;   <Launch5> v     : Vane search (AI web search via /api/chat, localhost:3000)
+;;   <Launch5> v     : Vane search (AI web search via /api/chat, 127.0.0.1:3000)
 ;;   <Launch5> n     : Save gptel buffer as org-roam AI note
 ;;
 ;;; Code:
@@ -27,8 +27,11 @@
 (defconst my/ollama-host "localhost:11434"
   "Ollama host used by local Emacs AI clients.")
 
-(defconst my/vane-base-url "http://localhost:3000"
-  "Vane base URL.")
+(defconst my/vane-base-url "http://127.0.0.1:3000"
+  "Vane base URL.
+
+127.0.0.1, not localhost: the quadlet/pasta port-forwarder resets IPv6
+(::1) connections, and curl resolves ::1 first.")
 
 (defconst my/khoj-server-url "http://127.0.0.1:42110"
   "Khoj base URL for the local Emacs client.")
@@ -276,7 +279,7 @@ images, etc.) is silently ignored.  sources events carry citations."
 
   (defun my/vane-search (query)
     "Search Vane with QUERY; display results in an org buffer.
-Requires Vane running at `my/vane-base-url' (default: localhost:3000).
+Requires Vane running at `my/vane-base-url' (default: http://127.0.0.1:3000).
 Results include the answer and a clickable sources list."
     (interactive "sVane search: ")
     (let ((provider-id (my/vane--provider-id)))
@@ -738,7 +741,9 @@ tool that is not present.  Presets own their tools, so presets own this.")
   :after gptel
   :custom (mcp-hub-servers
            `(;; Local scripts
-             ("searxng" . (:command "podman" :args ("exec" "-i" "mcp-searxng" "node" "dist/cli.js")))
+             ("searxng" . (:command "podman" :args ("run" "-i" "--rm"
+                                                    "-e" "SEARXNG_URL=http://host.containers.internal:8080"
+                                                    "docker.io/isokoliuk/mcp-searxng:latest")))
              ("pdf" . (:command "uv"
                                 :args ("run" "--with" "pymupdf"
                                        "/home/dan/.local/bin/pdf-mcp.py")
