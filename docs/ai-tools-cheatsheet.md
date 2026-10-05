@@ -66,11 +66,43 @@ OPENAI_API_KEY   cloud/openai   openai     # <- uncomment when the entry exists
 rows), `emit` (VAR=VALUE blob), `agent-secrets cloud/x` (one entry).
 Consumers:
 
-| Tool     | How it gets keys                                                                                                        | Stored secret                     |
-| -------- | ----------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
-| Hermes   | `secrets.command` → `hermes-secrets` → `agent-secrets emit` (all rows)                                                  | none                              |
-| pi       | `pi-pass-auth` writes every row with a pi-provider-id as a command key: `"!\"$HOME/.local/bin/agent-secrets\" cloud/x"` | command reference, no literal key |
-| OpenCode | `opencode-with-secrets` exports registry rows that match OpenCode's provider env list, then `opencode … --standalone`   | none (after `auth logout`)        |
+| Tool     | How it gets keys                                                                                                                                                   | Stored secret                                                                               |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------- |
+| Hermes   | `secrets.command` → `hermes-secrets` → `agent-secrets emit` (all rows)                                                                                             | none                                                                                        |
+| pi       | `pi-pass-auth` writes every row with a pi-provider-id as a command key: `"!\"$HOME/.local/bin/agent-secrets\" cloud/x"`                                            | command reference, no literal key                                                           |
+| OpenCode | paste the pass value ONCE into its own store: `/connect` → provider → key, or the PTY helper below. Its db then serves every surface (TUI, `run`, shared service). | key in opencode.db (mode 600), same class as its existing deepseek/openrouter/copilot creds |
+
+OpenCode v2 has no `!command` reference form (pi's trick) and its shared
+background service never inherits a wrapper's env, so the wrapper
+`opencode-with-secrets` (`--standalone` + exported env) is only a fallback for
+headless `run` — it does not populate the shared service's model list. The
+durable setup is the stored credential. Re-add after a rotation (the key
+never passes through chat — the helper reads `pass` directly):
+
+```sh
+python3 - <<'PY'   # PTY helper: types the pass value into `opencode auth login`
+import os, pty, time, select, fcntl, termios, struct, re
+key = os.popen(os.path.expanduser("~/.local/bin/agent-secrets cloud/qwencloud")).read().strip()
+pid, fd = pty.fork()
+if pid == 0:
+    os.execvp("opencode", ["opencode", "auth", "login", "alibaba-token-plan", "--method", "key"])
+fcntl.ioctl(fd, termios.TIOCSWINSZ, struct.pack("HHHH", 40, 120, 0, 0))
+time.sleep(3.0); os.write(fd, (key + "\r").encode()); key = ""
+deadline = time.time() + 30
+while time.time() < deadline:
+    r, _, _ = select.select([fd], [], [], 1)
+    if not r: break
+    try: d = os.read(fd, 4096)
+    except OSError: break
+    if not d: break
+os.close(fd); os.waitpid(pid, 0)
+PY
+opencode auth list --format json | jq -r '.[] | select(.id|test("alibaba")) | .id'
+```
+
+The `sleep 3` then write is the reliable part: the TUI renders one character
+per write with ANSI escapes interleaved, so matching on a prompt string races.
+Set a real window size first (`TIOCSWINSZ`) or the TUI never paints.
 
 Workflow for a new provider key:
 
