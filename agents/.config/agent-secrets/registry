@@ -21,7 +21,9 @@
 ALIBABA_TOKEN_PLAN_API_KEY cloud/qwencloud          qwen-token-plan-individual
 GEMINI_API_KEY             cloud/gemini_API_key      google
 DEEPSEEK_API_KEY           cloud/deepseek            deepseek
-OPENROUTER_API_KEY         cloud/openrouter          openrouter
+OPENROUTER_API_KEY         cloud/openrouter
+# NOTE: pi column deliberately EMPTY for openrouter — authenticating it in pi
+# floods /model with ~400 catalog models. Hermes + OpenCode still get the key.
 
 # Anthropic caveat (kept from the original hermes-secrets): export as
 # ANTHROPIC_API_KEY only — never ANTHROPIC_TOKEN, which sits first in the
