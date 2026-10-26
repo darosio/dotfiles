@@ -87,3 +87,40 @@ Here is a revision that simplifies your init.el by removing redundant or less-us
   ;; - For LSP: use `eglot` (which you have) but add minimal configuration only.
   ;; - Use `apheleia` for formatters, keep it tuned to your existing setup.
   ;; - Use `doom-modeline` + `nerd-icons` + `minions` as your modeline stack.
+
+* TODO Fix local ollama max output tokens
+● this manuscript aim to demonstrate that key mutations in E2GPT would allow better chloride imaging. Actually iClima in conjunction with a different ref protein carries exactly those
+mutations and we just received a revision back from Neurons:
+iClima: a ratiometric genetically encoded sensor for optical imaging of fast GABAergic chloride currents in vitro and in vivo
+... (+514 more lines)
+There are many minor errors, the most exasperating of which is the mix up of the emission spectra and excitation spectra in
+Figure 1.
+────────────────────────────────────────
+
+⚠  Response truncated (finish_reason='length') - model hit max output tokens
+
+╭─ ☤ Hermes ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+You've shared the Neuron decision + all four reviews. Before I say more: I can work in this repo (Liaisan 2013 screening data, derived pKa tables, E2GFP analysis), but the i
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+⚠  Response truncated (finish_reason='length') - model hit max output tokens
+
+- [ ] hermes --max-tokens 16384
+- [ ] its config.yaml
+  #+begin_src yaml
+      model:
+        max_tokens: 16384
+        reasoning_effort: low  # opzioni: none, low, medium, high
+  #+end_src
+- [ ] in opencode config.json
+    #+begin_src json
+      {
+        "providers": {
+          "ollama": {
+            "options": {
+              "max_tokens": 16384,
+              "num_predict": 16384
+            }
+          }
+        }
+      }
+    #+end_src
