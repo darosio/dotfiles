@@ -40,7 +40,10 @@ export R_LIBS_USER=~/.Renviron/
 export IGNOREEOF=1
 export MAKEFLAGS='-j4'
 
+# completion files are shipped by the OS packages; not present everywhere (e.g. CI)
+# shellcheck source=/dev/null
 source /usr/share/bash-completion/completions/git
+# shellcheck source=/dev/null
 source /usr/share/bash-completion/completions/hg
 
 shopt -s autocd       # Auto "cd" when entering just a path
