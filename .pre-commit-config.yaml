@@ -34,6 +34,14 @@ repos:
         args: [--autofix, --indent, "2", --no-sort-keys]
         exclude: \.ipynb$
 
+  - repo: https://github.com/kynan/nbstripout
+    rev: 0.9.1
+    hooks:
+      - id: nbstripout
+        files: \.ipynb$
+        args:
+          - '--extra-keys=metadata.language_info.version metadata.signature metadata.widgets cell.metadata.ExecuteTime cell.metadata.execution cell.metadata.collapsed cell.metadata.scrolled'
+
   - repo: https://github.com/google/yamlfmt
     rev: v0.21.0
     hooks:
@@ -66,7 +74,7 @@ repos:
         exclude: (.goldendict/config|\.github/workflows/cruft-update\.yml|\.github/workflows/lockfile-update\.yml)
 
   - repo: https://github.com/gitleaks/gitleaks
-    rev: v8.30.0
+    rev: v8.30.1
     hooks:
       - id: gitleaks
 
@@ -78,7 +86,7 @@ repos:
         exclude: ".gitconfig|zotero/"
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.13
+    rev: v0.17.2
     hooks:
       - id: ruff
         types_or: [python, pyi, jupyter]
@@ -98,13 +106,13 @@ repos:
 
   # should be replaced in the future ref https://github.com/astral-sh/ruff/issues/458
   - repo: https://github.com/jsh9/pydoclint
-    rev: 0.9.1
+    rev: 0.11.1
     hooks:
       - id: pydoclint
         exclude: ^\.agents/skills/
 
   - repo: https://github.com/crate-ci/typos
-    rev: v1.50.1
+    rev: v1.51.1
     hooks:
       - id: typos
         # args: [] # Turn off automatic fixing
@@ -120,13 +128,13 @@ repos:
         args: [-x, --severity=style] # Show errors, warnings, info and style
 
   - repo: https://github.com/scop/pre-commit-shfmt
-    rev: v3.11.0-1
+    rev: v3.12.0-2
     hooks:
       - id: shfmt # prebuilt upstream executable
         args: ["-w", "-i", "2", "-ci", "-sr"] # 2 spaces, indent case, simplify redirects
 
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.12.12
+    rev: 0.13.5
     hooks:
       - id: uv-lock
         stages: [pre-commit]

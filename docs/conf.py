@@ -2,11 +2,11 @@
 
 project = "dotfiles"
 author = "Daniele Arosio"
-copyright = f"2024, {author}"  # noqa: A001
+copyright = f"2024, {author}"  # ruff: ignore[builtin-variable-shadowing]
 
 extensions = [
     "autoapi.extension",
-    "myst_parser",
+    "myst_nb",
     "sphinx.ext.napoleon",
     "sphinx_copybutton",
 ]
@@ -40,5 +40,5 @@ html_title = "dotfiles"
 # Source file suffixes
 source_suffix = {
     ".rst": "restructuredtext",
-    ".md": "markdown",
+    ".md": "myst-nb",
 }

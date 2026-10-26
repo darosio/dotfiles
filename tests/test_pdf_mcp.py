@@ -31,7 +31,7 @@ _mod = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(_mod)
 sys.modules["pdf_mcp"] = _mod
 
-import pdf_mcp as mcp  # type: ignore[import-not-found]  # noqa: E402
+import pdf_mcp as mcp  # type: ignore[import-not-found]  # ruff: ignore[module-import-not-at-top-of-file]
 
 _BIB = textwrap.dedent("""\
     @article{Vaswani2017_AV,

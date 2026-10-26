@@ -17,9 +17,9 @@ from pathlib import Path
 import click
 from dateutil.parser import ParserError, parse  # <--- NEW IMPORT
 
-PHOTO_EXTS: set[str] = {".arw", ".bmp", ".cr2", ".gif", ".heic", ".jpeg", ".jpg", ".nef", ".orf", ".png", ".rw2", ".tif", ".tiff", ".webp"}  # fmt: skip # noqa: E501
+PHOTO_EXTS: set[str] = {".arw", ".bmp", ".cr2", ".gif", ".heic", ".jpeg", ".jpg", ".nef", ".orf", ".png", ".rw2", ".tif", ".tiff", ".webp"}  # fmt: skip # ruff: ignore[line-too-long]
 
-VIDEO_EXTS: set[str] = {".3gp", ".avi", ".flv", ".m2ts", ".m4v", ".mkv", ".mov", ".mp4", ".mpeg", ".mpg", ".mts", ".webm", ".wmv"}  # fmt: skip # noqa: E501
+VIDEO_EXTS: set[str] = {".3gp", ".avi", ".flv", ".m2ts", ".m4v", ".mkv", ".mov", ".mp4", ".mpeg", ".mpg", ".mts", ".webm", ".wmv"}  # fmt: skip # ruff: ignore[line-too-long]
 
 EXIFTOOL: str | None = shutil.which("exiftool") or next(
     (p for p in ("/usr/bin/exiftool", "/usr/local/bin/exiftool") if Path(p).exists()),
@@ -127,7 +127,7 @@ def get_exif_datetime(file_path: Path) -> datetime | None:
             "-QuickTime:ModifyDate",
             str(file_path),
         ]
-        result = subprocess.run(  # noqa: S603
+        result = subprocess.run(  # ruff: ignore[subprocess-without-shell-equals-true]
             cmd,
             capture_output=True,
             text=True,
@@ -135,7 +135,7 @@ def get_exif_datetime(file_path: Path) -> datetime | None:
             timeout=20,
         )
         return _get_date_from_exif_json(result.stdout)
-    except Exception as e:  # noqa: BLE001
+    except Exception as e:  # ruff: ignore[blind-except]
         print(f"Critical error processing {file_path}: {e}")
         return None
 
@@ -224,7 +224,7 @@ def organize_files(
             file_path = futures_map[future]
             try:
                 exif_data[file_path] = future.result()
-            except Exception as e:  # noqa: BLE001
+            except Exception as e:  # ruff: ignore[blind-except]
                 click.echo(f"  ERROR (EXIF) {file_path.name}: {e}", err=True)
                 skipped += 1
     # Phase 2 - decide where each file belongs and copy (SERIAL)
@@ -234,7 +234,7 @@ def organize_files(
     for file_path, dt in exif_data.items():
         ext = file_path.suffix.lower()
         original_name = file_path.name
-        try:
+        try:  # ruff: ignore[too-many-statements-in-try-clause]
             # ------------------------------------------------------ Unknown?
             if dt is None:
                 target_dir = unknown_dir
@@ -262,7 +262,7 @@ def organize_files(
 
             processed += 1
 
-        except Exception as e:  # noqa: BLE001
+        except Exception as e:  # ruff: ignore[blind-except]
             click.echo(f"  ERROR (Copy) {file_path.name}: {e}", err=True)
             skipped += 1
 

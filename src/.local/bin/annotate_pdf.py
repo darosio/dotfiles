@@ -193,7 +193,7 @@ def normalise(quote: str) -> str:
 
 
 def locate(
-    page: Any,  # noqa: ANN401 - pymupdf.Page; the package ships no stubs
+    page: Any,  # ruff: ignore[any-type] - pymupdf.Page; the package ships no stubs
     quote: str,
     *,
     min_words: int = _MIN_MATCH_WORDS,
@@ -260,7 +260,7 @@ def api_key(provider: str) -> str:
         # hermes-secrets uses so the key resolves without exporting anything.
         env = dict(os.environ)
         env.setdefault("PASSWORD_STORE_DIR", str(Path.home() / "Sync" / ".pass"))
-        found = subprocess.run(  # noqa: S603 - fixed argv, path from shutil.which
+        found = subprocess.run(  # ruff: ignore[subprocess-without-shell-equals-true] - fixed argv, path from shutil.which
             [pass_bin, "show", store_entry],
             capture_output=True,
             text=True,
@@ -425,9 +425,9 @@ def chat(
     url, payload, headers = build_request(
         prompt, provider=provider, model=model, host=host
     )
-    request = urllib.request.Request(url, data=payload, headers=headers)  # noqa: S310 - scheme checked above
+    request = urllib.request.Request(url, data=payload, headers=headers)  # ruff: ignore[suspicious-url-open-usage] - scheme checked above
     try:
-        with urllib.request.urlopen(request, timeout=timeout) as response:  # noqa: S310
+        with urllib.request.urlopen(request, timeout=timeout) as response:  # ruff: ignore[suspicious-url-open-usage]
             body = json.loads(response.read())
     except urllib.error.HTTPError as exc:
         detail = http_error_message(exc)
@@ -440,7 +440,7 @@ def chat(
     return extract_content(provider, body)
 
 
-def propose(  # noqa: PLR0913
+def propose(  # ruff: ignore[too-many-arguments]
     text: str,
     *,
     provider: str,
@@ -491,7 +491,7 @@ def propose(  # noqa: PLR0913
 
 
 def annotate_page(
-    page: Any,  # noqa: ANN401 - pymupdf.Page; the package ships no stubs
+    page: Any,  # ruff: ignore[any-type] - pymupdf.Page; the package ships no stubs
     proposals: Iterable[Proposal],
     *,
     author: str,
@@ -599,7 +599,7 @@ def parse_pages(spec: str | None, count: int) -> Sequence[int]:
     help="Seconds to wait per page.",
 )
 @click.option("--dry-run", is_flag=True, help="Report proposals, write nothing.")
-def main(  # noqa: PLR0913
+def main(  # ruff: ignore[too-many-arguments]
     pdf: Path,
     *,
     provider: str,

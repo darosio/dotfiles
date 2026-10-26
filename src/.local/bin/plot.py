@@ -25,7 +25,7 @@ def convert_to_number(w: str | float) -> bool:
 
 
 args = docopt(__doc__)
-with open(args["FILE"], encoding="utf-8") as fp:  # noqa: PTH123
+with open(args["FILE"], encoding="utf-8") as fp:  # ruff: ignore[builtin-open]
     "skip lines that contain at least 1 (alpha)word"
     N = 0
     line = fp.readline()
@@ -43,7 +43,7 @@ if comma:
     df = pd.read_csv(args["FILE"], skiprows=N)
 else:
     df = pd.read_csv(args["FILE"], skiprows=N, sep="\t")
-df.set_index(df.columns[0], inplace=True)  # noqa: PD002
+df.set_index(df.columns[0], inplace=True)  # ruff: ignore[pandas-use-of-inplace-argument]
 print(df.head())
 df.plot(grid=True)
 plt.tight_layout()

@@ -37,12 +37,12 @@ def get_notmuch_config() -> str:
 
 def add_tags(
     notmuch_db: notmuch.Database,
-    add_gmail: bool = False,  # noqa: FBT001,FBT002
+    add_gmail: bool = False,  # ruff: ignore[boolean-type-hint-positional-argument, boolean-default-value-positional-argument]
 ) -> None:
     """Add tags from X-Keywords header to notmuch."""
     all_messages = notmuch.Query(notmuch_db, "").search_messages()
     for message in all_messages:
-        try:
+        try:  # ruff: ignore[too-many-statements-in-try-clause]
             message_tags = message.get_header("X-Keywords")
             if message_tags:
                 for tag in message_tags.split(","):
@@ -64,7 +64,7 @@ def add_tags(
             pass
 
 
-def main(add_gmail: bool = False) -> None:  # noqa: FBT001,FBT002
+def main(add_gmail: bool = False) -> None:  # ruff: ignore[boolean-type-hint-positional-argument, boolean-default-value-positional-argument]
     """Run the script."""
     notmuch_config = get_notmuch_config()
     logging.info("Notmuch config used: %s", notmuch_config)

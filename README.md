@@ -54,6 +54,11 @@ The project uses [uv](https://docs.astral.sh/uv/) for Python dependency
 management and [direnv](https://direnv.net/) for automatic environment
 activation.
 
+Python upgrades are **not** managed by Renovate. Upgrade Python in a single
+manual PR that updates `.python-version`, the `requires-python`/classifier/ruff
+settings in `pyproject.toml`, and the CI matrix in `.github/workflows/ci.yml`,
+then refresh `uv.lock`.
+
 ### Make Targets
 
 Run `make help` for the full list:
@@ -126,6 +131,31 @@ make thaw-emacs       # checkout pinned commits + rebuild
 | `cruft-update.yml`    | weekly, dispatch | Apply cookiecutter template updates      |
 | `lockfile-update.yml` | weekly, dispatch | `uv lock --upgrade` + PR                 |
 | `release.yml`         | tag push         | Publish release                          |
+
+### CI update authentication
+
+The `cruft-update` and `lockfile-update` workflows need write access to push
+update branches and open PRs. They prefer a GitHub App installation token via
+[`actions/create-github-app-token`](https://github.com/actions/create-github-app-token)
+and fall back to `github.token`. The fallback works for lockfile updates, but
+not when Cruft changes workflow files.
+
+One-time App setup (shared across repositories):
+
+1. [Create the App](https://github.com/settings/apps/new) with repository
+   permissions `Contents: Read & write`, `Pull requests: Read & write`, and
+   `Workflows: Read & write`. Disable webhooks.
+
+2. Generate and download a private key from the App's settings page.
+
+3. Install the App on this repository (or all repositories).
+
+4. Set the repository secrets:
+
+   ```bash
+   gh secret set APP_ID --repo <owner>/<repo> --body "<app-id>"
+   gh secret set APP_PRIVATE_KEY --repo <owner>/<repo> < /path/to/key.pem
+   ```
 
 ## License
 

@@ -12,7 +12,7 @@ import importlib.util
 import io
 import json
 import shutil
-import subprocess  # noqa: S404 - patched, never executed in tests
+import subprocess  # ruff: ignore[suspicious-subprocess-import] - patched, never executed in tests
 import sys
 import urllib.error
 import urllib.request
@@ -34,7 +34,7 @@ _mod = importlib.util.module_from_spec(_spec)
 sys.modules["annotate_pdf"] = _mod
 _spec.loader.exec_module(_mod)
 
-import annotate_pdf as ann  # noqa: E402 - must follow exec_module above
+import annotate_pdf as ann  # ruff: ignore[module-import-not-at-top-of-file] - must follow exec_module above
 
 _ON_PAGE = "The fluorescence lifetime decreased by 30% upon binding."
 _WRAPPED_HEAD = "Rate constants were obtained by fitting a single"
@@ -432,7 +432,7 @@ class TestProviders:
 
         monkeypatch.setattr(subprocess, "run", fake_run)
         ann.api_key("gemini")
-        assert seen["PASSWORD_STORE_DIR"] == "/custom/store"  # noqa: S105
+        assert seen["PASSWORD_STORE_DIR"] == "/custom/store"  # ruff: ignore[hardcoded-password-string]
 
     def test_missing_key_is_explicit(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """No key anywhere raises rather than sending an unauthenticated call."""

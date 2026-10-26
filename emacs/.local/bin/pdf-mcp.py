@@ -47,7 +47,7 @@ def _cache_load() -> dict:
     """
     try:
         return json.loads(_CACHE_FILE.read_text(encoding="utf-8"))
-    except Exception:  # noqa: BLE001
+    except Exception:  # ruff: ignore[blind-except]
         return {}
 
 
@@ -56,7 +56,7 @@ def _cache_save(cache: dict) -> None:
     try:
         _CACHE_DIR.mkdir(parents=True, exist_ok=True)
         _CACHE_FILE.write_text(json.dumps(cache), encoding="utf-8")
-    except Exception:  # noqa: S110, BLE001
+    except Exception:  # ruff: ignore[try-except-pass, blind-except]
         pass
 
 
@@ -382,7 +382,7 @@ TOOLS = [
 ]
 
 
-def handle(  # noqa: C901, PLR0911, PLR0912
+def handle(  # ruff: ignore[complex-structure, too-many-return-statements, too-many-branches]
     req: dict,
 ) -> dict | None:
     """Dispatch a JSON-RPC request and return the response dict (or None).
@@ -425,7 +425,7 @@ def handle(  # noqa: C901, PLR0911, PLR0912
             try:
                 result = extract_text_with_metadata(args["path"])
                 response_text = result["text"]
-            except Exception as exc:  # noqa: BLE001
+            except Exception as exc:  # ruff: ignore[blind-except]
                 return {
                     "jsonrpc": "2.0",
                     "id": req_id,
@@ -462,7 +462,7 @@ def handle(  # noqa: C901, PLR0911, PLR0912
                         )
                         + (f"\n{result['error']}" if result.get("error") else "")
                     )
-            except Exception as exc:  # noqa: BLE001
+            except Exception as exc:  # ruff: ignore[blind-except]
                 return {
                     "jsonrpc": "2.0",
                     "id": req_id,
@@ -485,7 +485,7 @@ def handle(  # noqa: C901, PLR0911, PLR0912
                     response_text = f"DOI: {result['doi']}\nFile: {result['filename']}"
                 else:
                     response_text = f"No DOI found in: {result['filename']}"
-            except Exception as exc:  # noqa: BLE001
+            except Exception as exc:  # ruff: ignore[blind-except]
                 return {
                     "jsonrpc": "2.0",
                     "id": req_id,
@@ -521,7 +521,7 @@ def main() -> None:
             resp = handle(req)
             if resp is not None:
                 print(json.dumps(resp), flush=True)
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:  # ruff: ignore[blind-except]
             print(
                 json.dumps({
                     "jsonrpc": "2.0",

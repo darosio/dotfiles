@@ -113,7 +113,7 @@ def main() -> None:
     locator = mdates.AutoDateLocator()
     ax.xaxis.set_major_locator(locator)
     ax.xaxis.set_major_formatter(mdates.ConciseDateFormatter(locator))
-    # plt.ylim([73.5, 77.5]) # noqa: ERA001
+    # plt.ylim([73.5, 77.5]) # ruff: ignore[commented-out-code]
     plt.grid(which="minor", color="r", linestyle="--")
     ymin = round(min(df.weight) - 0.5)
     ymax = round(max(df.weight) + 0.5)

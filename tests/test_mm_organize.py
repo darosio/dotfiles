@@ -19,7 +19,7 @@ _scripts_path = str(Path(__file__).parent.parent / "src" / ".local" / "bin")
 if _scripts_path not in sys.path:
     sys.path.insert(0, _scripts_path)
 
-from mm_organize import (  # noqa: E402
+from mm_organize import (  # ruff: ignore[module-import-not-at-top-of-file]
     PHOTO_EXTS,
     VIDEO_EXTS,
     _ensure_unique_path,

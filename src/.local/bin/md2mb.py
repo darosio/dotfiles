@@ -55,9 +55,9 @@ class UTF8Mbox(mailbox.mbox):
 
     def _dump_message(
         self,
-        message: Any,  # noqa: ANN401 base accepts Message, str, bytes or file-like
+        message: Any,  # ruff: ignore[any-type] base accepts Message, str, bytes or file-like
         target: SupportsWrite[bytes],
-        mangle_from_: bool = True,  # noqa: FBT001,FBT002
+        mangle_from_: bool = True,  # ruff: ignore[boolean-type-hint-positional-argument, boolean-default-value-positional-argument]
     ) -> None:
         """Write message to file from mbox mailbox."""
         if not isinstance(message, email.message.Message):
