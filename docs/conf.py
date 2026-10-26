@@ -1,4 +1,4 @@
-"""Sphinx configuration for dotfiles documentation."""
+"""Configuration file for the Sphinx documentation builder."""
 
 project = "dotfiles"
 author = "Daniele Arosio"
@@ -8,6 +8,7 @@ extensions = [
     "autoapi.extension",
     "myst_nb",
     "sphinx.ext.napoleon",
+    "sphinx_click",
     "sphinx_copybutton",
 ]
 
