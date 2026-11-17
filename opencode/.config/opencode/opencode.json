@@ -1,0 +1,22 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "ollama": {
+      "models": {
+        "qwen3.8:latest": {
+          "_launch": true,
+          "name": "qwen3.8:latest"
+        }
+      },
+      "name": "Ollama",
+      "npm": "@ai-sdk/openai-compatible",
+      "options": {
+        "baseURL": "http://127.0.0.1:11434/v1"
+      }
+    }
+  },
+  "plugins": [
+    "openslimedit",
+    "@angdrew/opencode-hashline-plugin"
+  ]
+}
