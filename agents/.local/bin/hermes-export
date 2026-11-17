@@ -1,0 +1,624 @@
+#!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.11"
+# dependencies = []
+# ///
+"""Export Hermes agent memory to a CLAUDE.md block and a private git repo.
+
+What it exports (text only):
+  ~/.hermes/memories/MEMORY.md, memories/USER.md, SOUL.md, skills/**
+
+What it never exports:
+  .env, auth.json, config.yaml, logs, caches, anything not plain text.
+  state.db (session history) only with --include-sessions, and only into a
+  git-annex repo.
+
+Safe by default: without --apply it only prints a plan. It refuses to run if
+it finds secret-looking strings in memories/** or SOUL.md, unless --redact is
+given. Matches under skills/** (vendored content) are warnings only.
+
+Usage:
+  hermes-export                                 # dry run (prints a plan)
+  hermes-export --apply                         # write repo + CLAUDE.md block
+  hermes-export --apply --push                  # also push to 'origin'
+"""
+
+from __future__ import annotations
+
+import argparse
+import re
+import shutil
+import sqlite3
+import subprocess  # ruff: ignore[suspicious-subprocess-import] - fixed argv, never shell=True
+import sys
+from datetime import UTC, datetime
+from pathlib import Path
+
+BEGIN = "<!-- BEGIN hermes-export (managed block: edit the source, not this) -->"
+END = "<!-- END hermes-export -->"
+
+TEXT_SUFFIXES = {".md", ".txt", ".yaml", ".yml", ".json", ".toml", ".py", ".sh"}
+IGNORED_PARTS = {"__pycache__", ".git", ".venv", "node_modules", ".cache"}
+MAX_BYTES = 1_000_000
+CLAUDE_BLOCK_WARN_LINES = 150
+
+SECRET_PATTERNS: dict[str, re.Pattern[str]] = {
+    "API key (sk-...)": re.compile(r"\bsk-[A-Za-z0-9_\-]{20,}"),
+    "GitHub token": re.compile(r"\bgh[pousr]_[A-Za-z0-9]{30,}"),
+    "Slack token": re.compile(r"\bxox[abprs]-[A-Za-z0-9-]{10,}"),
+    "Telegram bot token": re.compile(r"\b\d{8,10}:[A-Za-z0-9_-]{35}\b"),
+    "AWS access key": re.compile(r"\bAKIA[0-9A-Z]{16}\b"),
+    "Private key block": re.compile(r"-----BEGIN [A-Z ]*PRIVATE KEY-----"),
+    "Bearer token": re.compile(r"(?i)\bbearer\s+[A-Za-z0-9._\-]{20,}"),
+    "Key/secret assignment": re.compile(
+        r"(?i)\b(api[_-]?key|secret|token|password)\b\s*[:=]\s*['\"]?[A-Za-z0-9._\-]{16,}"
+    ),
+}
+
+GITIGNORE = """\
+.env
+auth.json
+*.pem
+*.key
+config.yaml
+"""
+
+
+def _now() -> datetime:
+    """Return the current local time as a tz-aware datetime.
+
+    Returns
+    -------
+    datetime
+        Current local time, tz-aware.
+    """
+    return datetime.now(UTC).astimezone()
+
+
+def find_secrets(text: str) -> list[tuple[str, int]]:
+    """Find secret-looking matches in ``text``.
+
+    Parameters
+    ----------
+    text : str
+        Text to scan, one pattern per line.
+
+    Returns
+    -------
+    list[tuple[str, int]]
+        ``(label, line number)`` for each match, 1-based line numbers.
+    """
+    hits: list[tuple[str, int]] = []
+    for lineno, line in enumerate(text.splitlines(), start=1):
+        for label, pattern in SECRET_PATTERNS.items():
+            if pattern.search(line):
+                hits.append((label, lineno))
+    return hits
+
+
+def redact(text: str) -> str:
+    """Replace secret-looking substrings with ``[REDACTED]``.
+
+    Parameters
+    ----------
+    text : str
+        Text to scan.
+
+    Returns
+    -------
+    str
+        ``text`` with every ``SECRET_PATTERNS`` match replaced.
+    """
+    for pattern in SECRET_PATTERNS.values():
+        text = pattern.sub("[REDACTED]", text)
+    return text
+
+
+def report_secrets(findings: dict[str, list[tuple[str, int]]]) -> None:
+    """Print one ``rel:line — label`` row per secret-looking match.
+
+    Parameters
+    ----------
+    findings : dict[str, list[tuple[str, int]]]
+        Map of relative path to ``(label, line number)`` hits.
+    """
+    for rel, hits in findings.items():
+        for label, lineno in hits:
+            print(f"{rel}:{lineno} — {label}", file=sys.stderr)
+
+
+def summarize_secret_warnings(findings: dict[str, list[tuple[str, int]]]) -> None:
+    """Print one summary line per file with secret-looking matches.
+
+    Parameters
+    ----------
+    findings : dict[str, list[tuple[str, int]]]
+        Map of relative path to ``(label, line number)`` hits.
+    """
+    for rel, hits in findings.items():
+        counts: dict[str, int] = {}
+        for label, _lineno in hits:
+            counts[label] = counts.get(label, 0) + 1
+        detail = ", ".join(f"{label} x{n}" for label, n in counts.items())
+        print(f"  warning: {rel} — {detail}", file=sys.stderr)
+
+
+def print_plan(
+    files: dict[str, str],
+    skipped: list[str],
+    block_lines: int,
+    args: argparse.Namespace,
+) -> None:
+    """Print what the export would do; shown in dry runs and before applying.
+
+    Parameters
+    ----------
+    files : dict[str, str]
+        Relative path to text content being exported.
+    skipped : list[str]
+        Notes for files that were not exported, one per file.
+    block_lines : int
+        Number of lines of the CLAUDE.md block that would be written.
+    args : argparse.Namespace
+        Parsed command-line arguments.
+    """
+    repo = Path(args.repo).expanduser()
+    claude_md = Path(args.claude_md).expanduser()
+    n_skills = sum(1 for rel in files if rel.startswith("skills/"))
+    print(f"Export {len(files)} files ({n_skills} under skills/) to {repo}")
+    for rel in sorted(files):
+        print(f"  {rel} ({len(files[rel])} chars)")
+    for note in skipped:
+        print(f"  skipped: {note}")
+    if not args.no_claude_md:
+        print(f"CLAUDE.md block: {block_lines} lines -> {claude_md}")
+        if block_lines > CLAUDE_BLOCK_WARN_LINES:
+            print(
+                f"  warning: block is larger than {CLAUDE_BLOCK_WARN_LINES} lines; "
+                "consider trimming the hermes memories"
+            )
+    if args.include_sessions:
+        print("sessions: state.db export requested (git-annex repo required)")
+
+
+def collect(home: Path) -> tuple[dict[str, str], list[str]]:
+    """Read exportable text files under ``home``.
+
+    Parameters
+    ----------
+    home : Path
+        Hermes data directory.
+
+    Returns
+    -------
+    tuple[dict[str, str], list[str]]
+        ``(rel_path -> text, skipped notes)``.
+    """
+    files: dict[str, str] = {}
+    skipped: list[str] = []
+    for rel in ("memories/MEMORY.md", "memories/USER.md", "SOUL.md"):
+        path = home / rel
+        if path.is_file():
+            files[rel] = path.read_text(encoding="utf-8")
+    skills = home / "skills"
+    if skills.is_dir():
+        for path in sorted(skills.rglob("*")):
+            if not path.is_file():
+                continue
+            rel_path = path.relative_to(home)
+            if any(p in IGNORED_PARTS for p in rel_path.parts):
+                continue
+            if path.suffix.lower() not in TEXT_SUFFIXES:
+                skipped.append(f"{rel_path} (not a text type)")
+                continue
+            if path.stat().st_size > MAX_BYTES:
+                skipped.append(f"{rel_path} (larger than {MAX_BYTES} bytes)")
+                continue
+            try:
+                files[rel_path.as_posix()] = path.read_text(encoding="utf-8")
+            except UnicodeDecodeError:
+                skipped.append(f"{rel_path} (not UTF-8)")
+    return files, skipped
+
+
+def render_claude_block(files: dict[str, str], *, include_soul: bool) -> str:
+    """Render the managed CLAUDE.md import block.
+
+    Parameters
+    ----------
+    files : dict[str, str]
+        Relative path to text content.
+    include_soul : bool
+        Include ``SOUL.md`` as a section.
+
+    Returns
+    -------
+    str
+        The complete block between the BEGIN/END markers, with trailing
+        newline.
+    """
+    stamp = _now().strftime("%Y-%m-%d")
+    parts = [
+        BEGIN,
+        f"## Imported from Hermes ({stamp})",
+        "",
+        "Review before relying on this. Memory entries may be stale or wrong.",
+    ]
+    sections = [
+        ("User profile (Hermes USER.md)", "memories/USER.md"),
+        ("Agent notes (Hermes MEMORY.md)", "memories/MEMORY.md"),
+    ]
+    if include_soul:
+        sections.append(("Style / persona (Hermes SOUL.md)", "SOUL.md"))
+    for title, rel in sections:
+        text = files.get(rel, "").strip()
+        if text:
+            parts += ["", f"### {title}", "", text]
+    parts += ["", END]
+    return "\n".join(parts) + "\n"
+
+
+def merge_claude_md(existing: str, block: str) -> str:
+    """Insert or replace the managed block inside existing CLAUDE.md text.
+
+    Parameters
+    ----------
+    existing : str
+        Current CLAUDE.md content (may be empty).
+    block : str
+        The rendered managed block to write.
+
+    Returns
+    -------
+    str
+        ``existing`` with the managed block replaced, or appended when the
+        markers are absent.
+    """
+    start = existing.find(BEGIN)
+    stop = existing.find(END)
+    if start != -1 and stop != -1 and stop > start:
+        tail = existing[stop + len(END) :].lstrip("\n")
+        head = existing[:start].rstrip("\n")
+        merged = (head + "\n\n" if head else "") + block
+        return merged + ("\n" + tail if tail else "")
+    sep = "\n\n" if existing.strip() else ""
+    return existing.rstrip("\n") + sep + block
+
+
+def _resolve_git() -> str:
+    """Return the absolute path to the git executable.
+
+    Returns
+    -------
+    str
+        Absolute path from PATH lookup.
+
+    Raises
+    ------
+    RuntimeError
+        When git is not on PATH.
+    """
+    git_bin = shutil.which("git")
+    if git_bin is None:
+        msg = "git not found on PATH"
+        raise RuntimeError(msg)
+    return git_bin
+
+
+def git(
+    repo: Path, *args: str, check: bool = True
+) -> subprocess.CompletedProcess[str]:
+    """Run git inside ``repo`` and return the completed process.
+
+    Parameters
+    ----------
+    repo : Path
+        Repository directory.
+    *args : str
+        Arguments passed to git after ``-C <repo>``.
+    check : bool
+        Raise ``CalledProcessError`` on nonzero exit.
+
+    Returns
+    -------
+    subprocess.CompletedProcess[str]
+        Captured process result.
+    """
+    return subprocess.run(  # ruff: ignore[subprocess-without-shell-equals-true] - fixed argv
+        [_resolve_git(), "-C", str(repo), *args],
+        check=check,
+        text=True,
+        capture_output=True,
+    )
+
+
+def is_annex(repo: Path) -> bool:
+    """Whether ``repo`` is a git-annex repository.
+
+    Parameters
+    ----------
+    repo : Path
+        Repository directory.
+
+    Returns
+    -------
+    bool
+        True when ``repo/.git/annex`` exists.
+    """
+    return (repo / ".git" / "annex").is_dir()
+
+
+def write_repo(repo: Path, files: dict[str, str]) -> None:
+    """Write exported files into ``repo``, replacing previous exports.
+
+    Parameters
+    ----------
+    repo : Path
+        Target git repository (created with ``git init`` when absent).
+    files : dict[str, str]
+        Relative path to text content to write.
+    """
+    repo.mkdir(parents=True, exist_ok=True)
+    if not (repo / ".git").exists():
+        git(repo, "init", "-b", "main")
+    for name in ("memories", "skills"):
+        shutil.rmtree(repo / name, ignore_errors=True)
+    (repo / "SOUL.md").unlink(missing_ok=True)
+    for rel, text in files.items():
+        dest = repo / rel
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        dest.write_text(text, encoding="utf-8")
+    (repo / ".gitignore").write_text(GITIGNORE, encoding="utf-8")
+
+
+def export_sessions(home: Path, repo: Path) -> Path | None:
+    """Copy ``state.db`` into ``repo/sessions/`` via sqlite backup.
+
+    Parameters
+    ----------
+    home : Path
+        Hermes data directory holding ``state.db``.
+    repo : Path
+        Target repository.
+
+    Returns
+    -------
+    Path | None
+        Destination path, or None when ``state.db`` does not exist.
+    """
+    db = home / "state.db"
+    if not db.is_file():
+        return None
+    dest = repo / "sessions" / "state.db"
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    src = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
+    try:
+        out = sqlite3.connect(dest)
+        try:
+            src.backup(out)
+        finally:
+            out.close()
+    finally:
+        src.close()
+    return dest
+
+
+def commit(repo: Path, annexed: Path | None) -> bool:
+    """Stage and commit everything in ``repo``.
+
+    Parameters
+    ----------
+    repo : Path
+        Repository directory.
+    annexed : Path | None
+        File to hand to ``git annex add`` first, when given.
+
+    Returns
+    -------
+    bool
+        True when a commit was created; False when nothing was staged.
+    """
+    if annexed is not None:
+        git(repo, "annex", "add", str(annexed.relative_to(repo)))
+    git(repo, "add", "-A")
+    if git(repo, "diff", "--cached", "--quiet", check=False).returncode == 0:
+        return False
+    msg = f"Hermes export {_now().strftime('%Y-%m-%d %H:%M')}"
+    git(repo, "commit", "-m", msg)
+    return True
+
+
+def parse_args(argv: list[str] | None) -> argparse.Namespace:
+    """Parse command-line arguments.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Argument vector, or None for ``sys.argv``.
+
+    Returns
+    -------
+    argparse.Namespace
+        Parsed options.
+    """
+    p = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    p.add_argument(
+        "--hermes-home",
+        default="~/.hermes",
+        help="Hermes data dir (default: ~/.hermes)",
+    )
+    p.add_argument(
+        "--repo",
+        default="~/hermes-memory-private",
+        help="private git repo to write into",
+    )
+    p.add_argument(
+        "--claude-md",
+        default="~/.claude/CLAUDE.md",
+        help="CLAUDE.md to update (managed block only)",
+    )
+    p.add_argument(
+        "--no-claude-md",
+        action="store_true",
+        help="do not touch any CLAUDE.md",
+    )
+    p.add_argument(
+        "--include-soul",
+        action="store_true",
+        help="also put SOUL.md in the CLAUDE.md block",
+    )
+    p.add_argument(
+        "--include-sessions",
+        action="store_true",
+        help="export state.db (git-annex repos only)",
+    )
+    p.add_argument(
+        "--redact",
+        action="store_true",
+        help="replace secret-looking strings instead of aborting",
+    )
+    p.add_argument(
+        "--apply",
+        action="store_true",
+        help="actually write (default is a dry run)",
+    )
+    p.add_argument(
+        "--push",
+        action="store_true",
+        help="git push to 'origin' after committing",
+    )
+    return p.parse_args(argv)
+
+
+def _apply_export(
+    args: argparse.Namespace,
+    repo: Path,
+    files: dict[str, str],
+    block: str,
+) -> int:
+    """Perform the export: write repo and CLAUDE.md, commit, optional push.
+
+    Parameters
+    ----------
+    args : argparse.Namespace
+        Parsed command-line arguments.
+    repo : Path
+        Target git repository.
+    files : dict[str, str]
+        Relative path to text content to write.
+    block : str
+        The rendered managed CLAUDE.md block.
+
+    Returns
+    -------
+    int
+        Exit code: 0 ok, 1 error.
+    """
+    home = Path(args.hermes_home).expanduser()
+    claude_md = Path(args.claude_md).expanduser()
+
+    if args.include_sessions and not is_annex(repo):
+        print(
+            f"error: --include-sessions requires a git-annex repo ({repo} is not one)",
+            file=sys.stderr,
+        )
+        return 1
+
+    write_repo(repo, files)
+    annexed = export_sessions(home, repo) if args.include_sessions else None
+
+    if not args.no_claude_md:
+        claude_md.parent.mkdir(parents=True, exist_ok=True)
+        existing = claude_md.read_text(encoding="utf-8") if claude_md.exists() else ""
+        if existing:
+            backup = claude_md.with_name(
+                f"{claude_md.name}.bak-{_now().strftime('%Y%m%d-%H%M%S')}"
+            )
+            backup.write_text(existing, encoding="utf-8")
+        claude_md.write_text(merge_claude_md(existing, block), encoding="utf-8")
+
+    commit(repo, annexed)
+
+    if args.push:
+        remote = git(repo, "remote", "get-url", "origin", check=False)
+        if remote.returncode != 0:
+            print("error: no 'origin' remote to push to", file=sys.stderr)
+            return 1
+        git(repo, "push", "-u", "origin", "HEAD")
+    return 0
+
+
+def main(argv: list[str] | None = None) -> int:
+    """Export hermes memory; dry run by default.
+
+    Parameters
+    ----------
+    argv : list[str] | None
+        Argument vector, or None for ``sys.argv``.
+
+    Returns
+    -------
+    int
+        Exit code: 0 ok, 1 error, 2 secrets found.
+    """
+    args = parse_args(argv)
+    home = Path(args.hermes_home).expanduser()
+    repo = Path(args.repo).expanduser()
+
+    if not home.is_dir():
+        print(f"error: hermes home not found: {home}", file=sys.stderr)
+        return 1
+
+    files, skipped = collect(home)
+    if not files:
+        print(f"error: nothing exportable under {home}", file=sys.stderr)
+        return 1
+
+    findings = {
+        rel: hits for rel, text in files.items() if (hits := find_secrets(text))
+    }
+    memory_findings = {
+        rel: hits for rel, hits in findings.items() if not rel.startswith("skills/")
+    }
+    skills_findings = {
+        rel: hits for rel, hits in findings.items() if rel.startswith("skills/")
+    }
+    if skills_findings:
+        print(
+            "Secret-looking matches in vendored skills (warn-only, not redacted):",
+            file=sys.stderr,
+        )
+        summarize_secret_warnings(skills_findings)
+    if memory_findings:
+        if args.redact:
+            print("Redacting secret-looking matches:", file=sys.stderr)
+            report_secrets(memory_findings)
+            files = {
+                rel: (redact(text) if rel in memory_findings else text)
+                for rel, text in files.items()
+            }
+        else:
+            print(
+                "Aborting: secret-looking strings found (re-run with --redact to "
+                "replace them instead):",
+                file=sys.stderr,
+            )
+            report_secrets(memory_findings)
+            return 2
+
+    block = render_claude_block(files, include_soul=args.include_soul)
+    block_lines = block.count("\n")
+
+    print_plan(files, skipped, block_lines, args)
+
+    if not args.apply:
+        print("Dry run: nothing written. Pass --apply to write.")
+        return 0
+
+    return _apply_export(args, repo, files, block)
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

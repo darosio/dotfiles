@@ -6,6 +6,9 @@ For Calibre just remember: /Sync/media/books
 - [X] attach file and send mail
 - [X] =, ,= for =, M=
 
+* TODO Hermes agent [0/1]
+- [ ] [hermes-lcm-x] Evaluate =hermes-lcm-x= (curated plugin catalog, community tier, v0.28.1): lossless context management — every turn mirrored to local =lcm.db= with a recoverable DAG of summaries and 15 =lcm_*= search/recall tools. Activated with =context.engine: lcm-x=; it replaces the built-in compressor engine (so the 42k window, qwen3:4b compression lane and threshold knobs would be superseded). Install: =hermes plugins install hermes-lcm-x=. Caveats from the catalog entry: all turns stored plaintext in =lcm.db= (secret redaction opt-in), oversized tool outputs as plaintext files under =HERMES_HOME/lcm-large-outputs=, optional semantic recall sends text off-machine (embeddings off by default, in-process FastEmbed alternative), DB growth needs monitoring, summaries use the configured main model. Decision 2026-11-17: stay on compressor; revisit when lossless recall becomes worth the storage/privacy trade.
+
 * TODO Repo maintenance [0/12]
 - [ ] [installer-integration-tests] Add temp-HOME smoke tests for =install.sh= and representative =*.stow.sh= packages; verify symlink creation and idempotent behavior.
 - [ ] [declarative-host-profiles] Add declarative install profiles (desktop/laptop/server/ai) with package metadata such as =needs_root=, =depends_on=, and platform constraints.
