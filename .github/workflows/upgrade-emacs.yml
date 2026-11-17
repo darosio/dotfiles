@@ -87,9 +87,19 @@ jobs:
       - name: Upgrade packages and run smoke tests
         run: make upgrade-emacs
 
+      - name: Generate GitHub App token
+        id: app_token
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
       - name: Create PR if versions changed
         env:
-          GH_TOKEN: ${{ secrets.PAT_WORKFLOWS }}
+          # PAT_WORKFLOWS is retired: push as the GitHub App (same mechanism
+          # as cruft-update.yml), so PRs come from the app bot and no PAT
+          # rotation is ever needed again.
+          APP_TOKEN: ${{ steps.app_token.outputs.token }}
         run: |
           VERSIONS_FILE="emacs/.emacs.d/straight/versions/default.el"
           if git diff --quiet "$VERSIONS_FILE"; then
@@ -98,12 +108,13 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          gh auth setup-git
           BRANCH="chore/update-emacs-packages"
           git checkout -B "$BRANCH"
           git add "$VERSIONS_FILE"
           git commit -m "bump(emacs): update straight.el package versions"
+          git remote set-url origin "https://x-access-token:${APP_TOKEN}@github.com/${{ github.repository }}.git"
           git push -f origin "$BRANCH"
+          export GH_TOKEN="$APP_TOKEN"
           if gh pr view "$BRANCH" --json state -q .state 2>/dev/null | grep -q "OPEN"; then
             echo "PR already exists, updated branch."
           else
