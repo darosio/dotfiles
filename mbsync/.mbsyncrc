@@ -72,6 +72,7 @@ User danielepietroarosio@gmail.com
 PassCmd "pass email/gmail-mbsync"
 TLSType IMAPS
 CertificateFile /etc/ssl/certs/ca-certificates.crt
+AuthMechs PLAIN
 
 # remote storage (use the imap account specified above)
 IMAPStore gmail-remote
